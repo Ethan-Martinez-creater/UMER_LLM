@@ -1,0 +1,29 @@
+# Internal-only files: local/server deployment details, not for the public repository
+WORKSPACE_GUIDE.md
+resources/resource_manifest.md
+results/source_paths.json
+
+# Server-side deployment/ops scripts (environment-specific entry points)
+scripts/launch_materialize_resources.sh
+scripts/materialize_resources.sh
+scripts/launch_pheme_fivefold.sh
+scripts/launch_maweibo_fivefold.sh
+scripts/launch_smoke_test.sh
+scripts/run_pheme_fivefold.sh
+scripts/run_maweibo_fivefold.sh
+scripts/smoke_test.sh
+scripts/collect_authoritative_results.py
+scripts/validate_workspace.py
+project/ablation_studies/round32_pheme/launch_fivefold_queue.sh
+project/ablation_studies/round32_pheme/run_fivefold_queue.sh
+project/ablation_studies/round32_pheme/run_smoke.sh
+project/optimization_rounds/round_021_cross_view_consistency/*.sh
+project/optimization_rounds/round_022_checkpoint_averaging/*.sh
+project/optimization_rounds/round_024_full_consistency_stochastic_pair/*.sh
+project/optimization_rounds/round_025_layerwise_lr_decay/*.sh
+project/optimization_rounds/round_032_sam/*.sh
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/

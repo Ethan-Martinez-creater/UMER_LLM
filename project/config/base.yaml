@@ -1,0 +1,32 @@
+seed: 3090
+
+data:
+  dataset: pheme_extension
+  labels_file: /data/jyz/next/llm/data/pheme_240h_data/labels.csv
+  output_dir: /data/jyz/next/llm/data/pheme_240h_data
+
+model:
+  text_feat_dim: 384
+  extra_feat_dim: 11
+  struct_feat_dim: 1024
+  hidden_dim: 256
+  dropout_rate: 0.35
+  num_classes: 2
+
+training:
+  batch_size: 64
+  gradient_accumulation_steps: 1
+  use_amp: true
+  num_workers: 4
+  stage1_epochs: 60
+  stage2_epochs: 0
+  stage1_lr: 0.0003
+  stage1_weight_decay: 0.0003
+  stage2_lr: 0.00003
+  weight_decay: 0.05
+  patience: 7
+  label_smoothing: 0.1
+  max_epochs: 60
+  augmentation:
+    graph_enabled: true
+    node_dropout: 0.05

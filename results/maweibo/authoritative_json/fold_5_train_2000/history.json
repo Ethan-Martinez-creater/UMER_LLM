@@ -1,0 +1,359 @@
+[
+  {
+    "epoch": 1,
+    "train_total": 1.7601677602245693,
+    "train_final": 1.5512405582481907,
+    "train_graph": 0.673604120730999,
+    "train_text": 0.7151673842753683,
+    "train_consistency": 0.0012229372369802149,
+    "threshold": 0.585,
+    "val_accuracy": 0.5320855614973262,
+    "val_weighted_f1": 0.527969012184986,
+    "val_macro_f1": 0.5284140445430768,
+    "val_rumor_f1": 0.5700245700245701,
+    "val_loss": 1.2264917910417772,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 52,
+      "skipped_nonfinite_first_passes": 1,
+      "mean_first_pass_gradient_norm": 8.266156224104074,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 2,
+    "train_total": 0.9470525907441264,
+    "train_final": 0.7798425290578356,
+    "train_graph": 0.4757284792428393,
+    "train_text": 0.6256460008521875,
+    "train_consistency": 0.0040077679973668035,
+    "threshold": 0.73,
+    "val_accuracy": 0.8128342245989305,
+    "val_weighted_f1": 0.8097093604625887,
+    "val_macro_f1": 0.809959349593496,
+    "val_rumor_f1": 0.8333333333333334,
+    "val_loss": 0.9109244098000348,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 7.84552848564004,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 3,
+    "train_total": 0.6045252717233129,
+    "train_final": 0.4708500935296927,
+    "train_graph": 0.35292420748044695,
+    "train_text": 0.5095222690275737,
+    "train_consistency": 0.008616401048597514,
+    "threshold": 0.71,
+    "val_accuracy": 0.8743315508021391,
+    "val_weighted_f1": 0.873771509273065,
+    "val_macro_f1": 0.8738544783884834,
+    "val_rumor_f1": 0.8816120906801007,
+    "val_loss": 0.5362048856316404,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 5.335468854544298,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 4,
+    "train_total": 0.4241853695628898,
+    "train_final": 0.3121271817390585,
+    "train_graph": 0.31614555641565295,
+    "train_text": 0.3985250313988044,
+    "train_consistency": 0.009715188884677315,
+    "threshold": 0.75,
+    "val_accuracy": 0.9251336898395722,
+    "val_weighted_f1": 0.9249621011040664,
+    "val_macro_f1": 0.9249964188511675,
+    "val_rumor_f1": 0.9282051282051282,
+    "val_loss": 0.39368984788496864,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 4.092148576142653,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 5,
+    "train_total": 0.23508246104410363,
+    "train_final": 0.15768286764865652,
+    "train_graph": 0.2008600966420047,
+    "train_text": 0.27778570893264953,
+    "train_consistency": 0.011205440858334657,
+    "threshold": 0.75,
+    "val_accuracy": 0.9491978609625669,
+    "val_weighted_f1": 0.9491174979691072,
+    "val_macro_f1": 0.9491364069087447,
+    "val_rumor_f1": 0.9509043927648578,
+    "val_loss": 0.29288724424407125,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 2.877938853119904,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 6,
+    "train_total": 0.15986882613977374,
+    "train_final": 0.09840921950095176,
+    "train_graph": 0.17207416084482766,
+    "train_text": 0.1909270753573981,
+    "train_consistency": 0.01401883684162775,
+    "threshold": 0.565,
+    "val_accuracy": 0.9545454545454546,
+    "val_weighted_f1": 0.9545074118270586,
+    "val_macro_f1": 0.9545191172788726,
+    "val_rumor_f1": 0.9556135770234987,
+    "val_loss": 0.2008688660577577,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 2.473881295267141,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 7,
+    "train_total": 0.11909181791790095,
+    "train_final": 0.06814699762409353,
+    "train_graph": 0.16448213701230652,
+    "train_text": 0.14243984327740258,
+    "train_consistency": 0.009813044647957472,
+    "threshold": 0.62,
+    "val_accuracy": 0.9812834224598931,
+    "val_weighted_f1": 0.9812838238878295,
+    "val_macro_f1": 0.9812832886505809,
+    "val_rumor_f1": 0.9812332439678284,
+    "val_loss": 0.14886705623815125,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 2.097316266230817,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 8,
+    "train_total": 0.0793738973113553,
+    "train_final": 0.040309508580131,
+    "train_graph": 0.14536770526790946,
+    "train_text": 0.08933008419061524,
+    "train_consistency": 0.007719437510741045,
+    "threshold": 0.53,
+    "val_accuracy": 0.9759358288770054,
+    "val_weighted_f1": 0.9759349686742843,
+    "val_macro_f1": 0.9759356568364611,
+    "val_rumor_f1": 0.976,
+    "val_loss": 0.1406203682539377,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 1.5660239643645737,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 9,
+    "train_total": 0.05899374758675029,
+    "train_final": 0.026228036867723858,
+    "train_graph": 0.1303087655107014,
+    "train_text": 0.06635660688459341,
+    "train_consistency": 0.006531807999364165,
+    "threshold": 0.42000000000000004,
+    "val_accuracy": 0.983957219251337,
+    "val_weighted_f1": 0.9839576780359616,
+    "val_macro_f1": 0.9839567604667124,
+    "val_rumor_f1": 0.9838709677419355,
+    "val_loss": 0.119768784995898,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 1.0322638075306731,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 10,
+    "train_total": 0.04057350064665245,
+    "train_final": 0.014047870922063123,
+    "train_graph": 0.12180933057607035,
+    "train_text": 0.03900408278319186,
+    "train_consistency": 0.004807233777642935,
+    "threshold": 0.5549999999999999,
+    "val_accuracy": 0.9866310160427807,
+    "val_weighted_f1": 0.9866313027770212,
+    "val_macro_f1": 0.9866309204647006,
+    "val_rumor_f1": 0.9865951742627346,
+    "val_loss": 0.11805080932833971,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 1.0375508289292175,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 11,
+    "train_total": 0.03158522280490225,
+    "train_final": 0.008079234785444506,
+    "train_graph": 0.11581469026575741,
+    "train_text": 0.028717362646628837,
+    "train_consistency": 0.0036523585841001433,
+    "threshold": 0.655,
+    "val_accuracy": 0.9866310160427807,
+    "val_weighted_f1": 0.9866305380703689,
+    "val_macro_f1": 0.9866286261807209,
+    "val_rumor_f1": 0.986449864498645,
+    "val_loss": 0.10390140780031103,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.6913789791880913,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 12,
+    "train_total": 0.022507441696507157,
+    "train_final": 0.0039020569936578146,
+    "train_graph": 0.100671388442459,
+    "train_text": 0.015504988710606647,
+    "train_consistency": 0.00235785483160574,
+    "threshold": 0.645,
+    "val_accuracy": 0.9786096256684492,
+    "val_weighted_f1": 0.9786096256684492,
+    "val_macro_f1": 0.9786096256684492,
+    "val_rumor_f1": 0.9786096256684492,
+    "val_loss": 0.14628574937017993,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.630162608932774,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 13,
+    "train_total": 0.01900191117012929,
+    "train_final": 0.0020673757147917403,
+    "train_graph": 0.09897126651610182,
+    "train_text": 0.008840286603247347,
+    "train_consistency": 0.0015256037459154403,
+    "threshold": 0.435,
+    "val_accuracy": 0.9786096256684492,
+    "val_weighted_f1": 0.9786096256684492,
+    "val_macro_f1": 0.9786071786071786,
+    "val_rumor_f1": 0.9783783783783784,
+    "val_loss": 0.11460596143441115,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.43940389325033946,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 14,
+    "train_total": 0.015321881850381726,
+    "train_final": 0.0004128729717021564,
+    "train_graph": 0.08909848697769035,
+    "train_text": 0.0054726304285438905,
+    "train_consistency": 0.001446681532559204,
+    "threshold": 0.25,
+    "val_accuracy": 0.9759358288770054,
+    "val_weighted_f1": 0.9759349686742843,
+    "val_macro_f1": 0.9759356568364611,
+    "val_rumor_f1": 0.976,
+    "val_loss": 0.15834063502746998,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.3200212334686855,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 15,
+    "train_total": 0.014405660091593052,
+    "train_final": 0.0003530357853925298,
+    "train_graph": 0.0859103751336252,
+    "train_text": 0.0044525882352553755,
+    "train_consistency": 0.0009963583165178609,
+    "threshold": 0.5549999999999999,
+    "val_accuracy": 0.9812834224598931,
+    "val_weighted_f1": 0.9812838239107902,
+    "val_macro_f1": 0.9812822181072018,
+    "val_rumor_f1": 0.9811320754716981,
+    "val_loss": 0.13372489732444562,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.2630092892444359,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 16,
+    "train_total": 0.012427843352374372,
+    "train_final": 0.00021293226449892072,
+    "train_graph": 0.0765006602135448,
+    "train_text": 0.002610746479677757,
+    "train_consistency": 0.0006963990746537466,
+    "threshold": 0.25,
+    "val_accuracy": 0.9732620320855615,
+    "val_weighted_f1": 0.973259737637514,
+    "val_macro_f1": 0.9732551487414187,
+    "val_rumor_f1": 0.9728260869565217,
+    "val_loss": 0.1392797587202385,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.25538944959078197,
+      "replayed_microbatches": 840
+    }
+  },
+  {
+    "epoch": 17,
+    "train_total": 0.01189231670455012,
+    "train_final": 0.00014741029107957123,
+    "train_graph": 0.07366016889185024,
+    "train_text": 0.0024395228142869503,
+    "train_consistency": 0.0006599043980656915,
+    "threshold": 0.25,
+    "val_accuracy": 0.9812834224598931,
+    "val_weighted_f1": 0.9812838239107902,
+    "val_macro_f1": 0.9812822181072018,
+    "val_rumor_f1": 0.9811320754716981,
+    "val_loss": 0.13116363723434565,
+    "sam": {
+      "rho": 0.05,
+      "completed_updates": 53,
+      "skipped_nonfinite_first_passes": 0,
+      "mean_first_pass_gradient_norm": 0.2229593086566003,
+      "replayed_microbatches": 840
+    }
+  }
+]

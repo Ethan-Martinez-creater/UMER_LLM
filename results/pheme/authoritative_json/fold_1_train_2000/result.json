@@ -1,0 +1,72 @@
+{
+  "scheme": "round_032_sam",
+  "initialization": "clean",
+  "task_checkpoint_initialization": false,
+  "view_strategy": "standard",
+  "fusion_type": "linear",
+  "fold": 1,
+  "training_seed": 2000,
+  "partition_seed": 3090,
+  "inner_split_strategy": "label",
+  "refit_full_outer_train": false,
+  "stage_one_train_size": 4626,
+  "stage_one_validation_size": 514,
+  "final_training_size": 4626,
+  "fixed_stop_epoch": null,
+  "scheduler_horizon_epochs": 30,
+  "threshold_selection_scope": "current_inner_validation",
+  "epoch_monitor_scope": "held_out_inner_validation",
+  "single_checkpoint": "/data/jyz/next/original_model_optimization/results/round_032_sam/twofold_seed2000/fold_1_train_2000/best_joint_model.pt",
+  "joint_gradient_branches": [
+    "graph",
+    "deberta",
+    "fusion"
+  ],
+  "retrieval_memory_scope": "strict_train_fold_buffer_leave_one_out",
+  "physical_batch_size": 4,
+  "train_view_count": 2,
+  "classification_view_count": 2,
+  "sequences_per_step": 8,
+  "gradient_accumulation_steps": 16,
+  "effective_batch_size": 64,
+  "learning_rates": {
+    "graph": 0.0001,
+    "deberta": 2e-05,
+    "fusion": 0.001
+  },
+  "text_layerwise_lr_decay": 1.0,
+  "rdrop_weight": 0.0,
+  "view_consistency_weight": 0.5,
+  "checkpoint_average_top_k": 1,
+  "checkpoint_selection": "legacy_four_metric_min",
+  "selected_checkpoint_kind": "single",
+  "selected_source_epochs": [
+    14
+  ],
+  "averaging_candidates": [],
+  "class_weight_power": 0.5,
+  "class_weights": [
+    1.0,
+    1.2944245338439941
+  ],
+  "group_dro": null,
+  "sam": {
+    "rho": 0.05,
+    "base_optimizer": "AdamW",
+    "perturbation_scope": "all_trainable_parameters",
+    "first_pass_scope": "effective_event_batch_64",
+    "second_pass_scope": "same_replayed_effective_event_batch_64",
+    "torch_rng_replayed": true,
+    "graph_and_text_views_replayed": true,
+    "gradient_clip_scope": "second_pass_only"
+  },
+  "threshold": 0.565,
+  "test_evaluated": true,
+  "metrics": {
+    "accuracy": 0.9042801556420234,
+    "weighted_f1": 0.9039644070342691,
+    "macro_f1": 0.8971652870139579,
+    "rumor_f1": 0.870116156282999,
+    "loss": 0.6839770470428777
+  }
+}

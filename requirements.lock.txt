@@ -1,0 +1,10 @@
+# Verified training environment (versions pinned; deployed env details in WORKSPACE_GUIDE.md, not distributed)
+python==3.11.13
+torch==2.7.1+cu128
+transformers==4.57.6
+numpy==1.26.4
+pandas==2.3.3
+scikit-learn==1.9.0
+PyYAML
+safetensors
+sentencepiece==0.2.2

@@ -1,0 +1,72 @@
+{
+  "scheme": "round_032_sam_maweibo",
+  "initialization": "clean",
+  "task_checkpoint_initialization": false,
+  "view_strategy": "standard",
+  "fusion_type": "linear",
+  "fold": 1,
+  "training_seed": 2000,
+  "partition_seed": 3090,
+  "inner_split_strategy": "label",
+  "refit_full_outer_train": false,
+  "stage_one_train_size": 3357,
+  "stage_one_validation_size": 374,
+  "final_training_size": 3357,
+  "fixed_stop_epoch": null,
+  "scheduler_horizon_epochs": 30,
+  "threshold_selection_scope": "current_inner_validation",
+  "epoch_monitor_scope": "held_out_inner_validation",
+  "single_checkpoint": "/data/jyz/next/original_model_optimization/results/comparison_models/maweibo_fivefold_author_training_v1_20260729/umer_round32/fold_1_train_2000/best_joint_model.pt",
+  "joint_gradient_branches": [
+    "graph",
+    "deberta",
+    "fusion"
+  ],
+  "retrieval_memory_scope": "strict_train_fold_buffer_leave_one_out",
+  "physical_batch_size": 4,
+  "train_view_count": 2,
+  "classification_view_count": 2,
+  "sequences_per_step": 8,
+  "gradient_accumulation_steps": 16,
+  "effective_batch_size": 64,
+  "learning_rates": {
+    "graph": 0.0001,
+    "deberta": 2e-05,
+    "fusion": 0.001
+  },
+  "text_layerwise_lr_decay": 1.0,
+  "rdrop_weight": 0.0,
+  "view_consistency_weight": 0.5,
+  "checkpoint_average_top_k": 1,
+  "checkpoint_selection": "legacy_four_metric_min",
+  "selected_checkpoint_kind": "single",
+  "selected_source_epochs": [
+    12
+  ],
+  "averaging_candidates": [],
+  "class_weight_power": 0.5,
+  "class_weights": [
+    1.0,
+    1.008075475692749
+  ],
+  "group_dro": null,
+  "sam": {
+    "rho": 0.05,
+    "base_optimizer": "AdamW",
+    "perturbation_scope": "all_trainable_parameters",
+    "first_pass_scope": "effective_event_batch_64",
+    "second_pass_scope": "same_replayed_effective_event_batch_64",
+    "torch_rng_replayed": true,
+    "graph_and_text_views_replayed": true,
+    "gradient_clip_scope": "second_pass_only"
+  },
+  "threshold": 0.73,
+  "test_evaluated": true,
+  "metrics": {
+    "accuracy": 0.9721329046087889,
+    "weighted_f1": 0.9721237470698585,
+    "macro_f1": 0.9721274933357846,
+    "rumor_f1": 0.9725158562367865,
+    "loss": 0.23352351104131913
+  }
+}
