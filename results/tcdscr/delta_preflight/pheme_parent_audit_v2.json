@@ -1,0 +1,382 @@
+{
+ "mutually_exclusive_partition": true,
+ "total_replies": 98929,
+ "resolved_parent": {
+  "count": 96414,
+  "ratio": 0.9745777274611085
+ },
+ "missing_parent_field": {
+  "count": 1017,
+  "ratio": 0.010280099869603453
+ },
+ "external_or_unresolved_parent": {
+  "count": 1498,
+  "ratio": 0.015142172669288075
+ },
+ "partition_sum_check": true,
+ "chronology_violation_count": 0,
+ "events_with_missing_parent": 834,
+ "events_with_external_parent": 634,
+ "unresolved_parent_ratio_per_event_P50_P90_P99": [
+  0.0,
+  0.08333333333333333,
+  0.36363636363636365
+ ],
+ "fixed_handling_rules": {
+  "resolved_parent": "build edge normally",
+  "missing_parent": "keep node; NOT attached to source; [UNAVAILABLE] in later evidence packer",
+  "external_or_unresolved": "keep node; NOT attached to source; [UNAVAILABLE] in later evidence packer"
+ },
+ "examples_max50": [
+  {
+   "event_id": "552784882687299584",
+   "node_id": "552787393825501184",
+   "parent_id": "552786310919110656",
+   "node_timestamp_utc": "2015-01-07T11:22:39+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552784882687299584",
+   "node_id": "552827557171986432",
+   "parent_id": "552818505142521857",
+   "node_timestamp_utc": "2015-01-07T14:02:15+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552787544837197824",
+   "node_id": "552800128172847104",
+   "parent_id": "552795137651527680",
+   "node_timestamp_utc": "2015-01-07T12:13:15+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552787544837197824",
+   "node_id": "552800364190519297",
+   "parent_id": "552795137651527680",
+   "node_timestamp_utc": "2015-01-07T12:14:12+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552787544837197824",
+   "node_id": "552801034016677890",
+   "parent_id": "552795137651527680",
+   "node_timestamp_utc": "2015-01-07T12:16:51+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552787544837197824",
+   "node_id": "552801599530479618",
+   "parent_id": "552795137651527680",
+   "node_timestamp_utc": "2015-01-07T12:19:06+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552791182670327808",
+   "node_id": "552794771568484353",
+   "parent_id": "552792777365671936",
+   "node_timestamp_utc": "2015-01-07T11:51:58+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552791182670327808",
+   "node_id": "552812150037958656",
+   "parent_id": "552792777365671936",
+   "node_timestamp_utc": "2015-01-07T13:01:01+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552792988376915969",
+   "node_id": "552797501414457345",
+   "parent_id": "552793202198331392",
+   "node_timestamp_utc": "2015-01-07T12:02:49+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552793552376569857",
+   "node_id": "552794979769520128",
+   "parent_id": "552793785264918529",
+   "node_timestamp_utc": "2015-01-07T11:52:48+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552795773180858368",
+   "node_id": "553044179727552513",
+   "parent_id": "552800577760268289",
+   "node_timestamp_utc": "2015-01-08T04:23:02+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552795773180858368",
+   "node_id": "553044335533367296",
+   "parent_id": "552800577760268289",
+   "node_timestamp_utc": "2015-01-08T04:23:39+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552801880812691456",
+   "node_id": "552811464344735744",
+   "parent_id": "552807127769956353",
+   "node_timestamp_utc": "2015-01-07T12:58:18+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552802128688078848",
+   "node_id": "552805912596189184",
+   "parent_id": "552803320705064960",
+   "node_timestamp_utc": "2015-01-07T12:36:14+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552802128688078848",
+   "node_id": "552806687808450562",
+   "parent_id": "552803320705064960",
+   "node_timestamp_utc": "2015-01-07T12:39:19+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552802606696136705",
+   "node_id": "552804213626253312",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T12:29:29+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552803839490150400",
+   "node_id": "552804384686735360",
+   "parent_id": "552804262825037825",
+   "node_timestamp_utc": "2015-01-07T12:30:10+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552804394727927808",
+   "node_id": "552809304114610176",
+   "parent_id": "552804929119997952",
+   "node_timestamp_utc": "2015-01-07T12:49:43+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552820020904861696",
+   "parent_id": "552819252705492992",
+   "node_timestamp_utc": "2015-01-07T13:32:18+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552821964448862208",
+   "parent_id": "552821480895967232",
+   "node_timestamp_utc": "2015-01-07T13:40:01+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552823413639610368",
+   "parent_id": "552822334336151552",
+   "node_timestamp_utc": "2015-01-07T13:45:47+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552823786370629632",
+   "parent_id": "552820492113956864",
+   "node_timestamp_utc": "2015-01-07T13:47:16+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552824157633646594",
+   "parent_id": "552819252705492992",
+   "node_timestamp_utc": "2015-01-07T13:48:44+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552824458352680961",
+   "parent_id": "552823560670965761",
+   "node_timestamp_utc": "2015-01-07T13:49:56+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552824703144837121",
+   "parent_id": "552823560670965761",
+   "node_timestamp_utc": "2015-01-07T13:50:54+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552805488631758849",
+   "node_id": "552843131977498624",
+   "parent_id": "552825768690991104",
+   "node_timestamp_utc": "2015-01-07T15:04:08+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552806937470201856",
+   "node_id": "552822589102764033",
+   "parent_id": "552821275731566595",
+   "node_timestamp_utc": "2015-01-07T13:42:30+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552807027781947393",
+   "node_id": "552814686484586496",
+   "parent_id": "552807244874940416",
+   "node_timestamp_utc": "2015-01-07T13:11:06+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552807027781947393",
+   "node_id": "552833642381447170",
+   "parent_id": "552819190193995776",
+   "node_timestamp_utc": "2015-01-07T14:26:26+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552808071387701248",
+   "node_id": "552808917755887618",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T12:48:11+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552808071387701248",
+   "node_id": "552813579422806018",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T13:06:42+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552808071387701248",
+   "node_id": "552814290848079872",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T13:09:32+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552808071387701248",
+   "node_id": "552814567185596417",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T13:10:38+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552809418417790976",
+   "node_id": "552817902479757312",
+   "parent_id": "552813134269132800",
+   "node_timestamp_utc": "2015-01-07T13:23:53+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552810448324943872",
+   "node_id": "552812681091354624",
+   "parent_id": "552812062351831042",
+   "node_timestamp_utc": "2015-01-07T13:03:08+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552812682626465792",
+   "node_id": "552856456920563713",
+   "parent_id": "552854406702452736",
+   "node_timestamp_utc": "2015-01-07T15:57:05+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552812682626465792",
+   "node_id": "552856615037456384",
+   "parent_id": "552854406702452736",
+   "node_timestamp_utc": "2015-01-07T15:57:43+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552812682626465792",
+   "node_id": "552859157960085505",
+   "parent_id": "552857958288084992",
+   "node_timestamp_utc": "2015-01-07T16:07:49+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552816020403269632",
+   "node_id": "552822711945535488",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T13:43:00+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552820736490889216",
+   "node_id": "552847024404848640",
+   "parent_id": "552846184994197504",
+   "node_timestamp_utc": "2015-01-07T15:19:36+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552821287933202435",
+   "node_id": "552822502750453762",
+   "parent_id": "552822090156756992",
+   "node_timestamp_utc": "2015-01-07T13:42:10+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552830864187727876",
+   "node_id": "552894372812177410",
+   "parent_id": "552831928018411521",
+   "node_timestamp_utc": "2015-01-07T18:27:45+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552831881847533568",
+   "node_id": "552834601690075137",
+   "parent_id": "552833917074829312",
+   "node_timestamp_utc": "2015-01-07T14:30:14+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552832817089236992",
+   "node_id": "552847695929688064",
+   "parent_id": null,
+   "node_timestamp_utc": "2015-01-07T15:22:16+00:00",
+   "parent_resolution_status": "missing_parent_field"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552859968823902208",
+   "parent_id": "552857901514358784",
+   "node_timestamp_utc": "2015-01-07T16:11:02+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552860069654970369",
+   "parent_id": "552857901514358784",
+   "node_timestamp_utc": "2015-01-07T16:11:26+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552860470261321729",
+   "parent_id": "552860240937766912",
+   "node_timestamp_utc": "2015-01-07T16:13:02+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552860715477110788",
+   "parent_id": "552860240937766912",
+   "node_timestamp_utc": "2015-01-07T16:14:00+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552861077550399489",
+   "parent_id": "552860240937766912",
+   "node_timestamp_utc": "2015-01-07T16:15:27+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  },
+  {
+   "event_id": "552845136414380032",
+   "node_id": "552861208488194048",
+   "parent_id": "552860780258152448",
+   "node_timestamp_utc": "2015-01-07T16:15:58+00:00",
+   "parent_resolution_status": "external_or_unresolved_parent"
+  }
+ ]
+}

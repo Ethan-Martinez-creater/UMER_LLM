@@ -1,0 +1,28 @@
+{
+ "events": 4664,
+ "nodes_with_time": 3805656,
+ "node_time_missing": 0,
+ "node_time_coverage": 1.0,
+ "text_missing_posts": 17,
+ "raw_text_coverage": 0.999995532964619,
+ "source_time_coverage": 1.0,
+ "events_no_parent_root": 0,
+ "multi_root_events": 0,
+ "duplicate_node_id_events": 0,
+ "negative_elapsed_posts_vs_event_min": 0,
+ "source_only_events": 0,
+ "relation": {
+  "relation_field": "parent (string mid of parent post; null for source)",
+  "edge_direction": "child -> parent",
+  "root_definition": "parent==null; historical adapter takes the FIRST null-parent post as source_id",
+  "parent_resolved_count": 3800962,
+  "parent_external_count": 30,
+  "parent_resolution_rate": 0.9999921073235618,
+  "cycle_count_events": 0,
+  "unreachable_posts_from_source": 30,
+  "child_before_parent_count": 5
+ },
+ "within_event_temporal_ready": true,
+ "global_chronological_ready": true,
+ "note": "t is an absolute unix timestamp on every post, so both within-event G_t construction and event-level chronological splitting are supported."
+}

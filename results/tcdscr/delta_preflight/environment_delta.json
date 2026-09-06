@@ -1,0 +1,27 @@
+{
+ "generated_at": "2026-09-06",
+ "git_commit_sha": "71ec7832993ae14cd58e244ea149374689fee302",
+ "python_version": "3.11.13",
+ "pytorch_version": "2.7.1+cu128",
+ "transformers_version": "4.57.6",
+ "sentence_transformers_version": "server DGPA install (version recorded in p0 first-round environment_server.json; same interpreter)",
+ "cuda_version": "12.8",
+ "gpu_model": "NVIDIA GeForce RTX 4090 (24564 MiB, driver 570.133.07)",
+ "os_server": "Linux (DGPA environment)",
+ "paths": {
+  "pheme_raw": "/data/jyz/rumor_detection/data/PHEME_extension/all-rnr-annotated-threads",
+  "pheme_processed": "/data/jyz/next/llm/data/pheme_240h_data",
+  "maweibo_raw": "/data/jyz/next/llm/data/maweibo_raw",
+  "maweibo_processed": "/data/jyz/next/llm/data/maweibo_240h_data",
+  "maweibo_labels": "/data/jyz/next/llm/data/maweibo_labels.txt",
+  "maweibo_umer_checkpoints": "/data/jyz/next/llm/checkpoints/maweibo",
+  "historical_preprocessing_source_root": "/data/jyz/next/src/rumor_detection/data"
+ },
+ "round1_preflight_intact": true,
+ "round1_summary_path": "results/tcdscr/preflight/preflight_summary.md",
+ "frozen_decisions_honoured": {
+  "weibo22_removed": true,
+  "tc_dscr_main_path_384_1024_only": true,
+  "norm_degree_snapshot_internal_max": true
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "extra_column_diffs": {
+  "3570716009678220": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_fol_inv",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.4995496869087219
+   ]
+  },
+  "3563719940577536": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_fol_inv",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.7953892350196838
+   ]
+  }
+ },
+ "text_variant_matching": [
+  {
+   "event_id": "3570716009678220",
+   "n_nodes": 1021,
+   "ref_vs_orig_diag_cos_min": 0.09040944278240204,
+   "ref_vs_orig_diag_cos_mean": 0.9848185181617737,
+   "ref_vs_raw_diag_cos_mean": 0.797409176826477,
+   "ref_vs_clean_diag_cos_mean": 0.9903009533882141,
+   "ref_vs_orig_best_match_rowwise_mean": 0.9983357191085815,
+   "reb_vs_orig_diag_cos_min": 0.09040945023298264,
+   "reb_vs_orig_diag_cos_mean": 0.990040123462677,
+   "ref_vs_reb_diag_cos_min": 0.1477375626564026,
+   "ref_vs_reb_diag_cos_mean": 0.9939857721328735,
+   "rows_where_ref_matches_orig_below_0_99": 56,
+   "rows_where_ref_matches_raw_above_orig": 45,
+   "rows_where_ref_matches_clean_above_orig": 84
+  },
+  {
+   "event_id": "3563719940577536",
+   "n_nodes": 767,
+   "ref_vs_orig_diag_cos_min": 0.2544597387313843,
+   "ref_vs_orig_diag_cos_mean": 0.8989844918251038,
+   "ref_vs_raw_diag_cos_mean": 0.7848477959632874,
+   "ref_vs_clean_diag_cos_mean": 1.0,
+   "ref_vs_orig_best_match_rowwise_mean": 0.9199119210243225,
+   "reb_vs_orig_diag_cos_min": 0.9999995827674866,
+   "reb_vs_orig_diag_cos_mean": 1.0,
+   "ref_vs_reb_diag_cos_min": 0.2544597387313843,
+   "ref_vs_reb_diag_cos_mean": 0.8989846706390381,
+   "rows_where_ref_matches_orig_below_0_99": 412,
+   "rows_where_ref_matches_raw_above_orig": 121,
+   "rows_where_ref_matches_clean_above_orig": 534
+  }
+ ]
+}

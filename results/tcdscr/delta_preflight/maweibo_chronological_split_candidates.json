@@ -1,0 +1,174 @@
+{
+ "available": true,
+ "basis": "source post absolute unix timestamp (t)",
+ "candidates": {
+  "60/20/20": {
+   "fractions": [
+    60,
+    20,
+    20
+   ],
+   "segments": {
+    "train": {
+     "events": 2798,
+     "rumor": 2313,
+     "nonrumor": 485,
+     "rumor_ratio": 0.8266619013581129,
+     "time_span_utc": [
+      "2010-12-01T16:34:33+00:00",
+      "2015-04-21T05:59:54+00:00"
+     ],
+     "year_distribution": {
+      "2010": 10,
+      "2011": 123,
+      "2012": 1110,
+      "2013": 1332,
+      "2014": 160,
+      "2015": 63
+     },
+     "source_only": 0
+    },
+    "validation": {
+     "events": 933,
+     "rumor": 0,
+     "nonrumor": 933,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-04-21T06:00:03+00:00",
+      "2015-11-21T12:00:02+00:00"
+     ],
+     "year_distribution": {
+      "2015": 933
+     },
+     "source_only": 0
+    },
+    "test": {
+     "events": 933,
+     "rumor": 0,
+     "nonrumor": 933,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-11-21T12:00:10+00:00",
+      "2015-12-31T06:32:57+00:00"
+     ],
+     "year_distribution": {
+      "2015": 933
+     },
+     "source_only": 0
+    }
+   }
+  },
+  "70/10/20": {
+   "fractions": [
+    70,
+    10,
+    20
+   ],
+   "segments": {
+    "train": {
+     "events": 3264,
+     "rumor": 2313,
+     "nonrumor": 951,
+     "rumor_ratio": 0.7086397058823529,
+     "time_span_utc": [
+      "2010-12-01T16:34:33+00:00",
+      "2015-11-16T01:29:59+00:00"
+     ],
+     "year_distribution": {
+      "2010": 10,
+      "2011": 123,
+      "2012": 1110,
+      "2013": 1332,
+      "2014": 160,
+      "2015": 529
+     },
+     "source_only": 0
+    },
+    "validation": {
+     "events": 467,
+     "rumor": 0,
+     "nonrumor": 467,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-11-16T01:41:03+00:00",
+      "2015-11-21T12:00:02+00:00"
+     ],
+     "year_distribution": {
+      "2015": 467
+     },
+     "source_only": 0
+    },
+    "test": {
+     "events": 933,
+     "rumor": 0,
+     "nonrumor": 933,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-11-21T12:00:10+00:00",
+      "2015-12-31T06:32:57+00:00"
+     ],
+     "year_distribution": {
+      "2015": 933
+     },
+     "source_only": 0
+    }
+   }
+  },
+  "70/15/15": {
+   "fractions": [
+    70,
+    15,
+    15
+   ],
+   "segments": {
+    "train": {
+     "events": 3264,
+     "rumor": 2313,
+     "nonrumor": 951,
+     "rumor_ratio": 0.7086397058823529,
+     "time_span_utc": [
+      "2010-12-01T16:34:33+00:00",
+      "2015-11-16T01:29:59+00:00"
+     ],
+     "year_distribution": {
+      "2010": 10,
+      "2011": 123,
+      "2012": 1110,
+      "2013": 1332,
+      "2014": 160,
+      "2015": 529
+     },
+     "source_only": 0
+    },
+    "validation": {
+     "events": 700,
+     "rumor": 0,
+     "nonrumor": 700,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-11-16T01:41:03+00:00",
+      "2015-11-22T16:00:03+00:00"
+     ],
+     "year_distribution": {
+      "2015": 700
+     },
+     "source_only": 0
+    },
+    "test": {
+     "events": 700,
+     "rumor": 0,
+     "nonrumor": 700,
+     "rumor_ratio": 0.0,
+     "time_span_utc": [
+      "2015-11-22T16:00:21+00:00",
+      "2015-12-31T06:32:57+00:00"
+     ],
+     "year_distribution": {
+      "2015": 700
+     },
+     "source_only": 0
+    }
+   }
+  }
+ }
+}

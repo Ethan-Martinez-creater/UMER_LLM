@@ -1,0 +1,218 @@
+{
+ "dataset": "Ma-Weibo raw (one JSON array per event)",
+ "raw_path": "/data/jyz/next/llm/data/maweibo_raw",
+ "n_event_files": 4664,
+ "labels_found": 4664,
+ "labels_missing": 0,
+ "post_total": 3805656,
+ "field_presence_rate_full_dataset": {
+  "id": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "mid": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "text": {
+   "present": 1.0,
+   "nonempty": 0.8239501941321024
+  },
+  "original_text": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "t": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "parent": {
+   "present": 1.0,
+   "nonempty": 0.9987744557048771
+  },
+  "uid": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "followers_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "friends_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "statuses_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "favourites_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "bi_followers_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "verified_type": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "user_geo_enabled": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "geo_enabled": {
+   "present": 0.0,
+   "nonempty": 0.0
+  },
+  "user_created_at": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "gender": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "geo": {
+   "present": 1.0,
+   "nonempty": 1.0510671484758475e-05
+  },
+  "province": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "city": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "reposts_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "comments_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "attitudes_count": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "user_description": {
+   "present": 1.0,
+   "nonempty": 0.6661088127776131
+  },
+  "screen_name": {
+   "present": 1.0,
+   "nonempty": 0.9984896165076402
+  },
+  "picture": {
+   "present": 1.0,
+   "nonempty": 0.001012177663982241
+  },
+  "verified": {
+   "present": 1.0,
+   "nonempty": 1.0
+  },
+  "user_location": {
+   "present": 1.0,
+   "nonempty": 1.0
+  }
+ },
+ "sample_seed": 3090,
+ "sample_size": 100,
+ "sample_details_first2": [
+  {
+   "n_posts_in_json": 1476,
+   "first_post_keys": [
+    "attitudes_count",
+    "bi_followers_count",
+    "city",
+    "comments_count",
+    "favourites_count",
+    "followers_count",
+    "friends_count",
+    "gender",
+    "geo",
+    "id",
+    "mid",
+    "original_text",
+    "parent",
+    "picture",
+    "province",
+    "reposts_count",
+    "screen_name",
+    "statuses_count",
+    "t",
+    "text",
+    "uid",
+    "user_avatar",
+    "user_created_at",
+    "user_description",
+    "user_geo_enabled",
+    "user_location",
+    "username",
+    "verified",
+    "verified_reason",
+    "verified_type"
+   ],
+   "root_count": 1,
+   "src_t": 1333350535,
+   "min_t": 1333350535,
+   "label": 1
+  },
+  {
+   "n_posts_in_json": 271,
+   "first_post_keys": [
+    "attitudes_count",
+    "bi_followers_count",
+    "city",
+    "comments_count",
+    "favourites_count",
+    "followers_count",
+    "friends_count",
+    "gender",
+    "geo",
+    "id",
+    "mid",
+    "original_text",
+    "parent",
+    "picture",
+    "province",
+    "reposts_count",
+    "screen_name",
+    "statuses_count",
+    "t",
+    "text",
+    "uid",
+    "user_avatar",
+    "user_created_at",
+    "user_description",
+    "user_geo_enabled",
+    "user_location",
+    "username",
+    "verified",
+    "verified_reason",
+    "verified_type"
+   ],
+   "root_count": 1,
+   "src_t": 1339569034,
+   "min_t": 1339569034,
+   "label": 1
+  }
+ ],
+ "t_field_semantics": {
+  "field_name": "t",
+  "dtype": "int",
+  "unit": "seconds",
+  "semantics": "absolute unix timestamp",
+  "global_min": 1291221273,
+  "global_max": 1452788866,
+  "source_t_equals_event_min_t_rate": 0.9997855917667239,
+  "source_t_zero_count": 0,
+  "list_order_monotonic_events_rate": 0.9997855917667239,
+  "negative_elapsed_posts_vs_event_min": 0,
+  "node_time_missing": 0,
+  "verdict": "ABSOLUTE_UNIX_SECONDS"
+ }
+}

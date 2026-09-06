@@ -1,0 +1,3337 @@
+{
+ "definition": {
+  "time_bin": "floor(elapsed_seconds/1800) clipped to [0,479]",
+  "norm_time": "time_bin/480",
+  "frozen_from": "round-1\u5ba1\u6279: historical max_time_steps=480, 30-min bins"
+ },
+ "seed": 3090,
+ "cutoffs_hours": [
+  1,
+  6,
+  24
+ ],
+ "events": [
+  {
+   "event_id": "499397048878501888",
+   "topic": "ferguson-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 7,
+   "first10_nodes": [
+    {
+     "node_id": "499397048878501888",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "499544240746414081",
+     "elapsed_seconds": 35093,
+     "expected_time_bin": 19,
+     "actual_time_bin": 19,
+     "expected_norm_time": 0.03958333333333333,
+     "actual_norm_time": 0.03958333333333333
+    },
+    {
+     "node_id": "499545033104564226",
+     "elapsed_seconds": 35282,
+     "expected_time_bin": 19,
+     "actual_time_bin": 19,
+     "expected_norm_time": 0.03958333333333333,
+     "actual_norm_time": 0.03958333333333333
+    },
+    {
+     "node_id": "499553591137693696",
+     "elapsed_seconds": 37323,
+     "expected_time_bin": 20,
+     "actual_time_bin": 20,
+     "expected_norm_time": 0.041666666666666664,
+     "actual_norm_time": 0.041666666666666664
+    },
+    {
+     "node_id": "499556138304962560",
+     "elapsed_seconds": 37930,
+     "expected_time_bin": 21,
+     "actual_time_bin": 21,
+     "expected_norm_time": 0.04375,
+     "actual_norm_time": 0.04375
+    },
+    {
+     "node_id": "499559925501399040",
+     "elapsed_seconds": 38833,
+     "expected_time_bin": 21,
+     "actual_time_bin": 21,
+     "expected_norm_time": 0.04375,
+     "actual_norm_time": 0.04375
+    },
+    {
+     "node_id": "499589195846148098",
+     "elapsed_seconds": 45811,
+     "expected_time_bin": 25,
+     "actual_time_bin": 25,
+     "expected_norm_time": 0.052083333333333336,
+     "actual_norm_time": 0.052083333333333336
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 1,
+     "excluded_count": 6,
+     "excluded_future_node_ids_first5": [
+      "499544240746414081",
+      "499545033104564226",
+      "499553591137693696",
+      "499556138304962560",
+      "499559925501399040"
+     ],
+     "edges": [],
+     "edge_count": 0,
+     "depth_max_in_snapshot": 0,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 0,
+     "norm_degree_source": 0.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.01875,
+      0.01875,
+      0.020833,
+      0.020833
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.039583,
+      0.039583,
+      0.041667,
+      0.04375
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 1,
+     "excluded_count": 6,
+     "excluded_future_node_ids_first5": [
+      "499544240746414081",
+      "499545033104564226",
+      "499553591137693696",
+      "499556138304962560",
+      "499559925501399040"
+     ],
+     "edges": [],
+     "edge_count": 0,
+     "depth_max_in_snapshot": 0,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 0,
+     "norm_degree_source": 0.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.01875,
+      0.01875,
+      0.020833,
+      0.020833
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.039583,
+      0.039583,
+      0.041667,
+      0.04375
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 7,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       1
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       6,
+       0
+      ]
+     ],
+     "edge_count": 6,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 3,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.01875,
+      0.01875,
+      0.020833,
+      0.020833
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.039583,
+      0.039583,
+      0.041667,
+      0.04375
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "500421926079066112",
+   "topic": "ferguson-all-rnr-threads",
+   "label": 1,
+   "n_nodes_full_240h": 15,
+   "first10_nodes": [
+    {
+     "node_id": "500421926079066112",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500422190068944898",
+     "elapsed_seconds": 63,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500425848185319425",
+     "elapsed_seconds": 935,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500426136003051521",
+     "elapsed_seconds": 1003,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500427504612831232",
+     "elapsed_seconds": 1330,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500427919617835009",
+     "elapsed_seconds": 1429,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500428052997099520",
+     "elapsed_seconds": 1461,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "500429804861407232",
+     "elapsed_seconds": 1878,
+     "expected_time_bin": 1,
+     "actual_time_bin": 1,
+     "expected_norm_time": 0.0020833333333333333,
+     "actual_norm_time": 0.0020833333333333333
+    },
+    {
+     "node_id": "500430720221724672",
+     "elapsed_seconds": 2096,
+     "expected_time_bin": 1,
+     "actual_time_bin": 1,
+     "expected_norm_time": 0.0020833333333333333,
+     "actual_norm_time": 0.0020833333333333333
+    },
+    {
+     "node_id": "500431353423626240",
+     "elapsed_seconds": 2247,
+     "expected_time_bin": 1,
+     "actual_time_bin": 1,
+     "expected_norm_time": 0.0020833333333333333,
+     "actual_norm_time": 0.0020833333333333333
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 12,
+     "excluded_count": 3,
+     "excluded_future_node_ids_first5": [
+      "500445512882216960",
+      "500446623806132225",
+      "500449073485193216"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ]
+     ],
+     "edge_count": 11,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 8,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 15,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ]
+     ],
+     "edge_count": 14,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 11,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 15,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ]
+     ],
+     "edge_count": 14,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 11,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "524929559909916672",
+   "topic": "ottawashooting-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 18,
+   "first10_nodes": [
+    {
+     "node_id": "524929559909916672",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "524935197587173376",
+     "elapsed_seconds": 1344,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "524935747389112321",
+     "elapsed_seconds": 1475,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "524955490091274240",
+     "elapsed_seconds": 6182,
+     "expected_time_bin": 3,
+     "actual_time_bin": 3,
+     "expected_norm_time": 0.00625,
+     "actual_norm_time": 0.00625
+    },
+    {
+     "node_id": "524956695949492224",
+     "elapsed_seconds": 6470,
+     "expected_time_bin": 3,
+     "actual_time_bin": 3,
+     "expected_norm_time": 0.00625,
+     "actual_norm_time": 0.00625
+    },
+    {
+     "node_id": "524959023754661888",
+     "elapsed_seconds": 7025,
+     "expected_time_bin": 3,
+     "actual_time_bin": 3,
+     "expected_norm_time": 0.00625,
+     "actual_norm_time": 0.00625
+    },
+    {
+     "node_id": "524962559884283905",
+     "elapsed_seconds": 7868,
+     "expected_time_bin": 4,
+     "actual_time_bin": 4,
+     "expected_norm_time": 0.008333333333333333,
+     "actual_norm_time": 0.008333333333333333
+    },
+    {
+     "node_id": "524962728671059968",
+     "elapsed_seconds": 7908,
+     "expected_time_bin": 4,
+     "actual_time_bin": 4,
+     "expected_norm_time": 0.008333333333333333,
+     "actual_norm_time": 0.008333333333333333
+    },
+    {
+     "node_id": "524962833235456000",
+     "elapsed_seconds": 7933,
+     "expected_time_bin": 4,
+     "actual_time_bin": 4,
+     "expected_norm_time": 0.008333333333333333,
+     "actual_norm_time": 0.008333333333333333
+    },
+    {
+     "node_id": "524963087946752000",
+     "elapsed_seconds": 7994,
+     "expected_time_bin": 4,
+     "actual_time_bin": 4,
+     "expected_norm_time": 0.008333333333333333,
+     "actual_norm_time": 0.008333333333333333
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 3,
+     "excluded_count": 15,
+     "excluded_future_node_ids_first5": [
+      "524955490091274240",
+      "524956695949492224",
+      "524959023754661888",
+      "524962559884283905",
+      "524962728671059968"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "edge_count": 2,
+     "depth_max_in_snapshot": 1,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 2,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.00625,
+      0.00625
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 18,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       9
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 16,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.00625,
+      0.00625
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 18,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       9
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 16,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.00625,
+      0.00625
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544416939867529216",
+   "topic": "sydneysiege-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 42,
+   "first10_nodes": [
+    {
+     "node_id": "544416939867529216",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417086919802880",
+     "elapsed_seconds": 35,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417464826617858",
+     "elapsed_seconds": 126,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417558506401792",
+     "elapsed_seconds": 148,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417820381958144",
+     "elapsed_seconds": 210,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417887532744704",
+     "elapsed_seconds": 226,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544417934517354497",
+     "elapsed_seconds": 238,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544418368246128641",
+     "elapsed_seconds": 341,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544418579999764480",
+     "elapsed_seconds": 391,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544418850242957312",
+     "elapsed_seconds": 456,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 32,
+     "excluded_count": 10,
+     "excluded_future_node_ids_first5": [
+      "544432917292646401",
+      "544434865626562560",
+      "544435765854236673",
+      "544436098714198016",
+      "544436988560953344"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ]
+     ],
+     "edge_count": 31,
+     "depth_max_in_snapshot": 9,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 9,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 39,
+     "excluded_count": 3,
+     "excluded_future_node_ids_first5": [
+      "544567190725218304",
+      "544603498709393408",
+      "544610007895912448"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ],
+      [
+       32,
+       31
+      ],
+      [
+       33,
+       32
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       35,
+       34
+      ],
+      [
+       36,
+       35
+      ],
+      [
+       37,
+       36
+      ],
+      [
+       38,
+       37
+      ]
+     ],
+     "edge_count": 38,
+     "depth_max_in_snapshot": 9,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 9,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 42,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ],
+      [
+       32,
+       31
+      ],
+      [
+       33,
+       32
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       35,
+       34
+      ],
+      [
+       36,
+       35
+      ],
+      [
+       37,
+       36
+      ],
+      [
+       38,
+       37
+      ],
+      [
+       39,
+       38
+      ],
+      [
+       40,
+       39
+      ],
+      [
+       41,
+       40
+      ]
+     ],
+     "edge_count": 41,
+     "depth_max_in_snapshot": 9,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 9,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544440749387808768",
+   "topic": "sydneysiege-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 13,
+   "first10_nodes": [
+    {
+     "node_id": "544440749387808768",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544441283754745856",
+     "elapsed_seconds": 127,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544442924310593536",
+     "elapsed_seconds": 519,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544443596472999936",
+     "elapsed_seconds": 679,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544444351925870592",
+     "elapsed_seconds": 859,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544444444162785280",
+     "elapsed_seconds": 881,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544444540065558528",
+     "elapsed_seconds": 904,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544446191803445248",
+     "elapsed_seconds": 1298,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544446680079163393",
+     "elapsed_seconds": 1414,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544452292129202176",
+     "elapsed_seconds": 2752,
+     "expected_time_bin": 1,
+     "actual_time_bin": 1,
+     "expected_norm_time": 0.0020833333333333333,
+     "actual_norm_time": 0.0020833333333333333
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 11,
+     "excluded_count": 2,
+     "excluded_future_node_ids_first5": [
+      "544458228277334016",
+      "544459835937271809"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 8,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 13,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       10
+      ]
+     ],
+     "edge_count": 12,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 9,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 13,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       10
+      ]
+     ],
+     "edge_count": 12,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 9,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544475905926524928",
+   "topic": "sydneysiege-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 18,
+   "first10_nodes": [
+    {
+     "node_id": "544475905926524928",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544477243763097600",
+     "elapsed_seconds": 319,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544479066233913344",
+     "elapsed_seconds": 753,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "544494576413995008",
+     "elapsed_seconds": 4451,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "544494850180403200",
+     "elapsed_seconds": 4517,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "544496093393072128",
+     "elapsed_seconds": 4813,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "544497007076048897",
+     "elapsed_seconds": 5031,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "544497647227138049",
+     "elapsed_seconds": 5184,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "544498639348178944",
+     "elapsed_seconds": 5420,
+     "expected_time_bin": 3,
+     "actual_time_bin": 3,
+     "expected_norm_time": 0.00625,
+     "actual_norm_time": 0.00625
+    },
+    {
+     "node_id": "544499530402902016",
+     "elapsed_seconds": 5633,
+     "expected_time_bin": 3,
+     "actual_time_bin": 3,
+     "expected_norm_time": 0.00625,
+     "actual_norm_time": 0.00625
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 3,
+     "excluded_count": 15,
+     "excluded_future_node_ids_first5": [
+      "544494576413995008",
+      "544494850180403200",
+      "544496093393072128",
+      "544497007076048897",
+      "544497647227138049"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "edge_count": 2,
+     "depth_max_in_snapshot": 1,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 2,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.004167,
+      0.004167
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 18,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "depth_max_in_snapshot": 1,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 17,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.004167,
+      0.004167
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 18,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "depth_max_in_snapshot": 1,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 17,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.004167,
+      0.004167
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "552845191003250688",
+   "topic": "charliehebdo-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 25,
+   "first10_nodes": [
+    {
+     "node_id": "552845191003250688",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845529458016256",
+     "elapsed_seconds": 81,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845822560575489",
+     "elapsed_seconds": 151,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845835869102080",
+     "elapsed_seconds": 154,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845901262499841",
+     "elapsed_seconds": 169,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845939858092032",
+     "elapsed_seconds": 179,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552845975237042177",
+     "elapsed_seconds": 187,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552846055952240641",
+     "elapsed_seconds": 206,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552846062399291393",
+     "elapsed_seconds": 208,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "552846123371868160",
+     "elapsed_seconds": 222,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 25,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 14,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 25,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 14,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 25,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 14,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "553137601457426433",
+   "topic": "charliehebdo-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 19,
+   "first10_nodes": [
+    {
+     "node_id": "553137601457426433",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553140624354848768",
+     "elapsed_seconds": 721,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553141539694977024",
+     "elapsed_seconds": 939,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553143523516882944",
+     "elapsed_seconds": 1412,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553144435882885120",
+     "elapsed_seconds": 1630,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553144844617809920",
+     "elapsed_seconds": 1727,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553144922690564096",
+     "elapsed_seconds": 1746,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553144979410137088",
+     "elapsed_seconds": 1759,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553145049253675009",
+     "elapsed_seconds": 1776,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "553145155193417728",
+     "elapsed_seconds": 1801,
+     "expected_time_bin": 1,
+     "actual_time_bin": 1,
+     "expected_norm_time": 0.0020833333333333333,
+     "actual_norm_time": 0.0020833333333333333
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 17,
+     "excluded_count": 2,
+     "excluded_future_node_ids_first5": [
+      "553160100165464064",
+      "553162161686863872"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ]
+     ],
+     "edge_count": 8,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 9,
+     "raw_degree_source": 3,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 19,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       17,
+       5
+      ],
+      [
+       18,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 9,
+     "raw_degree_source": 4,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 19,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       17,
+       5
+      ],
+      [
+       18,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "depth_max_in_snapshot": 5,
+     "unreachable_in_snapshot": 9,
+     "raw_degree_source": 4,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "580323946899214336",
+   "topic": "germanwings-crash-all-rnr-threads",
+   "label": 0,
+   "n_nodes_full_240h": 1,
+   "first10_nodes": [
+    {
+     "node_id": "580323946899214336",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 1,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "depth_max_in_snapshot": 0,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 0,
+     "norm_degree_source": 0.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 1,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "depth_max_in_snapshot": 0,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 0,
+     "norm_degree_source": 0.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 1,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "depth_max_in_snapshot": 0,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 0,
+     "norm_degree_source": 0.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "580348878370828288",
+   "topic": "germanwings-crash-all-rnr-threads",
+   "label": 1,
+   "n_nodes_full_240h": 12,
+   "first10_nodes": [
+    {
+     "node_id": "580348878370828288",
+     "elapsed_seconds": 0,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580349473747918848",
+     "elapsed_seconds": 142,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580349579721310208",
+     "elapsed_seconds": 167,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580349735556554752",
+     "elapsed_seconds": 204,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580349946580328448",
+     "elapsed_seconds": 255,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580349974497611776",
+     "elapsed_seconds": 261,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580350657917505536",
+     "elapsed_seconds": 424,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580351226954555392",
+     "elapsed_seconds": 560,
+     "expected_time_bin": 0,
+     "actual_time_bin": 0,
+     "expected_norm_time": 0.0,
+     "actual_norm_time": 0.0
+    },
+    {
+     "node_id": "580368792347279360",
+     "elapsed_seconds": 4748,
+     "expected_time_bin": 2,
+     "actual_time_bin": 2,
+     "expected_norm_time": 0.004166666666666667,
+     "actual_norm_time": 0.004166666666666667
+    },
+    {
+     "node_id": "580379506214588416",
+     "elapsed_seconds": 7302,
+     "expected_time_bin": 4,
+     "actual_time_bin": 4,
+     "expected_norm_time": 0.008333333333333333,
+     "actual_norm_time": 0.008333333333333333
+    }
+   ],
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 8,
+     "excluded_count": 4,
+     "excluded_future_node_ids_first5": [
+      "580368792347279360",
+      "580379506214588416",
+      "580381154957725696",
+      "580496044947070979"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ]
+     ],
+     "edge_count": 7,
+     "depth_max_in_snapshot": 2,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 6,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 11,
+     "excluded_count": 1,
+     "excluded_future_node_ids_first5": [
+      "580496044947070979"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       10,
+       9
+      ]
+     ],
+     "edge_count": 10,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 6,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 12,
+     "excluded_count": 0,
+     "excluded_future_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       10,
+       9
+      ],
+      [
+       11,
+       0
+      ]
+     ],
+     "edge_count": 11,
+     "depth_max_in_snapshot": 3,
+     "unreachable_in_snapshot": 0,
+     "raw_degree_source": 7,
+     "norm_degree_source": 1.0,
+     "time_bin_exact": true,
+     "norm_time_max_abs_diff_vs_definition": 0.0,
+     "old_round1_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed_norm_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_topology_leakage": false,
+     "future_text_leakage": false
+    }
+   ]
+  }
+ ],
+ "checks": {
+  "time_bin_exact_rate": 1.0,
+  "norm_time_max_abs_diff": 0.0,
+  "node_monotonicity": "PASS",
+  "edge_monotonicity": "PASS",
+  "future_topology_leakage_count": 0,
+  "future_text_leakage_count": 0,
+  "note": "snapshot features are rebuilt from included nodes only; excluded nodes' text never enters any recomputed feature (construction guarantee, verified by rebuild path)"
+ },
+ "status": "PASS"
+}
