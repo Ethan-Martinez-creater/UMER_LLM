@@ -7,8 +7,8 @@ under-specified points, not protocol changes.
 
 ## Git
 
-- commit: recorded in the follow-up commit immediately after the Code
-  Complete submission (a commit cannot contain its own hash)
+- commit: `77dfcd3` — "TC-DSCR V2 Code Complete: implementation, tests, tiny
+  smoke run (Stage A)"
 - branch: `main`, repository `Ethan-Martinez-creater/UMER_LLM`
 
 ## Implemented Modules
