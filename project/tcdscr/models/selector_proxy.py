@@ -53,9 +53,13 @@ def proxy_loss(p_sel, y, p_full, alpha, sem_nodes, candidate_mask=None):
     """Assemble L = L_cls + 1.0 L_fid + 0.05 L_div for one event snapshot."""
     l_cls = F.cross_entropy(p_sel.unsqueeze(0), y.unsqueeze(0))
 
-    log_q = F.log_softmax(p_sel, dim=-1)
+    # true KL(stopgrad(p_full) || p_sel) = sum p_ref (log p_ref - log q);
+    # numerically gradient-equivalent to the previous cross-entropy form
+    # (p_ref is detached) but the logged value is now the actual divergence.
     p_ref = F.softmax(p_full.detach(), dim=-1)
-    l_fid = -(p_ref * log_q).sum()  # KL(stopgrad(p_full) || p_sel)
+    log_p_ref = F.log_softmax(p_full.detach(), dim=-1)
+    log_q = F.log_softmax(p_sel, dim=-1)
+    l_fid = (p_ref * (log_p_ref - log_q)).sum()
 
     # cos(e_i, e_j); normalize defensively (MiniLM rows are already L2-normalized)
     sem = F.normalize(sem_nodes, dim=1)

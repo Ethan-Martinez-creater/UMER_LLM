@@ -74,6 +74,8 @@ def load_event(topic: str, label: int, folder: str) -> dict:
     if os.path.isdir(reactions_dir):
         files = sorted(f for f in os.listdir(reactions_dir)
                        if f.endswith(".json") and not f.startswith("._"))
+    seen_ids = {source_id}
+    duplicate_reaction_files = 0
     for order, f in enumerate(files, start=1):
         r = _load_json(os.path.join(reactions_dir, f))
         # 100% reply timestamp coverage is a frozen data fact; fail loudly.
@@ -81,6 +83,14 @@ def load_event(topic: str, label: int, folder: str) -> dict:
         reply_id = str(r["id_str"])
         parent_raw = r.get("in_reply_to_status_id_str")
         parent_id = str(parent_raw) if parent_raw else None
+        if reply_id in seen_ids:
+            # a handful of threads ship the same reaction id twice under
+            # different file names; the historical pipeline de-duplicated
+            # through a dict. Keep the FIRST file (deterministic filename
+            # order) and audit the duplicate instead of raising.
+            duplicate_reaction_files += 1
+            continue
+        seen_ids.add(reply_id)
         status = "VALID"
         if parent_id is None:
             status = "MISSING_PARENT"
@@ -108,6 +118,7 @@ def load_event(topic: str, label: int, folder: str) -> dict:
         "source_id": source_id,
         "source_timestamp": source_ts,
         "nodes": nodes,
+        "duplicate_reaction_files": duplicate_reaction_files,
         "topic": topic,
     }
     return validate_event(event)

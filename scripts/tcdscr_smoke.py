@@ -45,7 +45,12 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
     from tcdscr.context.packer import pack_context
     from tcdscr.context.token_budget import EvidenceBudgetSelector
     from tcdscr.data.manifests import AdapterAuditLog, CapStatistics
-    from tcdscr.data.temporal_split import stratified_event_folds
+    from tcdscr.data.temporal_split import (event_folds_to_snapshot_folds,
+                                            stratified_event_folds)
+    from tcdscr.evaluation.baselines import (rank_candidates,
+                                             resolve_context_length,
+                                             select_all_current)
+    from tcdscr.evaluation.leakage_scanner import scan_prompt
     from tcdscr.evaluation.temporal_metrics import (evidence_turnover,
                                                     flip_rate,
                                                     persistent_new_ratio)
@@ -87,6 +92,18 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                                               trust_remote_code=False)
     budget_sel = EvidenceBudgetSelector(tokenizer, args.budget)
 
+    # delta-fix §19/§20/§39: resolved context length + new-check counters
+    context_length = resolve_context_length(
+        getattr(llm, "model", None).config if llm is not None else None,
+        tokenizer)
+    max_new_tokens = GENERATION_CONFIG["max_new_tokens"]
+    delta_checks = {
+        "prompt_source_binding_failures": 0,
+        "fold_integrity_failures": 0,
+        "recent_baseline_order_failures": 0,
+        "context_overflow_failures": 0,
+    }
+
     cap = CapStatistics()
     audit = AdapterAuditLog()
     rows = []
@@ -116,8 +133,39 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
             selected_ids = []
             evidence_tokens = 0
             selected_units = []
+            from tcdscr.context.evidence_unit import build_evidence_units
+            all_units = build_evidence_units(snap)
+            # delta-fix §39: source binding + fold inheritance checks
+            event_source_text = next(
+                n["text"] for n in event["nodes"]
+                if n["node_id"] == event["source_id"])
+            if snap["texts"][src_pos] != event_source_text:
+                delta_checks["prompt_source_binding_failures"] += 1
+            try:
+                sfs = event_folds_to_snapshot_folds({(eid, cutoff): eid},
+                                                    folds)
+                if sfs[(eid, cutoff)] != folds[eid]:
+                    delta_checks["fold_integrity_failures"] += 1
+            except ValueError:
+                delta_checks["fold_integrity_failures"] += 1
+            # delta-fix §39: recent baseline must surface the latest reply
+            if all_units:
+                recent_scores = rank_candidates(
+                    "recent_budget", snap, all_units,
+                    {"dataset": cfg.dataset})
+                top = max(range(len(all_units)),
+                          key=lambda i: recent_scores[i])
+                if recent_scores[top] != max(u["elapsed_seconds"]
+                                             for u in all_units):
+                    delta_checks["recent_baseline_order_failures"] += 1
+            # delta-fix §4E/§18: bounded all-current selection for this row
+            ac = select_all_current(
+                snap, all_units, budget_sel, context_length, max_new_tokens,
+                prompt_builder=lambda s, acc: pack_context(
+                    s["texts"][src_pos], s, acc)["prompt"])
+            if ac["input_tokens"] + max_new_tokens > context_length:
+                delta_checks["context_overflow_failures"] += 1
             if cand:
-                from tcdscr.context.evidence_unit import build_evidence_units
                 cand_ids = [feat["node_ids"][i] for i in cand]
                 u_cand = selector(
                     node_repr[cand], event_repr,
@@ -130,7 +178,7 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                     d_scores[i] = float(d_cand[k])
                     nov[i] = float(nov_cand[k])
                     per[i] = float(per_cand[k])
-                units = build_evidence_units(snap)
+                units = all_units
                 d_by_id = dict(zip(cand_ids, d_cand))
                 unit_scores = [d_by_id[u_["node_id"]] for u_ in units]
                 accepted, evidence_tokens = budget_sel.select(
@@ -144,7 +192,7 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                                        for s in selected_ids]]
                     if selected_ids else torch.empty(0, 384))
             packed = pack_context(
-                event["nodes"][src_pos]["text"], snap, selected_units,
+                snap["texts"][src_pos], snap, selected_units,
                 template_lang=template_lang)
             from tcdscr.evaluation.leakage_scanner import scan_prompt
             leak = scan_prompt(packed["prompt"], event, snap)
@@ -189,6 +237,14 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                 "num_candidates": len(cand),
                 "num_nodes": snap["num_nodes_after_cap"],
                 "max_depth": snap["max_depth"],
+                "all_current_truncated": ac["truncated"],
+                "all_current_units_before_truncation":
+                    ac["units_before_truncation"],
+                "all_current_units_after_truncation":
+                    ac["units_after_truncation"],
+                "all_current_tokens_dropped": ac["tokens_dropped"],
+                "all_current_context_length": context_length,
+                "all_current_input_tokens": ac["input_tokens"],
             }
             rows.append(row)
             if len(prompt_examples) < 2:
@@ -225,6 +281,8 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
         "llm_requests": llm_used,
         "prompt_examples": prompt_examples,
         "folds_demo": folds,
+        "delta_checks": delta_checks,
+        "context_length": context_length,
     }
 
 
@@ -323,6 +381,8 @@ def main():
             "device": report["device"],
             "folds_demo": {k: v for k, v in
                            list(report["folds_demo"].items())[:8]},
+            "delta_checks": report["delta_checks"],
+            "context_length": report["context_length"],
         }
         print(dataset, "metrics:", json.dumps(report["metrics"]), flush=True)
 

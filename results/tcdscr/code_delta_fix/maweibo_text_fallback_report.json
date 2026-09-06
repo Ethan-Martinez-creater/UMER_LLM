@@ -1,0 +1,11 @@
+{
+ "total_nodes": 3805656,
+ "original_text_used": 3805656,
+ "text_fallback_count": 0,
+ "empty_text_count": 17,
+ "events": 4664,
+ "events_with_fallback": 0,
+ "fallback_rate": 0.0,
+ "dataset": "maweibo",
+ "note": "original_text preferred; text used only when the field is absent (historical, D6-verified); blank original_text still counts as original_text branch"
+}

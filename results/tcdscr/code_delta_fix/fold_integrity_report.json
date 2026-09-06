@@ -1,0 +1,38 @@
+{
+ "pheme": {
+  "events_total": 6425,
+  "fold_0_size": 1286,
+  "fold_1_size": 1286,
+  "fold_2_size": 1285,
+  "fold_3_size": 1284,
+  "fold_4_size": 1284,
+  "per_fold_rumor_ratio": {
+   "0": 0.3740279937791602,
+   "1": 0.3740279937791602,
+   "2": 0.3735408560311284,
+   "3": 0.37383177570093457,
+   "4": 0.37383177570093457
+  },
+  "cross_fold_event_count": 0,
+  "snapshot_fold_mismatch_count": 0,
+  "events_missing_in_registry": 0
+ },
+ "maweibo": {
+  "events_total": 4664,
+  "fold_0_size": 934,
+  "fold_1_size": 933,
+  "fold_2_size": 933,
+  "fold_3_size": 932,
+  "fold_4_size": 932,
+  "per_fold_rumor_ratio": {
+   "0": 0.49571734475374735,
+   "1": 0.4962486602357985,
+   "2": 0.4962486602357985,
+   "3": 0.4957081545064378,
+   "4": 0.4957081545064378
+  },
+  "cross_fold_event_count": 0,
+  "snapshot_fold_mismatch_count": 0,
+  "events_missing_in_registry": 0
+ }
+}

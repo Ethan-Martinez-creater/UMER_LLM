@@ -7,8 +7,17 @@ from __future__ import annotations
 
 import json
 import os
+import sys
+from pathlib import Path
 
 import pytest
+
+# entry-point scripts live in <repo>/scripts; make them importable so the
+# fold-argument behavior of the training entries can be tested directly
+REPO_DIR = Path(__file__).resolve().parents[3]
+SCRIPTS_DIR = REPO_DIR / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
 def make_event(nodes, source_ts=1000, label=1, event_id="e1",

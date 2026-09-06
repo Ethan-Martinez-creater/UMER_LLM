@@ -24,6 +24,46 @@ from tcdscr.data.snapshot_builder import (build_snapshot,  # noqa: E402
 from tcdscr.data.structural_features import build_snapshot_features  # noqa: E402
 
 
+def event_label_registry(dataset: str, cfg) -> dict:
+    """Lightweight {event_id: label} registry — no event JSON is parsed."""
+    if dataset == "pheme":
+        return {eid: label for eid, _topic, label, _folder
+                in pheme_adapter.event_ids(cfg.raw_dir)}
+    if dataset == "maweibo":
+        return {eid: label for eid, label
+                in maweibo_adapter.event_ids(cfg.raw_dir, cfg.label_file)}
+    raise ValueError(dataset)
+
+
+def resolve_train_events(dataset: str, cfg, split, limit=None, seed=3090):
+    """Load only the train-split events (test/validation are never read).
+
+    ``limit`` caps the number of train events for smoke runs (deterministic
+    sample from the sorted train ids); None loads every train event.
+    """
+    train_ids = sorted(split["train"])
+    if limit is not None and limit < len(train_ids):
+        train_ids = sorted(random.Random(seed).sample(train_ids, limit))
+    if dataset == "pheme":
+        by_id = {eid: (topic, label, folder)
+                 for eid, topic, label, folder
+                 in pheme_adapter.event_ids(cfg.raw_dir)}
+        return [pheme_adapter.load_event(*by_id[eid]) for eid in train_ids]
+    if dataset == "maweibo":
+        labels = dict(maweibo_adapter.event_ids(cfg.raw_dir, cfg.label_file))
+        return [maweibo_adapter.load_event(
+            eid, labels[eid],
+            f"{cfg.raw_dir.rstrip('/')}/{eid}.json") for eid in train_ids]
+    raise ValueError(dataset)
+
+
+def label_counts(ids, registry) -> dict:
+    counts = {0: 0, 1: 0}
+    for eid in ids:
+        counts[registry[eid]] += 1
+    return counts
+
+
 def load_events(dataset: str, cfg, limit=None, seed=3090):
     """Deterministically sample up to ``limit`` events (sorted ids + seed)."""
     if dataset == "pheme":

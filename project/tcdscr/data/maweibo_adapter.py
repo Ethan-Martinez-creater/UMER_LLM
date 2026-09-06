@@ -36,10 +36,16 @@ def parse_labels(label_file: str) -> dict:
     return labels
 
 
-def _node_text(post: dict) -> str:
+def _node_text(post: dict):
+    """Return (text, source) where source is 'original_text' or 'fallback'.
+
+    Historical behavior preserved: original_text is preferred; text is used
+    only when the field is absent (D6-verified behavior). The source is
+    reported per event so the fallback is audited, never silent.
+    """
     if "original_text" in post:
-        return str(post.get("original_text") or "")
-    return str(post.get("text") or "")
+        return str(post.get("original_text") or ""), "original_text"
+    return str(post.get("text") or ""), "fallback"
 
 
 def load_event(eid: str, label: int, path: str) -> dict:
@@ -49,17 +55,25 @@ def load_event(eid: str, label: int, path: str) -> dict:
 
     roots = []
     raw_nodes = []
+    text_counts = {"total_nodes": 0, "original_text_used": 0,
+                   "text_fallback_count": 0, "empty_text_count": 0}
     for order, p in enumerate(posts):
         pid = p.get("mid", p.get("id"))
         if pid is None or p.get("t") is None:
             raise SchemaError(f"event {eid}: post without mid/id or t")
         parent = p.get("parent", None)
         parent_id = str(parent) if parent is not None else None
+        text, text_source = _node_text(p)
+        text_counts["total_nodes"] += 1
+        text_counts["original_text_used" if text_source == "original_text"
+                    else "text_fallback_count"] += 1
+        if not text.strip():
+            text_counts["empty_text_count"] += 1
         raw_nodes.append({
             "node_id": str(pid),
             "parent_id": parent_id,
             "timestamp": int(p["t"]),
-            "text": _node_text(p),
+            "text": text,
             "original_order": order,
         })
         if parent is None:
@@ -93,8 +107,34 @@ def load_event(eid: str, label: int, path: str) -> dict:
         "source_id": source_id,
         "source_timestamp": source_ts,
         "nodes": nodes,
+        "text_source_counts": text_counts,
     }
     return validate_event(event)
+
+
+def aggregate_text_fallback(events) -> dict:
+    """Dataset-level fallback audit (delta-fix §34/§35)."""
+    events = list(events)
+    total = {"total_nodes": 0, "original_text_used": 0,
+             "text_fallback_count": 0, "empty_text_count": 0}
+    events_with_fallback = 0
+    for ev in events:
+        counts = ev.get("text_source_counts")
+        if counts is None:
+            raise ValueError(
+                f"event {ev.get('event_id')!r} has no text_source_counts; "
+                "re-generate with the audited adapter")
+        for key in total:
+            total[key] += counts[key]
+        if counts["text_fallback_count"]:
+            events_with_fallback += 1
+    n_nodes = total["total_nodes"]
+    return {
+        **total,
+        "events": len(events),
+        "events_with_fallback": events_with_fallback,
+        "fallback_rate": (total["text_fallback_count"] / max(n_nodes, 1)),
+    }
 
 
 def iter_events(raw_dir: str, label_file: str) -> Iterator[dict]:

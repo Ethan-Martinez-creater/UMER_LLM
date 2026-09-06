@@ -110,3 +110,40 @@ def test_format_cutoff_labels():
     assert format_cutoff(5) == "5m"
     assert format_cutoff(60) == "1h"
     assert format_cutoff(1440) == "24h"
+
+
+def _raw_order_event():
+    """Adversarial ordering: raw node order differs from timestamp order and
+    the source is NOT the first raw node (delta-fix §12)."""
+    return make_event([
+        ("reply_A", "src", 1000 + 900, "early reply text A", 0),
+        ("src", None, 1000, "the real source claim", 1),
+        ("reply_B", "src", 1000 + 300, "later raw reply text B", 2),
+    ], source_id="src")
+
+
+def test_source_text_correct_when_raw_order_differs():
+    from ..data.snapshot_builder import build_source_only
+    event = _raw_order_event()
+    # snapshot order is timestamp-sorted: src(1000), reply_B(1300), reply_A
+    snap = build_snapshot(event, 60)
+    src_pos = snap["node_ids"].index(snap["source_id"])
+    source_text = snap["texts"][src_pos]
+    assert source_text == "the real source claim"
+    # the old cross-index pattern would have returned reply_A's text — the
+    # source-only snapshot must also carry the true source text
+    solo = build_source_only(event)
+    assert solo["texts"][0] == "the real source claim"
+
+
+def test_prompt_source_bound_by_source_id():
+    event = _raw_order_event()
+    snap = build_snapshot(event, 60)
+    src_pos = snap["node_ids"].index(snap["source_id"])
+    packed = pack_context(snap["texts"][src_pos], snap, [])
+    # SOURCE CLAIM section must contain exactly the source_id's text
+    claim_block = packed["prompt"].split("SOURCE CLAIM\n")[1].split(
+        "\n\nCURRENT SNAPSHOT")[0]
+    assert claim_block == "the real source claim"
+    assert "early reply text A" not in claim_block
+    assert "later raw reply text B" not in claim_block

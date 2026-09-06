@@ -86,8 +86,8 @@ def _run_chain(event, cutoffs=("SOURCE_ONLY", 15, 60)):
                 if selected_ids else torch.empty(0, 384))
         unit_by_id = {u_["node_id"]: u_ for u_ in build_evidence_units(snap)}
         selected_units = [unit_by_id[sid] for sid in selected_ids]
-        packed = pack_context(
-            event["nodes"][src_pos]["text"], snap, selected_units)
+        # source text bound by source_id within the snapshot's own ordering
+        packed = pack_context(snap["texts"][src_pos], snap, selected_units)
         leak = scan_prompt(packed["prompt"], event, snap)
         outputs.append({
             "cutoff": cutoff, "snapshot": snap, "feats": feats,

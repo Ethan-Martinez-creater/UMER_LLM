@@ -48,3 +48,43 @@ def test_maweibo_multiroot_rejected(maweibo_tree, tmp_path):
         raised = True
     assert raised  # frozen audit says multi-root events do not exist
     os.remove(bad)
+
+
+def test_maweibo_text_fallback_count(maweibo_tree, tmp_path):
+    """delta-fix §34/§35: original_text -> text fallback is audited, never
+    silent."""
+    import json
+    import os
+    from ..data.maweibo_adapter import (aggregate_text_fallback, iter_events,
+                                        load_event, parse_labels)
+    raw, labels = maweibo_tree
+    mixed = os.path.join(raw, "35555.json")
+    with open(mixed, "w", encoding="utf-8") as fh:
+        json.dump([
+            {"mid": "1", "parent": None, "t": 1000,
+             "original_text": "原文", "text": "未被使用"},
+            {"mid": "2", "parent": "1", "t": 1100, "text": "只有 text 字段"},
+            {"mid": "3", "parent": "1", "t": 1200, "original_text": "  "},
+        ], fh, ensure_ascii=False)
+    labels_map = parse_labels(labels)
+    ev = load_event("35555", 1, mixed)
+    counts = ev["text_source_counts"]
+    assert counts["total_nodes"] == 3
+    # field presence decides the branch (historical behavior): node 1 and
+    # node 3 carry an original_text field (node 3's is blank), node 2 only
+    # has text -> fallback
+    assert counts["original_text_used"] == 2
+    assert counts["text_fallback_count"] == 1
+    assert counts["empty_text_count"] == 1     # node 3's resolved text is blank
+
+    # aggregate over the dataset iterator
+    events = list(iter_events(raw, labels))
+    agg = aggregate_text_fallback(events)
+    assert agg["events"] == len(events)
+    assert agg["total_nodes"] == sum(
+        e["text_source_counts"]["total_nodes"] for e in events)
+    assert agg["text_fallback_count"] == sum(
+        e["text_source_counts"]["text_fallback_count"] for e in events)
+    assert abs(agg["fallback_rate"] - agg["text_fallback_count"]
+               / max(agg["total_nodes"], 1)) < 1e-12
+    os.remove(mixed)

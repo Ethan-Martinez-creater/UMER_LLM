@@ -19,6 +19,39 @@ BASELINE_NAMES = (
     "tcdscr_dynamic",
 )
 
+CONTEXT_LENGTH_PLACEHOLDER_LIMIT = 10 ** 6
+
+
+class ContextLengthUnresolved(RuntimeError):
+    """Raised when no sane context length can be determined (delta-fix §19:
+    never guess 32768/131072 — STOP instead)."""
+
+
+def resolve_context_length(model_config=None, tokenizer=None) -> int:
+    """Model context length from config, with sanity checks.
+
+    Prefers ``model_config.max_position_embeddings``, falls back to
+    ``tokenizer.model_max_length``; tokenizer placeholder values (the famous
+    10^33 sentinel) are rejected. Uses the smaller of the sane candidates so
+    all-current prompts can never overflow. No guessing.
+    """
+    candidates = []
+    if model_config is not None:
+        value = getattr(model_config, "max_position_embeddings", None)
+        if isinstance(value, int) and 1024 <= value <= \
+                CONTEXT_LENGTH_PLACEHOLDER_LIMIT:
+            candidates.append(value)
+    if tokenizer is not None:
+        value = getattr(tokenizer, "model_max_length", None)
+        if isinstance(value, int) and 1024 <= value <= \
+                CONTEXT_LENGTH_PLACEHOLDER_LIMIT:
+            candidates.append(value)
+    if not candidates:
+        raise ContextLengthUnresolved(
+            "cannot determine model context length from model config or "
+            "tokenizer; refusing to guess (CONTEXT_LENGTH_UNRESOLVED)")
+    return min(candidates)
+
 
 def _seeded_rng(dataset, event_id, cutoff) -> random.Random:
     digest = hashlib.sha256(
@@ -55,7 +88,10 @@ def rank_candidates(name, snapshot, units, ctx):
                           snapshot["cutoff_minutes"])
         return [rng.random() for _ in range(n_units)]
     if name == "recent_budget":
-        return [-u["elapsed_seconds"] for u in units]
+        # descending score = larger elapsed first = most recent reply first
+        # (delta-fix §13/§14); equal timestamps keep snapshot order via the
+        # (score desc, order asc) sort in select_evidence
+        return [u["elapsed_seconds"] for u in units]
     if name == "semantic_budget":
         src_idx = ctx["source_pos"]
         src_vec = ctx["sem"][src_idx]
@@ -86,22 +122,65 @@ def rank_candidates(name, snapshot, units, ctx):
     raise ValueError(f"unhandled baseline {name!r}")
 
 
+def select_all_current(snapshot, units, budget_selector, context_length,
+                       max_new_tokens, prompt_builder):
+    """All-current under the model context limit (delta-fix §17–§22).
+
+    Definition: the full social evidence the model can actually read at this
+    snapshot. Units are added whole in deterministic snapshot order (§4.1
+    timestamp ascending, original_order ties) until including the next pair
+    would push the FINAL prompt token count + max_new_tokens past the
+    context length — then stop. Pairs are atomic; nothing is truncated.
+    """
+    accepted = []
+    for unit in units:
+        candidate = accepted + [unit]
+        prompt = prompt_builder(snapshot, candidate)
+        total = budget_selector.count_tokens(prompt)
+        if total + max_new_tokens > context_length:
+            break
+        accepted = candidate
+    final_prompt = prompt_builder(snapshot, accepted)
+    input_tokens = budget_selector.count_tokens(final_prompt)
+    if input_tokens + max_new_tokens > context_length:
+        raise RuntimeError(
+            "all_current prompt exceeds the model context limit")
+    # tokens contributed by the excluded pairs (rendered in their own order)
+    dropped = 0
+    for i, unit in enumerate(units[len(accepted):], start=len(accepted) + 1):
+        from ..context.evidence_unit import render_evidence
+        dropped += budget_selector.count_tokens(render_evidence(unit, i))
+    return {
+        "selected_units": accepted,
+        "selected_node_ids": [u["node_id"] for u in accepted],
+        "evidence_tokens": input_tokens,
+        "truncated": len(accepted) < len(units),
+        "units_before_truncation": len(units),
+        "units_after_truncation": len(accepted),
+        "tokens_dropped": dropped,
+        "context_length": context_length,
+        "input_tokens": input_tokens,
+    }
+
+
 def select_evidence(name, snapshot, units, ctx, budget_selector):
     """Return (selected_units, evidence_tokens, scores) for one arm."""
     scores = rank_candidates(name, snapshot, units, ctx)
     if name == "source_only":
         return [], 0, scores
     if name == "all_current":
-        # the whole current snapshot, deterministic snapshot order; tokens
-        # are counted but the budget does not bind this baseline
-        total = 0
-        rendered = []
-        for i, u in enumerate(units):
-            from ..context.evidence_unit import render_evidence
-            text = render_evidence(u, i + 1)
-            total += budget_selector.count_tokens(text)
-            rendered.append(u)
-        return rendered, total, scores
+        # context guard is mandatory: the caller must supply the resolved
+        # context length, a prompt builder over accepted units, and the
+        # generation reserve (delta-fix §17–§22)
+        for key in ("context_length", "max_new_tokens", "prompt_builder"):
+            if key not in ctx:
+                raise ValueError(
+                    f"all_current requires ctx[{key!r}] — unbounded prompts "
+                    "are forbidden")
+        result = select_all_current(
+            snapshot, units, budget_selector, ctx["context_length"],
+            ctx["max_new_tokens"], ctx["prompt_builder"])
+        return result["selected_units"], result["evidence_tokens"], scores
     order = sorted(range(len(units)),
                    key=lambda i: (-scores[i], units[i]["order"]))
     accepted, total = [], 0
