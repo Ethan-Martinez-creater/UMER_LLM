@@ -6,7 +6,8 @@ PASS
 ## Git
 - commit: `2cd12b7` — "TC-DSCR V2 Code Complete delta fix: fold-aware
   protocol, source binding, recent/all-current baselines, full cap audit"
-  (hash recorded in a follow-up commit)
+- final patch commit: `ac74242` — "TC-DSCR final patch: All-current token
+  accounting aligned with Qwen chat template"
 
 ## Fix 1 — Five-Fold Protocol
 - helper fixed: `event_folds_to_snapshot_folds(snapshot_event_ids,
