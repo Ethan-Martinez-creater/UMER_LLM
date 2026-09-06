@@ -1,0 +1,18 @@
+{
+ "encoder_params": 6870786,
+ "selector_params": 397833,
+ "proxy_params": 393986,
+ "encoder_module_summary": {
+  "node_projection_weight": [
+   768,
+   384
+  ],
+  "d_model": 768,
+  "classifier_weight": [
+   2,
+   768
+  ]
+ },
+ "selector_input_dim": 1540,
+ "proxy_input_dim": 1536
+}

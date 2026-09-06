@@ -28,3 +28,6 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 data_raw/
+
+# TC-DSCR local ops helpers (environment-specific)
+scripts/tcdscr_code/

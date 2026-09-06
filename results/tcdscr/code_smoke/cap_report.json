@@ -1,0 +1,20 @@
+{
+ "pheme": {
+  "events": 48,
+  "cap_hits": 0,
+  "cap_hit_rate": 0.0,
+  "mean_nodes_before_cap": 5.791666666666667,
+  "p90_nodes_before_cap": 15.600000000000009,
+  "max_nodes_before_cap": 32,
+  "total_nodes_removed": 0
+ },
+ "maweibo": {
+  "events": 48,
+  "cap_hits": 0,
+  "cap_hit_rate": 0.0,
+  "mean_nodes_before_cap": 79.20833333333333,
+  "p90_nodes_before_cap": 225.7000000000003,
+  "max_nodes_before_cap": 729,
+  "total_nodes_removed": 0
+ }
+}

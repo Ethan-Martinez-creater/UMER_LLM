@@ -1,0 +1,14 @@
+# TC-DSCR V2 configuration — PHEME (Stage A server paths; override via
+# TCDSRC_PHEME_YAML for local runs). Frozen protocol constants are validated
+# by schema.py and must not be edited here.
+dataset: pheme
+raw_dir: /data/jyz/next/llm/data/pheme_raw
+label_file: ""
+semantic_model_path: /data/jyz/rumor_detection/model/paraphrase-multilingual-MiniLM-L12-v2
+qwen_model_path: /data/jyz/next/model/qwen3-8b
+cache_dir: /data/jyz/next/llm/tcdscr_cache/pheme
+output_dir: /data/jyz/next/llm/results/tcdscr/code_smoke
+frozen_note: >-
+  max_nodes=1021, depth_norm=19, 30-min bins /480, primary cutoffs
+  5/15/30/60/180/360 min, late diagnostic 24h, fold seed 3090 are frozen by
+  the V2 formal execution plan.
