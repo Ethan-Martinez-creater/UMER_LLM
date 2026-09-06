@@ -4,8 +4,9 @@
 PASS
 
 ## Git
-- commit: recorded in the follow-up commit immediately after this submission
-  (a commit cannot contain its own hash)
+- commit: `2cd12b7` — "TC-DSCR V2 Code Complete delta fix: fold-aware
+  protocol, source binding, recent/all-current baselines, full cap audit"
+  (hash recorded in a follow-up commit)
 
 ## Fix 1 — Five-Fold Protocol
 - helper fixed: `event_folds_to_snapshot_folds(snapshot_event_ids,
