@@ -1,0 +1,12 @@
+{
+ "event_id": "544354657385316352",
+ "n_nodes": 20,
+ "model_id2label": {
+  "0": "NEGATIVE",
+  "1": "POSITIVE"
+ },
+ "note": "reference/rebuild columns are graph-builder normalised (raw+1)/2; control aligned to same scale",
+ "ref_vs_rebuild_fp16_batch64_max_abs_diff": 0.068184494972229,
+ "ref_vs_fp32_batch1_norm_max_abs_diff": 0.030167758464813232,
+ "ref_vs_fp32_batch1_norm_exact_rate": 0.15
+}

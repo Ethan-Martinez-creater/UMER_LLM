@@ -1,0 +1,34 @@
+{
+ "generated_at": "2026-09-06",
+ "git_commit_sha": "572d5506880eb361af907a855f6736509c8a8296",
+ "execution_host": {
+  "local": "Windows 10.0.19045 x64 (authoring/audit host; no torch)",
+  "server": "Linux-5.15.0-139-generic-x86_64-with-glibc2.31"
+ },
+ "python_version": "3.11.13",
+ "pytorch_version": "2.7.1+cu128",
+ "transformers_version": "4.57.6",
+ "cuda_version": "12.8",
+ "gpu_model": "NVIDIA GeForce RTX 4090, 24564 MiB, 570.133.07",
+ "data_paths": {
+  "pheme_raw": "/data/jyz/rumor_detection/data/PHEME_extension/all-rnr-annotated-threads",
+  "pheme_processed_authoritative_source": "/data/jyz/next/modified/common/pheme_240h_data",
+  "pheme_processed_working_copy": "/data/jyz/next/llm/data/pheme_240h_data",
+  "maweibo_processed": "/data/jyz/next/llm/data/maweibo_240h_data",
+  "umer_checkpoints_pheme": "/data/jyz/next/llm/checkpoints/pheme",
+  "umer_checkpoints_maweibo": "/data/jyz/next/llm/checkpoints/maweibo"
+ },
+ "preprocessing_code": {
+  "server_authoritative": "/data/jyz/next/src/rumor_detection/data",
+  "local_mirror": "Algorithm/modified/ablation/src/rumor_detection/data (4/7 files byte-identical; preprocess_graph.py, pheme_extension/graph_builder.py, sentiment.py differ -> server version used for parity)"
+ },
+ "old_umer_baseline_importable": true,
+ "processed_pt_key_schema": [
+  "max_time_steps",
+  "node_feat",
+  "node_ids",
+  "num_nodes",
+  "struct_feat",
+  "time_bin"
+ ]
+}

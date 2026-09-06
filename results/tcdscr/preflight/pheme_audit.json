@@ -1,0 +1,304 @@
+{
+ "dataset": "PHEME_extension raw threads",
+ "raw_path": "/data/jyz/rumor_detection/data/PHEME_extension/all-rnr-annotated-threads",
+ "n_events": 6425,
+ "n_nodes_full": 104582,
+ "n_reply_nodes": 98929,
+ "source_timestamp_coverage": 1.0,
+ "source_parse_failures": 0,
+ "reply_timestamp_coverage": 1.0,
+ "reply_parse_failures": 0,
+ "parent_relation_coverage_among_replies": 0.9897199001303966,
+ "replies_without_parent_field": 1017,
+ "orphan_parents_outside_event": 1743,
+ "orphan_rate_among_replies": 0.017618696236695004,
+ "chronology_violation_count": 0,
+ "chronology_violation_examples": [],
+ "duplicate_node_id_events": 0,
+ "multi_root_events": 0,
+ "empty_text_nodes": 0,
+ "empty_text_rate": 0.0,
+ "user_field_missing_replies": 0,
+ "source_only_events": 677,
+ "source_only_ratio": 0.10536964980544747,
+ "nodes_per_event_P50_P90_P99": [
+  12.0,
+  31.0,
+  98.76000000000022
+ ],
+ "event_duration_s_P50_P90_P99": [
+  9419.0,
+  126750.20000000001,
+  693134.1200000006
+ ],
+ "topic_counts": {
+  "charliehebdo-all-rnr-threads": 2079,
+  "ebola-essien-all-rnr-threads": 14,
+  "ferguson-all-rnr-threads": 1143,
+  "germanwings-crash-all-rnr-threads": 469,
+  "gurlitt-all-rnr-threads": 138,
+  "ottawashooting-all-rnr-threads": 890,
+  "prince-toronto-all-rnr-threads": 233,
+  "putinmissing-all-rnr-threads": 238,
+  "sydneysiege-all-rnr-threads": 1221
+ },
+ "label_counts": {
+  "1": 2402,
+  "0": 4023
+ },
+ "gates": {
+  "source_ts_coverage_100pct": true,
+  "reply_ts_coverage_ge_99.9": true,
+  "parent_coverage_ge_99.9": false
+ },
+ "splits_detail": {
+  "60/20/20": {
+   "fractions": [
+    60,
+    20,
+    20
+   ],
+   "segments": {
+    "train": {
+     "events": 3855,
+     "rumor": 1672,
+     "nonrumor": 2183,
+     "rumor_ratio": 0.4337224383916991,
+     "source_only": 440,
+     "ts_min_utc": "2014-08-09T22:33:06+00:00",
+     "ts_max_utc": "2015-01-07T12:42:42+00:00"
+    },
+    "validation": {
+     "events": 1285,
+     "rumor": 156,
+     "nonrumor": 1129,
+     "rumor_ratio": 0.12140077821011673,
+     "source_only": 48,
+     "ts_min_utc": "2015-01-07T12:42:52+00:00",
+     "ts_max_utc": "2015-01-09T09:00:04+00:00"
+    },
+    "test": {
+     "events": 1285,
+     "rumor": 574,
+     "nonrumor": 711,
+     "rumor_ratio": 0.4466926070038911,
+     "source_only": 189,
+     "ts_min_utc": "2015-01-09T09:00:48+00:00",
+     "ts_max_utc": "2015-03-27T20:17:38+00:00"
+    }
+   },
+   "topic_family_overlap": {
+    "charliehebdo-all-rnr-threads": [
+     "train",
+     "validation",
+     "test"
+    ]
+   },
+   "topic_overlap_summary": {
+    "topics_total": 9,
+    "topics_in_multiple_segments": 1
+   }
+  },
+  "70/10/20": {
+   "fractions": [
+    70,
+    10,
+    20
+   ],
+   "segments": {
+    "train": {
+     "events": 4497,
+     "rumor": 1732,
+     "nonrumor": 2765,
+     "rumor_ratio": 0.3851456526573271,
+     "source_only": 466,
+     "ts_min_utc": "2014-08-09T22:33:06+00:00",
+     "ts_max_utc": "2015-01-08T00:15:31+00:00"
+    },
+    "validation": {
+     "events": 643,
+     "rumor": 96,
+     "nonrumor": 547,
+     "rumor_ratio": 0.14930015552099535,
+     "source_only": 22,
+     "ts_min_utc": "2015-01-08T00:16:26+00:00",
+     "ts_max_utc": "2015-01-09T09:00:04+00:00"
+    },
+    "test": {
+     "events": 1285,
+     "rumor": 574,
+     "nonrumor": 711,
+     "rumor_ratio": 0.4466926070038911,
+     "source_only": 189,
+     "ts_min_utc": "2015-01-09T09:00:48+00:00",
+     "ts_max_utc": "2015-03-27T20:17:38+00:00"
+    }
+   },
+   "topic_family_overlap": {
+    "charliehebdo-all-rnr-threads": [
+     "train",
+     "validation",
+     "test"
+    ]
+   },
+   "topic_overlap_summary": {
+    "topics_total": 9,
+    "topics_in_multiple_segments": 1
+   }
+  },
+  "70/15/15": {
+   "fractions": [
+    70,
+    15,
+    15
+   ],
+   "segments": {
+    "train": {
+     "events": 4497,
+     "rumor": 1732,
+     "nonrumor": 2765,
+     "rumor_ratio": 0.3851456526573271,
+     "source_only": 466,
+     "ts_min_utc": "2014-08-09T22:33:06+00:00",
+     "ts_max_utc": "2015-01-08T00:15:31+00:00"
+    },
+    "validation": {
+     "events": 964,
+     "rumor": 233,
+     "nonrumor": 731,
+     "rumor_ratio": 0.241701244813278,
+     "source_only": 36,
+     "ts_min_utc": "2015-01-08T00:16:26+00:00",
+     "ts_max_utc": "2015-01-09T14:13:28+00:00"
+    },
+    "test": {
+     "events": 964,
+     "rumor": 437,
+     "nonrumor": 527,
+     "rumor_ratio": 0.4533195020746888,
+     "source_only": 175,
+     "ts_min_utc": "2015-01-09T14:13:40+00:00",
+     "ts_max_utc": "2015-03-27T20:17:38+00:00"
+    }
+   },
+   "topic_family_overlap": {
+    "charliehebdo-all-rnr-threads": [
+     "train",
+     "validation",
+     "test"
+    ]
+   },
+   "topic_overlap_summary": {
+    "topics_total": 9,
+    "topics_in_multiple_segments": 1
+   }
+  }
+ },
+ "snapshot_windows_detail": {
+  "0": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 1.0001556420233464,
+   "median_nodes": 1.0,
+   "p90_nodes": 1.0,
+   "mean_edges": 0.0001556420233463035,
+   "rumor_mean_nodes": 1.0,
+   "nonrumor_mean_nodes": 1.0002485707183695,
+   "reply_coverage_P25": 0.0,
+   "reply_coverage_P50": 0.0,
+   "reply_coverage_P75": 0.0,
+   "reply_coverage_P90": 1.0
+  },
+  "1": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 10.45898832684825,
+   "median_nodes": 8.0,
+   "p90_nodes": 21.0,
+   "mean_edges": 9.304591439688716,
+   "rumor_mean_nodes": 10.045795170691092,
+   "nonrumor_mean_nodes": 10.705692269450658,
+   "reply_coverage_P25": 0.5,
+   "reply_coverage_P50": 0.8,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  },
+  "3": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 13.087937743190661,
+   "median_nodes": 10.0,
+   "p90_nodes": 24.0,
+   "mean_edges": 11.87828793774319,
+   "rumor_mean_nodes": 12.014154870940883,
+   "nonrumor_mean_nodes": 13.72905791697738,
+   "reply_coverage_P25": 0.7777777777777778,
+   "reply_coverage_P50": 0.9583333333333334,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  },
+  "6": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 14.233307392996108,
+   "median_nodes": 11.0,
+   "p90_nodes": 27.0,
+   "mean_edges": 13.003112840466926,
+   "rumor_mean_nodes": 12.659866777685263,
+   "nonrumor_mean_nodes": 15.172756649266717,
+   "reply_coverage_P25": 0.8888888888888888,
+   "reply_coverage_P50": 1.0,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  },
+  "12": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 14.96591439688716,
+   "median_nodes": 11.0,
+   "p90_nodes": 28.0,
+   "mean_edges": 13.722645914396887,
+   "rumor_mean_nodes": 13.039966694421315,
+   "nonrumor_mean_nodes": 16.11583395476013,
+   "reply_coverage_P25": 0.9444444444444444,
+   "reply_coverage_P50": 1.0,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  },
+  "24": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 15.524980544747082,
+   "median_nodes": 12.0,
+   "p90_nodes": 29.0,
+   "mean_edges": 14.267548638132295,
+   "rumor_mean_nodes": 13.344712739383846,
+   "nonrumor_mean_nodes": 16.826746209296545,
+   "reply_coverage_P25": 1.0,
+   "reply_coverage_P50": 1.0,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  },
+  "48": {
+   "events_total": 6425,
+   "events_source_only": 677,
+   "source_only_ratio": 0.10536964980544747,
+   "mean_nodes": 15.890272373540856,
+   "median_nodes": 12.0,
+   "p90_nodes": 30.0,
+   "mean_edges": 14.625058365758754,
+   "rumor_mean_nodes": 13.510407993338884,
+   "nonrumor_mean_nodes": 17.31121053939846,
+   "reply_coverage_P25": 1.0,
+   "reply_coverage_P50": 1.0,
+   "reply_coverage_P75": 1.0,
+   "reply_coverage_P90": 1.0
+  }
+ }
+}

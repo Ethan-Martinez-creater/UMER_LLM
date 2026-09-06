@@ -1,0 +1,142 @@
+{
+ "p7_384d_encoder": {
+  "encoder_used_by_historical_preprocessing": "paraphrase-multilingual-MiniLM-L12-v2",
+  "same_model_for_pheme_and_maweibo": true,
+  "evidence": [
+   "server configs: /data/jyz/next/configs/pheme_extension_with_mask.yaml line 68 and ma_weibo_240h config use the same text_embedding_model path",
+   "local mirror configs (ablation) identical: model/paraphrase-multilingual-MiniLM-L12-v2"
+  ],
+  "multilingual": true,
+  "weights_present": true,
+  "weight_files": [
+   "._____temp",
+   ".msc",
+   ".mv",
+   "1_Pooling",
+   "README.md",
+   "config.json",
+   "config_sentence_transformers.json",
+   "configuration.json",
+   "modules.json",
+   "pytorch_model.bin",
+   "sentence_bert_config.json",
+   "sentencepiece.bpe.model",
+   "special_tokens_map.json",
+   "tf_model.h5",
+   "tokenizer.json",
+   "tokenizer_config.json",
+   "unigram.json"
+  ],
+  "tokenizer_freezable": true,
+  "reproducibility_evidence": "P4 parity: rebuilt 384D embeddings vs frozen 240h .pt give max_abs_diff 9.5e-7 over 100 events with the current DGPA environment",
+  "weibo22_directly_reusable": false,
+  "weibo22_blocker": "Weibo22 release contains no raw text (vol_5000 word indices only), so no text exists to encode; the encoder itself is fine",
+  "verdict": "ENCODER_OK; no NEED_TEXT_ENCODER_DECISION for the encoder itself"
+ },
+ "p8_11d_weibo22": {
+  "schema_source": "server /data/jyz/next/src/rumor_detection/data/pheme_extension/graph_builder.py user_cols + senti_norm; preprocess_graph.py concatenates text384 + user10 + senti + userFeatures -> node_feat 396 cols",
+  "umer_consumed_block": "node_feat[:,384:395] (10 user + senti); trailing userFeatures column unused by the model",
+  "weibo22_rows": [
+   {
+    "feature": "f01_reposts_or_retweets_count",
+    "definition": "retweet_count (tweet object)",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f02_comments_count",
+    "definition": "no PHEME source field; hardcoded 0.0 by adapter",
+    "pheme_availability": "constant_0",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f03_attitudes_or_favorites_count",
+    "definition": "favorite_count (tweet object)",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f04_followers_count",
+    "definition": "user.followers_count",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f05_statuses_count",
+    "definition": "user.statuses_count",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f06_favourites_count",
+    "definition": "user.favourites_count",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f07_bi_followers_count",
+    "definition": "no PHEME source field; hardcoded 0.0 by adapter",
+    "pheme_availability": "constant_0",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f08_user_verified",
+    "definition": "user.verified (bool -> 0/1)",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f09_user_geo_enabled",
+    "definition": "user.geo_enabled (bool -> 0/1)",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f10_user_created_at_norm",
+    "definition": "user.created_at parsed to unix, then 1-(x-min)/(max-min) over the full preprocessed frame",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   },
+   {
+    "feature": "f11_senti_feature",
+    "definition": "sentiment-roberta-large-english logits p_pos-p_neg on cleaned text, 0 for empty text",
+    "pheme_availability": "available",
+    "weibo22_availability": "absent",
+    "missing_rate_weibo22": 1.0,
+    "can_compute_exactly_weibo22": false,
+    "note": "Weibo22 ships neither tweet/user JSON fields nor raw text; per protocol, filling 0, substituting proxies, or redefining the 11D schema is forbidden."
+   }
+  ],
+  "verdict": "NEED_FEATURE_SCHEMA_DECISION"
+ }
+}

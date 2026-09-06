@@ -1,0 +1,2 @@
+DONE 6425 events 104582 nodes
+{"source_ts_coverage_100pct": true, "reply_ts_coverage_ge_99.9": true, "parent_coverage_ge_99.9": false}

@@ -27,3 +27,4 @@ project/optimization_rounds/round_032_sam/*.sh
 __pycache__/
 *.py[cod]
 .pytest_cache/
+data_raw/

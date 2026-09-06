@@ -1,0 +1,81 @@
+{
+ "n_pt_files": 6425,
+ "keys": [
+  "max_time_steps",
+  "node_feat",
+  "node_ids",
+  "num_nodes",
+  "struct_feat",
+  "time_bin"
+ ],
+ "node_feat_shape": [
+  15,
+  396
+ ],
+ "struct_feat_shape": [
+  15,
+  1024
+ ],
+ "num_nodes_shape": [],
+ "time_bin_shape": [
+  15
+ ],
+ "max_time_steps_shape": [],
+ "node_ids_first3": [
+  "498235547685756928",
+  "498235547685756928",
+  "498243332204949504"
+ ],
+ "node_ids_len": 15,
+ "node_feat_dim_distribution_sample50": {
+  "396": 50
+ },
+ "struct_feat_dim_distribution_sample50": {
+  "1024": 50
+ },
+ "sample50_has_node_ids": 50,
+ "sample50_has_time_bin": 50,
+ "labels_csv_head": [
+  "event_id,label",
+  "498235547685756928,0",
+  "498248415223246848,0",
+  "498248648699150336,0",
+  "498250100079341568,0"
+ ],
+ "labels_csv_lines": 6426,
+ "splits_contents": [
+  "all_event_ids.txt"
+ ],
+ "metadata_contents": [],
+ "pheme_raw_topics": [
+  "charliehebdo-all-rnr-threads",
+  "ebola-essien-all-rnr-threads",
+  "ferguson-all-rnr-threads",
+  "germanwings-crash-all-rnr-threads",
+  "gurlitt-all-rnr-threads",
+  "ottawashooting-all-rnr-threads",
+  "prince-toronto-all-rnr-threads",
+  "putinmissing-all-rnr-threads",
+  "sydneysiege-all-rnr-threads"
+ ],
+ "preprocess_src_files": [
+  "rumor_detection/data/__init__.py",
+  "rumor_detection/data/canonical.py",
+  "rumor_detection/data/coordinates.py",
+  "rumor_detection/data/embeddings.py",
+  "rumor_detection/data/frame_builder_common.py",
+  "rumor_detection/data/preprocess_graph.py",
+  "rumor_detection/data/preprocess_npz.py",
+  "rumor_detection/data/sentiment.py",
+  "rumor_detection/data/text_cleaning.py",
+  "rumor_detection/data/time_windows.py"
+ ],
+ "preprocess_src_pheme_files": [
+  "__init__.py",
+  "frame_builder.py",
+  "graph_builder.py",
+  "pipeline.py",
+  "rebuild_user_features.py",
+  "user_features.py"
+ ]
+}

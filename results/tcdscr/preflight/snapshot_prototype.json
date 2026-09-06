@@ -1,0 +1,2476 @@
+{
+ "seed": 3090,
+ "cutoffs_hours": [
+  1,
+  6,
+  24
+ ],
+ "max_time_steps": 480,
+ "events": [
+  {
+   "event_id": "499397048878501888",
+   "n_nodes_full_240h": 7,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 1,
+     "excluded_count": 6,
+     "included_node_ids_first5": [
+      "499397048878501888"
+     ],
+     "excluded_node_ids_first5": [
+      "499544240746414081",
+      "499545033104564226",
+      "499553591137693696",
+      "499556138304962560",
+      "499559925501399040"
+     ],
+     "edges": [],
+     "edge_count": 0,
+     "max_depth_in_snapshot": 0,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 0,
+     "norm_time_first5": [
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 1,
+     "excluded_count": 6,
+     "included_node_ids_first5": [
+      "499397048878501888"
+     ],
+     "excluded_node_ids_first5": [
+      "499544240746414081",
+      "499545033104564226",
+      "499553591137693696",
+      "499556138304962560",
+      "499559925501399040"
+     ],
+     "edges": [],
+     "edge_count": 0,
+     "max_depth_in_snapshot": 0,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 0,
+     "norm_time_first5": [
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 7,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "499397048878501888",
+      "499544240746414081",
+      "499545033104564226",
+      "499553591137693696",
+      "499556138304962560"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       1
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       6,
+       0
+      ]
+     ],
+     "edge_count": 6,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 3,
+     "norm_time_first5": [
+      0.0,
+      0.01875,
+      0.01875,
+      0.020833,
+      0.020833
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "500421926079066112",
+   "n_nodes_full_240h": 15,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 12,
+     "excluded_count": 3,
+     "included_node_ids_first5": [
+      "500421926079066112",
+      "500422190068944898",
+      "500425848185319425",
+      "500426136003051521",
+      "500427504612831232"
+     ],
+     "excluded_node_ids_first5": [
+      "500445512882216960",
+      "500446623806132225",
+      "500449073485193216"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ]
+     ],
+     "edge_count": 11,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 8,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 15,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "500421926079066112",
+      "500422190068944898",
+      "500425848185319425",
+      "500426136003051521",
+      "500427504612831232"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ]
+     ],
+     "edge_count": 14,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 11,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 15,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "500421926079066112",
+      "500422190068944898",
+      "500425848185319425",
+      "500426136003051521",
+      "500427504612831232"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       8
+      ],
+      [
+       10,
+       8
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ]
+     ],
+     "edge_count": 14,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 11,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "524929559909916672",
+   "n_nodes_full_240h": 18,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 3,
+     "excluded_count": 15,
+     "included_node_ids_first5": [
+      "524929559909916672",
+      "524935197587173376",
+      "524935747389112321"
+     ],
+     "excluded_node_ids_first5": [
+      "524955490091274240",
+      "524956695949492224",
+      "524959023754661888",
+      "524962559884283905",
+      "524962728671059968"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "edge_count": 2,
+     "max_depth_in_snapshot": 1,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 2,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 18,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "524929559909916672",
+      "524935197587173376",
+      "524935747389112321",
+      "524955490091274240",
+      "524956695949492224"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       9
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 16,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 18,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "524929559909916672",
+      "524935197587173376",
+      "524935747389112321",
+      "524955490091274240",
+      "524956695949492224"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       9
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 16,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544416939867529216",
+   "n_nodes_full_240h": 42,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 32,
+     "excluded_count": 10,
+     "included_node_ids_first5": [
+      "544416939867529216",
+      "544417086919802880",
+      "544417464826617858",
+      "544417558506401792",
+      "544417820381958144"
+     ],
+     "excluded_node_ids_first5": [
+      "544432917292646401",
+      "544434865626562560",
+      "544435765854236673",
+      "544436098714198016",
+      "544436988560953344"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ]
+     ],
+     "edge_count": 31,
+     "max_depth_in_snapshot": 9,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 9,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 39,
+     "excluded_count": 3,
+     "included_node_ids_first5": [
+      "544416939867529216",
+      "544417086919802880",
+      "544417464826617858",
+      "544417558506401792",
+      "544417820381958144"
+     ],
+     "excluded_node_ids_first5": [
+      "544567190725218304",
+      "544603498709393408",
+      "544610007895912448"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ],
+      [
+       32,
+       31
+      ],
+      [
+       33,
+       32
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       35,
+       34
+      ],
+      [
+       36,
+       35
+      ],
+      [
+       37,
+       36
+      ],
+      [
+       38,
+       37
+      ]
+     ],
+     "edge_count": 38,
+     "max_depth_in_snapshot": 9,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 9,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 42,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "544416939867529216",
+      "544417086919802880",
+      "544417464826617858",
+      "544417558506401792",
+      "544417820381958144"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       3
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       2
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       5
+      ],
+      [
+       13,
+       6
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       2
+      ],
+      [
+       16,
+       12
+      ],
+      [
+       17,
+       10
+      ],
+      [
+       18,
+       9
+      ],
+      [
+       19,
+       17
+      ],
+      [
+       20,
+       18
+      ],
+      [
+       21,
+       19
+      ],
+      [
+       22,
+       20
+      ],
+      [
+       23,
+       15
+      ],
+      [
+       24,
+       23
+      ],
+      [
+       25,
+       24
+      ],
+      [
+       26,
+       25
+      ],
+      [
+       27,
+       25
+      ],
+      [
+       28,
+       27
+      ],
+      [
+       29,
+       28
+      ],
+      [
+       30,
+       29
+      ],
+      [
+       31,
+       8
+      ],
+      [
+       32,
+       31
+      ],
+      [
+       33,
+       32
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       35,
+       34
+      ],
+      [
+       36,
+       35
+      ],
+      [
+       37,
+       36
+      ],
+      [
+       38,
+       37
+      ],
+      [
+       39,
+       38
+      ],
+      [
+       40,
+       39
+      ],
+      [
+       41,
+       40
+      ]
+     ],
+     "edge_count": 41,
+     "max_depth_in_snapshot": 9,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 9,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544440749387808768",
+   "n_nodes_full_240h": 13,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 11,
+     "excluded_count": 2,
+     "included_node_ids_first5": [
+      "544440749387808768",
+      "544441283754745856",
+      "544442924310593536",
+      "544443596472999936",
+      "544444351925870592"
+     ],
+     "excluded_node_ids_first5": [
+      "544458228277334016",
+      "544459835937271809"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 8,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 13,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "544440749387808768",
+      "544441283754745856",
+      "544442924310593536",
+      "544443596472999936",
+      "544444351925870592"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       10
+      ]
+     ],
+     "edge_count": 12,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 9,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 13,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "544440749387808768",
+      "544441283754745856",
+      "544442924310593536",
+      "544443596472999936",
+      "544444351925870592"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       5
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       10
+      ]
+     ],
+     "edge_count": 12,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 9,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "544475905926524928",
+   "n_nodes_full_240h": 18,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 3,
+     "excluded_count": 15,
+     "included_node_ids_first5": [
+      "544475905926524928",
+      "544477243763097600",
+      "544479066233913344"
+     ],
+     "excluded_node_ids_first5": [
+      "544494576413995008",
+      "544494850180403200",
+      "544496093393072128",
+      "544497007076048897",
+      "544497647227138049"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ]
+     ],
+     "edge_count": 2,
+     "max_depth_in_snapshot": 1,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 2,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 18,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "544475905926524928",
+      "544477243763097600",
+      "544479066233913344",
+      "544494576413995008",
+      "544494850180403200"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "max_depth_in_snapshot": 1,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 17,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 18,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "544475905926524928",
+      "544477243763097600",
+      "544479066233913344",
+      "544494576413995008",
+      "544494850180403200"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       0
+      ],
+      [
+       15,
+       0
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       0
+      ]
+     ],
+     "edge_count": 17,
+     "max_depth_in_snapshot": 1,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 17,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.002083,
+      0.002083
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "552845191003250688",
+   "n_nodes_full_240h": 25,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 25,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "552845191003250688",
+      "552845529458016256",
+      "552845822560575489",
+      "552845835869102080",
+      "552845901262499841"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 14,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 25,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "552845191003250688",
+      "552845529458016256",
+      "552845822560575489",
+      "552845835869102080",
+      "552845901262499841"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 14,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 25,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "552845191003250688",
+      "552845529458016256",
+      "552845822560575489",
+      "552845835869102080",
+      "552845901262499841"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       0
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       0
+      ],
+      [
+       9,
+       0
+      ],
+      [
+       10,
+       0
+      ],
+      [
+       11,
+       0
+      ],
+      [
+       12,
+       0
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       14,
+       2
+      ],
+      [
+       15,
+       6
+      ],
+      [
+       16,
+       0
+      ],
+      [
+       17,
+       4
+      ],
+      [
+       18,
+       15
+      ],
+      [
+       19,
+       18
+      ],
+      [
+       20,
+       17
+      ],
+      [
+       21,
+       20
+      ],
+      [
+       22,
+       21
+      ],
+      [
+       23,
+       21
+      ],
+      [
+       24,
+       11
+      ]
+     ],
+     "edge_count": 24,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 14,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "553137601457426433",
+   "n_nodes_full_240h": 19,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 17,
+     "excluded_count": 2,
+     "included_node_ids_first5": [
+      "553137601457426433",
+      "553140624354848768",
+      "553141539694977024",
+      "553143523516882944",
+      "553144435882885120"
+     ],
+     "excluded_node_ids_first5": [
+      "553160100165464064",
+      "553162161686863872"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ]
+     ],
+     "edge_count": 8,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [
+      "553144922690564096",
+      "553144979410137088",
+      "553145049253675009",
+      "553145459892830208",
+      "553145790370443264",
+      "553148188082069504",
+      "553148743894462464",
+      "553149148829351936",
+      "553149405814325249"
+     ],
+     "degree_source": 3,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 19,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "553137601457426433",
+      "553140624354848768",
+      "553141539694977024",
+      "553143523516882944",
+      "553144435882885120"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       17,
+       5
+      ],
+      [
+       18,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [
+      "553144922690564096",
+      "553144979410137088",
+      "553145049253675009",
+      "553145459892830208",
+      "553145790370443264",
+      "553148188082069504",
+      "553148743894462464",
+      "553149148829351936",
+      "553149405814325249"
+     ],
+     "degree_source": 4,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 19,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "553137601457426433",
+      "553140624354848768",
+      "553141539694977024",
+      "553143523516882944",
+      "553144435882885120"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       1
+      ],
+      [
+       4,
+       3
+      ],
+      [
+       5,
+       4
+      ],
+      [
+       9,
+       5
+      ],
+      [
+       11,
+       8
+      ],
+      [
+       13,
+       0
+      ],
+      [
+       17,
+       5
+      ],
+      [
+       18,
+       0
+      ]
+     ],
+     "edge_count": 10,
+     "max_depth_in_snapshot": 5,
+     "orphan_nodes_in_snapshot": [
+      "553144922690564096",
+      "553144979410137088",
+      "553145049253675009",
+      "553145459892830208",
+      "553145790370443264",
+      "553148188082069504",
+      "553148743894462464",
+      "553149148829351936",
+      "553149405814325249"
+     ],
+     "degree_source": 4,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "580323946899214336",
+   "n_nodes_full_240h": 1,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 1,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "580323946899214336"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "max_depth_in_snapshot": 0,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 0,
+     "norm_time_first5": [
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 1,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "580323946899214336"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "max_depth_in_snapshot": 0,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 0,
+     "norm_time_first5": [
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 1,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "580323946899214336"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [],
+     "edge_count": 0,
+     "max_depth_in_snapshot": 0,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 0,
+     "norm_time_first5": [
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  },
+  {
+   "event_id": "580348878370828288",
+   "n_nodes_full_240h": 12,
+   "cutoffs": [
+    {
+     "cutoff_hours": 1,
+     "included_count": 8,
+     "excluded_count": 4,
+     "included_node_ids_first5": [
+      "580348878370828288",
+      "580349473747918848",
+      "580349579721310208",
+      "580349735556554752",
+      "580349946580328448"
+     ],
+     "excluded_node_ids_first5": [
+      "580368792347279360",
+      "580379506214588416",
+      "580381154957725696",
+      "580496044947070979"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ]
+     ],
+     "edge_count": 7,
+     "max_depth_in_snapshot": 2,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 6,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 6,
+     "included_count": 11,
+     "excluded_count": 1,
+     "included_node_ids_first5": [
+      "580348878370828288",
+      "580349473747918848",
+      "580349579721310208",
+      "580349735556554752",
+      "580349946580328448"
+     ],
+     "excluded_node_ids_first5": [
+      "580496044947070979"
+     ],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       10,
+       9
+      ]
+     ],
+     "edge_count": 10,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 6,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    },
+    {
+     "cutoff_hours": 24,
+     "included_count": 12,
+     "excluded_count": 0,
+     "included_node_ids_first5": [
+      "580348878370828288",
+      "580349473747918848",
+      "580349579721310208",
+      "580349735556554752",
+      "580349946580328448"
+     ],
+     "excluded_node_ids_first5": [],
+     "edges": [
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       0
+      ],
+      [
+       3,
+       0
+      ],
+      [
+       4,
+       0
+      ],
+      [
+       5,
+       0
+      ],
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       0
+      ],
+      [
+       8,
+       7
+      ],
+      [
+       9,
+       7
+      ],
+      [
+       10,
+       9
+      ],
+      [
+       11,
+       0
+      ]
+     ],
+     "edge_count": 11,
+     "max_depth_in_snapshot": 3,
+     "orphan_nodes_in_snapshot": [],
+     "degree_source": 7,
+     "norm_time_first5": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "future_leakage": false
+    }
+   ]
+  }
+ ],
+ "checks": {
+  "node_monotonic_in_cutoff": true,
+  "edge_monotonic_in_cutoff": true,
+  "no_future_edge_leakage_all_events": true,
+  "depth_recomputed_within_snapshot": true,
+  "frozen_denominators": {
+   "time_bins": 480,
+   "depth_clamp": 19
+  },
+  "note": "norm_depth uses fixed clamp denominator 19 and norm_time fixed 480 bins; no per-snapshot renormalisation, so feature definitions are snapshot-invariant."
+ }
+}

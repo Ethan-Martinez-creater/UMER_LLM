@@ -1,0 +1,41 @@
+{
+ "generated_at": "2026-09-06",
+ "git_commit_sha": "572d5506880eb361af907a855f6736509c8a8296",
+ "top_level": {
+  "docs": {
+   "files": 12
+  },
+  "project": {
+   "files": 104
+  },
+  "results": {
+   "files": 39
+  },
+  "resources": {
+   "files": 2
+  },
+  "scripts": {
+   "files": 18
+  }
+ },
+ "root_files": [
+  ".gitignore",
+  "README.md",
+  "WORKSPACE_GUIDE.md",
+  "requirements.lock.txt"
+ ],
+ "key_entries": {
+  "model": "project/optimization_rounds/round_013_joint_trifusion/model.py",
+  "run_fold": "project/optimization_rounds/round_013_joint_trifusion/run_fold.py",
+  "graph_branch": "project/src/rumor_detection/models/original_model.py",
+  "sam": "project/optimization_rounds/round_032_sam/sam.py",
+  "formal_results": "results/pheme/authoritative_json/summary.json, results/maweibo/authoritative_json/summary.json"
+ },
+ "excluded_by_gitignore": [
+  "WORKSPACE_GUIDE.md",
+  "resources/resource_manifest.md",
+  "results/source_paths.json",
+  "data_raw/ (Weibo22 raw zips)",
+  "server-side ops scripts (*.sh entry points)"
+ ]
+}

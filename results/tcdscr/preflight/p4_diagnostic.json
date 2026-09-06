@@ -1,0 +1,439 @@
+{
+ "extra_column_diffs": {
+  "544354657385316352": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.068184494972229,
+    0.0
+   ]
+  },
+  "552984916070531072": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.04070371389389038,
+    0.0
+   ]
+  },
+  "544463778780557312": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.037610530853271484,
+    0.0
+   ]
+  },
+  "552849865680494595": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.03756275773048401,
+    0.0
+   ]
+  },
+  "499439795618480128": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.037497758865356445,
+    0.0
+   ]
+  },
+  "500308574703452160": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.032467007637023926,
+    0.0
+   ]
+  },
+  "524934142958788608": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.031179845333099365,
+    0.0
+   ]
+  },
+  "552806610490646528": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.02990064024925232,
+    0.0
+   ]
+  },
+  "500286058664579072": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.027064025402069092,
+    0.0
+   ]
+  },
+  "500430673099104256": {
+   "labels": [
+    "reposts",
+    "comments",
+    "attitudes",
+    "followers",
+    "statuses",
+    "favourites",
+    "bi_followers",
+    "verified",
+    "geo",
+    "created_norm",
+    "senti",
+    "userFeatures"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.01944899559020996,
+    0.0
+   ]
+  }
+ },
+ "s3_column_diffs": {
+  "498317138554150912": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833611488342285
+   ],
+   "time_bin_equal": false
+  },
+  "499439795618480128": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833611488342285
+   ],
+   "time_bin_equal": false
+  },
+  "499453886474637312": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833611488342285
+   ],
+   "time_bin_equal": false
+  },
+  "499698311306043392": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833611488342285
+   ],
+   "time_bin_equal": false
+  },
+  "553133704881917952": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833611488342285
+   ],
+   "time_bin_equal": false
+  },
+  "552806610490646528": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833462476730347
+   ],
+   "time_bin_equal": false
+  },
+  "498284429333524480": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833387970924377
+   ],
+   "time_bin_equal": false
+  },
+  "500417151346696192": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833387970924377
+   ],
+   "time_bin_equal": false
+  },
+  "500430673099104256": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833387970924377
+   ],
+   "time_bin_equal": false
+  },
+  "544520990538358784": {
+   "labels": [
+    "norm_degree",
+    "norm_depth",
+    "norm_timestep"
+   ],
+   "col_max_abs_diff": [
+    0.0,
+    0.0,
+    0.0020833387970924377
+   ],
+   "time_bin_equal": false
+  }
+ },
+ "time_bin_mismatch_events": 10,
+ "depth_examples": [],
+ "examples": []
+}

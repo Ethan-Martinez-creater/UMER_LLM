@@ -1,0 +1,55 @@
+{
+ "python_version": "3.11.13",
+ "platform": "Linux-5.15.0-139-generic-x86_64-with-glibc2.31",
+ "torch_version": "2.7.1+cu128",
+ "transformers_version": "4.57.6",
+ "cuda_available": true,
+ "cuda_version": "12.8",
+ "gpu": "NVIDIA GeForce RTX 4090, 24564 MiB, 570.133.07",
+ "paths": {
+  "pheme_raw": {
+   "exists": true,
+   "entries": 275247
+  },
+  "pheme_processed_authoritative_source": {
+   "exists": true,
+   "entries": 6430
+  },
+  "pheme_processed_working_copy": {
+   "exists": true,
+   "entries": 6430
+  },
+  "maweibo_processed": {
+   "exists": true,
+   "entries": 9391
+  },
+  "maweibo_raw": {
+   "exists": true,
+   "entries": 4664
+  },
+  "deberta_v3_large": {
+   "exists": true,
+   "entries": 12
+  },
+  "pheme_checkpoints": {
+   "exists": true,
+   "entries": 29
+  },
+  "maweibo_checkpoints": {
+   "exists": true,
+   "entries": 27
+  },
+  "minilm_model": {
+   "exists": true,
+   "entries": 19
+  },
+  "sentiment_model": {
+   "exists": true,
+   "entries": 27
+  },
+  "preprocessing_project_src": {
+   "exists": true,
+   "entries": 63
+  }
+ }
+}

@@ -1,0 +1,26 @@
+sampled 100 events; buckets: {'source_only': 677, 'small': 1971, 'medium': 3527, 'large': 250}
+raw records: 105354
+Before log1p - inf: False
+Before log1p - NaN: False
+After log1p - inf: False
+After log1p - NaN: False
+subset records: 3225
+Sentiment inference:   0%|          | 0/51 [00:00<?, ?it/s]/data/jyz/next/src/rumor_detection/data/sentiment.py:48: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  autocast_ctx = torch.cuda.amp.autocast() if use_cuda else nullcontext()
+Sentiment inference:   2%|▏         | 1/51 [00:00<00:27,  1.81it/s]Sentiment inference:   6%|▌         | 3/51 [00:00<00:08,  5.48it/s]Sentiment inference:  10%|▉         | 5/51 [00:00<00:05,  8.62it/s]Sentiment inference:  14%|█▎        | 7/51 [00:00<00:03, 11.18it/s]Sentiment inference:  18%|█▊        | 9/51 [00:00<00:03, 13.24it/s]Sentiment inference:  22%|██▏       | 11/51 [00:01<00:02, 14.83it/s]Sentiment inference:  25%|██▌       | 13/51 [00:01<00:02, 16.00it/s]Sentiment inference:  29%|██▉       | 15/51 [00:01<00:02, 16.86it/s]Sentiment inference:  33%|███▎      | 17/51 [00:01<00:01, 17.49it/s]Sentiment inference:  37%|███▋      | 19/51 [00:01<00:01, 17.95it/s]Sentiment inference:  41%|████      | 21/51 [00:01<00:01, 18.06it/s]Sentiment inference:  45%|████▌     | 23/51 [00:01<00:01, 18.37it/s]Sentiment inference:  49%|████▉     | 25/51 [00:01<00:01, 18.61it/s]Sentiment inference:  53%|█████▎    | 27/51 [00:01<00:01, 18.74it/s]Sentiment inference:  57%|█████▋    | 29/51 [00:02<00:01, 18.87it/s]Sentiment inference:  61%|██████    | 31/51 [00:02<00:01, 18.93it/s]Sentiment inference:  65%|██████▍   | 33/51 [00:02<00:00, 18.16it/s]Sentiment inference:  69%|██████▊   | 35/51 [00:02<00:00, 18.18it/s]Sentiment inference:  73%|███████▎  | 37/51 [00:02<00:00, 18.41it/s]Sentiment inference:  76%|███████▋  | 39/51 [00:02<00:00, 18.61it/s]Sentiment inference:  80%|████████  | 41/51 [00:02<00:00, 18.75it/s]Sentiment inference:  84%|████████▍ | 43/51 [00:02<00:00, 18.86it/s]Sentiment inference:  88%|████████▊ | 45/51 [00:02<00:00, 18.95it/s]Sentiment inference:  92%|█████████▏| 47/51 [00:02<00:00, 19.03it/s]Sentiment inference:  96%|█████████▌| 49/51 [00:03<00:00, 19.05it/s]Sentiment inference: 100%|██████████| 51/51 [00:03<00:00, 16.04it/s]
+Batches:   0%|          | 0/26 [00:00<?, ?it/s]Batches:   4%|▍         | 1/26 [00:00<00:04,  6.22it/s]Batches:  27%|██▋       | 7/26 [00:00<00:00, 30.27it/s]Batches:  50%|█████     | 13/26 [00:00<00:00, 41.86it/s]Batches:  77%|███████▋  | 20/26 [00:00<00:00, 49.32it/s]Batches: 100%|██████████| 26/26 [00:00<00:00, 45.72it/s]
+Found 100 .pt files
+Preprocessing Graphs:   0%|          | 0/100 [00:00<?, ?it/s]Preprocessing Graphs:  32%|███▏      | 32/100 [00:00<00:00, 313.65it/s]Preprocessing Graphs:  82%|████████▏ | 82/100 [00:00<00:00, 420.80it/s]Preprocessing Graphs: 100%|██████████| 100/100 [00:00<00:00, 438.62it/s]
+Done! Output dir: /data/jyz/next/llm/results/tcdscr/preflight/p4_rebuild/graph_final
+{
+ "events_compared": 100,
+ "node_ids_exact_rate": 1.0,
+ "edge_index_exact_rate": 0.0,
+ "num_nodes_exact_rate": 1.0,
+ "text384_max_abs_diff_max": 9.5367431640625e-07,
+ "extra_block_max_abs_diff_max": 0.068184494972229,
+ "adj_signature_max_abs_diff_max": 0.0,
+ "summary3_max_abs_diff_max": 0.0020833611488342285,
+ "any_text384_over_1e-5": false,
+ "any_struct_over_1e-5": true
+}

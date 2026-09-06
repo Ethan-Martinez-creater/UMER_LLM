@@ -1,0 +1,97 @@
+{
+ "dataset": "Weibo22 via KPG release v1",
+ "source": {
+  "repo_url": "https://github.com/kkkkk001/KPG",
+  "release_tag": "v1",
+  "release_commit": "8b1d16b3c0485336c6379e056c00b31581459687",
+  "main_head_at_download": "7b41f6647fba7f23b8d461a85df33bdf4c699ce8",
+  "download_date": "2026-09-06",
+  "download_method": "raw.githubusercontent.com via local proxy (server has no GitHub access)",
+  "files": {
+   "Weibo_label_All.zip": {
+    "bytes": 38203,
+    "sha256": "451e51bc28a74ff26a19d212acab8796baf468928a908da5ac49b104b88e9ea0"
+   },
+   "data.TD_RvNN.vol_5000.zip": {
+    "bytes": 7541566,
+    "sha256": "f58ab42ee01b29a62987a3e6668af18c3dd3148d91d6c6d717a859bbbdcb550f"
+   }
+  }
+ },
+ "schema": {
+  "label_file_format": "label(false|true) <TAB> topic <TAB> weibo_id — no timestamp, no text, no user fields",
+  "tree_file_format": "weibo_id <TAB> [parent-index chain, 'None' marks root] <TAB> wordidx:count ... (vol_5000 vocabulary indices, not raw text)"
+ },
+ "labels": {
+  "rows": 4174,
+  "column_count_distribution": {
+   "3": 4174
+  },
+  "label_counts": {
+   "false": 2087,
+   "true": 2087
+  },
+  "topic_counts": {
+   "covid-19": 2171,
+   "other": 2003
+  },
+  "duplicate_ids": 0
+ },
+ "trees": {
+  "lines": 961962,
+  "bad_rows": 0,
+  "distinct_weibo_ids": 4174,
+  "roots_detected": 4174,
+  "max_structure_index": 30791,
+  "max_word_index": 4999,
+  "nodes_per_tree_mean": 230.4652611403929,
+  "nodes_per_tree_median": 7.0,
+  "nodes_per_tree_max": 30791,
+  "ids_without_label_row": 0
+ },
+ "temporal_readiness": {
+  "absolute_node_timestamp": false,
+  "source_absolute_timestamp": false,
+  "parent_child_relation": true,
+  "repost_chain_semantics": "rooted tree (single parent per node, TD_RvNN format)",
+  "raw_text_available": false,
+  "user_fields_available": false
+ },
+ "example_rows": [
+  {
+   "weibo_id": "4742118512525546",
+   "structural_fields": [
+    "None",
+    "1",
+    "9",
+    "28"
+   ],
+   "n_struct_fields": 4,
+   "n_text_tokens": 1
+  },
+  {
+   "weibo_id": "4742118512525546",
+   "structural_fields": [
+    "1",
+    "2",
+    "9",
+    "28"
+   ],
+   "n_struct_fields": 4,
+   "n_text_tokens": 1
+  },
+  {
+   "weibo_id": "4742118512525546",
+   "structural_fields": [
+    "1",
+    "3",
+    "9",
+    "28"
+   ],
+   "n_struct_fields": 4,
+   "n_text_tokens": 1
+  }
+ ],
+ "verdict": "NOT_READY_WEIBO22_TEMPORAL",
+ "verdict_reason": "Neither source nor node absolute timestamps exist anywhere in the released files; text is vocabulary-index-only (vol_5000) and no user fields are present, so UMER-style 11D/384D features and global chronological splits cannot be constructed from this release."
+}
