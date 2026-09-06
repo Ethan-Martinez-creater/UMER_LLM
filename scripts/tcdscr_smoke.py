@@ -56,7 +56,8 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                                                     persistent_new_ratio)
     from tcdscr.llm.cache import build_cache_key
     from tcdscr.llm.parser import label_to_int, parse_label
-    from tcdscr.llm.qwen_wrapper import GENERATION_CONFIG
+    from tcdscr.llm.qwen_wrapper import (GENERATION_CONFIG,
+                                         count_chat_input_tokens)
     from tcdscr.models.causal_social_encoder import CausalSocialEncoder
     from tcdscr.models.evidence_memory import DynamicEvidenceMemory
     from tcdscr.models.selector import StaticUtilitySelector
@@ -158,11 +159,14 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                 if recent_scores[top] != max(u["elapsed_seconds"]
                                              for u in all_units):
                     delta_checks["recent_baseline_order_failures"] += 1
-            # delta-fix §4E/§18: bounded all-current selection for this row
+            # delta-fix §4E/§18 + final patch §1–§3: bounded all-current
+            # selection for this row, counted on the chat-formatted prompt
             ac = select_all_current(
                 snap, all_units, budget_sel, context_length, max_new_tokens,
                 prompt_builder=lambda s, acc: pack_context(
-                    s["texts"][src_pos], s, acc)["prompt"])
+                    s["texts"][src_pos], s, acc)["prompt"],
+                chat_counter=lambda p: count_chat_input_tokens(
+                    tokenizer, p))
             if ac["input_tokens"] + max_new_tokens > context_length:
                 delta_checks["context_overflow_failures"] += 1
             if cand:
@@ -245,6 +249,7 @@ def infer_dataset(cfg, events, llm, llm_cache, per_dataset_llm_limit,
                 "all_current_tokens_dropped": ac["tokens_dropped"],
                 "all_current_context_length": context_length,
                 "all_current_input_tokens": ac["input_tokens"],
+                "all_current_evidence_tokens": ac["evidence_tokens"],
             }
             rows.append(row)
             if len(prompt_examples) < 2:

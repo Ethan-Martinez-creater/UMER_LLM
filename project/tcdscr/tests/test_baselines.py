@@ -57,7 +57,8 @@ def test_all_current_respects_context_limit():
     result = select_all_current(
         snap, units, budget, context_length=200, max_new_tokens=8,
         prompt_builder=lambda s, acc: pack_context(
-            "source claim", s, acc)["prompt"])
+            "source claim", s, acc)["prompt"],
+        chat_counter=lambda p: len(p.split()))
     assert result["input_tokens"] + 8 <= 200
     assert 0 < result["units_after_truncation"] < result["units_before_truncation"]
     assert result["truncated"] is True
@@ -74,7 +75,8 @@ def test_all_current_never_partial_pair():
     result = select_all_current(
         snap, units, budget, context_length=200, max_new_tokens=8,
         prompt_builder=lambda s, acc: pack_context(
-            "source claim", s, acc)["prompt"])
+            "source claim", s, acc)["prompt"],
+        chat_counter=lambda p: len(p.split()))
     # every accepted unit appears whole inside the final prompt
     packed = pack_context("source claim", snap,
                           result["selected_units"])["prompt"]
@@ -89,7 +91,8 @@ def test_all_current_preserves_snapshot_order():
     result = select_all_current(
         snap, units, budget, context_length=200, max_new_tokens=8,
         prompt_builder=lambda s, acc: pack_context(
-            "source claim", s, acc)["prompt"])
+            "source claim", s, acc)["prompt"],
+        chat_counter=lambda p: len(p.split()))
     accepted_ids = [u["node_id"] for u in result["selected_units"]]
     chronological = [nid for nid in snap["node_ids"] if nid in accepted_ids]
     assert accepted_ids == chronological
@@ -109,7 +112,8 @@ def test_all_current_fits_when_small():
     result = select_all_current(
         snap, units, budget, context_length=4096, max_new_tokens=8,
         prompt_builder=lambda s, acc: pack_context(
-            "source claim", s, acc)["prompt"])
+            "source claim", s, acc)["prompt"],
+        chat_counter=lambda p: len(p.split()))
     assert result["truncated"] is False
     assert result["units_after_truncation"] == 1
     assert result["tokens_dropped"] == 0

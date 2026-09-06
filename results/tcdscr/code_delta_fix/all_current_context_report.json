@@ -1,0 +1,20 @@
+{
+ "model_context_length": 40960,
+ "max_new_tokens": 8,
+ "token_counting_mode": "qwen_chat_template",
+ "counter_implementation": "count_chat_input_tokens: apply_chat_template(single user message, add_generation_prompt=True, enable_thinking=False) then tokenize \u2014 shared with QwenRumorLLM._chat_text",
+ "tests": {
+  "overflow_failures": 0,
+  "partial_pair_failures": 0,
+  "chat_token_mismatch_failures": 0
+ },
+ "synthetic_near_limit": {
+  "input_tokens": 40868,
+  "evidence_tokens": 40686,
+  "truncated": true,
+  "units_before_truncation": 120,
+  "units_after_truncation": 96,
+  "tokens_dropped": 10219,
+  "input_plus_reserve": 40876
+ }
+}

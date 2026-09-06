@@ -123,37 +123,53 @@ def rank_candidates(name, snapshot, units, ctx):
 
 
 def select_all_current(snapshot, units, budget_selector, context_length,
-                       max_new_tokens, prompt_builder):
-    """All-current under the model context limit (delta-fix §17–§22).
+                       max_new_tokens, prompt_builder, chat_counter=None):
+    """All-current under the model context limit (delta-fix §17–§22;
+    final-patch §1–§3).
 
     Definition: the full social evidence the model can actually read at this
     snapshot. Units are added whole in deterministic snapshot order (§4.1
     timestamp ascending, original_order ties) until including the next pair
-    would push the FINAL prompt token count + max_new_tokens past the
+    would push the FINAL CHAT-FORMATTED prompt + max_new_tokens past the
     context length — then stop. Pairs are atomic; nothing is truncated.
+
+    ``chat_counter(prompt_text)`` must count tokens exactly the way
+    ``QwenRumorLLM`` builds its inference input (apply_chat_template →
+    tokenize); pass ``count_chat_input_tokens`` from the qwen wrapper. Token
+    accounting is strictly separated:
+      - ``evidence_tokens``: rendered Reply–Parent units kept in the prompt;
+      - ``input_tokens``: source + snapshot metadata + evidence + task
+        instructions, chat-formatted — never reported as evidence_tokens.
     """
+    if chat_counter is None:
+        raise ValueError(
+            "all_current requires a chat-formatted token counter "
+            "(count_chat_input_tokens) — raw prompt counting is forbidden")
     accepted = []
     for unit in units:
         candidate = accepted + [unit]
         prompt = prompt_builder(snapshot, candidate)
-        total = budget_selector.count_tokens(prompt)
-        if total + max_new_tokens > context_length:
+        if chat_counter(prompt) + max_new_tokens > context_length:
             break
         accepted = candidate
     final_prompt = prompt_builder(snapshot, accepted)
-    input_tokens = budget_selector.count_tokens(final_prompt)
+    input_tokens = chat_counter(final_prompt)
     if input_tokens + max_new_tokens > context_length:
         raise RuntimeError(
             "all_current prompt exceeds the model context limit")
+
+    from ..context.evidence_unit import render_evidence
+    evidence_tokens = sum(
+        budget_selector.count_tokens(render_evidence(u, i + 1))
+        for i, u in enumerate(accepted))
     # tokens contributed by the excluded pairs (rendered in their own order)
-    dropped = 0
-    for i, unit in enumerate(units[len(accepted):], start=len(accepted) + 1):
-        from ..context.evidence_unit import render_evidence
-        dropped += budget_selector.count_tokens(render_evidence(unit, i))
+    dropped = sum(
+        budget_selector.count_tokens(render_evidence(u, i + 1))
+        for i, u in enumerate(units[len(accepted):], start=len(accepted) + 1))
     return {
         "selected_units": accepted,
         "selected_node_ids": [u["node_id"] for u in accepted],
-        "evidence_tokens": input_tokens,
+        "evidence_tokens": evidence_tokens,
         "truncated": len(accepted) < len(units),
         "units_before_truncation": len(units),
         "units_after_truncation": len(accepted),
@@ -170,16 +186,19 @@ def select_evidence(name, snapshot, units, ctx, budget_selector):
         return [], 0, scores
     if name == "all_current":
         # context guard is mandatory: the caller must supply the resolved
-        # context length, a prompt builder over accepted units, and the
-        # generation reserve (delta-fix §17–§22)
-        for key in ("context_length", "max_new_tokens", "prompt_builder"):
+        # context length, a prompt builder over accepted units, the
+        # generation reserve, and the chat-formatted counter (final patch
+        # §1–§3)
+        for key in ("context_length", "max_new_tokens", "prompt_builder",
+                    "chat_counter"):
             if key not in ctx:
                 raise ValueError(
-                    f"all_current requires ctx[{key!r}] — unbounded prompts "
-                    "are forbidden")
+                    f"all_current requires ctx[{key!r}] — unbounded or "
+                    "raw-counted prompts are forbidden")
         result = select_all_current(
             snapshot, units, budget_selector, ctx["context_length"],
-            ctx["max_new_tokens"], ctx["prompt_builder"])
+            ctx["max_new_tokens"], ctx["prompt_builder"],
+            chat_counter=ctx["chat_counter"])
         return result["selected_units"], result["evidence_tokens"], scores
     order = sorted(range(len(units)),
                    key=lambda i: (-scores[i], units[i]["order"]))

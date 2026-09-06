@@ -107,6 +107,41 @@ The 1021 cap rule was NOT changed.
 - numeric test: `test_fidelity_loss_matches_manual_kl` (value equality with
   the manual KL, zero for identical distributions, direction check) — pass
 
+## All-current Chat-template Accounting: PASS
+
+Final patch: All-current token accounting now matches real Qwen3-8B
+inference exactly.
+
+- Shared implementation: `format_chat_prompt(tokenizer, prompt)` /
+  `count_chat_input_tokens(tokenizer, prompt)` in
+  `project/tcdscr/llm/qwen_wrapper.py` — single user message,
+  `add_generation_prompt=True`, `enable_thinking=False`; `QwenRumorLLM` and
+  the All-current limit check call the same functions, so they cannot drift.
+- Strict separation: `evidence_tokens` counts only the rendered kept
+  Reply–Parent units; `input_tokens` is the full chat-formatted prompt
+  (source + snapshot metadata + evidence + task). SOURCE_ONLY rows report
+  `evidence_tokens = 0`; the largest smoke row is input 35,816 /
+  evidence 35,461, both well inside 40,960.
+- Truncation decisions run on the chat-formatted prompt: candidate units ->
+  pack_context -> apply_chat_template -> tokenize ->
+  `input_tokens + 8 <= context_length` (40960 resolved dynamically via
+  `resolve_context_length`, never hard-coded).
+- Report: `results/tcdscr/code_delta_fix/all_current_context_report.json` —
+  model_context_length 40960, max_new_tokens 8, token_counting_mode
+  "qwen_chat_template", overflow/partial-pair/chat-mismatch failures all 0;
+  synthetic near-limit stress (120 whole pairs) stops at input_tokens
+  40,868 (+8 reserve = 40,876 <= 40,960), evidence_tokens 40,686, 96/120
+  units kept, truncated.
+- Tests: `test_chat_token_count_matches_qwen_wrapper`,
+  `test_all_current_limit_uses_chat_formatted_tokens`,
+  `test_all_current_near_limit_never_overflows`,
+  `test_all_current_evidence_tokens_exclude_source_and_instruction` — pass.
+- Note: the Qwen3 template pre-fills an EMPTY `<think>
+
+</think>` block
+  when thinking is disabled; that is the expected disabled-thinking marker
+  and the tests assert the block is empty.
+
 ## Ma-Weibo Text Fallback
 - total nodes: 3,805,656
 - fallback count: 0 (`original_text` used for every node; 17 blank-text
@@ -116,10 +151,10 @@ The 1021 cap rule was NOT changed.
   (`text_source_counts` per event, `maweibo_text_fallback_report.json`)
 
 ## Tests
-- total: 79
-- passed: 79
-- failed: 0 (`test_report.txt`; includes the 13 delta-fix tests + the §37
-  adversarial integration test)
+- total: 83
+- passed: 83
+- failed: 0 (`test_report.txt`; includes the 13 delta-fix tests, the §37
+  adversarial integration test, and the 4 chat-accounting tests)
 
 ## Tiny Smoke
 - PHEME: 16 events, SOURCE_ONLY/15m/1h, 10 LLM requests — completed

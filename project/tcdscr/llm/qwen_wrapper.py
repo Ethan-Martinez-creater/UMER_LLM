@@ -19,6 +19,30 @@ GENERATION_CONFIG = {
 }
 
 
+def format_chat_prompt(tokenizer, prompt: str) -> str:
+    """The single chat-formatting implementation (single user message,
+    add_generation_prompt=True, thinking disabled when supported).
+
+    ``QwenRumorLLM`` and all-current context accounting both call this, so
+    the context-limit check can never drift from real inference inputs.
+    """
+    messages = [{"role": "user", "content": prompt}]
+    try:
+        return tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True,
+            enable_thinking=False)
+    except TypeError:
+        # older chat templates without the enable_thinking kwarg
+        return tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True)
+
+
+def count_chat_input_tokens(tokenizer, prompt: str) -> int:
+    """Token count of the chat-formatted input the model actually sees."""
+    text = format_chat_prompt(tokenizer, prompt)
+    return len(tokenizer(text, add_special_tokens=True)["input_ids"])
+
+
 class QwenRumorLLM:
 
     def __init__(self, model_path: str, device: str = "cuda"):
@@ -35,15 +59,7 @@ class QwenRumorLLM:
         self.model.eval()
 
     def _chat_text(self, prompt: str) -> str:
-        messages = [{"role": "user", "content": prompt}]
-        try:
-            return self.tokenizer.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True,
-                enable_thinking=False)
-        except TypeError:
-            # older chat templates without the enable_thinking kwarg
-            return self.tokenizer.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True)
+        return format_chat_prompt(self.tokenizer, prompt)
 
     @torch.no_grad()
     def generate(self, prompt: str) -> str:

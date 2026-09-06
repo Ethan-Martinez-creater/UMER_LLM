@@ -73,28 +73,20 @@ max_depth = 1
 
 选中的社会证据
 [E1]
+time = 648s
+depth = 1
+parent:
+如果本届伦敦奥运会结束后，中国代表队能在金牌榜上排第一，现决定：参与转发本微博并关注@慧思外语教育网，每人送一台iPhone4S+iPad3。@5个好友即送iPhone4S，@10个好友以上即送iPhone4S+iPad3！绝对真实！见图上的iPhone4S、iPad3（不玩文字游戏，绝对每人送一台！欢迎截图！叫上你的好友齐参与！）
+reply:
+ @咪咪163 @_小黑黑黑丶 @Azusa果断地没忘记三千院傲娇 @baka子 @爆爆团-DrEamLeSs初霜 @大佐M君傲娇义妹控 @怪叔叔-萌爱-梓喵 @Hatsune_Miku喵 @花泽黑子 @KVE黑色旋影
+
+[E2]
 time = 747s
 depth = 1
 parent:
 如果本届伦敦奥运会结束后，中国代表队能在金牌榜上排第一，现决定：参与转发本微博并关注@慧思外语教育网，每人送一台iPhone4S+iPad3。@5个好友即送iPhone4S，@10个好友以上即送iPhone4S+iPad3！绝对真实！见图上的iPhone4S、iPad3（不玩文字游戏，绝对每人送一台！欢迎截图！叫上你的好友齐参与！）
 reply:
  @Jo_oyxiaoxia @陳曉怡的世界很美好- @Andrea-朱日堯禾呈 @Raymond杨晓芝 @陪你一世--恩
-
-[E2]
-time = 445s
-depth = 1
-parent:
-如果本届伦敦奥运会结束后，中国代表队能在金牌榜上排第一，现决定：参与转发本微博并关注@慧思外语教育网，每人送一台iPhone4S+iPad3。@5个好友即送iPhone4S，@10个好友以上即送iPhone4S+iPad3！绝对真实！见图上的iPhone4S、iPad3（不玩文字游戏，绝对每人送一台！欢迎截图！叫上你的好友齐参与！）
-reply:
-转转转 @纙彩孋 @z_chuping @Taosyuan @黄秋萍cfw果籽 @郑丽卿Zz
-
-[E3]
-time = 839s
-depth = 1
-parent:
-如果本届伦敦奥运会结束后，中国代表队能在金牌榜上排第一，现决定：参与转发本微博并关注@慧思外语教育网，每人送一台iPhone4S+iPad3。@5个好友即送iPhone4S，@10个好友以上即送iPhone4S+iPad3！绝对真实！见图上的iPhone4S、iPad3（不玩文字游戏，绝对每人送一台！欢迎截图！叫上你的好友齐参与！）
-reply:
-@等喵的兔子荻 @哆啦2BI梦 @Tanna小僑 @半枝莲花一生境遇 @iris虹笔全身痛 @被周笔畅嫌弃的天使 @艾凉 @angelBI @Sophie_秀 @笨笨爱笔 [加油][冠军诞生]必须兑现啊。。不然。。。。。
 
 任务
 仅依据上面的源帖和社会证据，

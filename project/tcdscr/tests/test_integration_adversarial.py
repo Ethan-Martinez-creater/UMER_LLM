@@ -106,7 +106,8 @@ def test_adversarial_event_full_chain():
             result = select_all_current(
                 snap, units, budget, context_length=120, max_new_tokens=8,
                 prompt_builder=lambda s, acc: pack_context(
-                    source_text, s, acc)["prompt"])
+                    source_text, s, acc)["prompt"],
+                chat_counter=lambda p: len(p.split()))
             assert result["input_tokens"] + 8 <= 120
 
             # 5. same-timestamp replies keep deterministic snapshot order:

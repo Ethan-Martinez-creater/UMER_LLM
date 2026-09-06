@@ -54,18 +54,18 @@
    },
    "turnover": {
     "transitions": 25,
-    "mean_turnover": 0.31326984126984125
+    "mean_turnover": 0.34184126984126983
    },
    "persistent_new": {
-    "persistent": 26,
-    "new": 96,
-    "persistent_ratio": 0.21311475409836064
+    "persistent": 21,
+    "new": 100,
+    "persistent_ratio": 0.17355371900826447
    },
    "efficiency": {
-    "mean_evidence_tokens": 197.9375,
+    "mean_evidence_tokens": 200.33333333333334,
     "median_evidence_tokens": 96,
-    "mean_total_prompt_tokens": 302.875,
-    "p90_total_prompt_tokens": 601.6,
+    "mean_total_prompt_tokens": 305.375,
+    "p90_total_prompt_tokens": 615.3,
     "n_rows": 48
    },
    "cap": {
@@ -86,15 +86,15 @@
     "events_with_depth_overflow": 0
    },
    "encoder_history": [
-    0.954228937625885
+    0.862463116645813
    ],
    "selector_history": [
     {
-     "loss": 0.8779534479746451,
+     "loss": 0.9981591816131885,
      "events": 13,
-     "l_cls": 7.061143644154072,
-     "l_fid": 4.2139900624752045,
-     "l_div": 2.7652262076735497
+     "l_cls": 7.985805064439774,
+     "l_fid": 4.8565833903849125,
+     "l_div": 2.6736181527376175
     }
    ],
    "device": "cuda",
@@ -155,18 +155,18 @@
    },
    "turnover": {
     "transitions": 32,
-    "mean_turnover": 0.4275874732905983
+    "mean_turnover": 0.43245161002997695
    },
    "persistent_new": {
-    "persistent": 17,
-    "new": 153,
-    "persistent_ratio": 0.1
+    "persistent": 18,
+    "new": 166,
+    "persistent_ratio": 0.09782608695652174
    },
    "efficiency": {
-    "mean_evidence_tokens": 330.0208333333333,
-    "median_evidence_tokens": 488,
-    "mean_total_prompt_tokens": 468.5208333333333,
-    "p90_total_prompt_tokens": 672.0,
+    "mean_evidence_tokens": 328.4791666666667,
+    "median_evidence_tokens": 490,
+    "mean_total_prompt_tokens": 467.4375,
+    "p90_total_prompt_tokens": 675.5,
     "n_rows": 48
    },
    "cap": {
@@ -187,15 +187,15 @@
     "events_with_depth_overflow": 0
    },
    "encoder_history": [
-    0.6604151129722595
+    0.6083471179008484
    ],
    "selector_history": [
     {
-     "loss": 1.1516380133107305,
+     "loss": 0.9233920872211456,
      "events": 16,
-     "l_cls": 15.525770917534828,
-     "l_fid": 2.5255627106525935,
-     "l_div": 7.49748857319355
+     "l_cls": 9.22055570781231,
+     "l_fid": 5.179406970739365,
+     "l_div": 7.486208379268646
     }
    ],
    "device": "cuda",
