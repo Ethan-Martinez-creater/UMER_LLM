@@ -1,0 +1,74 @@
+{
+ "SOURCE_ONLY": {
+  "n": 932,
+  "accuracy": 0.6148068669527897,
+  "macro_f1": 0.5560744749589692,
+  "weighted_f1": 0.5546884598086727,
+  "rumor_f1": 0.7175452399685288,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "5": {
+  "n": 932,
+  "accuracy": 0.8626609442060086,
+  "macro_f1": 0.8620504637017508,
+  "weighted_f1": 0.8619716920237819,
+  "rumor_f1": 0.8712273641851106,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "15": {
+  "n": 932,
+  "accuracy": 0.8819742489270386,
+  "macro_f1": 0.8818823247475656,
+  "weighted_f1": 0.8818540403846508,
+  "rumor_f1": 0.8851774530271398,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "30": {
+  "n": 932,
+  "accuracy": 0.9023605150214592,
+  "macro_f1": 0.9023199191949904,
+  "weighted_f1": 0.9023028262154246,
+  "rumor_f1": 0.9043112513144058,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "60": {
+  "n": 932,
+  "accuracy": 0.9087982832618026,
+  "macro_f1": 0.9087956582957153,
+  "weighted_f1": 0.9087914583499757,
+  "rumor_f1": 0.9092849519743863,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "180": {
+  "n": 932,
+  "accuracy": 0.9130901287553648,
+  "macro_f1": 0.9130852258008808,
+  "weighted_f1": 0.9130796224243275,
+  "rumor_f1": 0.9137380191693292,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "360": {
+  "n": 932,
+  "accuracy": 0.9141630901287554,
+  "macro_f1": 0.9141567652205951,
+  "weighted_f1": 0.9141504403124346,
+  "rumor_f1": 0.9148936170212766,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ },
+ "1440": {
+  "n": 932,
+  "accuracy": 0.9184549356223176,
+  "macro_f1": 0.9184365312956284,
+  "weighted_f1": 0.9184260145375203,
+  "rumor_f1": 0.9196617336152221,
+  "support_rumor": 462,
+  "support_nonrumor": 470
+ }
+}

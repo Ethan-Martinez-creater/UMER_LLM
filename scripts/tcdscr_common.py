@@ -5,6 +5,7 @@ sampling, snapshot assembly, feature construction with the §15 disk cache.
 """
 from __future__ import annotations
 
+import os
 import random
 import sys
 from pathlib import Path
@@ -62,6 +63,101 @@ def label_counts(ids, registry) -> dict:
     for eid in ids:
         counts[registry[eid]] += 1
     return counts
+
+
+class EventSemanticStore:
+    """Per-event 384D text embedding cache: {event_id: {node_id: tensor}}.
+
+    One MiniLM encode per unique text per event; snapshots gather rows from
+    the store instead of re-encoding text at every cutoff. Cache files live
+    under cache_dir/event_texts/<dataset>/<preprocess_version>_<model_hash>/.
+    """
+
+    def __init__(self, cfg, device=None):
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self._encoder = None
+        self._device = device
+        self.cfg = cfg
+        from tcdscr.data.semantic_encoder import (PREPROCESS_VERSION,
+                                                  semantic_model_hash)
+        self.root = os.path.join(
+            cfg.cache_dir, "event_texts", cfg.dataset,
+            f"{PREPROCESS_VERSION}_{semantic_model_hash(cfg.semantic_model_path)}")
+        os.makedirs(self.root, exist_ok=True)
+
+    @property
+    def encoder(self):
+        if self._encoder is None:
+            self._encoder = SemanticEncoder(self.cfg.semantic_model_path,
+                                            self.cfg.dataset,
+                                            device=self._device)
+        return self._encoder
+
+    def _path(self, event_id):
+        return os.path.join(self.root, f"{event_id}.pt")
+
+    def get_store(self, event, cache=None):
+        """Return {node_id: float32 tensor(384)} for the event, encoding any
+        missing nodes. ``cache`` is an optional in-memory
+        {event_id: store} dict updated in place."""
+        eid = event["event_id"]
+        if cache is not None and eid in cache:
+            return cache[eid]
+        path = self._path(eid)
+        store = None
+        if os.path.exists(path):
+            try:
+                store = torch.load(path, map_location="cpu",
+                                   weights_only=True)
+            except Exception:
+                store = None
+        if store is None:
+            store = {}
+        missing = [n["node_id"] for n in event["nodes"]
+                   if n["node_id"] not in store]
+        if missing:
+            by_id = {n["node_id"]: n["text"] for n in event["nodes"]}
+            unique_texts = list({by_id[nid] for nid in missing})
+            emb = self.encoder.encode(unique_texts)
+            text_to_vec = {t: emb[i] for i, t in enumerate(unique_texts)}
+            for nid in missing:
+                store[nid] = text_to_vec[by_id[nid]].clone()
+            tmp = path + ".tmp"
+            torch.save(store, tmp)
+            os.replace(tmp, path)
+        if cache is not None:
+            cache[eid] = store
+        return store
+
+
+def snapshot_features_from_store(event, snapshot, store):
+    """Online Module-3 features: semantics gathered from the store, 1021D
+    signature and 3D summary built fresh for the current snapshot."""
+    sem = torch.stack([store[nid] for nid in snapshot["node_ids"]])
+    return build_snapshot_features(snapshot, sem)
+
+
+def load_split_events(dataset: str, cfg, split):
+    """Load train/validation/test events of a resolved Protocol A split.
+
+    Each event is loaded exactly once; the three id sets are disjoint.
+    """
+    if dataset == "pheme":
+        by_id = {eid: (topic, label, folder)
+                 for eid, topic, label, folder
+                 in pheme_adapter.event_ids(cfg.raw_dir)}
+        load_one = lambda eid: pheme_adapter.load_event(*by_id[eid])
+    elif dataset == "maweibo":
+        labels = dict(maweibo_adapter.event_ids(cfg.raw_dir, cfg.label_file))
+        load_one = lambda eid: maweibo_adapter.load_event(
+            eid, labels[eid], f"{cfg.raw_dir.rstrip('/')}/{eid}.json")
+    else:
+        raise ValueError(dataset)
+    out = {}
+    for seg in ("train", "validation", "test"):
+        out[seg] = [load_one(eid) for eid in sorted(split[seg])]
+    return out
 
 
 def load_events(dataset: str, cfg, limit=None, seed=3090):

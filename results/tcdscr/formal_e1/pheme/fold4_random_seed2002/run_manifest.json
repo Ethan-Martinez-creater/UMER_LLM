@@ -1,0 +1,31 @@
+{
+ "stage": "formal_e1",
+ "dataset": "pheme",
+ "fold": 4,
+ "init": "random",
+ "seed": 2002,
+ "hparams": {
+  "batch_size": 32,
+  "max_epochs": 60,
+  "patience": 7,
+  "lr": 0.0001,
+  "weight_decay": 0.05,
+  "label_smoothing": 0.1,
+  "epochs_run": 60
+ },
+ "split": {
+  "train": 4626,
+  "validation": 514,
+  "test": 1285
+ },
+ "partition_seed": 3090,
+ "init_info": {
+  "mode": "random",
+  "n_copied_tensors": 0
+ },
+ "best_epoch": 10,
+ "best_val_macro_f1": 0.8860388524068095,
+ "device": "cuda",
+ "checkpoint_sha16": "095e3b06c50f710f",
+ "encoder_umer_ckpt": null
+}

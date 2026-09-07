@@ -1,0 +1,1268 @@
+=== pheme fold0 random seed2000 20:55:07 ===
+[pheme fold0 random s2000] epoch 0 loss=0.5910 val_f1=0.7801 best=0.7801
+[pheme fold0 random s2000] epoch 1 loss=0.4920 val_f1=0.8003 best=0.8003
+[pheme fold0 random s2000] epoch 2 loss=0.4623 val_f1=0.8313 best=0.8313
+[pheme fold0 random s2000] epoch 3 loss=0.4386 val_f1=0.8480 best=0.8480
+[pheme fold0 random s2000] epoch 4 loss=0.4172 val_f1=0.8455 best=0.8480
+[pheme fold0 random s2000] epoch 5 loss=0.3965 val_f1=0.8385 best=0.8480
+[pheme fold0 random s2000] epoch 6 loss=0.3758 val_f1=0.8542 best=0.8542
+[pheme fold0 random s2000] epoch 7 loss=0.3612 val_f1=0.8606 best=0.8606
+[pheme fold0 random s2000] epoch 8 loss=0.3488 val_f1=0.8451 best=0.8606
+[pheme fold0 random s2000] epoch 9 loss=0.3346 val_f1=0.8518 best=0.8606
+[pheme fold0 random s2000] epoch 10 loss=0.3261 val_f1=0.8567 best=0.8606
+[pheme fold0 random s2000] epoch 11 loss=0.3121 val_f1=0.8424 best=0.8606
+[pheme fold0 random s2000] epoch 12 loss=0.3057 val_f1=0.8504 best=0.8606
+[pheme fold0 random s2000] epoch 13 loss=0.2941 val_f1=0.8420 best=0.8606
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_random_seed2000 best_epoch 7 val 0.8606
+=== pheme_fold0_random_seed2000 21:47:43 ===
+[pheme fold0 random s2000] epoch 0 loss=0.5910 val_f1=0.7801 best=0.7801
+[pheme fold0 random s2000] epoch 1 loss=0.4920 val_f1=0.8003 best=0.8003
+[pheme fold0 random s2000] epoch 2 loss=0.4623 val_f1=0.8313 best=0.8313
+[pheme fold0 random s2000] epoch 3 loss=0.4386 val_f1=0.8480 best=0.8480
+[pheme fold0 random s2000] epoch 4 loss=0.4172 val_f1=0.8455 best=0.8480
+[pheme fold0 random s2000] epoch 5 loss=0.3965 val_f1=0.8385 best=0.8480
+[pheme fold0 random s2000] epoch 6 loss=0.3758 val_f1=0.8542 best=0.8542
+[pheme fold0 random s2000] epoch 7 loss=0.3612 val_f1=0.8606 best=0.8606
+[pheme fold0 random s2000] epoch 8 loss=0.3488 val_f1=0.8451 best=0.8606
+[pheme fold0 random s2000] epoch 9 loss=0.3346 val_f1=0.8518 best=0.8606
+[pheme fold0 random s2000] epoch 10 loss=0.3261 val_f1=0.8567 best=0.8606
+[pheme fold0 random s2000] epoch 11 loss=0.3121 val_f1=0.8424 best=0.8606
+[pheme fold0 random s2000] epoch 12 loss=0.3057 val_f1=0.8504 best=0.8606
+[pheme fold0 random s2000] epoch 13 loss=0.2941 val_f1=0.8420 best=0.8606
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_random_seed2000 best_epoch 7 val 0.8606
+exit=0
+=== pheme_fold0_random_seed2001 21:50:03 ===
+[pheme fold0 random s2001] epoch 0 loss=0.6094 val_f1=0.7841 best=0.7841
+[pheme fold0 random s2001] epoch 1 loss=0.5015 val_f1=0.7990 best=0.7990
+[pheme fold0 random s2001] epoch 2 loss=0.4677 val_f1=0.8218 best=0.8218
+[pheme fold0 random s2001] epoch 3 loss=0.4353 val_f1=0.8325 best=0.8325
+[pheme fold0 random s2001] epoch 4 loss=0.4130 val_f1=0.8224 best=0.8325
+[pheme fold0 random s2001] epoch 5 loss=0.3943 val_f1=0.8147 best=0.8325
+[pheme fold0 random s2001] epoch 6 loss=0.3826 val_f1=0.8472 best=0.8472
+[pheme fold0 random s2001] epoch 7 loss=0.3634 val_f1=0.8520 best=0.8520
+[pheme fold0 random s2001] epoch 8 loss=0.3500 val_f1=0.8573 best=0.8573
+[pheme fold0 random s2001] epoch 9 loss=0.3309 val_f1=0.8542 best=0.8573
+[pheme fold0 random s2001] epoch 10 loss=0.3216 val_f1=0.8581 best=0.8581
+[pheme fold0 random s2001] epoch 11 loss=0.3154 val_f1=0.8537 best=0.8581
+[pheme fold0 random s2001] epoch 12 loss=0.3009 val_f1=0.8331 best=0.8581
+[pheme fold0 random s2001] epoch 13 loss=0.3030 val_f1=0.8625 best=0.8625
+[pheme fold0 random s2001] epoch 14 loss=0.2865 val_f1=0.8356 best=0.8625
+[pheme fold0 random s2001] epoch 15 loss=0.2884 val_f1=0.8598 best=0.8625
+[pheme fold0 random s2001] epoch 16 loss=0.2804 val_f1=0.8532 best=0.8625
+[pheme fold0 random s2001] epoch 17 loss=0.2694 val_f1=0.8635 best=0.8635
+[pheme fold0 random s2001] epoch 18 loss=0.2666 val_f1=0.8409 best=0.8635
+[pheme fold0 random s2001] epoch 19 loss=0.2586 val_f1=0.8477 best=0.8635
+[pheme fold0 random s2001] epoch 20 loss=0.2567 val_f1=0.8780 best=0.8780
+[pheme fold0 random s2001] epoch 21 loss=0.2608 val_f1=0.8350 best=0.8780
+[pheme fold0 random s2001] epoch 22 loss=0.2523 val_f1=0.8499 best=0.8780
+[pheme fold0 random s2001] epoch 23 loss=0.2537 val_f1=0.8609 best=0.8780
+[pheme fold0 random s2001] epoch 24 loss=0.2463 val_f1=0.8630 best=0.8780
+[pheme fold0 random s2001] epoch 25 loss=0.2484 val_f1=0.8623 best=0.8780
+[pheme fold0 random s2001] epoch 26 loss=0.2385 val_f1=0.8652 best=0.8780
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_random_seed2001 best_epoch 20 val 0.878
+exit=0
+=== pheme_fold0_random_seed2002 21:53:53 ===
+[pheme fold0 random s2002] epoch 0 loss=0.5836 val_f1=0.7913 best=0.7913
+[pheme fold0 random s2002] epoch 1 loss=0.5006 val_f1=0.7890 best=0.7913
+[pheme fold0 random s2002] epoch 2 loss=0.4714 val_f1=0.8148 best=0.8148
+[pheme fold0 random s2002] epoch 3 loss=0.4303 val_f1=0.8215 best=0.8215
+[pheme fold0 random s2002] epoch 4 loss=0.4128 val_f1=0.8248 best=0.8248
+[pheme fold0 random s2002] epoch 5 loss=0.3866 val_f1=0.8393 best=0.8393
+[pheme fold0 random s2002] epoch 6 loss=0.3741 val_f1=0.8567 best=0.8567
+[pheme fold0 random s2002] epoch 7 loss=0.3627 val_f1=0.8344 best=0.8567
+[pheme fold0 random s2002] epoch 8 loss=0.3443 val_f1=0.8363 best=0.8567
+[pheme fold0 random s2002] epoch 9 loss=0.3293 val_f1=0.8668 best=0.8668
+[pheme fold0 random s2002] epoch 10 loss=0.3199 val_f1=0.8331 best=0.8668
+[pheme fold0 random s2002] epoch 11 loss=0.3140 val_f1=0.8338 best=0.8668
+[pheme fold0 random s2002] epoch 12 loss=0.3076 val_f1=0.8661 best=0.8668
+[pheme fold0 random s2002] epoch 13 loss=0.2925 val_f1=0.8549 best=0.8668
+[pheme fold0 random s2002] epoch 14 loss=0.2868 val_f1=0.8545 best=0.8668
+[pheme fold0 random s2002] epoch 15 loss=0.2773 val_f1=0.8606 best=0.8668
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_random_seed2002 best_epoch 9 val 0.8668
+exit=0
+=== pheme_fold0_umer_seed2000 21:58:43 ===
+[pheme fold0 umer s2000] epoch 0 loss=0.4369 val_f1=0.8707 best=0.8707
+[pheme fold0 umer s2000] epoch 1 loss=0.4032 val_f1=0.8659 best=0.8707
+[pheme fold0 umer s2000] epoch 2 loss=0.3856 val_f1=0.8731 best=0.8731
+[pheme fold0 umer s2000] epoch 3 loss=0.3646 val_f1=0.8863 best=0.8863
+[pheme fold0 umer s2000] epoch 4 loss=0.3547 val_f1=0.8685 best=0.8863
+[pheme fold0 umer s2000] epoch 5 loss=0.3451 val_f1=0.8700 best=0.8863
+[pheme fold0 umer s2000] epoch 6 loss=0.3259 val_f1=0.8649 best=0.8863
+[pheme fold0 umer s2000] epoch 7 loss=0.3215 val_f1=0.8888 best=0.8888
+[pheme fold0 umer s2000] epoch 8 loss=0.3053 val_f1=0.8787 best=0.8888
+[pheme fold0 umer s2000] epoch 9 loss=0.3048 val_f1=0.8572 best=0.8888
+[pheme fold0 umer s2000] epoch 10 loss=0.2885 val_f1=0.8965 best=0.8965
+[pheme fold0 umer s2000] epoch 11 loss=0.2907 val_f1=0.8750 best=0.8965
+[pheme fold0 umer s2000] epoch 12 loss=0.2874 val_f1=0.8828 best=0.8965
+[pheme fold0 umer s2000] epoch 13 loss=0.2778 val_f1=0.8878 best=0.8965
+[pheme fold0 umer s2000] epoch 14 loss=0.2719 val_f1=0.8854 best=0.8965
+[pheme fold0 umer s2000] epoch 15 loss=0.2802 val_f1=0.8684 best=0.8965
+[pheme fold0 umer s2000] epoch 16 loss=0.2630 val_f1=0.8573 best=0.8965
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_umer_seed2000 best_epoch 10 val 0.8965
+exit=0
+=== pheme_fold0_umer_seed2001 22:11:35 ===
+[pheme fold0 umer s2001] epoch 0 loss=0.4385 val_f1=0.8573 best=0.8573
+[pheme fold0 umer s2001] epoch 1 loss=0.3964 val_f1=0.8900 best=0.8900
+[pheme fold0 umer s2001] epoch 2 loss=0.3855 val_f1=0.8669 best=0.8900
+[pheme fold0 umer s2001] epoch 3 loss=0.3595 val_f1=0.8722 best=0.8900
+[pheme fold0 umer s2001] epoch 4 loss=0.3540 val_f1=0.8500 best=0.8900
+[pheme fold0 umer s2001] epoch 5 loss=0.3393 val_f1=0.8483 best=0.8900
+[pheme fold0 umer s2001] epoch 6 loss=0.3282 val_f1=0.8802 best=0.8900
+[pheme fold0 umer s2001] epoch 7 loss=0.3150 val_f1=0.8678 best=0.8900
+[pheme fold0 umer s2001] epoch 8 loss=0.3108 val_f1=0.8978 best=0.8978
+[pheme fold0 umer s2001] epoch 9 loss=0.2937 val_f1=0.8671 best=0.8978
+[pheme fold0 umer s2001] epoch 10 loss=0.2940 val_f1=0.8697 best=0.8978
+[pheme fold0 umer s2001] epoch 11 loss=0.2922 val_f1=0.8915 best=0.8978
+[pheme fold0 umer s2001] epoch 12 loss=0.2795 val_f1=0.8621 best=0.8978
+[pheme fold0 umer s2001] epoch 13 loss=0.2753 val_f1=0.8782 best=0.8978
+[pheme fold0 umer s2001] epoch 14 loss=0.2729 val_f1=0.8629 best=0.8978
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_umer_seed2001 best_epoch 8 val 0.8978
+exit=0
+=== pheme_fold0_umer_seed2002 22:22:29 ===
+[pheme fold0 umer s2002] epoch 0 loss=0.4342 val_f1=0.8639 best=0.8639
+[pheme fold0 umer s2002] epoch 1 loss=0.4018 val_f1=0.8863 best=0.8863
+[pheme fold0 umer s2002] epoch 2 loss=0.3850 val_f1=0.8867 best=0.8867
+[pheme fold0 umer s2002] epoch 3 loss=0.3710 val_f1=0.8763 best=0.8867
+[pheme fold0 umer s2002] epoch 4 loss=0.3523 val_f1=0.8621 best=0.8867
+[pheme fold0 umer s2002] epoch 5 loss=0.3376 val_f1=0.8846 best=0.8867
+[pheme fold0 umer s2002] epoch 6 loss=0.3301 val_f1=0.8912 best=0.8912
+[pheme fold0 umer s2002] epoch 7 loss=0.3190 val_f1=0.8768 best=0.8912
+[pheme fold0 umer s2002] epoch 8 loss=0.3135 val_f1=0.8804 best=0.8912
+[pheme fold0 umer s2002] epoch 9 loss=0.3041 val_f1=0.8778 best=0.8912
+[pheme fold0 umer s2002] epoch 10 loss=0.2950 val_f1=0.8841 best=0.8912
+[pheme fold0 umer s2002] epoch 11 loss=0.2894 val_f1=0.8554 best=0.8912
+[pheme fold0 umer s2002] epoch 12 loss=0.2831 val_f1=0.8689 best=0.8912
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_umer_seed2002 best_epoch 6 val 0.8912
+exit=0
+=== pheme_fold1_random_seed2000 22:33:11 ===
+[pheme fold1 random s2000] epoch 0 loss=0.6123 val_f1=0.7654 best=0.7654
+[pheme fold1 random s2000] epoch 1 loss=0.5082 val_f1=0.7884 best=0.7884
+[pheme fold1 random s2000] epoch 2 loss=0.4622 val_f1=0.8156 best=0.8156
+[pheme fold1 random s2000] epoch 3 loss=0.4411 val_f1=0.8208 best=0.8208
+[pheme fold1 random s2000] epoch 4 loss=0.4255 val_f1=0.8243 best=0.8243
+[pheme fold1 random s2000] epoch 5 loss=0.4040 val_f1=0.8392 best=0.8392
+[pheme fold1 random s2000] epoch 6 loss=0.3839 val_f1=0.8328 best=0.8392
+[pheme fold1 random s2000] epoch 7 loss=0.3639 val_f1=0.8496 best=0.8496
+[pheme fold1 random s2000] epoch 8 loss=0.3502 val_f1=0.8466 best=0.8496
+[pheme fold1 random s2000] epoch 9 loss=0.3390 val_f1=0.8551 best=0.8551
+[pheme fold1 random s2000] epoch 10 loss=0.3212 val_f1=0.8560 best=0.8560
+[pheme fold1 random s2000] epoch 11 loss=0.3202 val_f1=0.8551 best=0.8560
+[pheme fold1 random s2000] epoch 12 loss=0.3070 val_f1=0.8564 best=0.8564
+[pheme fold1 random s2000] epoch 13 loss=0.3006 val_f1=0.8607 best=0.8607
+[pheme fold1 random s2000] epoch 14 loss=0.2920 val_f1=0.8617 best=0.8617
+[pheme fold1 random s2000] epoch 15 loss=0.2870 val_f1=0.8504 best=0.8617
+[pheme fold1 random s2000] epoch 16 loss=0.2810 val_f1=0.8648 best=0.8648
+[pheme fold1 random s2000] epoch 17 loss=0.2701 val_f1=0.8647 best=0.8648
+[pheme fold1 random s2000] epoch 18 loss=0.2744 val_f1=0.8657 best=0.8657
+[pheme fold1 random s2000] epoch 19 loss=0.2661 val_f1=0.8609 best=0.8657
+[pheme fold1 random s2000] epoch 20 loss=0.2589 val_f1=0.8549 best=0.8657
+[pheme fold1 random s2000] epoch 21 loss=0.2662 val_f1=0.8606 best=0.8657
+[pheme fold1 random s2000] epoch 22 loss=0.2577 val_f1=0.8661 best=0.8661
+[pheme fold1 random s2000] epoch 23 loss=0.2519 val_f1=0.8645 best=0.8661
+[pheme fold1 random s2000] epoch 24 loss=0.2478 val_f1=0.8678 best=0.8678
+[pheme fold1 random s2000] epoch 25 loss=0.2469 val_f1=0.8710 best=0.8710
+[pheme fold1 random s2000] epoch 26 loss=0.2446 val_f1=0.8667 best=0.8710
+[pheme fold1 random s2000] epoch 27 loss=0.2478 val_f1=0.8561 best=0.8710
+[pheme fold1 random s2000] epoch 28 loss=0.2385 val_f1=0.8764 best=0.8764
+[pheme fold1 random s2000] epoch 29 loss=0.2319 val_f1=0.8590 best=0.8764
+[pheme fold1 random s2000] epoch 30 loss=0.2335 val_f1=0.8539 best=0.8764
+[pheme fold1 random s2000] epoch 31 loss=0.2329 val_f1=0.8542 best=0.8764
+[pheme fold1 random s2000] epoch 32 loss=0.2324 val_f1=0.8620 best=0.8764
+[pheme fold1 random s2000] epoch 33 loss=0.2377 val_f1=0.8516 best=0.8764
+[pheme fold1 random s2000] epoch 34 loss=0.2276 val_f1=0.8542 best=0.8764
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_random_seed2000 best_epoch 28 val 0.8764
+exit=0
+=== pheme_fold1_random_seed2001 22:56:36 ===
+[pheme fold1 random s2001] epoch 0 loss=0.5986 val_f1=0.7778 best=0.7778
+[pheme fold1 random s2001] epoch 1 loss=0.4992 val_f1=0.7902 best=0.7902
+[pheme fold1 random s2001] epoch 2 loss=0.4641 val_f1=0.7808 best=0.7902
+[pheme fold1 random s2001] epoch 3 loss=0.4404 val_f1=0.8118 best=0.8118
+[pheme fold1 random s2001] epoch 4 loss=0.4157 val_f1=0.8353 best=0.8353
+[pheme fold1 random s2001] epoch 5 loss=0.3981 val_f1=0.8299 best=0.8353
+[pheme fold1 random s2001] epoch 6 loss=0.3808 val_f1=0.8589 best=0.8589
+[pheme fold1 random s2001] epoch 7 loss=0.3708 val_f1=0.8443 best=0.8589
+[pheme fold1 random s2001] epoch 8 loss=0.3476 val_f1=0.8311 best=0.8589
+[pheme fold1 random s2001] epoch 9 loss=0.3419 val_f1=0.8258 best=0.8589
+[pheme fold1 random s2001] epoch 10 loss=0.3324 val_f1=0.8430 best=0.8589
+[pheme fold1 random s2001] epoch 11 loss=0.3220 val_f1=0.8356 best=0.8589
+[pheme fold1 random s2001] epoch 12 loss=0.3106 val_f1=0.8415 best=0.8589
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_random_seed2001 best_epoch 6 val 0.8589
+exit=0
+=== pheme_fold1_random_seed2002 23:06:02 ===
+[pheme fold1 random s2002] epoch 0 loss=0.6042 val_f1=0.7357 best=0.7357
+[pheme fold1 random s2002] epoch 1 loss=0.5039 val_f1=0.7922 best=0.7922
+[pheme fold1 random s2002] epoch 2 loss=0.4671 val_f1=0.7954 best=0.7954
+[pheme fold1 random s2002] epoch 3 loss=0.4342 val_f1=0.8255 best=0.8255
+[pheme fold1 random s2002] epoch 4 loss=0.4147 val_f1=0.8214 best=0.8255
+[pheme fold1 random s2002] epoch 5 loss=0.3922 val_f1=0.8280 best=0.8280
+[pheme fold1 random s2002] epoch 6 loss=0.3723 val_f1=0.8360 best=0.8360
+[pheme fold1 random s2002] epoch 7 loss=0.3621 val_f1=0.8307 best=0.8360
+[pheme fold1 random s2002] epoch 8 loss=0.3410 val_f1=0.8404 best=0.8404
+[pheme fold1 random s2002] epoch 9 loss=0.3404 val_f1=0.8410 best=0.8410
+[pheme fold1 random s2002] epoch 10 loss=0.3306 val_f1=0.8250 best=0.8410
+[pheme fold1 random s2002] epoch 11 loss=0.3174 val_f1=0.8328 best=0.8410
+[pheme fold1 random s2002] epoch 12 loss=0.3027 val_f1=0.8462 best=0.8462
+[pheme fold1 random s2002] epoch 13 loss=0.3087 val_f1=0.8540 best=0.8540
+[pheme fold1 random s2002] epoch 14 loss=0.2929 val_f1=0.8570 best=0.8570
+[pheme fold1 random s2002] epoch 15 loss=0.2847 val_f1=0.8469 best=0.8570
+[pheme fold1 random s2002] epoch 16 loss=0.2818 val_f1=0.8529 best=0.8570
+[pheme fold1 random s2002] epoch 17 loss=0.2702 val_f1=0.8465 best=0.8570
+[pheme fold1 random s2002] epoch 18 loss=0.2644 val_f1=0.8399 best=0.8570
+[pheme fold1 random s2002] epoch 19 loss=0.2598 val_f1=0.8652 best=0.8652
+[pheme fold1 random s2002] epoch 20 loss=0.2631 val_f1=0.8700 best=0.8700
+[pheme fold1 random s2002] epoch 21 loss=0.2508 val_f1=0.8590 best=0.8700
+[pheme fold1 random s2002] epoch 22 loss=0.2511 val_f1=0.8422 best=0.8700
+[pheme fold1 random s2002] epoch 23 loss=0.2484 val_f1=0.8639 best=0.8700
+[pheme fold1 random s2002] epoch 24 loss=0.2489 val_f1=0.8538 best=0.8700
+[pheme fold1 random s2002] epoch 25 loss=0.2464 val_f1=0.8295 best=0.8700
+[pheme fold1 random s2002] epoch 26 loss=0.2436 val_f1=0.8458 best=0.8700
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_random_seed2002 best_epoch 20 val 0.87
+exit=0
+=== pheme_fold1_umer_seed2000 23:25:29 ===
+[pheme fold1 umer s2000] epoch 0 loss=0.4484 val_f1=0.8369 best=0.8369
+[pheme fold1 umer s2000] epoch 1 loss=0.4126 val_f1=0.8461 best=0.8461
+[pheme fold1 umer s2000] epoch 2 loss=0.3909 val_f1=0.8601 best=0.8601
+[pheme fold1 umer s2000] epoch 3 loss=0.3734 val_f1=0.8584 best=0.8601
+[pheme fold1 umer s2000] epoch 4 loss=0.3678 val_f1=0.8499 best=0.8601
+[pheme fold1 umer s2000] epoch 5 loss=0.3502 val_f1=0.8619 best=0.8619
+[pheme fold1 umer s2000] epoch 6 loss=0.3451 val_f1=0.8656 best=0.8656
+[pheme fold1 umer s2000] epoch 7 loss=0.3358 val_f1=0.8573 best=0.8656
+[pheme fold1 umer s2000] epoch 8 loss=0.3193 val_f1=0.8491 best=0.8656
+[pheme fold1 umer s2000] epoch 9 loss=0.3068 val_f1=0.8736 best=0.8736
+[pheme fold1 umer s2000] epoch 10 loss=0.2994 val_f1=0.8622 best=0.8736
+[pheme fold1 umer s2000] epoch 11 loss=0.2973 val_f1=0.8753 best=0.8753
+[pheme fold1 umer s2000] epoch 12 loss=0.2856 val_f1=0.8670 best=0.8753
+[pheme fold1 umer s2000] epoch 13 loss=0.2856 val_f1=0.8629 best=0.8753
+[pheme fold1 umer s2000] epoch 14 loss=0.2774 val_f1=0.8744 best=0.8753
+[pheme fold1 umer s2000] epoch 15 loss=0.2679 val_f1=0.8570 best=0.8753
+[pheme fold1 umer s2000] epoch 16 loss=0.2741 val_f1=0.8652 best=0.8753
+[pheme fold1 umer s2000] epoch 17 loss=0.2628 val_f1=0.8684 best=0.8753
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_umer_seed2000 best_epoch 11 val 0.8753
+exit=0
+=== pheme_fold1_umer_seed2001 23:37:40 ===
+[pheme fold1 umer s2001] epoch 0 loss=0.4421 val_f1=0.8431 best=0.8431
+[pheme fold1 umer s2001] epoch 1 loss=0.4106 val_f1=0.8615 best=0.8615
+[pheme fold1 umer s2001] epoch 2 loss=0.3936 val_f1=0.8619 best=0.8619
+[pheme fold1 umer s2001] epoch 3 loss=0.3718 val_f1=0.8524 best=0.8619
+[pheme fold1 umer s2001] epoch 4 loss=0.3623 val_f1=0.8496 best=0.8619
+[pheme fold1 umer s2001] epoch 5 loss=0.3454 val_f1=0.8493 best=0.8619
+[pheme fold1 umer s2001] epoch 6 loss=0.3335 val_f1=0.8564 best=0.8619
+[pheme fold1 umer s2001] epoch 7 loss=0.3301 val_f1=0.8547 best=0.8619
+[pheme fold1 umer s2001] epoch 8 loss=0.3133 val_f1=0.8592 best=0.8619
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_umer_seed2001 best_epoch 2 val 0.8619
+exit=0
+=== pheme_fold1_umer_seed2002 23:45:12 ===
+[pheme fold1 umer s2002] epoch 0 loss=0.4515 val_f1=0.8233 best=0.8233
+[pheme fold1 umer s2002] epoch 1 loss=0.4089 val_f1=0.8466 best=0.8466
+[pheme fold1 umer s2002] epoch 2 loss=0.3889 val_f1=0.8464 best=0.8466
+[pheme fold1 umer s2002] epoch 3 loss=0.3742 val_f1=0.8458 best=0.8466
+[pheme fold1 umer s2002] epoch 4 loss=0.3686 val_f1=0.8504 best=0.8504
+[pheme fold1 umer s2002] epoch 5 loss=0.3415 val_f1=0.8620 best=0.8620
+[pheme fold1 umer s2002] epoch 6 loss=0.3478 val_f1=0.8625 best=0.8625
+[pheme fold1 umer s2002] epoch 7 loss=0.3249 val_f1=0.8437 best=0.8625
+[pheme fold1 umer s2002] epoch 8 loss=0.3217 val_f1=0.8702 best=0.8702
+[pheme fold1 umer s2002] epoch 9 loss=0.3053 val_f1=0.8561 best=0.8702
+[pheme fold1 umer s2002] epoch 10 loss=0.3047 val_f1=0.8686 best=0.8702
+[pheme fold1 umer s2002] epoch 11 loss=0.2935 val_f1=0.8652 best=0.8702
+[pheme fold1 umer s2002] epoch 12 loss=0.2824 val_f1=0.8573 best=0.8702
+[pheme fold1 umer s2002] epoch 13 loss=0.2859 val_f1=0.8717 best=0.8717
+[pheme fold1 umer s2002] epoch 14 loss=0.2750 val_f1=0.8794 best=0.8794
+[pheme fold1 umer s2002] epoch 15 loss=0.2738 val_f1=0.8734 best=0.8794
+[pheme fold1 umer s2002] epoch 16 loss=0.2699 val_f1=0.8616 best=0.8794
+[pheme fold1 umer s2002] epoch 17 loss=0.2693 val_f1=0.8568 best=0.8794
+[pheme fold1 umer s2002] epoch 18 loss=0.2529 val_f1=0.8778 best=0.8794
+[pheme fold1 umer s2002] epoch 19 loss=0.2573 val_f1=0.8780 best=0.8794
+[pheme fold1 umer s2002] epoch 20 loss=0.2559 val_f1=0.8688 best=0.8794
+[pheme fold1 umer s2002] epoch 21 loss=0.2539 val_f1=0.8836 best=0.8836
+[pheme fold1 umer s2002] epoch 22 loss=0.2441 val_f1=0.8720 best=0.8836
+[pheme fold1 umer s2002] epoch 23 loss=0.2471 val_f1=0.8772 best=0.8836
+[pheme fold1 umer s2002] epoch 24 loss=0.2414 val_f1=0.8589 best=0.8836
+[pheme fold1 umer s2002] epoch 25 loss=0.2410 val_f1=0.8661 best=0.8836
+[pheme fold1 umer s2002] epoch 26 loss=0.2387 val_f1=0.8717 best=0.8836
+[pheme fold1 umer s2002] epoch 27 loss=0.2388 val_f1=0.8833 best=0.8836
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_umer_seed2002 best_epoch 21 val 0.8836
+exit=0
+=== pheme_fold2_random_seed2000 00:04:06 ===
+[pheme fold2 random s2000] epoch 0 loss=0.5881 val_f1=0.7729 best=0.7729
+[pheme fold2 random s2000] epoch 1 loss=0.5050 val_f1=0.8043 best=0.8043
+[pheme fold2 random s2000] epoch 2 loss=0.4597 val_f1=0.8309 best=0.8309
+[pheme fold2 random s2000] epoch 3 loss=0.4322 val_f1=0.8341 best=0.8341
+[pheme fold2 random s2000] epoch 4 loss=0.4233 val_f1=0.8426 best=0.8426
+[pheme fold2 random s2000] epoch 5 loss=0.3932 val_f1=0.8462 best=0.8462
+[pheme fold2 random s2000] epoch 6 loss=0.3728 val_f1=0.8497 best=0.8497
+[pheme fold2 random s2000] epoch 7 loss=0.3588 val_f1=0.8496 best=0.8497
+[pheme fold2 random s2000] epoch 8 loss=0.3353 val_f1=0.8429 best=0.8497
+[pheme fold2 random s2000] epoch 9 loss=0.3357 val_f1=0.8582 best=0.8582
+[pheme fold2 random s2000] epoch 10 loss=0.3291 val_f1=0.8689 best=0.8689
+[pheme fold2 random s2000] epoch 11 loss=0.3135 val_f1=0.8530 best=0.8689
+[pheme fold2 random s2000] epoch 12 loss=0.3098 val_f1=0.8529 best=0.8689
+[pheme fold2 random s2000] epoch 13 loss=0.2984 val_f1=0.8625 best=0.8689
+[pheme fold2 random s2000] epoch 14 loss=0.2931 val_f1=0.8516 best=0.8689
+[pheme fold2 random s2000] epoch 15 loss=0.2818 val_f1=0.8548 best=0.8689
+[pheme fold2 random s2000] epoch 16 loss=0.2838 val_f1=0.8456 best=0.8689
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_random_seed2000 best_epoch 10 val 0.8689
+exit=0
+=== pheme_fold2_random_seed2001 00:16:02 ===
+[pheme fold2 random s2001] epoch 0 loss=0.5938 val_f1=0.7901 best=0.7901
+[pheme fold2 random s2001] epoch 1 loss=0.5051 val_f1=0.7735 best=0.7901
+[pheme fold2 random s2001] epoch 2 loss=0.4644 val_f1=0.8205 best=0.8205
+[pheme fold2 random s2001] epoch 3 loss=0.4304 val_f1=0.8551 best=0.8551
+[pheme fold2 random s2001] epoch 4 loss=0.4125 val_f1=0.8647 best=0.8647
+[pheme fold2 random s2001] epoch 5 loss=0.3947 val_f1=0.8685 best=0.8685
+[pheme fold2 random s2001] epoch 6 loss=0.3784 val_f1=0.8503 best=0.8685
+[pheme fold2 random s2001] epoch 7 loss=0.3654 val_f1=0.8508 best=0.8685
+[pheme fold2 random s2001] epoch 8 loss=0.3518 val_f1=0.8719 best=0.8719
+[pheme fold2 random s2001] epoch 9 loss=0.3418 val_f1=0.8804 best=0.8804
+[pheme fold2 random s2001] epoch 10 loss=0.3301 val_f1=0.8688 best=0.8804
+[pheme fold2 random s2001] epoch 11 loss=0.3151 val_f1=0.8648 best=0.8804
+[pheme fold2 random s2001] epoch 12 loss=0.3121 val_f1=0.8601 best=0.8804
+[pheme fold2 random s2001] epoch 13 loss=0.3016 val_f1=0.8823 best=0.8823
+[pheme fold2 random s2001] epoch 14 loss=0.2931 val_f1=0.8538 best=0.8823
+[pheme fold2 random s2001] epoch 15 loss=0.2881 val_f1=0.8759 best=0.8823
+[pheme fold2 random s2001] epoch 16 loss=0.2885 val_f1=0.8629 best=0.8823
+[pheme fold2 random s2001] epoch 17 loss=0.2765 val_f1=0.8623 best=0.8823
+[pheme fold2 random s2001] epoch 18 loss=0.2680 val_f1=0.8623 best=0.8823
+[pheme fold2 random s2001] epoch 19 loss=0.2617 val_f1=0.8581 best=0.8823
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_random_seed2001 best_epoch 13 val 0.8823
+exit=0
+=== pheme_fold2_random_seed2002 00:29:37 ===
+[pheme fold2 random s2002] epoch 0 loss=0.5954 val_f1=0.8039 best=0.8039
+[pheme fold2 random s2002] epoch 1 loss=0.5008 val_f1=0.8209 best=0.8209
+[pheme fold2 random s2002] epoch 2 loss=0.4583 val_f1=0.8315 best=0.8315
+[pheme fold2 random s2002] epoch 3 loss=0.4296 val_f1=0.8414 best=0.8414
+[pheme fold2 random s2002] epoch 4 loss=0.4158 val_f1=0.8394 best=0.8414
+[pheme fold2 random s2002] epoch 5 loss=0.3936 val_f1=0.8401 best=0.8414
+[pheme fold2 random s2002] epoch 6 loss=0.3739 val_f1=0.8410 best=0.8414
+[pheme fold2 random s2002] epoch 7 loss=0.3653 val_f1=0.8536 best=0.8536
+[pheme fold2 random s2002] epoch 8 loss=0.3512 val_f1=0.8461 best=0.8536
+[pheme fold2 random s2002] epoch 9 loss=0.3380 val_f1=0.8623 best=0.8623
+[pheme fold2 random s2002] epoch 10 loss=0.3267 val_f1=0.8523 best=0.8623
+[pheme fold2 random s2002] epoch 11 loss=0.3224 val_f1=0.8447 best=0.8623
+[pheme fold2 random s2002] epoch 12 loss=0.3097 val_f1=0.8609 best=0.8623
+[pheme fold2 random s2002] epoch 13 loss=0.3011 val_f1=0.8434 best=0.8623
+[pheme fold2 random s2002] epoch 14 loss=0.2984 val_f1=0.8508 best=0.8623
+[pheme fold2 random s2002] epoch 15 loss=0.2872 val_f1=0.8551 best=0.8623
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_random_seed2002 best_epoch 9 val 0.8623
+exit=0
+=== pheme_fold2_umer_seed2000 00:39:27 ===
+[pheme fold2 umer s2000] epoch 0 loss=0.4619 val_f1=0.8547 best=0.8547
+[pheme fold2 umer s2000] epoch 1 loss=0.4309 val_f1=0.8649 best=0.8649
+[pheme fold2 umer s2000] epoch 2 loss=0.4073 val_f1=0.8683 best=0.8683
+[pheme fold2 umer s2000] epoch 3 loss=0.3864 val_f1=0.8637 best=0.8683
+[pheme fold2 umer s2000] epoch 4 loss=0.3746 val_f1=0.8794 best=0.8794
+[pheme fold2 umer s2000] epoch 5 loss=0.3606 val_f1=0.8775 best=0.8794
+[pheme fold2 umer s2000] epoch 6 loss=0.3461 val_f1=0.8700 best=0.8794
+[pheme fold2 umer s2000] epoch 7 loss=0.3347 val_f1=0.8792 best=0.8794
+[pheme fold2 umer s2000] epoch 8 loss=0.3227 val_f1=0.8731 best=0.8794
+[pheme fold2 umer s2000] epoch 9 loss=0.3245 val_f1=0.8693 best=0.8794
+[pheme fold2 umer s2000] epoch 10 loss=0.3034 val_f1=0.8789 best=0.8794
+[pheme fold2 umer s2000] epoch 11 loss=0.2987 val_f1=0.8873 best=0.8873
+[pheme fold2 umer s2000] epoch 12 loss=0.2837 val_f1=0.8871 best=0.8873
+[pheme fold2 umer s2000] epoch 13 loss=0.2890 val_f1=0.8811 best=0.8873
+[pheme fold2 umer s2000] epoch 14 loss=0.2810 val_f1=0.8704 best=0.8873
+[pheme fold2 umer s2000] epoch 15 loss=0.2712 val_f1=0.8839 best=0.8873
+[pheme fold2 umer s2000] epoch 16 loss=0.2674 val_f1=0.8746 best=0.8873
+[pheme fold2 umer s2000] epoch 17 loss=0.2654 val_f1=0.8779 best=0.8873
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_umer_seed2000 best_epoch 11 val 0.8873
+exit=0
+=== pheme_fold2_umer_seed2001 00:52:51 ===
+[pheme fold2 umer s2001] epoch 0 loss=0.4760 val_f1=0.8352 best=0.8352
+[pheme fold2 umer s2001] epoch 1 loss=0.4272 val_f1=0.8392 best=0.8392
+[pheme fold2 umer s2001] epoch 2 loss=0.4071 val_f1=0.8639 best=0.8639
+[pheme fold2 umer s2001] epoch 3 loss=0.3854 val_f1=0.8591 best=0.8639
+[pheme fold2 umer s2001] epoch 4 loss=0.3710 val_f1=0.8721 best=0.8721
+[pheme fold2 umer s2001] epoch 5 loss=0.3577 val_f1=0.8685 best=0.8721
+[pheme fold2 umer s2001] epoch 6 loss=0.3477 val_f1=0.8821 best=0.8821
+[pheme fold2 umer s2001] epoch 7 loss=0.3327 val_f1=0.8649 best=0.8821
+[pheme fold2 umer s2001] epoch 8 loss=0.3173 val_f1=0.8663 best=0.8821
+[pheme fold2 umer s2001] epoch 9 loss=0.3131 val_f1=0.8851 best=0.8851
+[pheme fold2 umer s2001] epoch 10 loss=0.3038 val_f1=0.8867 best=0.8867
+[pheme fold2 umer s2001] epoch 11 loss=0.3000 val_f1=0.8697 best=0.8867
+[pheme fold2 umer s2001] epoch 12 loss=0.2883 val_f1=0.8689 best=0.8867
+[pheme fold2 umer s2001] epoch 13 loss=0.2854 val_f1=0.8661 best=0.8867
+[pheme fold2 umer s2001] epoch 14 loss=0.2752 val_f1=0.8774 best=0.8867
+[pheme fold2 umer s2001] epoch 15 loss=0.2702 val_f1=0.8826 best=0.8867
+[pheme fold2 umer s2001] epoch 16 loss=0.2683 val_f1=0.8878 best=0.8878
+[pheme fold2 umer s2001] epoch 17 loss=0.2637 val_f1=0.8750 best=0.8878
+[pheme fold2 umer s2001] epoch 18 loss=0.2545 val_f1=0.8797 best=0.8878
+[pheme fold2 umer s2001] epoch 19 loss=0.2541 val_f1=0.8764 best=0.8878
+[pheme fold2 umer s2001] epoch 20 loss=0.2509 val_f1=0.8603 best=0.8878
+[pheme fold2 umer s2001] epoch 21 loss=0.2493 val_f1=0.8686 best=0.8878
+[pheme fold2 umer s2001] epoch 22 loss=0.2465 val_f1=0.8689 best=0.8878
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_umer_seed2001 best_epoch 16 val 0.8878
+exit=0
+=== pheme_fold2_umer_seed2002 01:08:25 ===
+[pheme fold2 umer s2002] epoch 0 loss=0.4783 val_f1=0.8539 best=0.8539
+[pheme fold2 umer s2002] epoch 1 loss=0.4259 val_f1=0.8628 best=0.8628
+[pheme fold2 umer s2002] epoch 2 loss=0.4074 val_f1=0.8557 best=0.8628
+[pheme fold2 umer s2002] epoch 3 loss=0.3846 val_f1=0.8551 best=0.8628
+[pheme fold2 umer s2002] epoch 4 loss=0.3782 val_f1=0.8542 best=0.8628
+[pheme fold2 umer s2002] epoch 5 loss=0.3581 val_f1=0.8739 best=0.8739
+[pheme fold2 umer s2002] epoch 6 loss=0.3444 val_f1=0.8729 best=0.8739
+[pheme fold2 umer s2002] epoch 7 loss=0.3312 val_f1=0.8690 best=0.8739
+[pheme fold2 umer s2002] epoch 8 loss=0.3288 val_f1=0.8769 best=0.8769
+[pheme fold2 umer s2002] epoch 9 loss=0.3211 val_f1=0.8759 best=0.8769
+[pheme fold2 umer s2002] epoch 10 loss=0.3062 val_f1=0.8659 best=0.8769
+[pheme fold2 umer s2002] epoch 11 loss=0.2955 val_f1=0.8723 best=0.8769
+[pheme fold2 umer s2002] epoch 12 loss=0.2952 val_f1=0.8817 best=0.8817
+[pheme fold2 umer s2002] epoch 13 loss=0.2793 val_f1=0.8654 best=0.8817
+[pheme fold2 umer s2002] epoch 14 loss=0.2822 val_f1=0.8708 best=0.8817
+[pheme fold2 umer s2002] epoch 15 loss=0.2789 val_f1=0.8661 best=0.8817
+[pheme fold2 umer s2002] epoch 16 loss=0.2665 val_f1=0.8739 best=0.8817
+[pheme fold2 umer s2002] epoch 17 loss=0.2580 val_f1=0.8733 best=0.8817
+[pheme fold2 umer s2002] epoch 18 loss=0.2600 val_f1=0.8678 best=0.8817
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold2_umer_seed2002 best_epoch 12 val 0.8817
+exit=0
+=== pheme_fold3_random_seed2000 01:22:43 ===
+[pheme fold3 random s2000] epoch 0 loss=0.6192 val_f1=0.7850 best=0.7850
+[pheme fold3 random s2000] epoch 1 loss=0.4981 val_f1=0.7977 best=0.7977
+[pheme fold3 random s2000] epoch 2 loss=0.4530 val_f1=0.8090 best=0.8090
+[pheme fold3 random s2000] epoch 3 loss=0.4289 val_f1=0.8085 best=0.8090
+[pheme fold3 random s2000] epoch 4 loss=0.4088 val_f1=0.8075 best=0.8090
+[pheme fold3 random s2000] epoch 5 loss=0.3917 val_f1=0.8303 best=0.8303
+[pheme fold3 random s2000] epoch 6 loss=0.3748 val_f1=0.8426 best=0.8426
+[pheme fold3 random s2000] epoch 7 loss=0.3531 val_f1=0.8118 best=0.8426
+[pheme fold3 random s2000] epoch 8 loss=0.3446 val_f1=0.8284 best=0.8426
+[pheme fold3 random s2000] epoch 9 loss=0.3318 val_f1=0.8335 best=0.8426
+[pheme fold3 random s2000] epoch 10 loss=0.3227 val_f1=0.8323 best=0.8426
+[pheme fold3 random s2000] epoch 11 loss=0.3071 val_f1=0.8545 best=0.8545
+[pheme fold3 random s2000] epoch 12 loss=0.3058 val_f1=0.8499 best=0.8545
+[pheme fold3 random s2000] epoch 13 loss=0.2910 val_f1=0.8494 best=0.8545
+[pheme fold3 random s2000] epoch 14 loss=0.2872 val_f1=0.8341 best=0.8545
+[pheme fold3 random s2000] epoch 15 loss=0.2757 val_f1=0.8384 best=0.8545
+[pheme fold3 random s2000] epoch 16 loss=0.2788 val_f1=0.8285 best=0.8545
+[pheme fold3 random s2000] epoch 17 loss=0.2650 val_f1=0.8494 best=0.8545
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_random_seed2000 best_epoch 11 val 0.8545
+exit=0
+=== pheme_fold3_random_seed2001 01:34:13 ===
+[pheme fold3 random s2001] epoch 0 loss=0.5932 val_f1=0.7757 best=0.7757
+[pheme fold3 random s2001] epoch 1 loss=0.4947 val_f1=0.7959 best=0.7959
+[pheme fold3 random s2001] epoch 2 loss=0.4526 val_f1=0.8091 best=0.8091
+[pheme fold3 random s2001] epoch 3 loss=0.4331 val_f1=0.8126 best=0.8126
+[pheme fold3 random s2001] epoch 4 loss=0.4045 val_f1=0.8285 best=0.8285
+[pheme fold3 random s2001] epoch 5 loss=0.3923 val_f1=0.8313 best=0.8313
+[pheme fold3 random s2001] epoch 6 loss=0.3756 val_f1=0.8256 best=0.8313
+[pheme fold3 random s2001] epoch 7 loss=0.3622 val_f1=0.8309 best=0.8313
+[pheme fold3 random s2001] epoch 8 loss=0.3387 val_f1=0.8326 best=0.8326
+[pheme fold3 random s2001] epoch 9 loss=0.3342 val_f1=0.8271 best=0.8326
+[pheme fold3 random s2001] epoch 10 loss=0.3272 val_f1=0.8219 best=0.8326
+[pheme fold3 random s2001] epoch 11 loss=0.3196 val_f1=0.8238 best=0.8326
+[pheme fold3 random s2001] epoch 12 loss=0.3081 val_f1=0.8189 best=0.8326
+[pheme fold3 random s2001] epoch 13 loss=0.3001 val_f1=0.8032 best=0.8326
+[pheme fold3 random s2001] epoch 14 loss=0.2887 val_f1=0.8199 best=0.8326
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_random_seed2001 best_epoch 8 val 0.8326
+exit=0
+=== pheme_fold3_random_seed2002 01:44:38 ===
+[pheme fold3 random s2002] epoch 0 loss=0.6004 val_f1=0.7703 best=0.7703
+[pheme fold3 random s2002] epoch 1 loss=0.4947 val_f1=0.7684 best=0.7703
+[pheme fold3 random s2002] epoch 2 loss=0.4528 val_f1=0.7820 best=0.7820
+[pheme fold3 random s2002] epoch 3 loss=0.4314 val_f1=0.8076 best=0.8076
+[pheme fold3 random s2002] epoch 4 loss=0.4085 val_f1=0.8090 best=0.8090
+[pheme fold3 random s2002] epoch 5 loss=0.3891 val_f1=0.8227 best=0.8227
+[pheme fold3 random s2002] epoch 6 loss=0.3713 val_f1=0.8129 best=0.8227
+[pheme fold3 random s2002] epoch 7 loss=0.3574 val_f1=0.8366 best=0.8366
+[pheme fold3 random s2002] epoch 8 loss=0.3385 val_f1=0.8395 best=0.8395
+[pheme fold3 random s2002] epoch 9 loss=0.3255 val_f1=0.8348 best=0.8395
+[pheme fold3 random s2002] epoch 10 loss=0.3220 val_f1=0.8360 best=0.8395
+[pheme fold3 random s2002] epoch 11 loss=0.3156 val_f1=0.8296 best=0.8395
+[pheme fold3 random s2002] epoch 12 loss=0.3044 val_f1=0.8483 best=0.8483
+[pheme fold3 random s2002] epoch 13 loss=0.2909 val_f1=0.8439 best=0.8483
+[pheme fold3 random s2002] epoch 14 loss=0.2837 val_f1=0.8325 best=0.8483
+[pheme fold3 random s2002] epoch 15 loss=0.2736 val_f1=0.8459 best=0.8483
+[pheme fold3 random s2002] epoch 16 loss=0.2703 val_f1=0.8353 best=0.8483
+[pheme fold3 random s2002] epoch 17 loss=0.2697 val_f1=0.8241 best=0.8483
+[pheme fold3 random s2002] epoch 18 loss=0.2714 val_f1=0.8318 best=0.8483
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_random_seed2002 best_epoch 12 val 0.8483
+exit=0
+=== pheme_fold3_umer_seed2000 01:57:28 ===
+[pheme fold3 umer s2000] epoch 0 loss=0.4554 val_f1=0.8345 best=0.8345
+[pheme fold3 umer s2000] epoch 1 loss=0.4176 val_f1=0.8426 best=0.8426
+[pheme fold3 umer s2000] epoch 2 loss=0.4012 val_f1=0.8429 best=0.8429
+[pheme fold3 umer s2000] epoch 3 loss=0.3833 val_f1=0.8407 best=0.8429
+[pheme fold3 umer s2000] epoch 4 loss=0.3685 val_f1=0.8414 best=0.8429
+[pheme fold3 umer s2000] epoch 5 loss=0.3531 val_f1=0.8320 best=0.8429
+[pheme fold3 umer s2000] epoch 6 loss=0.3395 val_f1=0.8668 best=0.8668
+[pheme fold3 umer s2000] epoch 7 loss=0.3276 val_f1=0.8455 best=0.8668
+[pheme fold3 umer s2000] epoch 8 loss=0.3207 val_f1=0.8560 best=0.8668
+[pheme fold3 umer s2000] epoch 9 loss=0.3139 val_f1=0.8474 best=0.8668
+[pheme fold3 umer s2000] epoch 10 loss=0.3011 val_f1=0.8322 best=0.8668
+[pheme fold3 umer s2000] epoch 11 loss=0.2961 val_f1=0.8516 best=0.8668
+[pheme fold3 umer s2000] epoch 12 loss=0.2843 val_f1=0.8542 best=0.8668
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_umer_seed2000 best_epoch 6 val 0.8668
+exit=0
+=== pheme_fold3_umer_seed2001 02:06:47 ===
+[pheme fold3 umer s2001] epoch 0 loss=0.4613 val_f1=0.8178 best=0.8178
+[pheme fold3 umer s2001] epoch 1 loss=0.4189 val_f1=0.8506 best=0.8506
+[pheme fold3 umer s2001] epoch 2 loss=0.4070 val_f1=0.8376 best=0.8506
+[pheme fold3 umer s2001] epoch 3 loss=0.3833 val_f1=0.8520 best=0.8520
+[pheme fold3 umer s2001] epoch 4 loss=0.3670 val_f1=0.8580 best=0.8580
+[pheme fold3 umer s2001] epoch 5 loss=0.3530 val_f1=0.8455 best=0.8580
+[pheme fold3 umer s2001] epoch 6 loss=0.3470 val_f1=0.8469 best=0.8580
+[pheme fold3 umer s2001] epoch 7 loss=0.3344 val_f1=0.8281 best=0.8580
+[pheme fold3 umer s2001] epoch 8 loss=0.3125 val_f1=0.8673 best=0.8673
+[pheme fold3 umer s2001] epoch 9 loss=0.3078 val_f1=0.8353 best=0.8673
+[pheme fold3 umer s2001] epoch 10 loss=0.3029 val_f1=0.8642 best=0.8673
+[pheme fold3 umer s2001] epoch 11 loss=0.2903 val_f1=0.8438 best=0.8673
+[pheme fold3 umer s2001] epoch 12 loss=0.2850 val_f1=0.8558 best=0.8673
+[pheme fold3 umer s2001] epoch 13 loss=0.2736 val_f1=0.8399 best=0.8673
+[pheme fold3 umer s2001] epoch 14 loss=0.2805 val_f1=0.8590 best=0.8673
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_umer_seed2001 best_epoch 8 val 0.8673
+exit=0
+=== pheme_fold3_umer_seed2002 02:17:13 ===
+[pheme fold3 umer s2002] epoch 0 loss=0.4503 val_f1=0.8294 best=0.8294
+[pheme fold3 umer s2002] epoch 1 loss=0.4181 val_f1=0.8375 best=0.8375
+[pheme fold3 umer s2002] epoch 2 loss=0.3946 val_f1=0.8154 best=0.8375
+[pheme fold3 umer s2002] epoch 3 loss=0.3808 val_f1=0.8516 best=0.8516
+[pheme fold3 umer s2002] epoch 4 loss=0.3614 val_f1=0.8554 best=0.8554
+[pheme fold3 umer s2002] epoch 5 loss=0.3493 val_f1=0.8554 best=0.8554
+[pheme fold3 umer s2002] epoch 6 loss=0.3378 val_f1=0.8461 best=0.8554
+[pheme fold3 umer s2002] epoch 7 loss=0.3310 val_f1=0.8552 best=0.8554
+[pheme fold3 umer s2002] epoch 8 loss=0.3137 val_f1=0.8235 best=0.8554
+[pheme fold3 umer s2002] epoch 9 loss=0.3042 val_f1=0.8510 best=0.8554
+[pheme fold3 umer s2002] epoch 10 loss=0.2988 val_f1=0.8508 best=0.8554
+[pheme fold3 umer s2002] epoch 11 loss=0.2914 val_f1=0.8439 best=0.8554
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold3_umer_seed2002 best_epoch 5 val 0.8554
+exit=0
+=== pheme_fold4_random_seed2000 02:26:11 ===
+[pheme fold4 random s2000] epoch 0 loss=0.5955 val_f1=0.7201 best=0.7201
+[pheme fold4 random s2000] epoch 1 loss=0.5139 val_f1=0.8407 best=0.8407
+[pheme fold4 random s2000] epoch 2 loss=0.4662 val_f1=0.8266 best=0.8407
+[pheme fold4 random s2000] epoch 3 loss=0.4466 val_f1=0.8570 best=0.8570
+[pheme fold4 random s2000] epoch 4 loss=0.4189 val_f1=0.8603 best=0.8603
+[pheme fold4 random s2000] epoch 5 loss=0.3997 val_f1=0.8652 best=0.8652
+[pheme fold4 random s2000] epoch 6 loss=0.3815 val_f1=0.8762 best=0.8762
+[pheme fold4 random s2000] epoch 7 loss=0.3654 val_f1=0.8578 best=0.8762
+[pheme fold4 random s2000] epoch 8 loss=0.3565 val_f1=0.8809 best=0.8809
+[pheme fold4 random s2000] epoch 9 loss=0.3383 val_f1=0.8772 best=0.8809
+[pheme fold4 random s2000] epoch 10 loss=0.3221 val_f1=0.8719 best=0.8809
+[pheme fold4 random s2000] epoch 11 loss=0.3153 val_f1=0.8702 best=0.8809
+[pheme fold4 random s2000] epoch 12 loss=0.3149 val_f1=0.8684 best=0.8809
+[pheme fold4 random s2000] epoch 13 loss=0.3031 val_f1=0.8575 best=0.8809
+[pheme fold4 random s2000] epoch 14 loss=0.2953 val_f1=0.8447 best=0.8809
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_random_seed2000 best_epoch 8 val 0.8809
+exit=0
+=== pheme_fold4_random_seed2001 02:36:14 ===
+[pheme fold4 random s2001] epoch 0 loss=0.5921 val_f1=0.8391 best=0.8391
+[pheme fold4 random s2001] epoch 1 loss=0.5073 val_f1=0.8432 best=0.8432
+[pheme fold4 random s2001] epoch 2 loss=0.4700 val_f1=0.8461 best=0.8461
+[pheme fold4 random s2001] epoch 3 loss=0.4394 val_f1=0.8640 best=0.8640
+[pheme fold4 random s2001] epoch 4 loss=0.4217 val_f1=0.8590 best=0.8640
+[pheme fold4 random s2001] epoch 5 loss=0.3995 val_f1=0.8502 best=0.8640
+[pheme fold4 random s2001] epoch 6 loss=0.3890 val_f1=0.8733 best=0.8733
+[pheme fold4 random s2001] epoch 7 loss=0.3733 val_f1=0.8734 best=0.8734
+[pheme fold4 random s2001] epoch 8 loss=0.3494 val_f1=0.8585 best=0.8734
+[pheme fold4 random s2001] epoch 9 loss=0.3437 val_f1=0.8741 best=0.8741
+[pheme fold4 random s2001] epoch 10 loss=0.3247 val_f1=0.8778 best=0.8778
+[pheme fold4 random s2001] epoch 11 loss=0.3128 val_f1=0.8706 best=0.8778
+[pheme fold4 random s2001] epoch 12 loss=0.3165 val_f1=0.8606 best=0.8778
+[pheme fold4 random s2001] epoch 13 loss=0.3094 val_f1=0.8710 best=0.8778
+[pheme fold4 random s2001] epoch 14 loss=0.2985 val_f1=0.8744 best=0.8778
+[pheme fold4 random s2001] epoch 15 loss=0.2884 val_f1=0.8798 best=0.8798
+[pheme fold4 random s2001] epoch 16 loss=0.2785 val_f1=0.8631 best=0.8798
+[pheme fold4 random s2001] epoch 17 loss=0.2781 val_f1=0.8761 best=0.8798
+[pheme fold4 random s2001] epoch 18 loss=0.2720 val_f1=0.8710 best=0.8798
+[pheme fold4 random s2001] epoch 19 loss=0.2645 val_f1=0.8542 best=0.8798
+[pheme fold4 random s2001] epoch 20 loss=0.2686 val_f1=0.8645 best=0.8798
+[pheme fold4 random s2001] epoch 21 loss=0.2563 val_f1=0.8736 best=0.8798
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_random_seed2001 best_epoch 15 val 0.8798
+exit=0
+=== pheme_fold4_random_seed2002 02:50:27 ===
+[pheme fold4 random s2002] epoch 0 loss=0.5932 val_f1=0.8095 best=0.8095
+[pheme fold4 random s2002] epoch 1 loss=0.5050 val_f1=0.8345 best=0.8345
+[pheme fold4 random s2002] epoch 2 loss=0.4595 val_f1=0.8442 best=0.8442
+[pheme fold4 random s2002] epoch 3 loss=0.4430 val_f1=0.8617 best=0.8617
+[pheme fold4 random s2002] epoch 4 loss=0.4173 val_f1=0.8550 best=0.8617
+[pheme fold4 random s2002] epoch 5 loss=0.3940 val_f1=0.8603 best=0.8617
+[pheme fold4 random s2002] epoch 6 loss=0.3774 val_f1=0.8584 best=0.8617
+[pheme fold4 random s2002] epoch 7 loss=0.3653 val_f1=0.8741 best=0.8741
+[pheme fold4 random s2002] epoch 8 loss=0.3461 val_f1=0.8826 best=0.8826
+[pheme fold4 random s2002] epoch 9 loss=0.3392 val_f1=0.8628 best=0.8826
+[pheme fold4 random s2002] epoch 10 loss=0.3403 val_f1=0.8860 best=0.8860
+[pheme fold4 random s2002] epoch 11 loss=0.3185 val_f1=0.8799 best=0.8860
+[pheme fold4 random s2002] epoch 12 loss=0.3099 val_f1=0.8780 best=0.8860
+[pheme fold4 random s2002] epoch 13 loss=0.3003 val_f1=0.8689 best=0.8860
+[pheme fold4 random s2002] epoch 14 loss=0.2824 val_f1=0.8612 best=0.8860
+[pheme fold4 random s2002] epoch 15 loss=0.2820 val_f1=0.8561 best=0.8860
+[pheme fold4 random s2002] epoch 16 loss=0.2846 val_f1=0.8717 best=0.8860
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_random_seed2002 best_epoch 10 val 0.886
+exit=0
+=== pheme_fold4_umer_seed2000 03:02:00 ===
+[pheme fold4 umer s2000] epoch 0 loss=0.4656 val_f1=0.8432 best=0.8432
+[pheme fold4 umer s2000] epoch 1 loss=0.4264 val_f1=0.8878 best=0.8878
+[pheme fold4 umer s2000] epoch 2 loss=0.4035 val_f1=0.8817 best=0.8878
+[pheme fold4 umer s2000] epoch 3 loss=0.3813 val_f1=0.8948 best=0.8948
+[pheme fold4 umer s2000] epoch 4 loss=0.3716 val_f1=0.8819 best=0.8948
+[pheme fold4 umer s2000] epoch 5 loss=0.3581 val_f1=0.8687 best=0.8948
+[pheme fold4 umer s2000] epoch 6 loss=0.3444 val_f1=0.8863 best=0.8948
+[pheme fold4 umer s2000] epoch 7 loss=0.3324 val_f1=0.8762 best=0.8948
+[pheme fold4 umer s2000] epoch 8 loss=0.3327 val_f1=0.8913 best=0.8948
+[pheme fold4 umer s2000] epoch 9 loss=0.3144 val_f1=0.8863 best=0.8948
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_umer_seed2000 best_epoch 3 val 0.8948
+exit=0
+=== pheme_fold4_umer_seed2001 03:09:06 ===
+[pheme fold4 umer s2001] epoch 0 loss=0.4644 val_f1=0.8607 best=0.8607
+[pheme fold4 umer s2001] epoch 1 loss=0.4244 val_f1=0.8719 best=0.8719
+[pheme fold4 umer s2001] epoch 2 loss=0.4058 val_f1=0.8868 best=0.8868
+[pheme fold4 umer s2001] epoch 3 loss=0.3892 val_f1=0.8837 best=0.8868
+[pheme fold4 umer s2001] epoch 4 loss=0.3736 val_f1=0.8712 best=0.8868
+[pheme fold4 umer s2001] epoch 5 loss=0.3550 val_f1=0.8685 best=0.8868
+[pheme fold4 umer s2001] epoch 6 loss=0.3556 val_f1=0.8856 best=0.8868
+[pheme fold4 umer s2001] epoch 7 loss=0.3378 val_f1=0.8860 best=0.8868
+[pheme fold4 umer s2001] epoch 8 loss=0.3268 val_f1=0.8723 best=0.8868
+[pheme fold4 umer s2001] epoch 9 loss=0.3101 val_f1=0.8870 best=0.8870
+[pheme fold4 umer s2001] epoch 10 loss=0.3108 val_f1=0.8961 best=0.8961
+[pheme fold4 umer s2001] epoch 11 loss=0.3008 val_f1=0.8848 best=0.8961
+[pheme fold4 umer s2001] epoch 12 loss=0.2955 val_f1=0.8873 best=0.8961
+[pheme fold4 umer s2001] epoch 13 loss=0.2932 val_f1=0.8755 best=0.8961
+[pheme fold4 umer s2001] epoch 14 loss=0.2840 val_f1=0.8770 best=0.8961
+[pheme fold4 umer s2001] epoch 15 loss=0.2704 val_f1=0.8707 best=0.8961
+[pheme fold4 umer s2001] epoch 16 loss=0.2688 val_f1=0.8729 best=0.8961
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_umer_seed2001 best_epoch 10 val 0.8961
+exit=0
+=== pheme_fold4_umer_seed2002 03:20:07 ===
+[pheme fold4 umer s2002] epoch 0 loss=0.4668 val_f1=0.8705 best=0.8705
+[pheme fold4 umer s2002] epoch 1 loss=0.4231 val_f1=0.8709 best=0.8709
+[pheme fold4 umer s2002] epoch 2 loss=0.3978 val_f1=0.8824 best=0.8824
+[pheme fold4 umer s2002] epoch 3 loss=0.3916 val_f1=0.8695 best=0.8824
+[pheme fold4 umer s2002] epoch 4 loss=0.3773 val_f1=0.8582 best=0.8824
+[pheme fold4 umer s2002] epoch 5 loss=0.3549 val_f1=0.8797 best=0.8824
+[pheme fold4 umer s2002] epoch 6 loss=0.3447 val_f1=0.8821 best=0.8824
+[pheme fold4 umer s2002] epoch 7 loss=0.3366 val_f1=0.8685 best=0.8824
+[pheme fold4 umer s2002] epoch 8 loss=0.3229 val_f1=0.8789 best=0.8824
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold4_umer_seed2002 best_epoch 2 val 0.8824
+exit=0
+=== maweibo_fold0_random_seed2000 03:26:50 ===
+[maweibo fold0 random s2000] epoch 0 loss=0.5719 val_f1=0.7724 best=0.7724
+[maweibo fold0 random s2000] epoch 1 loss=0.4393 val_f1=0.8232 best=0.8232
+[maweibo fold0 random s2000] epoch 2 loss=0.3788 val_f1=0.9011 best=0.9011
+[maweibo fold0 random s2000] epoch 3 loss=0.3486 val_f1=0.8984 best=0.9011
+[maweibo fold0 random s2000] epoch 4 loss=0.3362 val_f1=0.9037 best=0.9037
+[maweibo fold0 random s2000] epoch 5 loss=0.3222 val_f1=0.9198 best=0.9198
+[maweibo fold0 random s2000] epoch 6 loss=0.3080 val_f1=0.9278 best=0.9278
+[maweibo fold0 random s2000] epoch 7 loss=0.2953 val_f1=0.8815 best=0.9278
+[maweibo fold0 random s2000] epoch 8 loss=0.2891 val_f1=0.9385 best=0.9385
+[maweibo fold0 random s2000] epoch 9 loss=0.2815 val_f1=0.9116 best=0.9385
+[maweibo fold0 random s2000] epoch 10 loss=0.2786 val_f1=0.9060 best=0.9385
+[maweibo fold0 random s2000] epoch 11 loss=0.2714 val_f1=0.9305 best=0.9385
+[maweibo fold0 random s2000] epoch 12 loss=0.2755 val_f1=0.9062 best=0.9385
+[maweibo fold0 random s2000] epoch 13 loss=0.2592 val_f1=0.9170 best=0.9385
+[maweibo fold0 random s2000] epoch 14 loss=0.2605 val_f1=0.9088 best=0.9385
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_random_seed2000 best_epoch 8 val 0.9385
+exit=0
+=== maweibo_fold0_random_seed2001 04:29:05 ===
+[maweibo fold0 random s2001] epoch 0 loss=0.5461 val_f1=0.8081 best=0.8081
+[maweibo fold0 random s2001] epoch 1 loss=0.4140 val_f1=0.8516 best=0.8516
+[maweibo fold0 random s2001] epoch 2 loss=0.3680 val_f1=0.8876 best=0.8876
+[maweibo fold0 random s2001] epoch 3 loss=0.3396 val_f1=0.9144 best=0.9144
+[maweibo fold0 random s2001] epoch 4 loss=0.3303 val_f1=0.9008 best=0.9144
+[maweibo fold0 random s2001] epoch 5 loss=0.3171 val_f1=0.9033 best=0.9144
+[maweibo fold0 random s2001] epoch 6 loss=0.3124 val_f1=0.9116 best=0.9144
+[maweibo fold0 random s2001] epoch 7 loss=0.2969 val_f1=0.8706 best=0.9144
+[maweibo fold0 random s2001] epoch 8 loss=0.2950 val_f1=0.9251 best=0.9251
+[maweibo fold0 random s2001] epoch 9 loss=0.2871 val_f1=0.9062 best=0.9251
+[maweibo fold0 random s2001] epoch 10 loss=0.2857 val_f1=0.9331 best=0.9331
+[maweibo fold0 random s2001] epoch 11 loss=0.2775 val_f1=0.9143 best=0.9331
+[maweibo fold0 random s2001] epoch 12 loss=0.2642 val_f1=0.9088 best=0.9331
+[maweibo fold0 random s2001] epoch 13 loss=0.2599 val_f1=0.8981 best=0.9331
+[maweibo fold0 random s2001] epoch 14 loss=0.2562 val_f1=0.9305 best=0.9331
+[maweibo fold0 random s2001] epoch 15 loss=0.2590 val_f1=0.9062 best=0.9331
+[maweibo fold0 random s2001] epoch 16 loss=0.2536 val_f1=0.9224 best=0.9331
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_random_seed2001 best_epoch 10 val 0.9331
+exit=0
+=== maweibo_fold0_random_seed2002 05:10:11 ===
+[maweibo fold0 random s2002] epoch 0 loss=0.5381 val_f1=0.8014 best=0.8014
+[maweibo fold0 random s2002] epoch 1 loss=0.4378 val_f1=0.8433 best=0.8433
+[maweibo fold0 random s2002] epoch 2 loss=0.3754 val_f1=0.8898 best=0.8898
+[maweibo fold0 random s2002] epoch 3 loss=0.3490 val_f1=0.8621 best=0.8898
+[maweibo fold0 random s2002] epoch 4 loss=0.3447 val_f1=0.9144 best=0.9144
+[maweibo fold0 random s2002] epoch 5 loss=0.3143 val_f1=0.9171 best=0.9171
+[maweibo fold0 random s2002] epoch 6 loss=0.3039 val_f1=0.8983 best=0.9171
+[maweibo fold0 random s2002] epoch 7 loss=0.2907 val_f1=0.9144 best=0.9171
+[maweibo fold0 random s2002] epoch 8 loss=0.2861 val_f1=0.8787 best=0.9171
+[maweibo fold0 random s2002] epoch 9 loss=0.2831 val_f1=0.9171 best=0.9171
+[maweibo fold0 random s2002] epoch 10 loss=0.2742 val_f1=0.8899 best=0.9171
+[maweibo fold0 random s2002] epoch 11 loss=0.2670 val_f1=0.8846 best=0.9171
+[maweibo fold0 random s2002] epoch 12 loss=0.2570 val_f1=0.9198 best=0.9198
+[maweibo fold0 random s2002] epoch 13 loss=0.2650 val_f1=0.9170 best=0.9198
+[maweibo fold0 random s2002] epoch 14 loss=0.2481 val_f1=0.9278 best=0.9278
+[maweibo fold0 random s2002] epoch 15 loss=0.2512 val_f1=0.9198 best=0.9278
+[maweibo fold0 random s2002] epoch 16 loss=0.2385 val_f1=0.9171 best=0.9278
+[maweibo fold0 random s2002] epoch 17 loss=0.2413 val_f1=0.9198 best=0.9278
+[maweibo fold0 random s2002] epoch 18 loss=0.2359 val_f1=0.9224 best=0.9278
+[maweibo fold0 random s2002] epoch 19 loss=0.2328 val_f1=0.8815 best=0.9278
+[maweibo fold0 random s2002] epoch 20 loss=0.2316 val_f1=0.9116 best=0.9278
+[maweibo fold0 random s2002] epoch 21 loss=0.2386 val_f1=0.9278 best=0.9278
+[maweibo fold0 random s2002] epoch 22 loss=0.2315 val_f1=0.9144 best=0.9278
+[maweibo fold0 random s2002] epoch 23 loss=0.2265 val_f1=0.9117 best=0.9278
+[maweibo fold0 random s2002] epoch 24 loss=0.2265 val_f1=0.9278 best=0.9278
+[maweibo fold0 random s2002] epoch 25 loss=0.2212 val_f1=0.9278 best=0.9278
+[maweibo fold0 random s2002] epoch 26 loss=0.2232 val_f1=0.9223 best=0.9278
+[maweibo fold0 random s2002] epoch 27 loss=0.2227 val_f1=0.9251 best=0.9278
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_random_seed2002 best_epoch 21 val 0.9278
+exit=0
+=== maweibo_fold0_umer_seed2000 06:08:41 ===
+[maweibo fold0 umer s2000] epoch 0 loss=0.4165 val_f1=0.9009 best=0.9009
+[maweibo fold0 umer s2000] epoch 1 loss=0.3555 val_f1=0.9063 best=0.9063
+[maweibo fold0 umer s2000] epoch 2 loss=0.3399 val_f1=0.9251 best=0.9251
+[maweibo fold0 umer s2000] epoch 3 loss=0.3200 val_f1=0.8982 best=0.9251
+[maweibo fold0 umer s2000] epoch 4 loss=0.3087 val_f1=0.9278 best=0.9278
+[maweibo fold0 umer s2000] epoch 5 loss=0.2914 val_f1=0.9169 best=0.9278
+[maweibo fold0 umer s2000] epoch 6 loss=0.2898 val_f1=0.9331 best=0.9331
+[maweibo fold0 umer s2000] epoch 7 loss=0.2749 val_f1=0.8869 best=0.9331
+[maweibo fold0 umer s2000] epoch 8 loss=0.2693 val_f1=0.9438 best=0.9438
+[maweibo fold0 umer s2000] epoch 9 loss=0.2578 val_f1=0.9223 best=0.9438
+[maweibo fold0 umer s2000] epoch 10 loss=0.2616 val_f1=0.9224 best=0.9438
+[maweibo fold0 umer s2000] epoch 11 loss=0.2574 val_f1=0.9331 best=0.9438
+[maweibo fold0 umer s2000] epoch 12 loss=0.2481 val_f1=0.9114 best=0.9438
+[maweibo fold0 umer s2000] epoch 13 loss=0.2498 val_f1=0.9385 best=0.9438
+[maweibo fold0 umer s2000] epoch 14 loss=0.2489 val_f1=0.9115 best=0.9438
+[maweibo fold0 umer s2000] epoch 15 loss=0.2444 val_f1=0.9465 best=0.9465
+[maweibo fold0 umer s2000] epoch 16 loss=0.2444 val_f1=0.9358 best=0.9465
+[maweibo fold0 umer s2000] epoch 17 loss=0.2330 val_f1=0.9385 best=0.9465
+[maweibo fold0 umer s2000] epoch 18 loss=0.2356 val_f1=0.9331 best=0.9465
+[maweibo fold0 umer s2000] epoch 19 loss=0.2289 val_f1=0.9169 best=0.9465
+[maweibo fold0 umer s2000] epoch 20 loss=0.2278 val_f1=0.9278 best=0.9465
+[maweibo fold0 umer s2000] epoch 21 loss=0.2298 val_f1=0.9438 best=0.9465
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_umer_seed2000 best_epoch 15 val 0.9465
+exit=0
+=== maweibo_fold0_umer_seed2001 06:56:31 ===
+[maweibo fold0 umer s2001] epoch 0 loss=0.4116 val_f1=0.8790 best=0.8790
+[maweibo fold0 umer s2001] epoch 1 loss=0.3512 val_f1=0.8841 best=0.8841
+[maweibo fold0 umer s2001] epoch 2 loss=0.3414 val_f1=0.9115 best=0.9115
+[maweibo fold0 umer s2001] epoch 3 loss=0.3143 val_f1=0.8868 best=0.9115
+[maweibo fold0 umer s2001] epoch 4 loss=0.3097 val_f1=0.9223 best=0.9223
+[maweibo fold0 umer s2001] epoch 5 loss=0.2941 val_f1=0.9304 best=0.9304
+[maweibo fold0 umer s2001] epoch 6 loss=0.2915 val_f1=0.9412 best=0.9412
+[maweibo fold0 umer s2001] epoch 7 loss=0.2748 val_f1=0.9031 best=0.9412
+[maweibo fold0 umer s2001] epoch 8 loss=0.2703 val_f1=0.9412 best=0.9412
+[maweibo fold0 umer s2001] epoch 9 loss=0.2629 val_f1=0.9385 best=0.9412
+[maweibo fold0 umer s2001] epoch 10 loss=0.2597 val_f1=0.9331 best=0.9412
+[maweibo fold0 umer s2001] epoch 11 loss=0.2594 val_f1=0.9115 best=0.9412
+[maweibo fold0 umer s2001] epoch 12 loss=0.2459 val_f1=0.9142 best=0.9412
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_umer_seed2001 best_epoch 6 val 0.9412
+exit=0
+=== maweibo_fold0_umer_seed2002 07:30:27 ===
+[maweibo fold0 umer s2002] epoch 0 loss=0.4152 val_f1=0.9037 best=0.9037
+[maweibo fold0 umer s2002] epoch 1 loss=0.3545 val_f1=0.8702 best=0.9037
+[maweibo fold0 umer s2002] epoch 2 loss=0.3352 val_f1=0.9171 best=0.9171
+[maweibo fold0 umer s2002] epoch 3 loss=0.3162 val_f1=0.9059 best=0.9171
+[maweibo fold0 umer s2002] epoch 4 loss=0.3083 val_f1=0.9112 best=0.9171
+[maweibo fold0 umer s2002] epoch 5 loss=0.3074 val_f1=0.9115 best=0.9171
+[maweibo fold0 umer s2002] epoch 6 loss=0.2940 val_f1=0.9331 best=0.9331
+[maweibo fold0 umer s2002] epoch 7 loss=0.2788 val_f1=0.9251 best=0.9331
+[maweibo fold0 umer s2002] epoch 8 loss=0.2728 val_f1=0.8614 best=0.9331
+[maweibo fold0 umer s2002] epoch 9 loss=0.2795 val_f1=0.9278 best=0.9331
+[maweibo fold0 umer s2002] epoch 10 loss=0.2628 val_f1=0.9168 best=0.9331
+[maweibo fold0 umer s2002] epoch 11 loss=0.2549 val_f1=0.9060 best=0.9331
+[maweibo fold0 umer s2002] epoch 12 loss=0.2562 val_f1=0.9385 best=0.9385
+[maweibo fold0 umer s2002] epoch 13 loss=0.2580 val_f1=0.9250 best=0.9385
+[maweibo fold0 umer s2002] epoch 14 loss=0.2484 val_f1=0.9250 best=0.9385
+[maweibo fold0 umer s2002] epoch 15 loss=0.2420 val_f1=0.9251 best=0.9385
+[maweibo fold0 umer s2002] epoch 16 loss=0.2456 val_f1=0.9169 best=0.9385
+[maweibo fold0 umer s2002] epoch 17 loss=0.2359 val_f1=0.9438 best=0.9438
+[maweibo fold0 umer s2002] epoch 18 loss=0.2363 val_f1=0.9223 best=0.9438
+[maweibo fold0 umer s2002] epoch 19 loss=0.2386 val_f1=0.9277 best=0.9438
+[maweibo fold0 umer s2002] epoch 20 loss=0.2297 val_f1=0.9412 best=0.9438
+[maweibo fold0 umer s2002] epoch 21 loss=0.2297 val_f1=0.9492 best=0.9492
+[maweibo fold0 umer s2002] epoch 22 loss=0.2297 val_f1=0.9358 best=0.9492
+[maweibo fold0 umer s2002] epoch 23 loss=0.2270 val_f1=0.9331 best=0.9492
+[maweibo fold0 umer s2002] epoch 24 loss=0.2242 val_f1=0.9330 best=0.9492
+[maweibo fold0 umer s2002] epoch 25 loss=0.2301 val_f1=0.9358 best=0.9492
+[maweibo fold0 umer s2002] epoch 26 loss=0.2239 val_f1=0.9169 best=0.9492
+[maweibo fold0 umer s2002] epoch 27 loss=0.2237 val_f1=0.9438 best=0.9492
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold0_umer_seed2002 best_epoch 21 val 0.9492
+exit=0
+=== maweibo_fold1_random_seed2000 08:27:24 ===
+[maweibo fold1 random s2000] epoch 0 loss=0.5324 val_f1=0.8662 best=0.8662
+[maweibo fold1 random s2000] epoch 1 loss=0.4321 val_f1=0.7748 best=0.8662
+[maweibo fold1 random s2000] epoch 2 loss=0.3968 val_f1=0.9036 best=0.9036
+[maweibo fold1 random s2000] epoch 3 loss=0.3552 val_f1=0.8954 best=0.9036
+[maweibo fold1 random s2000] epoch 4 loss=0.3361 val_f1=0.9197 best=0.9197
+[maweibo fold1 random s2000] epoch 5 loss=0.3292 val_f1=0.8845 best=0.9197
+[maweibo fold1 random s2000] epoch 6 loss=0.3141 val_f1=0.8954 best=0.9197
+[maweibo fold1 random s2000] epoch 7 loss=0.3017 val_f1=0.9198 best=0.9198
+[maweibo fold1 random s2000] epoch 8 loss=0.2928 val_f1=0.8544 best=0.9198
+[maweibo fold1 random s2000] epoch 9 loss=0.2879 val_f1=0.8623 best=0.9198
+[maweibo fold1 random s2000] epoch 10 loss=0.2883 val_f1=0.9117 best=0.9198
+[maweibo fold1 random s2000] epoch 11 loss=0.2673 val_f1=0.9009 best=0.9198
+[maweibo fold1 random s2000] epoch 12 loss=0.2675 val_f1=0.9170 best=0.9198
+[maweibo fold1 random s2000] epoch 13 loss=0.2660 val_f1=0.9063 best=0.9198
+[maweibo fold1 random s2000] epoch 14 loss=0.2574 val_f1=0.9278 best=0.9278
+[maweibo fold1 random s2000] epoch 15 loss=0.2602 val_f1=0.9358 best=0.9358
+[maweibo fold1 random s2000] epoch 16 loss=0.2585 val_f1=0.9117 best=0.9358
+[maweibo fold1 random s2000] epoch 17 loss=0.2480 val_f1=0.9198 best=0.9358
+[maweibo fold1 random s2000] epoch 18 loss=0.2385 val_f1=0.9144 best=0.9358
+[maweibo fold1 random s2000] epoch 19 loss=0.2359 val_f1=0.9118 best=0.9358
+[maweibo fold1 random s2000] epoch 20 loss=0.2515 val_f1=0.9358 best=0.9358
+[maweibo fold1 random s2000] epoch 21 loss=0.2426 val_f1=0.9305 best=0.9358
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_random_seed2000 best_epoch 15 val 0.9358
+exit=0
+=== maweibo_fold1_random_seed2001 09:14:13 ===
+[maweibo fold1 random s2001] epoch 0 loss=0.5645 val_f1=0.8549 best=0.8549
+[maweibo fold1 random s2001] epoch 1 loss=0.4279 val_f1=0.7307 best=0.8549
+[maweibo fold1 random s2001] epoch 2 loss=0.3786 val_f1=0.8930 best=0.8930
+[maweibo fold1 random s2001] epoch 3 loss=0.3472 val_f1=0.9036 best=0.9036
+[maweibo fold1 random s2001] epoch 4 loss=0.3393 val_f1=0.8984 best=0.9036
+[maweibo fold1 random s2001] epoch 5 loss=0.3332 val_f1=0.9143 best=0.9143
+[maweibo fold1 random s2001] epoch 6 loss=0.3056 val_f1=0.9197 best=0.9197
+[maweibo fold1 random s2001] epoch 7 loss=0.2991 val_f1=0.9118 best=0.9197
+[maweibo fold1 random s2001] epoch 8 loss=0.2946 val_f1=0.9088 best=0.9197
+[maweibo fold1 random s2001] epoch 9 loss=0.2918 val_f1=0.9118 best=0.9197
+[maweibo fold1 random s2001] epoch 10 loss=0.2729 val_f1=0.9251 best=0.9251
+[maweibo fold1 random s2001] epoch 11 loss=0.2706 val_f1=0.9197 best=0.9251
+[maweibo fold1 random s2001] epoch 12 loss=0.2720 val_f1=0.9116 best=0.9251
+[maweibo fold1 random s2001] epoch 13 loss=0.2667 val_f1=0.9358 best=0.9358
+[maweibo fold1 random s2001] epoch 14 loss=0.2602 val_f1=0.9305 best=0.9358
+[maweibo fold1 random s2001] epoch 15 loss=0.2601 val_f1=0.9412 best=0.9412
+[maweibo fold1 random s2001] epoch 16 loss=0.2513 val_f1=0.9385 best=0.9412
+[maweibo fold1 random s2001] epoch 17 loss=0.2509 val_f1=0.9251 best=0.9412
+[maweibo fold1 random s2001] epoch 18 loss=0.2461 val_f1=0.9033 best=0.9412
+[maweibo fold1 random s2001] epoch 19 loss=0.2365 val_f1=0.9278 best=0.9412
+[maweibo fold1 random s2001] epoch 20 loss=0.2369 val_f1=0.9196 best=0.9412
+[maweibo fold1 random s2001] epoch 21 loss=0.2386 val_f1=0.9034 best=0.9412
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_random_seed2001 best_epoch 15 val 0.9412
+exit=0
+=== maweibo_fold1_random_seed2002 09:53:21 ===
+[maweibo fold1 random s2002] epoch 0 loss=0.5578 val_f1=0.7958 best=0.7958
+[maweibo fold1 random s2002] epoch 1 loss=0.4209 val_f1=0.8929 best=0.8929
+[maweibo fold1 random s2002] epoch 2 loss=0.3865 val_f1=0.9009 best=0.9009
+[maweibo fold1 random s2002] epoch 3 loss=0.3526 val_f1=0.8816 best=0.9009
+[maweibo fold1 random s2002] epoch 4 loss=0.3358 val_f1=0.8898 best=0.9009
+[maweibo fold1 random s2002] epoch 5 loss=0.3165 val_f1=0.9091 best=0.9091
+[maweibo fold1 random s2002] epoch 6 loss=0.3136 val_f1=0.8953 best=0.9091
+[maweibo fold1 random s2002] epoch 7 loss=0.3005 val_f1=0.9035 best=0.9091
+[maweibo fold1 random s2002] epoch 8 loss=0.2942 val_f1=0.9037 best=0.9091
+[maweibo fold1 random s2002] epoch 9 loss=0.2920 val_f1=0.8796 best=0.9091
+[maweibo fold1 random s2002] epoch 10 loss=0.2732 val_f1=0.8711 best=0.9091
+[maweibo fold1 random s2002] epoch 11 loss=0.2846 val_f1=0.8682 best=0.9091
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_random_seed2002 best_epoch 5 val 0.9091
+exit=0
+=== maweibo_fold1_umer_seed2000 10:19:34 ===
+[maweibo fold1 umer s2000] epoch 0 loss=0.4059 val_f1=0.8869 best=0.8869
+[maweibo fold1 umer s2000] epoch 1 loss=0.3501 val_f1=0.8896 best=0.8896
+[maweibo fold1 umer s2000] epoch 2 loss=0.3363 val_f1=0.9144 best=0.9144
+[maweibo fold1 umer s2000] epoch 3 loss=0.3214 val_f1=0.9035 best=0.9144
+[maweibo fold1 umer s2000] epoch 4 loss=0.3029 val_f1=0.9091 best=0.9144
+[maweibo fold1 umer s2000] epoch 5 loss=0.3017 val_f1=0.9144 best=0.9144
+[maweibo fold1 umer s2000] epoch 6 loss=0.2850 val_f1=0.8979 best=0.9144
+[maweibo fold1 umer s2000] epoch 7 loss=0.2762 val_f1=0.8983 best=0.9144
+[maweibo fold1 umer s2000] epoch 8 loss=0.2813 val_f1=0.9063 best=0.9144
+[maweibo fold1 umer s2000] epoch 9 loss=0.2643 val_f1=0.9170 best=0.9170
+[maweibo fold1 umer s2000] epoch 10 loss=0.2626 val_f1=0.9035 best=0.9170
+[maweibo fold1 umer s2000] epoch 11 loss=0.2571 val_f1=0.8955 best=0.9170
+[maweibo fold1 umer s2000] epoch 12 loss=0.2522 val_f1=0.9118 best=0.9170
+[maweibo fold1 umer s2000] epoch 13 loss=0.2544 val_f1=0.9090 best=0.9170
+[maweibo fold1 umer s2000] epoch 14 loss=0.2457 val_f1=0.9171 best=0.9171
+[maweibo fold1 umer s2000] epoch 15 loss=0.2489 val_f1=0.9331 best=0.9331
+[maweibo fold1 umer s2000] epoch 16 loss=0.2361 val_f1=0.9278 best=0.9331
+[maweibo fold1 umer s2000] epoch 17 loss=0.2473 val_f1=0.9090 best=0.9331
+[maweibo fold1 umer s2000] epoch 18 loss=0.2341 val_f1=0.9224 best=0.9331
+[maweibo fold1 umer s2000] epoch 19 loss=0.2321 val_f1=0.9197 best=0.9331
+[maweibo fold1 umer s2000] epoch 20 loss=0.2331 val_f1=0.9278 best=0.9331
+[maweibo fold1 umer s2000] epoch 21 loss=0.2281 val_f1=0.9278 best=0.9331
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_umer_seed2000 best_epoch 15 val 0.9331
+exit=0
+=== maweibo_fold1_umer_seed2001 10:27:13 ===
+[maweibo fold1 umer s2001] epoch 0 loss=0.4004 val_f1=0.8787 best=0.8787
+[maweibo fold1 umer s2001] epoch 1 loss=0.3473 val_f1=0.8953 best=0.8953
+[maweibo fold1 umer s2001] epoch 2 loss=0.3261 val_f1=0.9144 best=0.9144
+[maweibo fold1 umer s2001] epoch 3 loss=0.3166 val_f1=0.9036 best=0.9144
+[maweibo fold1 umer s2001] epoch 4 loss=0.3146 val_f1=0.9091 best=0.9144
+[maweibo fold1 umer s2001] epoch 5 loss=0.2954 val_f1=0.9170 best=0.9170
+[maweibo fold1 umer s2001] epoch 6 loss=0.2873 val_f1=0.9036 best=0.9170
+[maweibo fold1 umer s2001] epoch 7 loss=0.2877 val_f1=0.9063 best=0.9170
+[maweibo fold1 umer s2001] epoch 8 loss=0.2670 val_f1=0.9117 best=0.9170
+[maweibo fold1 umer s2001] epoch 9 loss=0.2667 val_f1=0.9117 best=0.9170
+[maweibo fold1 umer s2001] epoch 10 loss=0.2617 val_f1=0.9118 best=0.9170
+[maweibo fold1 umer s2001] epoch 11 loss=0.2557 val_f1=0.9278 best=0.9278
+[maweibo fold1 umer s2001] epoch 12 loss=0.2628 val_f1=0.8897 best=0.9278
+[maweibo fold1 umer s2001] epoch 13 loss=0.2530 val_f1=0.9224 best=0.9278
+[maweibo fold1 umer s2001] epoch 14 loss=0.2444 val_f1=0.9117 best=0.9278
+[maweibo fold1 umer s2001] epoch 15 loss=0.2558 val_f1=0.9251 best=0.9278
+[maweibo fold1 umer s2001] epoch 16 loss=0.2398 val_f1=0.9305 best=0.9305
+[maweibo fold1 umer s2001] epoch 17 loss=0.2356 val_f1=0.9142 best=0.9305
+[maweibo fold1 umer s2001] epoch 18 loss=0.2406 val_f1=0.9198 best=0.9305
+[maweibo fold1 umer s2001] epoch 19 loss=0.2282 val_f1=0.9171 best=0.9305
+[maweibo fold1 umer s2001] epoch 20 loss=0.2293 val_f1=0.9198 best=0.9305
+[maweibo fold1 umer s2001] epoch 21 loss=0.2264 val_f1=0.9198 best=0.9305
+[maweibo fold1 umer s2001] epoch 22 loss=0.2315 val_f1=0.9305 best=0.9305
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_umer_seed2001 best_epoch 16 val 0.9305
+exit=0
+=== maweibo_fold1_umer_seed2002 10:33:10 ===
+[maweibo fold1 umer s2002] epoch 0 loss=0.4178 val_f1=0.9091 best=0.9091
+[maweibo fold1 umer s2002] epoch 1 loss=0.3501 val_f1=0.8867 best=0.9091
+[maweibo fold1 umer s2002] epoch 2 loss=0.3312 val_f1=0.9086 best=0.9091
+[maweibo fold1 umer s2002] epoch 3 loss=0.3207 val_f1=0.9006 best=0.9091
+[maweibo fold1 umer s2002] epoch 4 loss=0.3060 val_f1=0.9117 best=0.9117
+[maweibo fold1 umer s2002] epoch 5 loss=0.2951 val_f1=0.9171 best=0.9171
+[maweibo fold1 umer s2002] epoch 6 loss=0.2891 val_f1=0.9117 best=0.9171
+[maweibo fold1 umer s2002] epoch 7 loss=0.2768 val_f1=0.9277 best=0.9277
+[maweibo fold1 umer s2002] epoch 8 loss=0.2779 val_f1=0.9171 best=0.9277
+[maweibo fold1 umer s2002] epoch 9 loss=0.2723 val_f1=0.9224 best=0.9277
+[maweibo fold1 umer s2002] epoch 10 loss=0.2607 val_f1=0.9144 best=0.9277
+[maweibo fold1 umer s2002] epoch 11 loss=0.2516 val_f1=0.9117 best=0.9277
+[maweibo fold1 umer s2002] epoch 12 loss=0.2506 val_f1=0.9143 best=0.9277
+[maweibo fold1 umer s2002] epoch 13 loss=0.2465 val_f1=0.9332 best=0.9332
+[maweibo fold1 umer s2002] epoch 14 loss=0.2474 val_f1=0.9144 best=0.9332
+[maweibo fold1 umer s2002] epoch 15 loss=0.2410 val_f1=0.9251 best=0.9332
+[maweibo fold1 umer s2002] epoch 16 loss=0.2444 val_f1=0.9063 best=0.9332
+[maweibo fold1 umer s2002] epoch 17 loss=0.2441 val_f1=0.9171 best=0.9332
+[maweibo fold1 umer s2002] epoch 18 loss=0.2416 val_f1=0.9091 best=0.9332
+[maweibo fold1 umer s2002] epoch 19 loss=0.2326 val_f1=0.9251 best=0.9332
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_umer_seed2002 best_epoch 13 val 0.9332
+exit=0
+=== maweibo_fold2_random_seed2000 10:38:46 ===
+[maweibo fold2 random s2000] epoch 0 loss=0.5435 val_f1=0.8339 best=0.8339
+[maweibo fold2 random s2000] epoch 1 loss=0.4356 val_f1=0.8134 best=0.8339
+[maweibo fold2 random s2000] epoch 2 loss=0.3808 val_f1=0.8790 best=0.8790
+[maweibo fold2 random s2000] epoch 3 loss=0.3554 val_f1=0.8820 best=0.8820
+[maweibo fold2 random s2000] epoch 4 loss=0.3481 val_f1=0.9090 best=0.9090
+[maweibo fold2 random s2000] epoch 5 loss=0.3269 val_f1=0.8927 best=0.9090
+[maweibo fold2 random s2000] epoch 6 loss=0.3109 val_f1=0.8815 best=0.9090
+[maweibo fold2 random s2000] epoch 7 loss=0.3156 val_f1=0.9063 best=0.9090
+[maweibo fold2 random s2000] epoch 8 loss=0.2917 val_f1=0.9197 best=0.9197
+[maweibo fold2 random s2000] epoch 9 loss=0.2816 val_f1=0.9332 best=0.9332
+[maweibo fold2 random s2000] epoch 10 loss=0.2785 val_f1=0.8980 best=0.9332
+[maweibo fold2 random s2000] epoch 11 loss=0.2805 val_f1=0.9144 best=0.9332
+[maweibo fold2 random s2000] epoch 12 loss=0.2696 val_f1=0.9144 best=0.9332
+[maweibo fold2 random s2000] epoch 13 loss=0.2569 val_f1=0.9063 best=0.9332
+[maweibo fold2 random s2000] epoch 14 loss=0.2565 val_f1=0.9117 best=0.9332
+[maweibo fold2 random s2000] epoch 15 loss=0.2532 val_f1=0.9035 best=0.9332
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_random_seed2000 best_epoch 9 val 0.9332
+exit=0
+=== maweibo_fold2_random_seed2001 10:46:36 ===
+[maweibo fold2 random s2001] epoch 0 loss=0.5392 val_f1=0.8419 best=0.8419
+[maweibo fold2 random s2001] epoch 1 loss=0.4212 val_f1=0.8284 best=0.8419
+[maweibo fold2 random s2001] epoch 2 loss=0.3869 val_f1=0.8929 best=0.8929
+[maweibo fold2 random s2001] epoch 3 loss=0.3492 val_f1=0.8732 best=0.8929
+[maweibo fold2 random s2001] epoch 4 loss=0.3411 val_f1=0.8786 best=0.8929
+[maweibo fold2 random s2001] epoch 5 loss=0.3204 val_f1=0.9090 best=0.9090
+[maweibo fold2 random s2001] epoch 6 loss=0.3054 val_f1=0.8761 best=0.9090
+[maweibo fold2 random s2001] epoch 7 loss=0.3033 val_f1=0.9091 best=0.9091
+[maweibo fold2 random s2001] epoch 8 loss=0.2863 val_f1=0.8623 best=0.9091
+[maweibo fold2 random s2001] epoch 9 loss=0.2862 val_f1=0.9198 best=0.9198
+[maweibo fold2 random s2001] epoch 10 loss=0.2757 val_f1=0.8869 best=0.9198
+[maweibo fold2 random s2001] epoch 11 loss=0.2770 val_f1=0.9171 best=0.9198
+[maweibo fold2 random s2001] epoch 12 loss=0.2796 val_f1=0.9117 best=0.9198
+[maweibo fold2 random s2001] epoch 13 loss=0.2563 val_f1=0.9170 best=0.9198
+[maweibo fold2 random s2001] epoch 14 loss=0.2576 val_f1=0.9144 best=0.9198
+[maweibo fold2 random s2001] epoch 15 loss=0.2556 val_f1=0.9063 best=0.9198
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_random_seed2001 best_epoch 9 val 0.9198
+exit=0
+=== maweibo_fold2_random_seed2002 10:55:08 ===
+[maweibo fold2 random s2002] epoch 0 loss=0.5599 val_f1=0.7880 best=0.7880
+[maweibo fold2 random s2002] epoch 1 loss=0.4307 val_f1=0.8255 best=0.8255
+[maweibo fold2 random s2002] epoch 2 loss=0.3833 val_f1=0.8821 best=0.8821
+[maweibo fold2 random s2002] epoch 3 loss=0.3530 val_f1=0.8224 best=0.8821
+[maweibo fold2 random s2002] epoch 4 loss=0.3340 val_f1=0.8955 best=0.8955
+[maweibo fold2 random s2002] epoch 5 loss=0.3157 val_f1=0.8954 best=0.8955
+[maweibo fold2 random s2002] epoch 6 loss=0.3136 val_f1=0.9197 best=0.9197
+[maweibo fold2 random s2002] epoch 7 loss=0.2943 val_f1=0.8900 best=0.9197
+[maweibo fold2 random s2002] epoch 8 loss=0.2999 val_f1=0.8926 best=0.9197
+[maweibo fold2 random s2002] epoch 9 loss=0.2823 val_f1=0.9064 best=0.9197
+[maweibo fold2 random s2002] epoch 10 loss=0.2687 val_f1=0.9144 best=0.9197
+[maweibo fold2 random s2002] epoch 11 loss=0.2615 val_f1=0.9118 best=0.9197
+[maweibo fold2 random s2002] epoch 12 loss=0.2773 val_f1=0.9117 best=0.9197
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_random_seed2002 best_epoch 6 val 0.9197
+exit=0
+=== maweibo_fold2_umer_seed2000 11:25:15 ===
+[maweibo fold2 umer s2000] epoch 0 loss=0.4077 val_f1=0.8848 best=0.8848
+[maweibo fold2 umer s2000] epoch 1 loss=0.3492 val_f1=0.8901 best=0.8901
+[maweibo fold2 umer s2000] epoch 2 loss=0.3342 val_f1=0.9064 best=0.9064
+[maweibo fold2 umer s2000] epoch 3 loss=0.3259 val_f1=0.9225 best=0.9225
+[maweibo fold2 umer s2000] epoch 4 loss=0.3093 val_f1=0.9144 best=0.9225
+[maweibo fold2 umer s2000] epoch 5 loss=0.3064 val_f1=0.8899 best=0.9225
+[maweibo fold2 umer s2000] epoch 6 loss=0.2839 val_f1=0.9143 best=0.9225
+[maweibo fold2 umer s2000] epoch 7 loss=0.2948 val_f1=0.9061 best=0.9225
+[maweibo fold2 umer s2000] epoch 8 loss=0.2742 val_f1=0.9061 best=0.9225
+[maweibo fold2 umer s2000] epoch 9 loss=0.2654 val_f1=0.9251 best=0.9251
+[maweibo fold2 umer s2000] epoch 10 loss=0.2541 val_f1=0.8843 best=0.9251
+[maweibo fold2 umer s2000] epoch 11 loss=0.2569 val_f1=0.9144 best=0.9251
+[maweibo fold2 umer s2000] epoch 12 loss=0.2494 val_f1=0.9331 best=0.9331
+[maweibo fold2 umer s2000] epoch 13 loss=0.2409 val_f1=0.9171 best=0.9331
+[maweibo fold2 umer s2000] epoch 14 loss=0.2345 val_f1=0.8982 best=0.9331
+[maweibo fold2 umer s2000] epoch 15 loss=0.2430 val_f1=0.9251 best=0.9331
+[maweibo fold2 umer s2000] epoch 16 loss=0.2439 val_f1=0.9088 best=0.9331
+[maweibo fold2 umer s2000] epoch 17 loss=0.2313 val_f1=0.9332 best=0.9332
+[maweibo fold2 umer s2000] epoch 18 loss=0.2373 val_f1=0.9171 best=0.9332
+[maweibo fold2 umer s2000] epoch 19 loss=0.2412 val_f1=0.9278 best=0.9332
+[maweibo fold2 umer s2000] epoch 20 loss=0.2302 val_f1=0.9277 best=0.9332
+[maweibo fold2 umer s2000] epoch 21 loss=0.2288 val_f1=0.9385 best=0.9385
+[maweibo fold2 umer s2000] epoch 22 loss=0.2266 val_f1=0.9251 best=0.9385
+[maweibo fold2 umer s2000] epoch 23 loss=0.2255 val_f1=0.9305 best=0.9385
+[maweibo fold2 umer s2000] epoch 24 loss=0.2260 val_f1=0.9332 best=0.9385
+[maweibo fold2 umer s2000] epoch 25 loss=0.2310 val_f1=0.9305 best=0.9385
+[maweibo fold2 umer s2000] epoch 26 loss=0.2257 val_f1=0.9384 best=0.9385
+[maweibo fold2 umer s2000] epoch 27 loss=0.2237 val_f1=0.9278 best=0.9385
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_umer_seed2000 best_epoch 21 val 0.9385
+exit=0
+=== maweibo_fold2_umer_seed2001 12:23:26 ===
+[maweibo fold2 umer s2001] epoch 0 loss=0.4030 val_f1=0.9064 best=0.9064
+[maweibo fold2 umer s2001] epoch 1 loss=0.3515 val_f1=0.8310 best=0.9064
+[maweibo fold2 umer s2001] epoch 2 loss=0.3338 val_f1=0.8874 best=0.9064
+[maweibo fold2 umer s2001] epoch 3 loss=0.3199 val_f1=0.9090 best=0.9090
+[maweibo fold2 umer s2001] epoch 4 loss=0.3048 val_f1=0.9088 best=0.9090
+[maweibo fold2 umer s2001] epoch 5 loss=0.3034 val_f1=0.9037 best=0.9090
+[maweibo fold2 umer s2001] epoch 6 loss=0.2861 val_f1=0.9061 best=0.9090
+[maweibo fold2 umer s2001] epoch 7 loss=0.2817 val_f1=0.9278 best=0.9278
+[maweibo fold2 umer s2001] epoch 8 loss=0.2698 val_f1=0.9036 best=0.9278
+[maweibo fold2 umer s2001] epoch 9 loss=0.2617 val_f1=0.9171 best=0.9278
+[maweibo fold2 umer s2001] epoch 10 loss=0.2599 val_f1=0.9036 best=0.9278
+[maweibo fold2 umer s2001] epoch 11 loss=0.2517 val_f1=0.9143 best=0.9278
+[maweibo fold2 umer s2001] epoch 12 loss=0.2453 val_f1=0.9198 best=0.9278
+[maweibo fold2 umer s2001] epoch 13 loss=0.2448 val_f1=0.9035 best=0.9278
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_umer_seed2001 best_epoch 7 val 0.9278
+exit=0
+=== maweibo_fold2_umer_seed2002 12:54:34 ===
+[maweibo fold2 umer s2002] epoch 0 loss=0.3960 val_f1=0.8756 best=0.8756
+[maweibo fold2 umer s2002] epoch 1 loss=0.3441 val_f1=0.8569 best=0.8756
+[maweibo fold2 umer s2002] epoch 2 loss=0.3290 val_f1=0.9171 best=0.9171
+[maweibo fold2 umer s2002] epoch 3 loss=0.3132 val_f1=0.8982 best=0.9171
+[maweibo fold2 umer s2002] epoch 4 loss=0.3144 val_f1=0.8874 best=0.9171
+[maweibo fold2 umer s2002] epoch 5 loss=0.2945 val_f1=0.8927 best=0.9171
+[maweibo fold2 umer s2002] epoch 6 loss=0.2889 val_f1=0.9010 best=0.9171
+[maweibo fold2 umer s2002] epoch 7 loss=0.2720 val_f1=0.9091 best=0.9171
+[maweibo fold2 umer s2002] epoch 8 loss=0.2750 val_f1=0.9171 best=0.9171
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold2_umer_seed2002 best_epoch 2 val 0.9171
+exit=0
+=== maweibo_fold3_random_seed2000 13:17:15 ===
+[maweibo fold3 random s2000] epoch 0 loss=0.5609 val_f1=0.8823 best=0.8823
+[maweibo fold3 random s2000] epoch 1 loss=0.4274 val_f1=0.8185 best=0.8823
+[maweibo fold3 random s2000] epoch 2 loss=0.3816 val_f1=0.9197 best=0.9197
+[maweibo fold3 random s2000] epoch 3 loss=0.3562 val_f1=0.9384 best=0.9384
+[maweibo fold3 random s2000] epoch 4 loss=0.3426 val_f1=0.9464 best=0.9464
+[maweibo fold3 random s2000] epoch 5 loss=0.3311 val_f1=0.9303 best=0.9464
+[maweibo fold3 random s2000] epoch 6 loss=0.3133 val_f1=0.9545 best=0.9545
+[maweibo fold3 random s2000] epoch 7 loss=0.3088 val_f1=0.9031 best=0.9545
+[maweibo fold3 random s2000] epoch 8 loss=0.2965 val_f1=0.9545 best=0.9545
+[maweibo fold3 random s2000] epoch 9 loss=0.2925 val_f1=0.9140 best=0.9545
+[maweibo fold3 random s2000] epoch 10 loss=0.2920 val_f1=0.9302 best=0.9545
+[maweibo fold3 random s2000] epoch 11 loss=0.2801 val_f1=0.9438 best=0.9545
+[maweibo fold3 random s2000] epoch 12 loss=0.2687 val_f1=0.9140 best=0.9545
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_random_seed2000 best_epoch 6 val 0.9545
+exit=0
+=== maweibo_fold3_random_seed2001 13:44:52 ===
+[maweibo fold3 random s2001] epoch 0 loss=0.5477 val_f1=0.7890 best=0.7890
+[maweibo fold3 random s2001] epoch 1 loss=0.4318 val_f1=0.8416 best=0.8416
+[maweibo fold3 random s2001] epoch 2 loss=0.3747 val_f1=0.8616 best=0.8616
+[maweibo fold3 random s2001] epoch 3 loss=0.3531 val_f1=0.9545 best=0.9545
+[maweibo fold3 random s2001] epoch 4 loss=0.3357 val_f1=0.9465 best=0.9545
+[maweibo fold3 random s2001] epoch 5 loss=0.3241 val_f1=0.9304 best=0.9545
+[maweibo fold3 random s2001] epoch 6 loss=0.3180 val_f1=0.9599 best=0.9599
+[maweibo fold3 random s2001] epoch 7 loss=0.3103 val_f1=0.9599 best=0.9599
+[maweibo fold3 random s2001] epoch 8 loss=0.2908 val_f1=0.9086 best=0.9599
+[maweibo fold3 random s2001] epoch 9 loss=0.3109 val_f1=0.8813 best=0.9599
+[maweibo fold3 random s2001] epoch 10 loss=0.2968 val_f1=0.9465 best=0.9599
+[maweibo fold3 random s2001] epoch 11 loss=0.2715 val_f1=0.9411 best=0.9599
+[maweibo fold3 random s2001] epoch 12 loss=0.2724 val_f1=0.9411 best=0.9599
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_random_seed2001 best_epoch 6 val 0.9599
+exit=0
+=== maweibo_fold3_random_seed2002 14:12:36 ===
+[maweibo fold3 random s2002] epoch 0 loss=0.5807 val_f1=0.7940 best=0.7940
+[maweibo fold3 random s2002] epoch 1 loss=0.4433 val_f1=0.8840 best=0.8840
+[maweibo fold3 random s2002] epoch 2 loss=0.3885 val_f1=0.9141 best=0.9141
+[maweibo fold3 random s2002] epoch 3 loss=0.3636 val_f1=0.9250 best=0.9250
+[maweibo fold3 random s2002] epoch 4 loss=0.3477 val_f1=0.9545 best=0.9545
+[maweibo fold3 random s2002] epoch 5 loss=0.3257 val_f1=0.9411 best=0.9545
+[maweibo fold3 random s2002] epoch 6 loss=0.3064 val_f1=0.9519 best=0.9545
+[maweibo fold3 random s2002] epoch 7 loss=0.2976 val_f1=0.9330 best=0.9545
+[maweibo fold3 random s2002] epoch 8 loss=0.2944 val_f1=0.9411 best=0.9545
+[maweibo fold3 random s2002] epoch 9 loss=0.2893 val_f1=0.9492 best=0.9545
+[maweibo fold3 random s2002] epoch 10 loss=0.2847 val_f1=0.9599 best=0.9599
+[maweibo fold3 random s2002] epoch 11 loss=0.2725 val_f1=0.9652 best=0.9652
+[maweibo fold3 random s2002] epoch 12 loss=0.2688 val_f1=0.9679 best=0.9679
+[maweibo fold3 random s2002] epoch 13 loss=0.2681 val_f1=0.9519 best=0.9679
+[maweibo fold3 random s2002] epoch 14 loss=0.2632 val_f1=0.9518 best=0.9679
+[maweibo fold3 random s2002] epoch 15 loss=0.2478 val_f1=0.9465 best=0.9679
+[maweibo fold3 random s2002] epoch 16 loss=0.2478 val_f1=0.9599 best=0.9679
+[maweibo fold3 random s2002] epoch 17 loss=0.2451 val_f1=0.9357 best=0.9679
+[maweibo fold3 random s2002] epoch 18 loss=0.2477 val_f1=0.9545 best=0.9679
+[maweibo fold3 random s2002] epoch 19 loss=0.2447 val_f1=0.9706 best=0.9706
+[maweibo fold3 random s2002] epoch 20 loss=0.2405 val_f1=0.9679 best=0.9706
+[maweibo fold3 random s2002] epoch 21 loss=0.2429 val_f1=0.9465 best=0.9706
+[maweibo fold3 random s2002] epoch 22 loss=0.2334 val_f1=0.9545 best=0.9706
+[maweibo fold3 random s2002] epoch 23 loss=0.2281 val_f1=0.9545 best=0.9706
+[maweibo fold3 random s2002] epoch 24 loss=0.2290 val_f1=0.9572 best=0.9706
+[maweibo fold3 random s2002] epoch 25 loss=0.2306 val_f1=0.9599 best=0.9706
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_random_seed2002 best_epoch 19 val 0.9706
+exit=0
+=== maweibo_fold3_umer_seed2000 14:56:12 ===
+[maweibo fold3 umer s2000] epoch 0 loss=0.4271 val_f1=0.8700 best=0.8700
+[maweibo fold3 umer s2000] epoch 1 loss=0.3607 val_f1=0.9519 best=0.9519
+[maweibo fold3 umer s2000] epoch 2 loss=0.3374 val_f1=0.9465 best=0.9519
+[maweibo fold3 umer s2000] epoch 3 loss=0.3252 val_f1=0.9194 best=0.9519
+[maweibo fold3 umer s2000] epoch 4 loss=0.3177 val_f1=0.9357 best=0.9519
+[maweibo fold3 umer s2000] epoch 5 loss=0.3035 val_f1=0.9275 best=0.9519
+[maweibo fold3 umer s2000] epoch 6 loss=0.2961 val_f1=0.9492 best=0.9519
+[maweibo fold3 umer s2000] epoch 7 loss=0.2856 val_f1=0.9249 best=0.9519
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_umer_seed2000 best_epoch 1 val 0.9519
+exit=0
+=== maweibo_fold3_umer_seed2001 15:18:04 ===
+[maweibo fold3 umer s2001] epoch 0 loss=0.4105 val_f1=0.9332 best=0.9332
+[maweibo fold3 umer s2001] epoch 1 loss=0.3547 val_f1=0.9058 best=0.9332
+[maweibo fold3 umer s2001] epoch 2 loss=0.3455 val_f1=0.9223 best=0.9332
+[maweibo fold3 umer s2001] epoch 3 loss=0.3283 val_f1=0.9519 best=0.9519
+[maweibo fold3 umer s2001] epoch 4 loss=0.3113 val_f1=0.9438 best=0.9519
+[maweibo fold3 umer s2001] epoch 5 loss=0.3041 val_f1=0.9438 best=0.9519
+[maweibo fold3 umer s2001] epoch 6 loss=0.2980 val_f1=0.9438 best=0.9519
+[maweibo fold3 umer s2001] epoch 7 loss=0.2905 val_f1=0.9492 best=0.9519
+[maweibo fold3 umer s2001] epoch 8 loss=0.2767 val_f1=0.9465 best=0.9519
+[maweibo fold3 umer s2001] epoch 9 loss=0.2749 val_f1=0.9384 best=0.9519
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_umer_seed2001 best_epoch 3 val 0.9519
+exit=0
+=== maweibo_fold3_umer_seed2002 15:42:06 ===
+[maweibo fold3 umer s2002] epoch 0 loss=0.4041 val_f1=0.9085 best=0.9085
+[maweibo fold3 umer s2002] epoch 1 loss=0.3542 val_f1=0.9248 best=0.9248
+[maweibo fold3 umer s2002] epoch 2 loss=0.3447 val_f1=0.9357 best=0.9357
+[maweibo fold3 umer s2002] epoch 3 loss=0.3205 val_f1=0.9357 best=0.9357
+[maweibo fold3 umer s2002] epoch 4 loss=0.3131 val_f1=0.9519 best=0.9519
+[maweibo fold3 umer s2002] epoch 5 loss=0.3045 val_f1=0.9276 best=0.9519
+[maweibo fold3 umer s2002] epoch 6 loss=0.2874 val_f1=0.9411 best=0.9519
+[maweibo fold3 umer s2002] epoch 7 loss=0.2871 val_f1=0.9384 best=0.9519
+[maweibo fold3 umer s2002] epoch 8 loss=0.2690 val_f1=0.9411 best=0.9519
+[maweibo fold3 umer s2002] epoch 9 loss=0.2677 val_f1=0.9599 best=0.9599
+[maweibo fold3 umer s2002] epoch 10 loss=0.2762 val_f1=0.9438 best=0.9599
+[maweibo fold3 umer s2002] epoch 11 loss=0.2609 val_f1=0.9652 best=0.9652
+[maweibo fold3 umer s2002] epoch 12 loss=0.2496 val_f1=0.9545 best=0.9652
+[maweibo fold3 umer s2002] epoch 13 loss=0.2517 val_f1=0.9626 best=0.9652
+[maweibo fold3 umer s2002] epoch 14 loss=0.2531 val_f1=0.9384 best=0.9652
+[maweibo fold3 umer s2002] epoch 15 loss=0.2387 val_f1=0.9358 best=0.9652
+[maweibo fold3 umer s2002] epoch 16 loss=0.2477 val_f1=0.9437 best=0.9652
+[maweibo fold3 umer s2002] epoch 17 loss=0.2444 val_f1=0.9679 best=0.9679
+[maweibo fold3 umer s2002] epoch 18 loss=0.2354 val_f1=0.9626 best=0.9679
+[maweibo fold3 umer s2002] epoch 19 loss=0.2397 val_f1=0.9518 best=0.9679
+[maweibo fold3 umer s2002] epoch 20 loss=0.2303 val_f1=0.9465 best=0.9679
+[maweibo fold3 umer s2002] epoch 21 loss=0.2313 val_f1=0.9599 best=0.9679
+[maweibo fold3 umer s2002] epoch 22 loss=0.2344 val_f1=0.9572 best=0.9679
+[maweibo fold3 umer s2002] epoch 23 loss=0.2254 val_f1=0.9572 best=0.9679
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold3_umer_seed2002 best_epoch 17 val 0.9679
+exit=0
+=== maweibo_fold4_random_seed2000 16:23:26 ===
+[maweibo fold4 random s2000] epoch 0 loss=0.5663 val_f1=0.8503 best=0.8503
+[maweibo fold4 random s2000] epoch 1 loss=0.4318 val_f1=0.8820 best=0.8820
+[maweibo fold4 random s2000] epoch 2 loss=0.3665 val_f1=0.9091 best=0.9091
+[maweibo fold4 random s2000] epoch 3 loss=0.3443 val_f1=0.9008 best=0.9091
+[maweibo fold4 random s2000] epoch 4 loss=0.3363 val_f1=0.8733 best=0.9091
+[maweibo fold4 random s2000] epoch 5 loss=0.3206 val_f1=0.8841 best=0.9091
+[maweibo fold4 random s2000] epoch 6 loss=0.3058 val_f1=0.9007 best=0.9091
+[maweibo fold4 random s2000] epoch 7 loss=0.2990 val_f1=0.8759 best=0.9091
+[maweibo fold4 random s2000] epoch 8 loss=0.2954 val_f1=0.8980 best=0.9091
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_random_seed2000 best_epoch 2 val 0.9091
+exit=0
+=== maweibo_fold4_random_seed2001 16:46:17 ===
+[maweibo fold4 random s2001] epoch 0 loss=0.5564 val_f1=0.7844 best=0.7844
+[maweibo fold4 random s2001] epoch 1 loss=0.4428 val_f1=0.8924 best=0.8924
+[maweibo fold4 random s2001] epoch 2 loss=0.3678 val_f1=0.9035 best=0.9035
+[maweibo fold4 random s2001] epoch 3 loss=0.3455 val_f1=0.8733 best=0.9035
+[maweibo fold4 random s2001] epoch 4 loss=0.3355 val_f1=0.9117 best=0.9117
+[maweibo fold4 random s2001] epoch 5 loss=0.3171 val_f1=0.8817 best=0.9117
+[maweibo fold4 random s2001] epoch 6 loss=0.2948 val_f1=0.9033 best=0.9117
+[maweibo fold4 random s2001] epoch 7 loss=0.3115 val_f1=0.8951 best=0.9117
+[maweibo fold4 random s2001] epoch 8 loss=0.2796 val_f1=0.8924 best=0.9117
+[maweibo fold4 random s2001] epoch 9 loss=0.2843 val_f1=0.8951 best=0.9117
+[maweibo fold4 random s2001] epoch 10 loss=0.2861 val_f1=0.8894 best=0.9117
+[maweibo fold4 random s2001] epoch 11 loss=0.2743 val_f1=0.9224 best=0.9224
+[maweibo fold4 random s2001] epoch 12 loss=0.2574 val_f1=0.8896 best=0.9224
+[maweibo fold4 random s2001] epoch 13 loss=0.2587 val_f1=0.8980 best=0.9224
+[maweibo fold4 random s2001] epoch 14 loss=0.2572 val_f1=0.8924 best=0.9224
+[maweibo fold4 random s2001] epoch 15 loss=0.2437 val_f1=0.8979 best=0.9224
+[maweibo fold4 random s2001] epoch 16 loss=0.2451 val_f1=0.9115 best=0.9224
+[maweibo fold4 random s2001] epoch 17 loss=0.2470 val_f1=0.9197 best=0.9224
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_random_seed2001 best_epoch 11 val 0.9224
+exit=0
+=== maweibo_fold4_random_seed2002 17:19:52 ===
+[maweibo fold4 random s2002] epoch 0 loss=0.5627 val_f1=0.8332 best=0.8332
+[maweibo fold4 random s2002] epoch 1 loss=0.4301 val_f1=0.8930 best=0.8930
+[maweibo fold4 random s2002] epoch 2 loss=0.3817 val_f1=0.9009 best=0.9009
+[maweibo fold4 random s2002] epoch 3 loss=0.3500 val_f1=0.8675 best=0.9009
+[maweibo fold4 random s2002] epoch 4 loss=0.3353 val_f1=0.9090 best=0.9090
+[maweibo fold4 random s2002] epoch 5 loss=0.3061 val_f1=0.8981 best=0.9090
+[maweibo fold4 random s2002] epoch 6 loss=0.3072 val_f1=0.8221 best=0.9090
+[maweibo fold4 random s2002] epoch 7 loss=0.3008 val_f1=0.9305 best=0.9305
+[maweibo fold4 random s2002] epoch 8 loss=0.2835 val_f1=0.9008 best=0.9305
+[maweibo fold4 random s2002] epoch 9 loss=0.2809 val_f1=0.9061 best=0.9305
+[maweibo fold4 random s2002] epoch 10 loss=0.2742 val_f1=0.9114 best=0.9305
+[maweibo fold4 random s2002] epoch 11 loss=0.2656 val_f1=0.9170 best=0.9305
+[maweibo fold4 random s2002] epoch 12 loss=0.2640 val_f1=0.9250 best=0.9305
+[maweibo fold4 random s2002] epoch 13 loss=0.2606 val_f1=0.9196 best=0.9305
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_random_seed2002 best_epoch 7 val 0.9305
+exit=0
+=== maweibo_fold4_umer_seed2000 17:48:38 ===
+[maweibo fold4 umer s2000] epoch 0 loss=0.4101 val_f1=0.8377 best=0.8377
+[maweibo fold4 umer s2000] epoch 1 loss=0.3532 val_f1=0.8621 best=0.8621
+[maweibo fold4 umer s2000] epoch 2 loss=0.3316 val_f1=0.8956 best=0.8956
+[maweibo fold4 umer s2000] epoch 3 loss=0.3207 val_f1=0.9144 best=0.9144
+[maweibo fold4 umer s2000] epoch 4 loss=0.3181 val_f1=0.8731 best=0.9144
+[maweibo fold4 umer s2000] epoch 5 loss=0.2985 val_f1=0.8845 best=0.9144
+[maweibo fold4 umer s2000] epoch 6 loss=0.2893 val_f1=0.9090 best=0.9144
+[maweibo fold4 umer s2000] epoch 7 loss=0.2836 val_f1=0.9251 best=0.9251
+[maweibo fold4 umer s2000] epoch 8 loss=0.2682 val_f1=0.8980 best=0.9251
+[maweibo fold4 umer s2000] epoch 9 loss=0.2631 val_f1=0.8871 best=0.9251
+[maweibo fold4 umer s2000] epoch 10 loss=0.2557 val_f1=0.9278 best=0.9278
+[maweibo fold4 umer s2000] epoch 11 loss=0.2655 val_f1=0.9169 best=0.9278
+[maweibo fold4 umer s2000] epoch 12 loss=0.2570 val_f1=0.9277 best=0.9278
+[maweibo fold4 umer s2000] epoch 13 loss=0.2461 val_f1=0.9465 best=0.9465
+[maweibo fold4 umer s2000] epoch 14 loss=0.2449 val_f1=0.9142 best=0.9465
+[maweibo fold4 umer s2000] epoch 15 loss=0.2434 val_f1=0.9251 best=0.9465
+[maweibo fold4 umer s2000] epoch 16 loss=0.2421 val_f1=0.9061 best=0.9465
+[maweibo fold4 umer s2000] epoch 17 loss=0.2344 val_f1=0.8952 best=0.9465
+[maweibo fold4 umer s2000] epoch 18 loss=0.2421 val_f1=0.9141 best=0.9465
+[maweibo fold4 umer s2000] epoch 19 loss=0.2314 val_f1=0.9332 best=0.9465
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_umer_seed2000 best_epoch 13 val 0.9465
+exit=0
+=== maweibo_fold4_umer_seed2001 18:05:22 ===
+[maweibo fold4 umer s2001] epoch 0 loss=0.4179 val_f1=0.8769 best=0.8769
+[maweibo fold4 umer s2001] epoch 1 loss=0.3693 val_f1=0.9011 best=0.9011
+[maweibo fold4 umer s2001] epoch 2 loss=0.3366 val_f1=0.8821 best=0.9011
+[maweibo fold4 umer s2001] epoch 3 loss=0.3223 val_f1=0.9008 best=0.9011
+[maweibo fold4 umer s2001] epoch 4 loss=0.3077 val_f1=0.9090 best=0.9090
+[maweibo fold4 umer s2001] epoch 5 loss=0.3014 val_f1=0.8706 best=0.9090
+[maweibo fold4 umer s2001] epoch 6 loss=0.2825 val_f1=0.8871 best=0.9090
+[maweibo fold4 umer s2001] epoch 7 loss=0.2840 val_f1=0.9143 best=0.9143
+[maweibo fold4 umer s2001] epoch 8 loss=0.2795 val_f1=0.8924 best=0.9143
+[maweibo fold4 umer s2001] epoch 9 loss=0.2686 val_f1=0.8786 best=0.9143
+[maweibo fold4 umer s2001] epoch 10 loss=0.2673 val_f1=0.9116 best=0.9143
+[maweibo fold4 umer s2001] epoch 11 loss=0.2547 val_f1=0.9035 best=0.9143
+[maweibo fold4 umer s2001] epoch 12 loss=0.2498 val_f1=0.9143 best=0.9143
+[maweibo fold4 umer s2001] epoch 13 loss=0.2485 val_f1=0.9278 best=0.9278
+[maweibo fold4 umer s2001] epoch 14 loss=0.2459 val_f1=0.9304 best=0.9304
+[maweibo fold4 umer s2001] epoch 15 loss=0.2425 val_f1=0.9224 best=0.9304
+[maweibo fold4 umer s2001] epoch 16 loss=0.2322 val_f1=0.9197 best=0.9304
+[maweibo fold4 umer s2001] epoch 17 loss=0.2416 val_f1=0.9304 best=0.9304
+[maweibo fold4 umer s2001] epoch 18 loss=0.2361 val_f1=0.9385 best=0.9385
+[maweibo fold4 umer s2001] epoch 19 loss=0.2366 val_f1=0.9277 best=0.9385
+[maweibo fold4 umer s2001] epoch 20 loss=0.2301 val_f1=0.9277 best=0.9385
+[maweibo fold4 umer s2001] epoch 21 loss=0.2279 val_f1=0.9142 best=0.9385
+[maweibo fold4 umer s2001] epoch 22 loss=0.2235 val_f1=0.9465 best=0.9465
+[maweibo fold4 umer s2001] epoch 23 loss=0.2363 val_f1=0.9358 best=0.9465
+[maweibo fold4 umer s2001] epoch 24 loss=0.2294 val_f1=0.9385 best=0.9465
+[maweibo fold4 umer s2001] epoch 25 loss=0.2231 val_f1=0.9223 best=0.9465
+[maweibo fold4 umer s2001] epoch 26 loss=0.2252 val_f1=0.9465 best=0.9465
+[maweibo fold4 umer s2001] epoch 27 loss=0.2219 val_f1=0.9331 best=0.9465
+[maweibo fold4 umer s2001] epoch 28 loss=0.2193 val_f1=0.9278 best=0.9465
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_umer_seed2001 best_epoch 22 val 0.9465
+exit=0
+=== maweibo_fold4_umer_seed2002 18:12:15 ===
+[maweibo fold4 umer s2002] epoch 0 loss=0.4069 val_f1=0.8516 best=0.8516
+[maweibo fold4 umer s2002] epoch 1 loss=0.3623 val_f1=0.8818 best=0.8818
+[maweibo fold4 umer s2002] epoch 2 loss=0.3459 val_f1=0.8956 best=0.8956
+[maweibo fold4 umer s2002] epoch 3 loss=0.3175 val_f1=0.8846 best=0.8956
+[maweibo fold4 umer s2002] epoch 4 loss=0.3176 val_f1=0.9197 best=0.9197
+[maweibo fold4 umer s2002] epoch 5 loss=0.2828 val_f1=0.9143 best=0.9197
+[maweibo fold4 umer s2002] epoch 6 loss=0.3015 val_f1=0.8871 best=0.9197
+[maweibo fold4 umer s2002] epoch 7 loss=0.2773 val_f1=0.8979 best=0.9197
+[maweibo fold4 umer s2002] epoch 8 loss=0.2785 val_f1=0.8924 best=0.9197
+[maweibo fold4 umer s2002] epoch 9 loss=0.2697 val_f1=0.8869 best=0.9197
+[maweibo fold4 umer s2002] epoch 10 loss=0.2568 val_f1=0.9224 best=0.9224
+[maweibo fold4 umer s2002] epoch 11 loss=0.2584 val_f1=0.9304 best=0.9304
+[maweibo fold4 umer s2002] epoch 12 loss=0.2517 val_f1=0.9142 best=0.9304
+[maweibo fold4 umer s2002] epoch 13 loss=0.2526 val_f1=0.9411 best=0.9411
+[maweibo fold4 umer s2002] epoch 14 loss=0.2564 val_f1=0.9033 best=0.9411
+[maweibo fold4 umer s2002] epoch 15 loss=0.2481 val_f1=0.9358 best=0.9411
+[maweibo fold4 umer s2002] epoch 16 loss=0.2477 val_f1=0.9331 best=0.9411
+[maweibo fold4 umer s2002] epoch 17 loss=0.2375 val_f1=0.9331 best=0.9411
+[maweibo fold4 umer s2002] epoch 18 loss=0.2374 val_f1=0.9116 best=0.9411
+[maweibo fold4 umer s2002] epoch 19 loss=0.2343 val_f1=0.9142 best=0.9411
+RUN DONE /data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold4_umer_seed2002 best_epoch 13 val 0.9411
+exit=0
+ALL_DONE 18:17:49

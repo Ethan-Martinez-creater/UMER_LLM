@@ -1,0 +1,31 @@
+{
+ "stage": "formal_e1",
+ "dataset": "maweibo",
+ "fold": 4,
+ "init": "random",
+ "seed": 2000,
+ "hparams": {
+  "batch_size": 32,
+  "max_epochs": 60,
+  "patience": 7,
+  "lr": 0.0001,
+  "weight_decay": 0.05,
+  "label_smoothing": 0.1,
+  "epochs_run": 60
+ },
+ "split": {
+  "train": 3358,
+  "validation": 374,
+  "test": 932
+ },
+ "partition_seed": 3090,
+ "init_info": {
+  "mode": "random",
+  "n_copied_tensors": 0
+ },
+ "best_epoch": 2,
+ "best_val_macro_f1": 0.9090883093113704,
+ "device": "cuda",
+ "checkpoint_sha16": "38f3523165444ccc",
+ "encoder_umer_ckpt": null
+}

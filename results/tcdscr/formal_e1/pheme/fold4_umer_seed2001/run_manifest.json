@@ -1,0 +1,33 @@
+{
+ "stage": "formal_e1",
+ "dataset": "pheme",
+ "fold": 4,
+ "init": "umer",
+ "seed": 2001,
+ "hparams": {
+  "batch_size": 32,
+  "max_epochs": 60,
+  "patience": 7,
+  "lr": 0.0001,
+  "weight_decay": 0.05,
+  "label_smoothing": 0.1,
+  "epochs_run": 60
+ },
+ "split": {
+  "train": 4626,
+  "validation": 514,
+  "test": 1285
+ },
+ "partition_seed": 3090,
+ "init_info": {
+  "mode": "umer",
+  "skipped": [],
+  "source_checkpoint": "/data/jyz/next/llm/checkpoints/pheme/fold_5_train_2000/best_joint_model.pt",
+  "n_copied_tensors": 39
+ },
+ "best_epoch": 10,
+ "best_val_macro_f1": 0.8960759575569358,
+ "device": "cuda",
+ "checkpoint_sha16": "8326529253fc3920",
+ "encoder_umer_ckpt": "/data/jyz/next/llm/checkpoints/pheme/fold_5_train_2000/best_joint_model.pt"
+}

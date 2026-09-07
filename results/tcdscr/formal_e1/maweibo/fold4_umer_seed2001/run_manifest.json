@@ -1,0 +1,33 @@
+{
+ "stage": "formal_e1",
+ "dataset": "maweibo",
+ "fold": 4,
+ "init": "umer",
+ "seed": 2001,
+ "hparams": {
+  "batch_size": 32,
+  "max_epochs": 60,
+  "patience": 7,
+  "lr": 0.0001,
+  "weight_decay": 0.05,
+  "label_smoothing": 0.1,
+  "epochs_run": 60
+ },
+ "split": {
+  "train": 3358,
+  "validation": 374,
+  "test": 932
+ },
+ "partition_seed": 3090,
+ "init_info": {
+  "mode": "umer",
+  "skipped": [],
+  "source_checkpoint": "/data/jyz/next/llm/checkpoints/maweibo/fold_5_train_2000/best_joint_model.pt",
+  "n_copied_tensors": 39
+ },
+ "best_epoch": 22,
+ "best_val_macro_f1": 0.9465225348890414,
+ "device": "cuda",
+ "checkpoint_sha16": "b0098b0067a11b15",
+ "encoder_umer_ckpt": "/data/jyz/next/llm/checkpoints/maweibo/fold_5_train_2000/best_joint_model.pt"
+}
