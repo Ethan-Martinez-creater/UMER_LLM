@@ -168,3 +168,10 @@ AdamW lr=1e-4  weight_decay=0.05  label_smoothing=0.1
 - 代码：`scripts/tcdscr_run_e1.py`、`scripts/tcdscr_summarize_e1.py`、`scripts/tcdscr_code/e1_driver.py`（服务器部署副本与本地逐一 diff 一致）、`project/tcdscr/tests/test_e1_collate.py`；
 - 权重：60× `best_encoder.pt` 仅存服务器 `/data/jyz/next/llm/results/tcdscr/formal_e1/{dataset}/{fold}_{init}_seed{seed}/`（每个 run 的 `checkpoint_sha16` 记录在 manifest 中，可用于复现比对）
 - 复现入口：`python scripts/tcdscr_run_e1.py --dataset {pheme|maweibo} --fold {0..4} --init {random|umer} --seeds 2000,2001,2002`
+
+## 9. Git
+
+- 主体提交：`db3c269`（TC-DSCR Formal E1），SHA 由紧随其后的记录提交回填（commit 不能包含自身 hash）
+- 分支：`main`，仓库 `Ethan-Martinez-creater/UMER_LLM`
+- 本报告与全部 per-run 产物随主体提交入库；60 个 `best_encoder.pt` 权重仅存服务器
+  `/data/jyz/next/llm/results/tcdscr/formal_e1/`
