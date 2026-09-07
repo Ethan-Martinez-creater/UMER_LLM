@@ -11,8 +11,9 @@ the use of UMER-init for E2. See Section 1.)
 
 ## Git
 - base commit: `db3c269` (TC-DSCR Formal E1, with SHA-backfill commit `2cbcdb6`)
-- final commit: (recorded in the follow-up commit immediately after this
-  submission)
+- final commit: `26029af` (TC-DSCR Formal E1 finalization; SHA recorded by
+  the immediately following backfill commit — a commit cannot contain its
+  own hash)
 
 ## 1. UMER / TC-DSCR Fold-ID Parity
 
