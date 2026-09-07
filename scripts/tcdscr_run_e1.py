@@ -10,9 +10,11 @@ draw, macro-F1, patience-based early stopping); the test set is evaluated
 once with the best checkpoint on every causal view (SOURCE_ONLY, 5m..6h,
 24h).
 
-Hyperparameters follow the frozen UMER five-fold training recipe
-(batch 32, max 60 epochs, patience 7, AdamW lr 1e-4, weight decay 0.05,
-label smoothing 0.1) and are recorded in every run manifest.
+Hyperparameters follow the TC-DSCR E1 frozen causal-encoder training
+recipe (batch 32, max 60 epochs, patience 7, AdamW lr 1e-4, weight decay
+0.05, label smoothing 0.1) and are recorded in every run manifest. UMER
+Init refers only to parameter initialization from the corresponding
+historical UMER fold checkpoint; the optimization recipe is TC-DSCR's own.
 """
 import argparse
 import hashlib
@@ -28,7 +30,7 @@ from tcdscr_common import (PROJECT_DIR, EventSemanticStore,
 PRIMARY_CUTOFFS = (5, 15, 30, 60, 180, 360)
 EVAL_CUTOFFS = ("SOURCE_ONLY",) + PRIMARY_CUTOFFS + (1440,)
 
-# frozen UMER five-fold training recipe
+# frozen TC-DSCR E1 causal-encoder training recipe
 HPARAMS = {
     "batch_size": 32,
     "max_epochs": 60,
@@ -290,7 +292,7 @@ def run_one(args, dataset, cfg, fold, init_mode, seed, store, registry):
         "fold": fold,
         "init": init_mode,
         "seed": seed,
-        "hparams": {**HPARAMS, "epochs_run": args.epochs, "lr": args.lr,
+        "hparams": {**HPARAMS, "epochs_run": len(history), "lr": args.lr,
                     "batch_size": args.batch_size,
                     "patience": args.patience},
         "split": {k: len(v) for k, v in split.items()},

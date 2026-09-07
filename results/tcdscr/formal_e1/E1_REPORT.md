@@ -24,7 +24,7 @@
 
 ## 2. 实验设置
 
-**冻结超参**（UMER 历史五折训练配方，见 `project/tcdscr/config/schema.py` 与每个 run 的 `run_manifest.json#hparams`）：
+**冻结超参**（TC-DSCR E1 frozen causal-encoder training recipe，见 `project/tcdscr/config/schema.py` 与每个 run 的 `run_manifest.json#hparams`；UMER Init refers only to parameter initialization from the corresponding historical UMER fold checkpoint — TC-DSCR E1 uses its own frozen causal-encoder optimization recipe, not the historical UMER optimization settings）：
 
 ```text
 batch_size=32  max_epochs=60  patience=7
