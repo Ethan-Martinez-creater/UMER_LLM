@@ -5,7 +5,8 @@ FAIL
 
 ## Git
 - base commit: `4bb3294` (E1 finalization)
-- E2 commit: (recorded in the follow-up commit after this submission)
+- E2 commit: `1c987f1` (TC-DSCR Formal E2; SHA recorded by the immediately
+  following backfill commit — a commit cannot contain its own hash)
 
 ## Encoder
 - type: Random-init TC-DSCR Causal Social Encoder
