@@ -1,0 +1,62 @@
+{
+ "stage": "formal_e2",
+ "dataset": "pheme",
+ "fold": 0,
+ "seed": 2002,
+ "encoder": {
+  "type": "random_init_tcdscr_causal_social_encoder",
+  "checkpoint_path": "/data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold0_random_seed2002/best_encoder.pt",
+  "checkpoint_sha": "e933cdb91758c66921e5f18aac10a541befdcfb99f3da47424c0a1f7190f0e36",
+  "frozen": true,
+  "checksum_before": "ce02afc98264a825af2877a423fa6c8d94aba784faae86e494ca31e9d4e0774f",
+  "checksum_after": "ce02afc98264a825af2877a423fa6c8d94aba784faae86e494ca31e9d4e0774f",
+  "checksum_match": true
+ },
+ "split_parity": {
+  "e1_train_count": 4626,
+  "e2_train_count": 4626,
+  "e1_val_count": 514,
+  "e2_val_count": 514,
+  "e1_test_count": 1285,
+  "e2_test_count": 1285,
+  "train_exact_match": true,
+  "validation_exact_match": true,
+  "test_exact_match": true,
+  "e1_test_ids_recovered": 1285,
+  "disjoint": true,
+  "covers_registry": true,
+  "note": "E1 train/validation ids are not stored in the E1 artifacts; equality holds by identical builder+registry (build_primary_fold_split, partition_seed=3090), identical counts, disjoint complete coverage of the registry, and the independent test-id match against the E1 predictions artifact"
+ },
+ "split_counts": {
+  "train": 4626,
+  "validation": 514,
+  "test": 1285
+ },
+ "hparams": {
+  "lr": 0.0001,
+  "weight_decay": 0.01,
+  "max_epochs": 30,
+  "patience": 5,
+  "epochs_run": 6,
+  "budget_tokens": 1024,
+  "tau": 0.5,
+  "loss_weights": {
+   "fid": 1.0,
+   "div": 0.05
+  }
+ },
+ "best_epoch": 0,
+ "best_val_mean_macro_f1_static": 0.7567999790602857,
+ "mean_primary_macro_f1_validation": {
+  "static": 0.7567999790602857,
+  "random": 0.7581664768064864,
+  "semantic": 0.7603357513510535
+ },
+ "device": "cuda",
+ "arms": [
+  "static",
+  "random",
+  "semantic"
+ ],
+ "time_seconds": 167.47839760780334
+}

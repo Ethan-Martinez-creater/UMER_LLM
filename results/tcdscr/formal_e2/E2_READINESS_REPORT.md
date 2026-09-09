@@ -1,0 +1,57 @@
+# TC-DSCR Formal E2 — Static Selector
+
+## Overall Status
+FAIL
+
+## Git
+- base commit: `4bb3294` (E1 finalization)
+- E2 commit: (recorded in the follow-up commit after this submission)
+
+## Encoder
+- type: Random-init TC-DSCR Causal Social Encoder
+- historical UMER checkpoint used: NO
+- encoder frozen: YES
+- checksum mismatches: 0 (recorded per run in run_manifest)
+
+## Run Completeness
+- expected runs: 30 (PHEME 15, Ma-Weibo 15)
+- completed: 30 (per-run manifests present)
+- failed: 0
+
+## PHEME Validation
+| method | mean primary Macro-F1 | delta vs best baseline |
+|---|---:|---:|
+| static | 0.7209 ± 0.0320 | -0.0003 |
+| random | 0.7212 ± 0.0338 |  |
+| semantic | 0.7199 ± 0.0333 |  |
+
+Readiness: FAIL
+
+## Ma-Weibo Validation
+| method | mean primary Macro-F1 | delta vs best baseline |
+|---|---:|---:|
+| static | 0.7125 ± 0.0321 | -0.0120 |
+| random | 0.7246 ± 0.0338 |  |
+| semantic | 0.7144 ± 0.0352 |  |
+
+Readiness: FAIL
+
+## Per-cutoff Validation Results
+Full per-cutoff Accuracy / Macro-F1 / Weighted-F1 / Rumor-F1 tables for both datasets are in `readiness/e2_tables.md` and per run in `validation_metrics.json`.
+
+## Selector Diagnostics
+- entropy / selected units / evidence tokens / score stats / semantic-static Jaccard: per dataset x cutoff in `readiness/e2_summary.json#diagnostics`
+
+## Leakage Audit
+- future leakage failures: 0 (selection restricted to the current snapshot; verified by `scripts/tcdscr_verify_e2.py`)
+- fold mismatch: 0 (E1/E2 split parity exact match on all 30 runs)
+- encoder checksum mismatch: 0
+
+## Test Results
+Not run: readiness was not PASS on both datasets (or E2-B was not executed), so the test split was never evaluated.
+
+## Blocking Issues
+1. readiness gate not met on: pheme, maweibo
+
+## Recommendation
+DO_NOT_START_E3
