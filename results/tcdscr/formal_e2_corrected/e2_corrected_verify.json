@@ -1,0 +1,35 @@
+{
+ "issues": [],
+ "n_issues": 0,
+ "checked": {
+  "n_runs": 30,
+  "required_files": [
+   "run_manifest.json",
+   "history.json",
+   "validation_metrics.json",
+   "validation_predictions.jsonl",
+   "best_selector.pt",
+   "diagnostics.json"
+  ],
+  "readiness_summary_present": true,
+  "spot_leakage": {
+   "rows_checked": 13911,
+   "failures": 0,
+   "missing_events_checked": 5634,
+   "missing_with_candidates": 0
+  }
+ },
+ "spot_runs": [
+  [
+   "pheme",
+   0,
+   2000
+  ],
+  [
+   "maweibo",
+   0,
+   2000
+  ]
+ ],
+ "old_root_untouched": true
+}

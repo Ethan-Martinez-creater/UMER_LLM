@@ -1,0 +1,67 @@
+{
+ "stage": "formal_e2",
+ "dataset": "maweibo",
+ "fold": 1,
+ "seed": 2000,
+ "encoder": {
+  "type": "random_init_tcdscr_causal_social_encoder",
+  "checkpoint_path": "/data/jyz/next/llm/results/tcdscr/formal_e1/maweibo/fold1_random_seed2000/best_encoder.pt",
+  "checkpoint_sha": "42b940de958310883e21713ba36f1b888cc997c0bc37837520944b66d479b8e5",
+  "frozen": true,
+  "checksum_before": "0c32bce015d333472114c04b45364147c1da8c593fb6a3ca1c2e150b496ff39b",
+  "checksum_after": "0c32bce015d333472114c04b45364147c1da8c593fb6a3ca1c2e150b496ff39b",
+  "checksum_match": true
+ },
+ "split_parity": {
+  "e1_train_count": 3357,
+  "e2_train_count": 3357,
+  "e1_val_count": 374,
+  "e2_val_count": 374,
+  "e1_test_count": 933,
+  "e2_test_count": 933,
+  "train_exact_match": true,
+  "validation_exact_match": true,
+  "test_exact_match": true,
+  "e1_test_ids_recovered": 933,
+  "disjoint": true,
+  "covers_registry": true,
+  "note": "E1 train/validation ids are not stored in the E1 artifacts; equality holds by identical builder+registry (build_primary_fold_split, partition_seed=3090), identical counts, disjoint complete coverage of the registry, and the independent test-id match against the E1 predictions artifact"
+ },
+ "split_counts": {
+  "train": 3357,
+  "validation": 374,
+  "test": 933
+ },
+ "hparams": {
+  "lr": 0.0001,
+  "weight_decay": 0.01,
+  "max_epochs": 30,
+  "patience": 5,
+  "epochs_run": 7,
+  "budget_tokens": 1024,
+  "tau": 0.5,
+  "loss_weights": {
+   "fid": 1.0,
+   "div": 0.05
+  }
+ },
+ "proxy_contract": {
+  "train_input": "[h_source ; z_sel]",
+  "classify_order": "source_then_selected",
+  "semantic_baseline": "F.cosine_similarity(e_i, e_source)"
+ },
+ "best_epoch": 1,
+ "best_val_mean_macro_f1_static": 0.9361981644281459,
+ "mean_primary_macro_f1_validation": {
+  "static": 0.9361981644281459,
+  "random": 0.9271694305313094,
+  "semantic": 0.9169797264505979
+ },
+ "device": "cuda",
+ "arms": [
+  "static",
+  "random",
+  "semantic"
+ ],
+ "time_seconds": 838.8626418113708
+}

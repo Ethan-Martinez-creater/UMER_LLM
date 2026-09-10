@@ -62,10 +62,10 @@ def train_selector(encoder, selector, proxy, per_event_features, labels,
                 continue
             mask = torch.zeros(n, dtype=torch.bool, device=device)
             mask[cand] = True
+            h_source = node_repr[src_pos]
             u = selector(node_repr[mask], event_repr, sem[mask],
                          sem[src_pos], struct3[mask])
-            alpha, _z_sel, p_sel = proxy(
-                node_repr[mask], event_repr, u)
+            alpha, _z_sel, p_sel = proxy(node_repr[mask], h_source, u)
             total, components = proxy_loss(
                 p_sel, y[0], logits_full, alpha, sem[mask])
             opt.zero_grad()

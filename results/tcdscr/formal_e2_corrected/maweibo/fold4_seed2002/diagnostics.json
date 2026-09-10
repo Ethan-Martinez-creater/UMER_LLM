@@ -1,0 +1,72 @@
+{
+ "per_cutoff": {
+  "5": {
+   "n": 335,
+   "mean_selected_count": 8.534328358208954,
+   "mean_evidence_tokens": 742.1820895522388,
+   "mean_n_units": 33.54626865671642,
+   "selection_score_mean": -2.757857305652846,
+   "selection_score_std": 3.364570222075951,
+   "mean_selection_entropy": 0.4262530880502088,
+   "mean_jaccard_static_semantic": 0.6015850651114426
+  },
+  "15": {
+   "n": 353,
+   "mean_selected_count": 10.274787535410765,
+   "mean_evidence_tokens": 869.1614730878186,
+   "mean_n_units": 81.56373937677054,
+   "selection_score_mean": -2.4722583745307185,
+   "selection_score_std": 3.8011032556787043,
+   "mean_selection_entropy": 0.43985020521684703,
+   "mean_jaccard_static_semantic": 0.41335123569350785
+  },
+  "30": {
+   "n": 363,
+   "mean_selected_count": 10.754820936639119,
+   "mean_evidence_tokens": 909.771349862259,
+   "mean_n_units": 119.27548209366391,
+   "selection_score_mean": -2.6208539695879924,
+   "selection_score_std": 3.933916979439378,
+   "mean_selection_entropy": 0.4394130943751748,
+   "mean_jaccard_static_semantic": 0.3372713178893838
+  },
+  "60": {
+   "n": 367,
+   "mean_selected_count": 11.054495912806539,
+   "mean_evidence_tokens": 933.9727520435968,
+   "mean_n_units": 166.283378746594,
+   "selection_score_mean": -2.7079108402252223,
+   "selection_score_std": 3.960247412238092,
+   "mean_selection_entropy": 0.4622519743167231,
+   "mean_jaccard_static_semantic": 0.27606944596589245
+  },
+  "180": {
+   "n": 371,
+   "mean_selected_count": 11.307277628032345,
+   "mean_evidence_tokens": 960.7035040431267,
+   "mean_n_units": 250.71159029649596,
+   "selection_score_mean": -2.9077014098491225,
+   "selection_score_std": 4.108119533740909,
+   "mean_selection_entropy": 0.5071430204715921,
+   "mean_jaccard_static_semantic": 0.21853578537844673
+  },
+  "360": {
+   "n": 374,
+   "mean_selected_count": 11.414438502673796,
+   "mean_evidence_tokens": 969.2887700534759,
+   "mean_n_units": 288.63903743315507,
+   "selection_score_mean": -2.9989603189500027,
+   "selection_score_std": 4.075947355161209,
+   "mean_selection_entropy": 0.5402781202955317,
+   "mean_jaccard_static_semantic": 0.18809971473483214
+  }
+ },
+ "loss_best_epoch": {
+  "epoch": 3,
+  "loss": 0.09051968274444942,
+  "l_cls": 0.059876971394234806,
+  "l_fid": 0.025112631311573014,
+  "l_div": 0.11060160448582294,
+  "val_mean_macro_f1_static": 0.933061174306767
+ }
+}

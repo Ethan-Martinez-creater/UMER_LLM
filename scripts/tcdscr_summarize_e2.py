@@ -110,13 +110,22 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--root",
                     default="/data/jyz/next/llm/results/tcdscr/formal_e2")
+    ap.add_argument("--report-name", default="E2_READINESS_REPORT.md",
+                    help="readiness report file name (e.g. "
+                         "E2_CORRECTED_READINESS_REPORT.md)")
+    ap.add_argument("--base-commit", default="4bb3294",
+                    help="git base commit recorded in the report Git section")
+    ap.add_argument("--base-note", default="E1 finalization",
+                    help="short note for the base commit (e.g. first "
+                         "submission)")
     args = ap.parse_args(argv)
 
     runs = collect_runs(args.root)
     assert len(runs) == 30, f"expected 30 runs, got {len(runs)}"
 
     summary = {"n_runs": len(runs), "threshold": THRESHOLD,
-               "datasets": {}}
+               "datasets": {}, "base_commit": args.base_commit,
+               "base_commit_note": args.base_note}
     md = ["# Formal E2 — Static Selector (validation readiness)", "",
           "30 runs (2 datasets x 5 folds x 3 seeds). Budget: 1024 evidence "
           "tokens, Qwen3-8B tokenizer, atomic Reply-Parent pairs. Readiness "
@@ -145,6 +154,28 @@ def main(argv=None):
         ds_pass = readiness_pass(pooled_mean["static"]["mean"], best_base,
                                  THRESHOLD)
         status_list.append(ds_pass)
+        # E1 full-encoder sanity view (diagnostic only, per-run mean)
+        e1_full_by_cut = {str(c): [] for c in PRIMARY_CUTOFFS}
+        for r in ds_runs:
+            e1_arm = r["metrics"].get("arms", {}).get("e1_full", {})
+            for c in PRIMARY_CUTOFFS:
+                if str(c) in e1_arm:
+                    e1_full_by_cut[str(c)].append(
+                        e1_arm[str(c)]["macro_f1"])
+        e1_per_run = []
+        for r in ds_runs:
+            e1_arm = r["metrics"].get("arms", {}).get("e1_full", {})
+            vals = [e1_arm[str(c)]["macro_f1"] for c in PRIMARY_CUTOFFS
+                    if str(c) in e1_arm]
+            if vals:
+                e1_per_run.append(st.mean(vals))
+        e1_full_stats = {
+            "per_cutoff_mean": {c: (st.mean(v) if v else 0.0)
+                                for c, v in e1_full_by_cut.items()},
+            "mean_primary": (st.mean(e1_per_run) if e1_per_run else 0.0),
+        }
+        proxy_sanity_warning = pooled_mean["static"]["mean"] < \
+            e1_full_stats["mean_primary"] - 0.10
         summary["datasets"][dataset] = {
             "per_run_mean_primary": {a: {"mean": st.mean(per_run[a]),
                                          "std": st.stdev(per_run[a])
@@ -154,6 +185,8 @@ def main(argv=None):
             "best_simple_baseline": best_base,
             "delta_static_minus_best_baseline": delta,
             "readiness_pass": ds_pass,
+            "e1_full": e1_full_stats,
+            "proxy_sanity_warning": proxy_sanity_warning,
             "diagnostics": aggregate_diagnostics(ds_runs),
         }
         md += [f"## {dataset} validation", "",
@@ -185,7 +218,20 @@ def main(argv=None):
                       f"{dd['mean_selected_count']:.2f} | "
                       f"{dd['mean_evidence_tokens']:.1f} | "
                       f"{dd['mean_jaccard_static_semantic']:.4f} |")
-        md += [""]
+        md += ["", "Proxy sanity vs E1 full encoder (validation, "
+                   "Macro-F1):", ""]
+        md += ["| cutoff | E1 full | static | random | semantic |",
+               "|---|---:|---:|---:|---:|"]
+        e1m = summary["datasets"][dataset]["e1_full"]["per_cutoff_mean"]
+        for c in PRIMARY_CUTOFFS:
+            row = [st.mean(mean_primary_macro_f1(
+                {str(c): pooled[s][a][str(c)]}) for s in SEEDS)
+                for a in ARM_NAMES]
+            md.append(f"| {c} | {e1m[str(c)]:.4f} | {row[0]:.4f} | "
+                      f"{row[1]:.4f} | {row[2]:.4f} |")
+        e1_mean = summary["datasets"][dataset]["e1_full"]["mean_primary"]
+        md += ["", f"E1 full mean primary: {e1_mean:.4f}; proxy sanity "
+                   f"warning: {'YES' if proxy_sanity_warning else 'no'}", ""]
 
     n_pass = sum(1 for p in status_list if p)
     if n_pass == 2:
@@ -211,7 +257,7 @@ def main(argv=None):
         fh.write("\n".join(md) + "\n")
 
     report = render_report(summary, args.root)
-    with open(os.path.join(args.root, "E2_READINESS_REPORT.md"), "w",
+    with open(os.path.join(args.root, args.report_name), "w",
               encoding="utf-8") as fh:
         fh.write(report)
     print(json.dumps({"status": status, "recommendation": rec,
@@ -231,7 +277,9 @@ def render_report(summary, root):
     lines = ["# TC-DSCR Formal E2 — Static Selector", "",
              "## Overall Status", summary["status"], "",
              "## Git",
-             "- base commit: `4bb3294` (E1 finalization)",
+             f"- base commit: `{summary.get('base_commit', '4bb3294')}`"
+             + (f" ({summary.get('base_commit_note')})"
+                if summary.get("base_commit_note") else ""),
              "- E2 commit: (recorded in the follow-up commit after this "
              "submission)", "",
              "## Encoder",
@@ -275,9 +323,20 @@ def render_report(summary, root):
               "",
               "## Selector Diagnostics",
               "- entropy / selected units / evidence tokens / score "
-              "stats / semantic-static Jaccard: per dataset x cutoff in "
+              "stats / semantic-static Jaccard / L_cls / L_fid / L_div "
+              "means: per dataset x cutoff in "
               "`readiness/e2_summary.json#diagnostics`",
               "",
+              "## Proxy Sanity vs E1"]
+    for d in ("pheme", "maweibo"):
+        e1m = summary["datasets"][d]["e1_full"]
+        warn = summary["datasets"][d].get("proxy_sanity_warning", False)
+        static_m = summary["datasets"][d]["pooled_3seed"]["static"]["mean"]
+        lines += [f"- {d}: E1 full-encoder mean primary Macro-F1 = "
+                  f"{e1m['mean_primary']:.4f}; static proxy = "
+                  f"{static_m:.4f}; PROXY_SANITY_WARNING = "
+                  f"{'YES' if warn else 'no'}"]
+    lines += ["",
               "## Leakage Audit",
               "- future leakage failures: 0 (selection restricted to the "
               "current snapshot; verified by `scripts/tcdscr_verify_e2.py`)",

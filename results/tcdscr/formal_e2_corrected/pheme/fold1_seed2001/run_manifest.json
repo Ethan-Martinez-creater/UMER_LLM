@@ -1,0 +1,67 @@
+{
+ "stage": "formal_e2",
+ "dataset": "pheme",
+ "fold": 1,
+ "seed": 2001,
+ "encoder": {
+  "type": "random_init_tcdscr_causal_social_encoder",
+  "checkpoint_path": "/data/jyz/next/llm/results/tcdscr/formal_e1/pheme/fold1_random_seed2001/best_encoder.pt",
+  "checkpoint_sha": "a7487e57c0affa8bbdeae438f26f4f7f9d2e4e4480fa416eac315fe5874b0ad3",
+  "frozen": true,
+  "checksum_before": "523c73d7e0675f5acb0fbfc2d6f76c29e00d784812a6cdd694d85f2addd0291c",
+  "checksum_after": "523c73d7e0675f5acb0fbfc2d6f76c29e00d784812a6cdd694d85f2addd0291c",
+  "checksum_match": true
+ },
+ "split_parity": {
+  "e1_train_count": 4626,
+  "e2_train_count": 4626,
+  "e1_val_count": 514,
+  "e2_val_count": 514,
+  "e1_test_count": 1285,
+  "e2_test_count": 1285,
+  "train_exact_match": true,
+  "validation_exact_match": true,
+  "test_exact_match": true,
+  "e1_test_ids_recovered": 1285,
+  "disjoint": true,
+  "covers_registry": true,
+  "note": "E1 train/validation ids are not stored in the E1 artifacts; equality holds by identical builder+registry (build_primary_fold_split, partition_seed=3090), identical counts, disjoint complete coverage of the registry, and the independent test-id match against the E1 predictions artifact"
+ },
+ "split_counts": {
+  "train": 4626,
+  "validation": 514,
+  "test": 1285
+ },
+ "hparams": {
+  "lr": 0.0001,
+  "weight_decay": 0.01,
+  "max_epochs": 30,
+  "patience": 5,
+  "epochs_run": 7,
+  "budget_tokens": 1024,
+  "tau": 0.5,
+  "loss_weights": {
+   "fid": 1.0,
+   "div": 0.05
+  }
+ },
+ "proxy_contract": {
+  "train_input": "[h_source ; z_sel]",
+  "classify_order": "source_then_selected",
+  "semantic_baseline": "F.cosine_similarity(e_i, e_source)"
+ },
+ "best_epoch": 1,
+ "best_val_mean_macro_f1_static": 0.839722523651964,
+ "mean_primary_macro_f1_validation": {
+  "static": 0.839722523651964,
+  "random": 0.8348066161010727,
+  "semantic": 0.8338370475561337
+ },
+ "device": "cuda",
+ "arms": [
+  "static",
+  "random",
+  "semantic"
+ ],
+ "time_seconds": 353.6288332939148
+}

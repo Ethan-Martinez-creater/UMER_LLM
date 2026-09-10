@@ -237,7 +237,10 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
     """
     import torch.nn.functional as F
 
-    results = {str(c): {a: [] for a in ARM_NAMES} for c in PRIMARY_CUTOFFS}
+    from tcdscr.models.selector_proxy import classify_selected
+
+    results = {str(c): {a: [] for a in ARM_NAMES} | {"e1_full": []}
+               for c in PRIMARY_CUTOFFS}
     rows = []
     diag = {str(c): {"score_mean": [], "score_std": [], "entropy": [],
                      "selected_count": [], "n_units": [],
@@ -257,6 +260,9 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
         struct3 = item["summary"].to(device)
         units = build_units(item)
         unit_index = {u2["node_id"]: i for i, u2 in enumerate(units)}
+        # E1 full-encoder sanity view (diagnostic only, not an arm)
+        results[cutoff]["e1_full"].append(
+            (item["label"], int(logits_full.argmax(dim=-1))))
         u = selector(h_cand, event_repr, sem[cand_idx], sem[src],
                      struct3[cand_idx])
         alpha = F.softmax(u / E2_HPARAMS["tau"], dim=0)
@@ -265,9 +271,12 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
         mean_u = sum(u_list) / len(u_list)
         std_u = (sum((x - mean_u) ** 2 for x in u_list)
                  / len(u_list)) ** 0.5
-        cos_scores = (sem[cand_idx] @ sem[src]).detach().cpu().tolist()
+        cos_scores = F.cosine_similarity(
+            sem[cand_idx], sem[src].unsqueeze(0).expand_as(sem[cand_idx]),
+            dim=-1).detach().cpu().tolist()
         cat_scores = {"static": u_list, "semantic": cos_scores}
         selections = {}
+        h_source = node_repr[src]
         for arm in ARM_NAMES:
             scores = (random_budget_scores(item["event_id"],
                                            item["cutoff_minutes"],
@@ -277,11 +286,12 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
             selections[arm] = (selected, tokens)
             if selected:
                 sel_idx = [cand[unit_index[u2["node_id"]]] for u2 in selected]
-                z_sel = node_repr[torch.tensor(sel_idx, dtype=torch.long,
-                                               device=device)].mean(dim=0)
+                sel_repr = node_repr[torch.tensor(sel_idx, dtype=torch.long,
+                                                  device=device)]
+                logits = classify_selected(proxy, h_source, sel_repr)
             else:
                 z_sel = torch.zeros(768, device=device)
-            logits = proxy.head(torch.cat([z_sel, node_repr[src]]))
+                logits = proxy.classify(h_source, z_sel)
             p = F.softmax(logits, dim=-1)
             pred = int(logits.argmax(dim=-1))
             results[cutoff][arm].append((item["label"], pred))
@@ -317,7 +327,10 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
         if device.startswith("cuda"):
             torch.cuda.empty_cache()
     metrics_by_cutoff = {c: {a: classification_metrics(results[c][a])
-                             for a in ARM_NAMES} for c in results}
+                             for a in ARM_NAMES} | {
+                             "e1_full": classification_metrics(
+                                 results[c]["e1_full"])}
+                         for c in results}
     diagnostics = {}
     for c, d in diag.items():
         k = len(d["entropy"])
@@ -496,10 +509,11 @@ def run_one(args, dataset, fold, seed):
                 struct3 = item["summary"].to(device)
                 y = torch.tensor([item["label"]], dtype=torch.long,
                                  device=device)
+                h_source = node_repr[src]
                 u = selector(node_repr[cand_idx], event_repr,
                              sem[cand_idx], sem[src], struct3[cand_idx])
                 alpha, _z_sel, p_sel = proxy(node_repr[cand_idx],
-                                             event_repr, u)
+                                             h_source, u)
                 total, components = proxy_loss(p_sel, y[0], logits_full,
                                                alpha, sem[cand_idx])
                 opt.zero_grad()
@@ -518,10 +532,12 @@ def run_one(args, dataset, fold, seed):
             dataset, seed)
         val_static = mean_primary_macro_f1(
             {c: val_metrics[c]["static"] for c in val_metrics})
+        n_steps = max(len(losses), 1)
         history.append({"epoch": epoch,
-                        "loss": sum(losses) / max(len(losses), 1),
-                        "l_cls": parts["l_cls"], "l_fid": parts["l_fid"],
-                        "l_div": parts["l_div"],
+                        "loss": sum(losses) / n_steps,
+                        "l_cls": parts["l_cls"] / n_steps,
+                        "l_fid": parts["l_fid"] / n_steps,
+                        "l_div": parts["l_div"] / n_steps,
                         "val_mean_macro_f1_static": val_static})
         if val_static > best_val:
             best_val, best_epoch, wait = val_static, epoch, 0
@@ -580,6 +596,10 @@ def run_one(args, dataset, fold, seed):
                     "epochs_run": len(history),
                     "budget_tokens": args.budget, "tau": E2_HPARAMS["tau"],
                     "loss_weights": E2_HPARAMS["loss_weights"]},
+        "proxy_contract": {
+            "train_input": "[h_source ; z_sel]",
+            "classify_order": "source_then_selected",
+            "semantic_baseline": "F.cosine_similarity(e_i, e_source)"},
         "best_epoch": best_epoch,
         "best_val_mean_macro_f1_static": best_val,
         "mean_primary_macro_f1_validation": mean_primary,
@@ -595,7 +615,9 @@ def run_one(args, dataset, fold, seed):
         json.dump(history, fh, indent=1)
     out = {"mean_primary_macro_f1": mean_primary,
            "arms": {a: {c: val_metrics[c][a] for c in val_metrics}
-                    for a in ARM_NAMES},
+                    for a in ARM_NAMES} | {
+               "e1_full": {c: val_metrics[c]["e1_full"]
+                           for c in val_metrics}},
            "n_val_events": len({r["event_id"] for r in val_rows}),
            "n_val_rows": len(val_rows)}
     with open(os.path.join(run_dir, "validation_metrics.json"), "w",

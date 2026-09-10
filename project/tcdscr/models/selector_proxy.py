@@ -33,11 +33,22 @@ class SelectorProxy(nn.Module):
             nn.Linear(hidden_dim, 2),
         )
 
-    def forward(self, h_nodes, h_source, u, candidate_mask=None):
-        """Return (alpha, z_sel, p_sel).
+    def classify(self, h_source, z_sel):
+        """Frozen proxy classification contract: [h_source ; z_sel] -> logits.
 
-        u rows that are -inf (masked out, e.g. the source row if a caller
-        passed one) get alpha exactly 0 through the softmax.
+        Both the soft training path and the hard validation/baseline path
+        must end here; nothing may concatenate [z_sel ; h_source] or
+        substitute event_repr for h_source.
+        """
+        return self.head(torch.cat([h_source, z_sel], dim=-1))
+
+    def forward(self, h_nodes, h_source, u, candidate_mask=None):
+        """Return (alpha, z_sel, logits).
+
+        Soft path: alpha = softmax(u / tau), z_sel = sum_i alpha_i h_i,
+        logits = classify(h_source, z_sel). u rows that are -inf (masked
+        out, e.g. the source row if a caller passed one) get alpha exactly
+        0 through the softmax.
         """
         alpha = F.softmax(u / self.tau, dim=0)
         if candidate_mask is not None:
@@ -45,8 +56,25 @@ class SelectorProxy(nn.Module):
             alpha = alpha / alpha.sum().clamp_min(1e-12)
         z_sel = alpha.unsqueeze(1) * h_nodes
         z_sel = z_sel.sum(dim=0)
-        logits = self.head(torch.cat([z_sel, h_source], dim=-1))
+        logits = self.classify(h_source, z_sel)
         return alpha, z_sel, logits
+
+
+def classify_selected(proxy, h_source, selected_node_repr, alpha=None):
+    """Unified classification for selected evidence.
+
+    alpha is None  -> hard path: z_sel = mean(selected h_i) (validation /
+                      baseline arms);
+    alpha provided  -> soft path: z_sel = sum_i alpha_i h_i (training).
+
+    Both paths end in ``proxy.classify(h_source, z_sel)`` so train and
+    evaluation share one classification contract.
+    """
+    if alpha is None:
+        z_sel = selected_node_repr.mean(dim=0)
+    else:
+        z_sel = (alpha.unsqueeze(1) * selected_node_repr).sum(dim=0)
+    return proxy.classify(h_source, z_sel)
 
 
 def proxy_loss(p_sel, y, p_full, alpha, sem_nodes, candidate_mask=None):
