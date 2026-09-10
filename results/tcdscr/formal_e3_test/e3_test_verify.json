@@ -1,0 +1,11 @@
+{
+ "n_issues": 0,
+ "checked": {
+  "runs": 30,
+  "rows_checked": 173277,
+  "first_cutoff_checked": 24681,
+  "test_ids_verified": 33267,
+  "spot_snapshots_rebuilt": 30783
+ },
+ "issues": []
+}
