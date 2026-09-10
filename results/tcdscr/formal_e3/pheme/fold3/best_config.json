@@ -1,0 +1,11 @@
+{
+ "dataset": "pheme",
+ "fold": 3,
+ "lambda_n": 0.25,
+ "lambda_p": 0.1,
+ "budget": 2048,
+ "validation_macro_f1": 0.8464476197832236,
+ "flip_rate": 0.012782694198623401,
+ "mean_evidence_tokens": 710.3931108430505,
+ "turnover": 0.20858597969319081
+}

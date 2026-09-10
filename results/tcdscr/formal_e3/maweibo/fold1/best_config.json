@@ -1,0 +1,11 @@
+{
+ "dataset": "maweibo",
+ "fold": 1,
+ "lambda_n": 1.0,
+ "lambda_p": 0.25,
+ "budget": 1024,
+ "validation_macro_f1": 0.9306594058577162,
+ "flip_rate": 0.026445966514459664,
+ "mean_evidence_tokens": 898.0318881558278,
+ "turnover": 0.4800877312156148
+}

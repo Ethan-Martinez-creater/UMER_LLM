@@ -1,0 +1,21 @@
+{
+ "flip_rate": {
+  "static": 0.03513770180436847,
+  "dynamic": 0.03513770180436847
+ },
+ "n_transitions": 5265,
+ "mean_evidence_tokens": {
+  "static": 911.4520332862302,
+  "dynamic": 911.5244151358141
+ },
+ "median_evidence_tokens": {
+  "static": 1003,
+  "dynamic": 1003
+ },
+ "mean_selected_units": 10.979588632438373,
+ "mean_turnover": {
+  "static": 0.4596691332328429,
+  "dynamic": 0.4493336265613768
+ },
+ "memory_retention": 0.7063883567385123
+}
