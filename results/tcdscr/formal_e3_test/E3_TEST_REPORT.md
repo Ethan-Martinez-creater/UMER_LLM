@@ -1,5 +1,9 @@
 # TC-DSCR Formal E3 Held-out Test
 
+## Git
+- base commit: `d87c990` (Formal E3 validation)
+- E3-B commit: `f7ec0ac396ab8d5502ed91a65ea6c0137f47a65a`
+
 ## Overall Status
 WEAK_POSITIVE
 
