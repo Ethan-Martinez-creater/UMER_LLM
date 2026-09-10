@@ -5,7 +5,7 @@ PASS
 
 ## Git
 - base commit: `851b509`
-- E3 commit: (recorded in the follow-up commit after this submission)
+- E3 commit: `80dc1e51b71554fc102d3a8dffbc0695fbc270ce`
 
 ## Frozen Components
 - E1 encoder: Random-init TC-DSCR Causal Social Encoder
