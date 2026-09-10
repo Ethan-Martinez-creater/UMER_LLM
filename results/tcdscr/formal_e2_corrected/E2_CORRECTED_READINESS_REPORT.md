@@ -5,7 +5,7 @@ PARTIAL
 
 ## Git
 - base commit: `b8a3121` (E2 first submission (invalidated))
-- E2 commit: (recorded in the follow-up commit after this submission)
+- E2 commit: `beaac6867bc7b0f2292169d04c7f1ed81c600c4b`
 
 ## Encoder
 - type: Random-init TC-DSCR Causal Social Encoder
