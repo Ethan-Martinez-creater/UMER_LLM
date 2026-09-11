@@ -1,0 +1,28 @@
+{
+ "pheme": {
+  "n_selection_changed": 8921,
+  "prediction_same": 8858,
+  "prediction_changed": 63,
+  "prediction_change_rate_given_selection_change": 0.007061988566304226,
+  "transitions": {
+   "wrong_to_correct": 36,
+   "correct_to_wrong": 27,
+   "both_wrong": 1194,
+   "both_correct": 7664,
+   "net_correction_gain": 9
+  }
+ },
+ "maweibo": {
+  "n_selection_changed": 9089,
+  "prediction_same": 9050,
+  "prediction_changed": 39,
+  "prediction_change_rate_given_selection_change": 0.004290901089228738,
+  "transitions": {
+   "wrong_to_correct": 20,
+   "correct_to_wrong": 19,
+   "both_wrong": 605,
+   "both_correct": 8445,
+   "net_correction_gain": 1
+  }
+ }
+}

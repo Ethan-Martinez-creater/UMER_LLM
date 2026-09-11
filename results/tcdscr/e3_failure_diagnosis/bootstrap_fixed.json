@@ -1,0 +1,34 @@
+{
+ "pheme": {
+  "n_events": 5669,
+  "n_iterations": 10000,
+  "seed": 3090,
+  "multiplicity": "preserved",
+  "delta_macro_f1": {
+   "point": 0.00010374179715577636,
+   "ci_low": -9.686044703149932e-05,
+   "ci_high": 0.00032141997398971167
+  },
+  "delta_flip_rate": {
+   "point": 0.0006874456853055242,
+   "ci_low": 0.00040152839841979017,
+   "ci_high": 0.0010125793511703094
+  }
+ },
+ "maweibo": {
+  "n_events": 4592,
+  "n_iterations": 10000,
+  "seed": 3090,
+  "multiplicity": "preserved",
+  "delta_macro_f1": {
+   "point": 1.1985856053109423e-05,
+   "ci_low": -0.0001399498574954361,
+   "ci_high": 0.00016137333622034955
+  },
+  "delta_flip_rate": {
+   "point": -1.529122130984606e-05,
+   "ci_low": -0.0002446707649019775,
+   "ci_high": 0.00021381227282446513
+  }
+ }
+}

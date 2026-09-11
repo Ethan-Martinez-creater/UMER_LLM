@@ -1,0 +1,18 @@
+{
+ "pheme": {
+  "n": 94104,
+  "spearman_mean": 0.9881644839574603,
+  "top1_change_rate": 0.025269914137549945,
+  "top3_set_change_rate": 0.05222944826999915,
+  "top5_set_change_rate": 0.07802006290912182,
+  "top10_set_change_rate": 0.06809487375669472
+ },
+ "maweibo": {
+  "n": 79173,
+  "spearman_mean": 0.9983637058286727,
+  "top1_change_rate": 0.014045192174099757,
+  "top3_set_change_rate": 0.03328154800247559,
+  "top5_set_change_rate": 0.05126747754916449,
+  "top10_set_change_rate": 0.097331160875551
+ }
+}

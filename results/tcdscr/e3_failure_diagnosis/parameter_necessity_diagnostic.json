@@ -1,0 +1,100 @@
+{
+ "pheme": {
+  "lambda_n_zero": [
+   {
+    "fold": 2,
+    "lambda_n": 0.0,
+    "lambda_p": 0.25,
+    "budget": 512,
+    "test_delta_macro_f1": 0.0002383833096788468,
+    "selection_change_rate": 0.050663705113966895
+   }
+  ],
+  "lambda_p_zero": [
+   {
+    "fold": 4,
+    "lambda_n": 1.0,
+    "lambda_p": 0.0,
+    "budget": 512,
+    "test_delta_macro_f1": 0.0004370753914766379,
+    "selection_change_rate": 0.18215456179300138
+   }
+  ],
+  "both_positive": [
+   {
+    "fold": 0,
+    "lambda_n": 0.5,
+    "lambda_p": 0.1,
+    "budget": 512,
+    "test_delta_macro_f1": 0.0002179640162606189,
+    "selection_change_rate": 0.13395886344359625
+   },
+   {
+    "fold": 1,
+    "lambda_n": 1.0,
+    "lambda_p": 0.1,
+    "budget": 512,
+    "test_delta_macro_f1": -0.00036662324059599793,
+    "selection_change_rate": 0.1025600338516873
+   },
+   {
+    "fold": 3,
+    "lambda_n": 0.25,
+    "lambda_p": 0.1,
+    "budget": 2048,
+    "test_delta_macro_f1": 0.0,
+    "selection_change_rate": 0.002755714054141676
+   }
+  ],
+  "both_zero": []
+ },
+ "maweibo": {
+  "lambda_n_zero": [
+   {
+    "fold": 4,
+    "lambda_n": 0.0,
+    "lambda_p": 0.1,
+    "budget": 1024,
+    "test_delta_macro_f1": 0.0001254015284064547,
+    "selection_change_rate": 0.057148281754319345
+   }
+  ],
+  "lambda_p_zero": [
+   {
+    "fold": 2,
+    "lambda_n": 1.0,
+    "lambda_p": 0.0,
+    "budget": 1024,
+    "test_delta_macro_f1": 0.00012636923766307095,
+    "selection_change_rate": 0.16760899610503832
+   }
+  ],
+  "both_positive": [
+   {
+    "fold": 0,
+    "lambda_n": 0.25,
+    "lambda_p": 0.25,
+    "budget": 1024,
+    "test_delta_macro_f1": -0.00018548458532274825,
+    "selection_change_rate": 0.0946031746031746
+   },
+   {
+    "fold": 1,
+    "lambda_n": 1.0,
+    "lambda_p": 0.25,
+    "budget": 1024,
+    "test_delta_macro_f1": -0.00019429627868383648,
+    "selection_change_rate": 0.2149379683859185
+   },
+   {
+    "fold": 3,
+    "lambda_n": 0.25,
+    "lambda_p": 0.1,
+    "budget": 1024,
+    "test_delta_macro_f1": 0.00018674360766479658,
+    "selection_change_rate": 0.03886255924170616
+   }
+  ],
+  "both_zero": []
+ }
+}

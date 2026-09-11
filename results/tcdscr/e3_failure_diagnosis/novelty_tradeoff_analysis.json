@@ -1,0 +1,22 @@
+{
+ "pheme": {
+  "n_dynamic_only_nodes": 11222,
+  "n_removed_static_nodes": 11184,
+  "dynamic_only_mean_novelty": 0.5654160098221357,
+  "removed_static_mean_novelty": 0.09322209852895512,
+  "novelty_gain": 0.47219391129318056,
+  "dynamic_only_mean_u": 1.9061152082351718,
+  "removed_static_mean_u": 2.13276634778936,
+  "utility_delta": -0.22665113955418836
+ },
+ "maweibo": {
+  "n_dynamic_only_nodes": 12802,
+  "n_removed_static_nodes": 12908,
+  "dynamic_only_mean_novelty": 0.25447324178140995,
+  "removed_static_mean_novelty": 0.09108398152849495,
+  "novelty_gain": 0.163389260252915,
+  "dynamic_only_mean_u": 2.64687595000924,
+  "removed_static_mean_u": 2.7516350495375907,
+  "utility_delta": -0.10475909952835094
+ }
+}

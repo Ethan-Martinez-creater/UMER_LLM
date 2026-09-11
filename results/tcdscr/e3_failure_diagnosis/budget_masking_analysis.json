@@ -1,0 +1,20 @@
+{
+ "pheme": {
+  "A_unchanged": 66461,
+  "B_ranking_changed_selection_same": 18722,
+  "C_ranking_changed_selection_changed": 8921,
+  "ranking_changed_but_selection_same_rate": 0.1989500977641758,
+  "mean_static_tokens": 439.86701946782284,
+  "mean_dynamic_tokens": 439.8668175635467,
+  "mean_budget_utilization": 0.6511069254578047
+ },
+ "maweibo": {
+  "A_unchanged": 31563,
+  "B_ranking_changed_selection_same": 38521,
+  "C_ranking_changed_selection_changed": 9089,
+  "ranking_changed_but_selection_same_rate": 0.486542129261238,
+  "mean_static_tokens": 904.4889293067081,
+  "mean_dynamic_tokens": 904.4757051014866,
+  "mean_budget_utilization": 0.8832770557631705
+ }
+}

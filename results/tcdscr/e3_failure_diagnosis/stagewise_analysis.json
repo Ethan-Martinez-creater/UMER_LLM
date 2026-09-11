@@ -1,0 +1,222 @@
+{
+ "pheme": {
+  "very_early": {
+   "n": 27690,
+   "static_macro_f1": {
+    "n": 27690,
+    "accuracy": 0.8546406644998195,
+    "macro_f1": 0.8441471133450273,
+    "weighted_f1": 0.8538914380916901,
+    "rumor_f1": 0.8037064130699829
+   },
+   "dynamic_macro_f1": {
+    "n": 27690,
+    "accuracy": 0.8546406644998195,
+    "macro_f1": 0.8441533758736575,
+    "weighted_f1": 0.8538945967721334,
+    "rumor_f1": 0.8037255571268349
+   },
+   "selection": {
+    "n": 27690,
+    "exact_match_count": 26884,
+    "exact_match_rate": 0.9708920187793427,
+    "jaccard_mean": 0.9909249912039728,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 973,
+    "added_by_dynamic": 981,
+    "symmetric_difference_size": 1954,
+    "mean_replacements_per_event": 0.07056699169375226,
+    "events_with_any_replacement": 806,
+    "replacement_rate": 0.02910798122065728
+   },
+   "ranking_change_rate": 0.1485373781148429,
+   "prediction_change_rate": 0.0001444564824846515,
+   "selection_change_rate": 0.02910798122065728
+  },
+  "early": {
+   "n": 32532,
+   "static_macro_f1": {
+    "n": 32532,
+    "accuracy": 0.8585700233616131,
+    "macro_f1": 0.846777832625957,
+    "weighted_f1": 0.8576906721854252,
+    "rumor_f1": 0.8042710681924534
+   },
+   "dynamic_macro_f1": {
+    "n": 32532,
+    "accuracy": 0.8585700233616131,
+    "macro_f1": 0.8468004681580554,
+    "weighted_f1": 0.8577020235600865,
+    "rumor_f1": 0.8043376568147991
+   },
+   "selection": {
+    "n": 32532,
+    "exact_match_count": 29412,
+    "exact_match_rate": 0.9040944300995942,
+    "jaccard_mean": 0.9691847077171964,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 3878,
+    "added_by_dynamic": 3856,
+    "symmetric_difference_size": 7734,
+    "mean_replacements_per_event": 0.23773515308004425,
+    "events_with_any_replacement": 3120,
+    "replacement_rate": 0.09590556990040576
+   },
+   "ranking_change_rate": 0.32128365916635926,
+   "prediction_change_rate": 0.0007992130825033813,
+   "selection_change_rate": 0.09590556990040576
+  },
+  "mid": {
+   "n": 33882,
+   "static_macro_f1": {
+    "n": 33882,
+    "accuracy": 0.8611061920783897,
+    "macro_f1": 0.8485663034644257,
+    "weighted_f1": 0.8601415852619309,
+    "rumor_f1": 0.8049892259240843
+   },
+   "dynamic_macro_f1": {
+    "n": 33882,
+    "accuracy": 0.8613718198453456,
+    "macro_f1": 0.8488531138159172,
+    "weighted_f1": 0.8604076573770756,
+    "rumor_f1": 0.8053541088226763
+   },
+   "selection": {
+    "n": 33882,
+    "exact_match_count": 28887,
+    "exact_match_rate": 0.8525765893394723,
+    "jaccard_mean": 0.951315753601589,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 6333,
+    "added_by_dynamic": 6385,
+    "symmetric_difference_size": 12718,
+    "mean_replacements_per_event": 0.3753615489050233,
+    "events_with_any_replacement": 4995,
+    "replacement_rate": 0.14742341066052772
+   },
+   "ranking_change_rate": 0.38598665958325956,
+   "prediction_change_rate": 0.0009739684788383213,
+   "selection_change_rate": 0.14742341066052772
+  }
+ },
+ "maweibo": {
+  "very_early": {
+   "n": 25032,
+   "static_macro_f1": {
+    "n": 25032,
+    "accuracy": 0.9090763822307446,
+    "macro_f1": 0.9086048499552961,
+    "weighted_f1": 0.9092185237731768,
+    "rumor_f1": 0.9020401136265818
+   },
+   "dynamic_macro_f1": {
+    "n": 25032,
+    "accuracy": 0.9090364333652924,
+    "macro_f1": 0.9085662749444019,
+    "weighted_f1": 0.9091791834150893,
+    "rumor_f1": 0.9020097258682275
+   },
+   "selection": {
+    "n": 25032,
+    "exact_match_count": 23504,
+    "exact_match_rate": 0.938958133589006,
+    "jaccard_mean": 0.9880559743987208,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 2030,
+    "added_by_dynamic": 1984,
+    "symmetric_difference_size": 4014,
+    "mean_replacements_per_event": 0.16035474592521573,
+    "events_with_any_replacement": 1528,
+    "replacement_rate": 0.06104186641099393
+   },
+   "ranking_change_rate": 0.33001757750079896,
+   "prediction_change_rate": 0.0001997443272611058,
+   "selection_change_rate": 0.06104186641099393
+  },
+  "early": {
+   "n": 26682,
+   "static_macro_f1": {
+    "n": 26682,
+    "accuracy": 0.9315643504984634,
+    "macro_f1": 0.9314516268819334,
+    "weighted_f1": 0.9315616417978813,
+    "rumor_f1": 0.9286718749999999
+   },
+   "dynamic_macro_f1": {
+    "n": 26682,
+    "accuracy": 0.9315643504984634,
+    "macro_f1": 0.9314520439031915,
+    "weighted_f1": 0.9315618547963461,
+    "rumor_f1": 0.9286774470744472
+   },
+   "selection": {
+    "n": 26682,
+    "exact_match_count": 23330,
+    "exact_match_rate": 0.8743722359643206,
+    "jaccard_mean": 0.9736849435548259,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 4727,
+    "added_by_dynamic": 4676,
+    "symmetric_difference_size": 9403,
+    "mean_replacements_per_event": 0.3524098643280114,
+    "events_with_any_replacement": 3352,
+    "replacement_rate": 0.1256277640356795
+   },
+   "ranking_change_rate": 0.6863428528596057,
+   "prediction_change_rate": 0.00074956899782625,
+   "selection_change_rate": 0.1256277640356795
+  },
+  "mid": {
+   "n": 27459,
+   "static_macro_f1": {
+    "n": 27459,
+    "accuracy": 0.9407844422593685,
+    "macro_f1": 0.9407614474647873,
+    "weighted_f1": 0.9407845272678513,
+    "rumor_f1": 0.9395943235010031
+   },
+   "dynamic_macro_f1": {
+    "n": 27459,
+    "accuracy": 0.9408572781237481,
+    "macro_f1": 0.9408337991612634,
+    "weighted_f1": 0.9408571064311522,
+    "rumor_f1": 0.939655172413793
+   },
+   "selection": {
+    "n": 27459,
+    "exact_match_count": 23250,
+    "exact_match_rate": 0.8467169234130886,
+    "jaccard_mean": 0.9653543718646218,
+    "jaccard_median": 1.0,
+    "jaccard_p25": 1.0,
+    "jaccard_p75": 1.0,
+    "jaccard_p90": 1.0,
+    "removed_from_static": 6151,
+    "added_by_dynamic": 6142,
+    "symmetric_difference_size": 12293,
+    "mean_replacements_per_event": 0.44768564040933756,
+    "events_with_any_replacement": 4209,
+    "replacement_rate": 0.1532830765869114
+   },
+   "ranking_change_rate": 0.7609891110382753,
+   "prediction_change_rate": 0.0005098510506573436,
+   "selection_change_rate": 0.1532830765869114
+  }
+ }
+}

@@ -1,0 +1,84 @@
+{
+ "pheme": {
+  "n": 94104,
+  "delta_p_mean": 0.0005999743217385841,
+  "delta_p_median": 0.0,
+  "delta_p_p90": 2.2351741790771484e-08,
+  "delta_p_p99": 0.016779541969299316,
+  "margin_static_mean": 0.4123788924124396,
+  "margin_dynamic_mean": 0.4123555589529299,
+  "per_cutoff": {
+   "5": {
+    "delta_p_mean": 0.0,
+    "margin_static_mean": 0.4087179286606154,
+    "margin_dynamic_mean": 0.4087179286606154
+   },
+   "15": {
+    "delta_p_mean": 0.0003580859305126525,
+    "margin_static_mean": 0.41153464841856846,
+    "margin_dynamic_mean": 0.4114979235490155
+   },
+   "30": {
+    "delta_p_mean": 0.0005251730123048982,
+    "margin_static_mean": 0.4121916376862879,
+    "margin_dynamic_mean": 0.4121852119746551
+   },
+   "60": {
+    "delta_p_mean": 0.0007093441357961443,
+    "margin_static_mean": 0.413027022368224,
+    "margin_dynamic_mean": 0.4130526929644101
+   },
+   "180": {
+    "delta_p_mean": 0.0008448236186488497,
+    "margin_static_mean": 0.41365532454606924,
+    "margin_dynamic_mean": 0.41362254684660155
+   },
+   "360": {
+    "delta_p_mean": 0.0009790653021355838,
+    "margin_static_mean": 0.4141104952889565,
+    "margin_dynamic_mean": 0.4140277359385661
+   }
+  }
+ },
+ "maweibo": {
+  "n": 79173,
+  "delta_p_mean": 0.0005182666231263019,
+  "delta_p_median": 0.0,
+  "delta_p_p90": 5.835294723510742e-05,
+  "delta_p_p99": 0.012783229351043701,
+  "margin_static_mean": 0.4133931115659794,
+  "margin_dynamic_mean": 0.41334199693189017,
+  "per_cutoff": {
+   "5": {
+    "delta_p_mean": 0.0,
+    "margin_static_mean": 0.39124238550734985,
+    "margin_dynamic_mean": 0.39124238550734985
+   },
+   "15": {
+    "delta_p_mean": 0.0005316492760164261,
+    "margin_static_mean": 0.40784450239003867,
+    "margin_dynamic_mean": 0.4078504279383182
+   },
+   "30": {
+    "delta_p_mean": 0.0005515894396849769,
+    "margin_static_mean": 0.4125621485829495,
+    "margin_dynamic_mean": 0.4124470036365551
+   },
+   "60": {
+    "delta_p_mean": 0.0006106139835124938,
+    "margin_static_mean": 0.4167154711226666,
+    "margin_dynamic_mean": 0.41659569615829345
+   },
+   "180": {
+    "delta_p_mean": 0.0006367357990623548,
+    "margin_static_mean": 0.4228046837192686,
+    "margin_dynamic_mean": 0.42280330779872705
+   },
+   "360": {
+    "delta_p_mean": 0.0007226145312822295,
+    "margin_static_mean": 0.4263100993561572,
+    "margin_dynamic_mean": 0.4262396989267771
+   }
+  }
+ }
+}

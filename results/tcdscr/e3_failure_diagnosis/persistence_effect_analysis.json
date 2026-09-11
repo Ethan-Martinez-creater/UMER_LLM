@@ -1,0 +1,40 @@
+{
+ "pheme": {
+  "P_select_given_persistent": 0.8718421265673291,
+  "P_select_given_new": 0.31227196343718333,
+  "persistence_selection_lift": 0.5595701631301457,
+  "n_persistent_candidates": 419982,
+  "n_new_candidates": 545691,
+  "n_persistent_selected": 366158,
+  "n_new_selected": 170404,
+  "persistence_saved_evidence": {
+   "n": 1466,
+   "transitions": {
+    "wrong_to_correct": 10,
+    "correct_to_wrong": 2,
+    "both_wrong": 226,
+    "both_correct": 1228,
+    "net_correction_gain": 8
+   }
+  }
+ },
+ "maweibo": {
+  "P_select_given_persistent": 0.6753461390011811,
+  "P_select_given_new": 0.034192877634929474,
+  "persistence_selection_lift": 0.6411532613662516,
+  "n_persistent_candidates": 689174,
+  "n_new_candidates": 11163202,
+  "n_persistent_selected": 465431,
+  "n_new_selected": 381702,
+  "persistence_saved_evidence": {
+   "n": 5716,
+   "transitions": {
+    "wrong_to_correct": 4,
+    "correct_to_wrong": 9,
+    "both_wrong": 267,
+    "both_correct": 5436,
+    "net_correction_gain": -5
+   }
+  }
+ }
+}
