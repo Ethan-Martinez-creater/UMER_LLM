@@ -1,0 +1,38 @@
+{
+ "stage": "final_evidence_gap_a",
+ "dataset": "pheme",
+ "fold": 2,
+ "seed": 2000,
+ "split_used": "test",
+ "protocol": "all events at every real cutoff (candidate_count == 0 included, empty selection)",
+ "budget": 1024,
+ "arms": [
+  "static",
+  "random",
+  "semantic"
+ ],
+ "partition_seed": 3090,
+ "n_test_events": 1285,
+ "n_rows": 23130,
+ "expected_rows": 23130,
+ "empty_selection_rows": 4221,
+ "mean_primary_macro_f1": {
+  "static": 0.8338280861672794,
+  "random": 0.831806526784422,
+  "semantic": 0.833222763422509
+ },
+ "frozen_checksum_match": {
+  "encoder": true,
+  "selector": true,
+  "proxy": true
+ },
+ "new_trainable_parameters": 0,
+ "test_time_hyperparameter_search": false,
+ "source_checkpoints": {
+  "e1_root": "/data/jyz/next/llm/results/tcdscr/formal_e1",
+  "e2_root": "/data/jyz/next/llm/results/tcdscr/formal_e2_corrected",
+  "encoder_ckpt_sha": "b9b72972398bb79e71d184dbe718aa913ebd74aec1e881be2d7a1f63fe787dfd",
+  "selector_checkpoint_sha": "3748077410cc85db4af8d08efdb3ee356bd193bd5d7fa630d97ff41b43ff99e5",
+  "e2_manifest_sha256": "b704c2d661aab5a777e3012403a58cc476d7fbf1c6ee1b1b9455a53e38e31388"
+ }
+}

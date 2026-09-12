@@ -1,0 +1,38 @@
+{
+ "stage": "final_evidence_gap_a",
+ "dataset": "maweibo",
+ "fold": 1,
+ "seed": 2002,
+ "split_used": "test",
+ "protocol": "all events at every real cutoff (candidate_count == 0 included, empty selection)",
+ "budget": 1024,
+ "arms": [
+  "static",
+  "random",
+  "semantic"
+ ],
+ "partition_seed": 3090,
+ "n_test_events": 933,
+ "n_rows": 16794,
+ "expected_rows": 16794,
+ "empty_selection_rows": 915,
+ "mean_primary_macro_f1": {
+  "static": 0.9284811920141481,
+  "random": 0.8720714987371402,
+  "semantic": 0.8777565225867651
+ },
+ "frozen_checksum_match": {
+  "encoder": true,
+  "selector": true,
+  "proxy": true
+ },
+ "new_trainable_parameters": 0,
+ "test_time_hyperparameter_search": false,
+ "source_checkpoints": {
+  "e1_root": "/data/jyz/next/llm/results/tcdscr/formal_e1",
+  "e2_root": "/data/jyz/next/llm/results/tcdscr/formal_e2_corrected",
+  "encoder_ckpt_sha": "2ca4f307531e6bab9e2bc0aa0002a536be30d4b62980d8d7d0c6a01fa17eb903",
+  "selector_checkpoint_sha": "1c8d292554ff0a0aa43cca43e95499e5827f20490d15c7406d5860fa26372bf9",
+  "e2_manifest_sha256": "25307226a0008825d5fc8a17066db151ae88d84349034751bae955c9be5291fe"
+ }
+}

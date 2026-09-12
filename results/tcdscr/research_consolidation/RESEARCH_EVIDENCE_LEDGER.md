@@ -67,7 +67,7 @@ Finalization notes: E1's reported split is VALIDATION (training split TRAIN). Th
 
 **Metrics.** PHEME: static 0.84643, dynamic 0.84653, delta +0.0001037, corrected CI [-0.0000969, +0.0003214]. Ma-Weibo: static 0.92678, dynamic 0.92679, delta +0.0000120, corrected CI [-0.0001399, +0.0001614].
 
-**Strength.** MODERATE — the held-out run is `CONDITIONAL_HELD_OUT` (candidate-conditioned), so it is not a clean all-event held-out result. **Status.** REJECTED as a method, retained as a supported negative finding. **Limitations.** The relative verdict is robust to the scope gap: on a no-candidate snapshot both arms predict source-only, so restoring the rows moves both arms toward the same value and cannot turn the negative delta positive.
+**Strength.** MODERATE — the held-out run is `CONDITIONAL_HELD_OUT` (candidate-conditioned), so it is not a clean all-event held-out result. **Status.** REJECTED as a method, retained as a supported historical negative finding based on its negligible candidate-conditioned held-out effect, corrected bootstrap intervals crossing zero, and consistent all-event validation diagnostics. **Limitations.** Because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F.
 
 ## C05 — Dynamic bonus suffered from scale and budget-boundary problems
 

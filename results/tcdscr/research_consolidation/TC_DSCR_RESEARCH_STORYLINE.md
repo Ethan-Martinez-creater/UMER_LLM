@@ -34,7 +34,7 @@ Freeze commit: `c96ccbddbc5aeecfd62efa5e162ad0aff33290c2`.
 
 The reader contribution is **not** complete: Contribution D is currently `VALIDATION-PILOT SUPPORTED; FINAL HELD-OUT EVIDENCE PENDING`.
 
-**Held-out evidence note (scope audit).** The E3 held-out run dropped every event-cutoff with no candidate (173,277 rows kept of 199,602 expected), so its absolute Macro-F1 values are `CONDITIONAL_HELD_OUT` / `DEPRECATED_ABSOLUTE`. The relative negative finding for Dynamic V1 stands, because a no-candidate snapshot yields a source-only prediction in both arms. Details: `E3_NO_CANDIDATE_SCOPE_AUDIT.md`.
+**Held-out evidence note (scope audit).** The E3 held-out run dropped every event-cutoff with no candidate (173,277 rows kept of 199,602 expected), so its absolute Macro-F1 values are `CONDITIONAL_HELD_OUT` / `DEPRECATED_ABSOLUTE`. Dynamic V1 remains a supported historical negative finding based on its negligible candidate-conditioned held-out effect, corrected bootstrap intervals crossing zero, and consistent all-event validation diagnostics; however, because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F. Details: `E3_NO_CANDIDATE_SCOPE_AUDIT.md`.
 
 ---
 

@@ -80,7 +80,7 @@ Historical readiness gate decision (candidate-conditioned): PHEME FAIL, Ma-Weibo
 | Ma-Weibo | Static selector | macro_f1 | 0.92678 | CONDITIONAL_HELD_OUT | CANDIDATE_CONDITIONED | `results/tcdscr/formal_e3_test/e3_test_summary.json` |
 | Ma-Weibo | Dynamic V1 - Static | delta macro_f1 95% CI | [-0.0001399, +0.0001614] | CONDITIONAL_HELD_OUT | CANDIDATE_CONDITIONED | `results/tcdscr/e3_failure_diagnosis/bootstrap_fixed.json` |
 
-Verdict retained as a historical negative finding: WEAK_POSITIVE, recommendation REVIEW_DYNAMIC_DESIGN; both CIs cross zero, so Dynamic V1 is REJECTED as a method. On a no-candidate snapshot both arms predict source-only, so restoring the dropped rows would move both arms toward the same value and cannot turn the negative delta positive. An all-event held-out run is listed as a missing evidence cell (Gap F).
+Verdict retained as a historical negative finding: WEAK_POSITIVE, recommendation REVIEW_DYNAMIC_DESIGN; both CIs cross zero, so Dynamic V1 is REJECTED as a method. Dynamic V1 remains a supported historical negative finding based on its negligible candidate-conditioned held-out effect, corrected bootstrap intervals crossing zero, and consistent all-event validation diagnostics. However, because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F. An all-event held-out run is listed as a missing evidence cell (Gap F).
 
 ## 6. Dynamic V2 / MF-TSR (split: VALIDATION)
 

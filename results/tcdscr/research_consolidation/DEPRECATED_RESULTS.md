@@ -64,7 +64,7 @@ Artifacts and numbers on this page must **not** be cited as canonical results. T
       "scope": "absolute Macro-F1 values of the E3 held-out run (results/tcdscr/formal_e3_test/e3_test_summary.json classification values)",
       "reason": "Scope audit CASE_B_ZERO_CANDIDATE_SKIPPED: the held-out runner dropped every event-cutoff with candidate_count == 0 (173,277 of 199,602 expected rows; zero retained rows have n_candidates == 0). The missing-row rate matches the validation no-candidate rate (PHEME 0.18630 vs 0.18774; Ma-Weibo 0.05693 vs 0.05071).",
       "impact": "The absolute held-out Macro-F1 values are not all-event and cannot be the paper's all-event held-out numbers.",
-      "retained_use": "The relative negative finding is retained as a historical negative finding: Dynamic V1 is not supported (both corrected CIs cross zero). On a no-candidate snapshot both arms predict source-only, so restoring the dropped rows would move both arms toward the same value and cannot turn the negative delta positive.",
+      "retained_use": "Dynamic V1 remains a supported historical negative finding: its candidate-conditioned held-out effect is negligible, the corrected bootstrap intervals cross zero, and the all-event validation diagnostics are consistent. Because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F.",
       "replacement": "results/tcdscr/research_consolidation/NEXT_EXPERIMENT_GAPS.md",
       "replacement_artifact": "results/tcdscr/research_consolidation/E3_NO_CANDIDATE_SCOPE_AUDIT.md",
       "replacement_commit": "47aa201",

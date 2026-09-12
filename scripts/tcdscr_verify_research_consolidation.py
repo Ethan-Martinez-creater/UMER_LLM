@@ -353,11 +353,13 @@ def write_e3_audit_files(root, results_root=None):
             "- E3 held-out absolute Macro-F1 values cannot remain ALL-EVENT "
             "canonical; they are classified CONDITIONAL_HELD_OUT / "
             "DEPRECATED_ABSOLUTE.",
-            "- The relative negative finding (Dynamic V1 not supported) is "
-            "retained as a historical negative finding: both arms predict "
-            "source-only on a no-candidate snapshot, so restoring those rows "
-            "would move both arms toward the same value and cannot turn the "
-            "delta positive.",
+            "- Dynamic V1 remains a supported historical negative finding "
+            "based on its negligible candidate-conditioned held-out effect, "
+            "corrected bootstrap intervals crossing zero, and consistent "
+            "all-event validation diagnostics.",
+            "- However, because Macro-F1 is nonlinear, the final all-event "
+            "held-out effect is not inferred from identical no-candidate "
+            "predictions and must be established by Gap F.",
             "- An all-event held-out evaluation is a missing evidence cell "
             "and is recorded in NEXT_EXPERIMENT_GAPS.md.",
             "- Validation all-event diagnostics are NOT a substitute for the "
@@ -651,6 +653,41 @@ def _check_option_a1(root, issues):
     return has_contrib_d
 
 
+def _check_documentation_correction(root, issues):
+    """The no-candidate scope discussion must not claim that adding
+    identical predictions cannot change the Macro-F1 delta sign."""
+    forbidden = (
+        "cannot turn the negative delta positive",
+        "cannot turn the delta positive",
+        "restoring those rows would move both arms toward the same value",
+        "restoring the dropped rows would move both arms",
+    )
+    hits = []
+    for dirpath, _dirs, files in os.walk(root):
+        for name in files:
+            if not name.endswith((".md", ".json")):
+                continue
+            if name == "research_consolidation_verify.json":
+                continue
+            text = read_text(os.path.join(dirpath, name))
+            for phrase in forbidden:
+                if phrase in text:
+                    hits.append(f"{name}: {phrase}")
+    for hit in hits:
+        issues.append(f"over-strong Macro-F1 direction claim present: {hit}")
+    nonlinear = False
+    for name in os.listdir(root):
+        if name.endswith((".md", ".json")) and \
+                name != "research_consolidation_verify.json":
+            if "Macro-F1 is nonlinear" in read_text(os.path.join(root, name)):
+                nonlinear = True
+                break
+    if not nonlinear:
+        issues.append("documentation correction missing: no artifact states "
+                      "that Macro-F1 is nonlinear")
+    return not hits and nonlinear
+
+
 def _check_recommendation_and_approvals(root, issues):
     manifest = load_json(os.path.join(root, "research_freeze_manifest.json"))
     diag = load_json(os.path.join(REPO_ROOT, DIAG_DIR,
@@ -773,6 +810,7 @@ def verify(root=None):
     n_canonical_rows = _check_protocol_status(root, issues)
     _check_e1_split(root, issues)
     _check_option_a1(root, issues)
+    _check_documentation_correction(root, issues)
     _check_recommendation_and_approvals(root, issues)
     _check_frozen_v3b(root, issues)
     _check_no_new_artifacts(root, issues)

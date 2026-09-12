@@ -190,7 +190,7 @@
         "Positive point estimates on both datasets but both bootstrap CIs cross zero; the method is not established as an improvement.",
         "The bootstrap CI in the original E3 test artifact lost multiplicity; see PROTOCOL_CORRECTIONS.",
         "SCOPE AUDIT (consolidation finalization): the held-out runner dropped event-cutoffs with candidate_count == 0 (173,277 of 199,602 expected rows; zero rows carry n_candidates == 0), so the absolute Macro-F1 values are CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE rather than all-event canonical.",
-        "The relative verdict is unchanged: on a no-candidate snapshot both arms predict source-only, so restoring those rows moves both arms toward the same value and cannot turn the negative delta positive."
+        "Dynamic V1 remains a supported historical negative finding (negligible candidate-conditioned held-out effect, corrected CIs crossing zero, consistent all-event validation diagnostics). Because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F."
       ],
       "protocol_issues_discovered_later": [
         "Bootstrap multiplicity bug (with-replacement resample collapsed into a unique-event dict) made the original CIs invalid; the corrected CIs are in e3_failure_diagnosis/bootstrap_fixed.json.",

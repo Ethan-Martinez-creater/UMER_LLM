@@ -149,7 +149,7 @@ E3 no-candidate scope audited:
 YES — runner behavior: the held-out runner dropped event-cutoffs with `candidate_count == 0`; expected rows 199,602, actual rows 173,277, rows with `n_candidates == 0` = 0; missing-row rate (PHEME 0.18630, Ma-Weibo 0.05693) matches the validation no-candidate rate (0.18774 / 0.05071). Artifacts: `E3_NO_CANDIDATE_SCOPE_AUDIT.md`, `e3_no_candidate_scope_audit.json`.
 
 E3 held-out canonical status:
-CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE — the relative negative finding (Dynamic V1 not supported) is retained; no re-run was performed; validation all-event diagnostics are not a held-out substitute.
+CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE — Dynamic V1 remains a supported historical negative finding based on its negligible candidate-conditioned held-out effect, corrected bootstrap intervals crossing zero, and consistent all-event validation diagnostics; because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F. No re-run was performed; validation all-event diagnostics are not a held-out substitute.
 
 Reader contribution status:
 VALIDATION-PILOT / FINAL-EVIDENCE-PENDING

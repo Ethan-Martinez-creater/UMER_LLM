@@ -1,0 +1,54 @@
+{
+ "pheme": {
+  "primary": {
+   "baseline": "semantic",
+   "point": 0.0008911347053137675,
+   "ci_low": 1.103252716572221e-06,
+   "ci_high": 0.0017778564543737023,
+   "status": "STRONG_SUPPORT",
+   "meets_historical_0.005_threshold": false,
+   "threshold": 0.005,
+   "threshold_note": "historical practical-effect threshold; not tuned on test"
+  },
+  "comparisons": {
+   "static_minus_random": {
+    "point": 0.0009102188808722822,
+    "ci_low": 0.00019240067940907714,
+    "ci_high": 0.0016454608206272507,
+    "excludes_zero": true
+   },
+   "static_minus_semantic": {
+    "point": 0.0008911347053137675,
+    "ci_low": 1.103252716572221e-06,
+    "ci_high": 0.0017778564543737023,
+    "excludes_zero": true
+   }
+  }
+ },
+ "maweibo": {
+  "primary": {
+   "baseline": "random",
+   "point": 0.017125872962507116,
+   "ci_low": 0.013952513814849462,
+   "ci_high": 0.020322939179145467,
+   "status": "STRONG_SUPPORT",
+   "meets_historical_0.005_threshold": true,
+   "threshold": 0.005,
+   "threshold_note": "historical practical-effect threshold; not tuned on test"
+  },
+  "comparisons": {
+   "static_minus_random": {
+    "point": 0.017125872962507116,
+    "ci_low": 0.013952513814849462,
+    "ci_high": 0.020322939179145467,
+    "excludes_zero": true
+   },
+   "static_minus_semantic": {
+    "point": 0.01948559746699985,
+    "ci_low": 0.016237275793383875,
+    "ci_high": 0.022749486261276233,
+    "excludes_zero": true
+   }
+  }
+ }
+}

@@ -1,0 +1,36 @@
+{
+ "pheme": {
+  "delta_macro_f1": {
+   "point": 9.121578564796895e-05,
+   "ci_low": -8.353286096390022e-05,
+   "ci_high": 0.00026961641007350323
+  },
+  "delta_flip_rate": {
+   "point": 0.0005499351491569382,
+   "ci_low": 0.0003216601815823599,
+   "ci_high": 0.0007989623865110249
+  },
+  "n_iterations": 10000,
+  "seed": 4096,
+  "unit": "event",
+  "stratified": "within outer fold",
+  "multiplicity": "preserved"
+ },
+ "maweibo": {
+  "delta_macro_f1": {
+   "point": 1.1872731969231332e-05,
+   "ci_low": -0.00013111608004878484,
+   "ci_high": 0.00015486664127437044
+  },
+  "delta_flip_rate": {
+   "point": -1.4293882218414933e-05,
+   "ci_low": -0.00021440823327616154,
+   "ci_high": 0.0002001143510577466
+  },
+  "n_iterations": 10000,
+  "seed": 4096,
+  "unit": "event",
+  "stratified": "within outer fold",
+  "multiplicity": "preserved"
+ }
+}

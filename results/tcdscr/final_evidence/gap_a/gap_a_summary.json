@@ -1,0 +1,194 @@
+{
+ "stage": "final_evidence_gap_a",
+ "protocol": "ALL_EVENT held-out (test split)",
+ "budget": 1024,
+ "bootstrap": {
+  "unit": "event",
+  "iterations": 10000,
+  "seed": 4096,
+  "stratified": "within outer fold",
+  "multiplicity": "preserved"
+ },
+ "datasets": {
+  "pheme": {
+   "static": 0.8470105713606779,
+   "random": 0.8461003524798056,
+   "semantic": 0.8461194366553642,
+   "best_simple_baseline": "semantic",
+   "delta_static_minus_best": 0.0008911347053137675,
+   "comparisons": {
+    "static_minus_random": {
+     "point": 0.0009102188808722822,
+     "ci_low": 0.00019240067940907714,
+     "ci_high": 0.0016454608206272507,
+     "excludes_zero": true
+    },
+    "static_minus_semantic": {
+     "point": 0.0008911347053137675,
+     "ci_low": 1.103252716572221e-06,
+     "ci_high": 0.0017778564543737023,
+     "excludes_zero": true
+    }
+   },
+   "per_cutoff": {
+    "5": {
+     "static": 0.8427892655460711,
+     "random": 0.8430971773553548,
+     "semantic": 0.8429333813609037
+    },
+    "15": {
+     "static": 0.8457736235828079,
+     "random": 0.845844796085514,
+     "semantic": 0.8459379783963643
+    },
+    "30": {
+     "static": 0.8476968072212661,
+     "random": 0.8473687716795337,
+     "semantic": 0.8475362508693611
+    },
+    "60": {
+     "static": 0.8479026091642023,
+     "random": 0.8472562654139245,
+     "semantic": 0.8471980578469988
+    },
+    "180": {
+     "static": 0.8490446193226346,
+     "random": 0.8467132747490813,
+     "semantic": 0.8466092815210446
+    },
+    "360": {
+     "static": 0.8488565033270863,
+     "random": 0.8463218295954258,
+     "semantic": 0.8465016699375121
+    }
+   },
+   "per_fold": {
+    "0": {
+     "static": 0.8415496801445371,
+     "random": 0.8426426199223814,
+     "semantic": 0.8428654255835681
+    },
+    "1": {
+     "static": 0.8659527948438693,
+     "random": 0.8662862595914618,
+     "semantic": 0.8659626224755704
+    },
+    "2": {
+     "static": 0.8291566274561308,
+     "random": 0.8259979216583458,
+     "semantic": 0.8267880237299963
+    },
+    "3": {
+     "static": 0.8405034259611813,
+     "random": 0.8390948498084553,
+     "semantic": 0.8381830051781544
+    },
+    "4": {
+     "static": 0.8570430257649458,
+     "random": 0.8555330056675037,
+     "semantic": 0.85591678847191
+    }
+   },
+   "primary": {
+    "baseline": "semantic",
+    "point": 0.0008911347053137675,
+    "ci_low": 1.103252716572221e-06,
+    "ci_high": 0.0017778564543737023,
+    "status": "STRONG_SUPPORT",
+    "meets_historical_0.005_threshold": false,
+    "threshold": 0.005,
+    "threshold_note": "historical practical-effect threshold; not tuned on test"
+   }
+  },
+  "maweibo": {
+   "static": 0.9244564301428436,
+   "random": 0.9073305571803365,
+   "semantic": 0.9049708326758438,
+   "best_simple_baseline": "random",
+   "delta_static_minus_best": 0.017125872962507116,
+   "comparisons": {
+    "static_minus_random": {
+     "point": 0.017125872962507116,
+     "ci_low": 0.013952513814849462,
+     "ci_high": 0.020322939179145467,
+     "excludes_zero": true
+    },
+    "static_minus_semantic": {
+     "point": 0.01948559746699985,
+     "ci_low": 0.016237275793383875,
+     "ci_high": 0.022749486261276233,
+     "excludes_zero": true
+    }
+   },
+   "per_cutoff": {
+    "5": {
+     "static": 0.8937436221986734,
+     "random": 0.8920780052180339,
+     "semantic": 0.885959637136124
+    },
+    "15": {
+     "static": 0.917952738887758,
+     "random": 0.9095724271362154,
+     "semantic": 0.9065653187780052
+    },
+    "30": {
+     "static": 0.925453672270385,
+     "random": 0.909370374857562,
+     "semantic": 0.9091090252907293
+    },
+    "60": {
+     "static": 0.9311660684391745,
+     "random": 0.9098761072038508,
+     "semantic": 0.9092143123256354
+    },
+    "180": {
+     "static": 0.9368152454763202,
+     "random": 0.9088075163926745,
+     "semantic": 0.9088811972315864
+    },
+    "360": {
+     "static": 0.9416072335847503,
+     "random": 0.9142789122736827,
+     "semantic": 0.9100955052929817
+    }
+   },
+   "per_fold": {
+    "0": {
+     "static": 0.9236402965533856,
+     "random": 0.9137140403663189,
+     "semantic": 0.9120828024033019
+    },
+    "1": {
+     "static": 0.9278759555686622,
+     "random": 0.905393861538414,
+     "semantic": 0.9013664635490901
+    },
+    "2": {
+     "static": 0.9284710893842273,
+     "random": 0.9222255386221564,
+     "semantic": 0.9144954828509652
+    },
+    "3": {
+     "static": 0.9374611939975948,
+     "random": 0.9167691969034183,
+     "semantic": 0.9148824577346718
+    },
+    "4": {
+     "static": 0.9047921696573372,
+     "random": 0.8782755321788037,
+     "semantic": 0.8818028072746773
+    }
+   },
+   "primary": {
+    "baseline": "random",
+    "point": 0.017125872962507116,
+    "ci_low": 0.013952513814849462,
+    "ci_high": 0.020322939179145467,
+    "status": "STRONG_SUPPORT",
+    "meets_historical_0.005_threshold": true,
+    "threshold": 0.005,
+    "threshold_note": "historical practical-effect threshold; not tuned on test"
+   }
+  }
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "n_issues": 0,
+ "issues": [],
+ "gap_a": {
+  "n_runs": 30,
+  "n_rows": 598806,
+  "expected_rows": 598806
+ },
+ "gap_f": {
+  "n_runs": 30,
+  "n_rows": 199602,
+  "expected_rows": 199602
+ },
+ "reader": {
+  "n_samples": 600,
+  "n_raw_generations": 2400,
+  "n_parsed": 2400,
+  "n_prompts": 2400,
+  "n_context_overflow": 0,
+  "unsupported_citations": 8,
+  "cited_total": 6079,
+  "prior_reader_overlap": 0
+ },
+ "checks": [
+  "Gap A: 30 runs, all events at all 6 cutoffs, no-candidate rows retained, 3 arms, frozen E2 checkpoints, budget 1024",
+  "Gap A: paired event bootstrap with multiplicity preserved",
+  "Gap F: 30 runs, rows == test events x 6, no-candidate rows > 0",
+  "Gap F: frozen best_config only, no test-time search",
+  "Gap F: dynamic memory chain causal (no future memory)",
+  "Gap F: static and dynamic paired on the same rows",
+  "reader: outer test only, all prior V3-B event ids excluded",
+  "reader: 300 unique events/dataset, 60/fold, 10 per cutoff/fold",
+  "reader: seed 4096, context seed 2000, alpha 0.8, budget 1024",
+  "reader: four arms exactly, token-matched arms never exceed MS",
+  "reader: gold labels not read before the generation freeze",
+  "reader: identical source text across the four arms",
+  "reader: same Qwen checkpoint as V3-B, prompt v3b-2",
+  "reader: manifest hash unchanged after freeze",
+  "reader: unsupported citation rate reproduces from parsed output"
+ ]
+}

@@ -41,6 +41,7 @@ The held-out runner dropped event-cutoffs with no candidate. The missing rows ma
 Consequences (no re-run, per protocol):
 
 - E3 held-out absolute Macro-F1 values cannot remain ALL-EVENT canonical; they are classified CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE.
-- The relative negative finding (Dynamic V1 not supported) is retained as a historical negative finding: both arms predict source-only on a no-candidate snapshot, so restoring those rows would move both arms toward the same value and cannot turn the delta positive.
+- Dynamic V1 remains a supported historical negative finding based on its negligible candidate-conditioned held-out effect, corrected bootstrap intervals crossing zero, and consistent all-event validation diagnostics.
+- However, because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F.
 - An all-event held-out evaluation is a missing evidence cell and is recorded in NEXT_EXPERIMENT_GAPS.md.
 - Validation all-event diagnostics are NOT a substitute for the held-out result.

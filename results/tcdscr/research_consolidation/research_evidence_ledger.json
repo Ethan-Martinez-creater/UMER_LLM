@@ -129,7 +129,7 @@
         "The verdict is REJECTED as a method because both paired bootstrap CIs cross zero; the positive point estimates are not established.",
         "It remains a supported negative finding: the point-wise dynamic bonus is measurable but not sufficient.",
         "SCOPE AUDIT: the held-out run skipped no-candidate snapshots (173,277 of 199,602 expected rows), so the absolute Macro-F1 values are CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE and this claim is MODERATE, not held-out-STRONG.",
-        "The relative verdict is robust to that gap: on a no-candidate snapshot both arms predict source-only, so restoring those rows would move both arms toward the same value and cannot turn the negative delta positive."
+        "The relative verdict is retained as a historical negative finding (negligible candidate-conditioned held-out effect, corrected CIs crossing zero, consistent all-event validation diagnostics). Because Macro-F1 is nonlinear, the final all-event held-out effect is not inferred from identical no-candidate predictions and must be established by Gap F."
       ],
       "negative_finding_supported": true,
       "allowed_in_paper": true,
