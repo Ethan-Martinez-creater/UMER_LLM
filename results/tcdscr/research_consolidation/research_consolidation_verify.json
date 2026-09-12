@@ -10,6 +10,17 @@
   "DIAGNOSTIC_ONLY": 2
  },
  "n_prohibited_claims": 7,
+ "n_canonical_rows": 62,
+ "e3_scope_verdict": "CASE_B_ZERO_CANDIDATE_SKIPPED",
+ "e3_held_out_status": "CONDITIONAL_HELD_OUT",
+ "e1_reported_split": "VALIDATION",
+ "e2_canonical_protocol": "ALL_EVENT",
+ "recommended_option": "A1",
+ "must_have_gaps": [
+  "Gap A",
+  "Gap B",
+  "Gap C"
+ ],
  "recommendation": "MS_TSR_COMPRESSION_ONLY",
  "v3c_approved": false,
  "full_e4_approved": false,
@@ -29,6 +40,12 @@
   "V3-C and full E4 remain NOT APPROVED",
   "no new Qwen generation artifact created (frozen hashes unchanged)",
   "no new model checkpoint or training output added",
-  "no selector/algorithm implementation changed"
+  "no selector/algorithm implementation changed",
+  "E1 reported split is VALIDATION (training split is TRAIN)",
+  "canonical rows carry a protocol_status",
+  "candidate-conditioned rows are never plain CANONICAL",
+  "E3 held-out no-candidate scope audited from frozen rows",
+  "E3 canonical status matches the scope audit",
+  "Contribution D implies Gap B and Option A1 (Gap A+B+C, B+C combined)"
  ]
 }

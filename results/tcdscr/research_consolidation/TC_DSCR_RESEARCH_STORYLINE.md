@@ -28,6 +28,14 @@ Freeze commit: `c96ccbddbc5aeecfd62efa5e162ad0aff33290c2`.
 
 **Final conclusion.** Proxy-defined sufficiency does not automatically transfer to an LLM reader. MS-TSR is retained as a **context-compression component**, not as a universal sufficiency selector. The final recommendation is `MS_TSR_COMPRESSION_ONLY`.
 
+**Current result.** Reader transfer is validation-supported but dataset-dependent (PHEME +0.01974 with a CI crossing zero; Ma-Weibo -0.00933).
+
+**Remaining final evidence.** A fold-local held-out reader comparison with token-matched compression baselines (Gap B + Gap C, one combined reader run), an all-event held-out closure of the Dynamic V1 comparison (Gap F), and a held-out Static vs Random vs Semantic comparison (Gap A).
+
+The reader contribution is **not** complete: Contribution D is currently `VALIDATION-PILOT SUPPORTED; FINAL HELD-OUT EVIDENCE PENDING`.
+
+**Held-out evidence note (scope audit).** The E3 held-out run dropped every event-cutoff with no candidate (173,277 rows kept of 199,602 expected), so its absolute Macro-F1 values are `CONDITIONAL_HELD_OUT` / `DEPRECATED_ABSOLUTE`. The relative negative finding for Dynamic V1 stands, because a no-candidate snapshot yields a source-only prediction in both arms. Details: `E3_NO_CANDIDATE_SCOPE_AUDIT.md`.
+
 ---
 
 ## Stage-to-paper mapping

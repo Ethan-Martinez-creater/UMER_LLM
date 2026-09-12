@@ -6,6 +6,17 @@
   "n_stages_note": "11 registry stages cover all 12 rows listed in the consolidation protocol: 'Dynamic V2 / MF-TSR' and 'MF-TSR validation' describe the same stage (V2-MF-TSR); the protocol-correction stage is listed separately as V2-PROTOCOL-CORRECTION.",
   "split_taxonomy": ["TRAIN", "VALIDATION", "HELD_OUT_TEST", "DIAGNOSTIC"],
   "status_taxonomy": ["SUPPORTED", "PARTIAL", "REJECTED", "DIAGNOSTIC_ONLY"],
+  "consolidation_finalization": {
+    "finalization_commit": "47aa201",
+    "e1_reported_split_corrected": true,
+    "e2_canonical_migrated_to_all_event": true,
+    "historical_e2_readiness_preserved": true,
+    "e3_scope_audited": true,
+    "e3_held_out_status": "CONDITIONAL_HELD_OUT",
+    "recommended_option": "A1",
+    "must_have_gaps": ["Gap A", "Gap B", "Gap C"],
+    "new_experiment_executed": false
+  },
   "stages": [
     {
       "stage_id": "E1",
@@ -13,7 +24,10 @@
       "commit_sha": "db3c269",
       "commit_note": "finalization commit 26029af (fold-parity audit, cap-aware diagnostic, epochs_run fix)",
       "datasets": ["pheme", "maweibo"],
-      "split_used": "TRAIN",
+      "split_used": "VALIDATION",
+      "training_split": "TRAIN",
+      "reported_evaluation_split": "VALIDATION",
+      "split_note": "The encoder is trained on the training fold; every E1 Macro-F1 reported here is a validation-fold readout, so the reported evidence split is VALIDATION, not TRAIN.",
       "model_components_used": ["causal graph encoder", "source-only head", "cutoff-conditioned head"],
       "trainable_components": ["causal encoder"],
       "frozen_components": [],
@@ -80,7 +94,16 @@
         "status": "PARTIAL",
         "recommendation": "STOP_FOR_RESEARCH_REVIEW",
         "datasets_passing": ["maweibo"],
-        "n_runs": 30
+        "n_runs": 30,
+        "historical_readiness_protocol": "CANDIDATE_CONDITIONED",
+        "historical_readiness_note": "The readiness gate was evaluated with the candidate-conditioned metric (candidate_count > 0). It is retained for audit and must not be cited as the paper's absolute metric.",
+        "canonical_protocol": "ALL_EVENT",
+        "canonical_all_event": {
+          "pheme": {"static": 0.856688641737558, "random": 0.8548242034988076, "semantic": 0.8538167618085079, "delta_static_minus_best_baseline": 0.0018644382387504},
+          "maweibo": {"static": 0.9338735968623215, "random": 0.9135689844888084, "semantic": 0.9089295304102168, "delta_static_minus_best_baseline": 0.0203046123735131},
+          "source_artifact": "results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json"
+        },
+        "canonical_note": "The protocol correction changed the absolute values but not the direction or the dataset-level conclusion (PHEME below the 0.005 readiness threshold, Ma-Weibo clearly positive)."
       },
       "status": "PARTIAL",
       "main_artifacts": [
@@ -145,7 +168,18 @@
         "overall_status": "WEAK_POSITIVE",
         "recommendation": "REVIEW_DYNAMIC_DESIGN",
         "n_runs": 30,
-        "n_failed": 0
+        "n_failed": 0,
+        "protocol_status": "CANDIDATE_CONDITIONED",
+        "held_out_status": "CONDITIONAL_HELD_OUT",
+        "scope_audit": {
+          "artifact": "results/tcdscr/research_consolidation/e3_no_candidate_scope_audit.json",
+          "verdict": "CASE_B_ZERO_CANDIDATE_SKIPPED",
+          "expected_rows": 199602,
+          "actual_rows": 173277,
+          "missing_rows": 26325,
+          "zero_candidate_rows": 0,
+          "cross_check_consistent": true
+        }
       },
       "status": "REJECTED",
       "main_artifacts": [
@@ -154,10 +188,13 @@
       ],
       "known_caveats": [
         "Positive point estimates on both datasets but both bootstrap CIs cross zero; the method is not established as an improvement.",
-        "The bootstrap CI in the original E3 test artifact lost multiplicity; see PROTOCOL_CORRECTIONS."
+        "The bootstrap CI in the original E3 test artifact lost multiplicity; see PROTOCOL_CORRECTIONS.",
+        "SCOPE AUDIT (consolidation finalization): the held-out runner dropped event-cutoffs with candidate_count == 0 (173,277 of 199,602 expected rows; zero rows carry n_candidates == 0), so the absolute Macro-F1 values are CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE rather than all-event canonical.",
+        "The relative verdict is unchanged: on a no-candidate snapshot both arms predict source-only, so restoring those rows moves both arms toward the same value and cannot turn the negative delta positive."
       ],
       "protocol_issues_discovered_later": [
-        "Bootstrap multiplicity bug (with-replacement resample collapsed into a unique-event dict) made the original CIs invalid; the corrected CIs are in e3_failure_diagnosis/bootstrap_fixed.json and remain compatible with the REJECTED verdict."
+        "Bootstrap multiplicity bug (with-replacement resample collapsed into a unique-event dict) made the original CIs invalid; the corrected CIs are in e3_failure_diagnosis/bootstrap_fixed.json.",
+        "No-candidate snapshots were skipped in the held-out run (scope audit CASE_B); the all-event held-out evidence cell is now listed as a MUST_HAVE gap."
       ]
     },
     {

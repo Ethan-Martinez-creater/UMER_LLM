@@ -14,9 +14,12 @@ Freeze commit: `c96ccbddbc5aeecfd62efa5e162ad0aff33290c2`.
 
 **Fix.** Every event is now evaluated at every real cutoff; a no-candidate snapshot keeps its empty candidate array and contributes its (source-only) prediction. Recorded in `results/tcdscr/dynamic_v2_protocol/protocol_manifest.json` with `test_split_read: false` and `no_retraining: true`.
 
-**Affected.** Candidate-conditioned E2 and E3-V1 readiness values. Corrected E2 PHEME static moved 0.85572 -> 0.85669 (all-event), random 0.85352 -> 0.85482, semantic 0.85232 -> 0.85382. These old values are DEPRECATED (D02).
+**Affected.**
 
-**Not affected.** E1 (it never dropped events), the E3 held-out test policy, the V3-A/V3-B protocols (both are all-event), and every V3-B reader metric.
+- **E3 validation/readiness metrics (candidate-conditioned):** corrected E2 PHEME static 0.85572 -> 0.85669 (all-event), random 0.85352 -> 0.85482, semantic 0.85232 -> 0.85382; Ma-Weibo static 0.93506 -> 0.93387, random 0.91394 -> 0.91357, semantic 0.90904 -> 0.90893. These old values are DEPRECATED (D02).
+- **E3 held-out absolute values:** the held-out run predates this correction and skipped no-candidate snapshots (scope audit `CASE_B_ZERO_CANDIDATE_SKIPPED`: 173,277 rows kept of 199,602 expected; missing-row rate 0.18630 / 0.05693 vs validation no-candidate rate 0.18774 / 0.05071). Its absolute Macro-F1 values are `CONDITIONAL_HELD_OUT` / `DEPRECATED_ABSOLUTE` (D06). No re-run was performed.
+
+**Not affected.** E1 (all-event by construction), the V3-A and V3-B protocols (both all-event), every V3-B reader metric, and the **relative** E3 held-out verdict (Dynamic V1 REJECTED): on a no-candidate snapshot both arms emit a source-only prediction, so restoring the dropped rows moves both arms toward the same value and cannot turn the negative delta positive.
 
 **Final status.** CLOSED. All-event evaluation is mandatory from this point on; no-candidate coverage is now a reported statistic at every cutoff.
 

@@ -10,15 +10,17 @@ This report consolidates the completed TC-DSCR research into an auditable eviden
 | Item | Value |
 |---|---|
 | Freeze commit | `c96ccbd` |
-| E1 Random-init Causal Encoder | VALID |
-| Corrected E2 Static Utility Selector | VALID (dataset-dependent) |
-| Dynamic V1 (novelty + persistence) | NOT SUPPORTED |
+| Consolidation finalization commit | `47aa201` |
+| E1 Random-init Causal Encoder | VALID — reported split **VALIDATION** (training split TRAIN) |
+| Corrected E2 Static Utility Selector | VALID (dataset-dependent) — canonical metric is **ALL-EVENT**; historical candidate-conditioned readiness retained for audit |
+| Dynamic V1 (novelty + persistence) | NOT SUPPORTED — held-out run is **CONDITIONAL_HELD_OUT** (scope audit CASE_B); relative verdict retained |
 | Dynamic V2 (MF-TSR teacher fidelity) | NOT SUPPORTED AS FINAL METHOD |
 | Dynamic V3-A (MS-TSR proxy) | PASS AT PROXY / COMPRESSION LEVEL |
-| Dynamic V3-B (frozen Qwen3-8B reader) | PARTIAL — PHEME WEAK_TRANSFER, Ma-Weibo TRANSFER_FAIL |
+| Dynamic V3-B (frozen Qwen3-8B reader) | PARTIAL — PHEME WEAK_TRANSFER, Ma-Weibo TRANSFER_FAIL; `VALIDATION-PILOT SUPPORTED; FINAL HELD-OUT EVIDENCE PENDING` |
 | V3-B failure diagnosis | CLOSED |
 | Final V3 recommendation | MS_TSR_COMPRESSION_ONLY |
-| V3-C held-out test | **NOT APPROVED** |
+| Recommended next option | **A1** — Gap A + Gap B + Gap C (Gap B and Gap C combined into one reader experiment) |
+| V3-C held-out test / Gap A/B/C execution | **NOT APPROVED** |
 | Full E4 | **NOT APPROVED** |
 | New training / new Qwen inference / held-out test this round | all false |
 
@@ -51,9 +53,9 @@ Point-wise dynamic scoring failure; teacher-fidelity / downstream-utility mismat
 
 Full tables with split, dataset, method, metric, value and status are in `CANONICAL_RESULTS_TABLE.md`. Highlights:
 
-- E1 (TRAIN): UMER init vs random init Macro-F1 deltas +0.00632 to +0.01477 (PHEME), +0.00586 to +0.01285 (Ma-Weibo).
-- Corrected E2 (VALIDATION): static beats the best simple baseline by +0.02095 (Ma-Weibo, readiness pass) and +0.00218 (PHEME, readiness fail).
-- Dynamic V1 (HELD_OUT_TEST): delta Macro-F1 +0.0001037 / +0.0000120, corrected CIs crossing zero.
+- E1 (**VALIDATION** fold readout, training split TRAIN): UMER init vs random init Macro-F1 deltas +0.00632 to +0.01477 (PHEME), +0.00586 to +0.01285 (Ma-Weibo).
+- Corrected E2 (VALIDATION, all-event canonical): static beats the best simple baseline by +0.02030 (Ma-Weibo) and +0.00186 (PHEME). Historical candidate-conditioned readiness (Ma-Weibo pass, PHEME fail) is retained for audit only.
+- Dynamic V1 (**CONDITIONAL_HELD_OUT**): delta Macro-F1 +0.0001037 / +0.0000120, corrected CIs crossing zero; absolute values are DEPRECATED_ABSOLUTE because the run skipped no-candidate snapshots.
 - MF-TSR (VALIDATION): +0.00293 / -0.00286, gate FAIL.
 - MS-TSR V3-A (VALIDATION): 57.9% / 82.7% mean token reduction, prediction change 0.
 - V3-B reader (**VALIDATION PILOT**): +0.01974 (PHEME, CI crossing zero) / -0.00933 (Ma-Weibo), overall PARTIAL.
@@ -91,17 +93,18 @@ See `TC_DSCR_RESEARCH_STORYLINE.md`. The chain is: problem -> why full context i
 
 See `NEXT_EXPERIMENT_GAPS.md`.
 
-- **MUST_HAVE Gap A** — held-out, fold-local paired comparison of the Static Utility Selector against random and semantic baselines (none exists; the held-out test only compared static vs dynamic).
-- **MUST_HAVE Gap B** — a strict fold-local reader evaluation if the reader section is to carry any claim (the current pilot mixes outer-fold pools and is validation-only).
-- **MUST_HAVE Gap C** — at least Static top-k and random compression baselines under the same frozen reader and prompt.
+- **MUST_HAVE Gap A** — held-out, fold-local paired comparison of the Static Utility Selector against Random and Semantic selection (none exists).
+- **MUST_HAVE Gap B** — a strict fold-local frozen-LLM reader evaluation (required as long as Contribution D stays in the paper; the current pilot mixes outer-fold pools and is validation-only).
+- **MUST_HAVE Gap C** — token-matched compression comparators under the same frozen reader and prompt (Static Full, Static Token-Matched, Random Token-Matched, MS-TSR). Gap B and Gap C should be executed as **one combined reader experiment**.
+- **MUST_HAVE Gap F** — an all-event held-out re-evaluation of the Dynamic V1 comparison (the current held-out run is candidate-conditioned).
 - **SHOULD_HAVE Gap D** — formal token-cost / latency comparison.
 - **OPTIONAL Gap E** — hallucination robustness experiment; outside the current critical path.
 
 ## 13. Candidate Next Research Options
 
-### Option A — Consolidation
+### Option A1 — Consolidation with Final Evidence Closure
 
-No new selector. Close Gap A and Gap C, optionally Gap D. Report the existing contributions honestly, with the reader section labeled a validation pilot.
+No new selector, no Dynamic V4, no new hallucination topic. Close Gap A, Gap B + Gap C (one combined reader experiment), Gap F, optionally Gap D. This is the recommended option.
 
 ### Option B — LLM robustness extension
 
@@ -113,25 +116,56 @@ Treat the proxy-reader mismatch as a new research topic (reader-aware sufficienc
 
 ## 14. Recommended Next Option
 
-**Recommended Next Research Option: A — Consolidation.**
+**Recommended Next Research Option: A1 — Consolidation with Final Evidence Closure.**
 
 ## 15. Why
 
 **Innovation.** The novelty already exists in the causal evaluation protocol, the redundancy/compression measurement and the proxy-to-reader transfer analysis. Adding a mechanism would not add a new idea.
 
-**Evidence already available.** Static utility validation, the full held-out Dynamic V1 verdict, MF-TSR and MS-TSR validation, the 600-pair reader pilot, and a closed failure diagnosis. Only two cells are empty: a held-out static-vs-baseline comparison and simple compression baselines under the reader.
+**Why A1 rather than the earlier Option A.** Option A planned only Gap A + Gap C, but Contribution D (proxy-to-LLM reader transfer) remains a paper contribution. A reader contribution cannot be closed without Gap B, so A1 makes the recommendation consistent with the contribution matrix.
 
-**Remaining workload.** Small and bounded: frozen-checkpoint evaluation (Gap A) plus a reader evaluation over already-defined contexts (Gap C). No training, no new selector, no new dataset.
+**Evidence already available.** Static utility validation (all-event), the Dynamic V1 negative finding (relative verdict intact), MF-TSR and MS-TSR validation, the 600-pair reader pilot, and a closed failure diagnosis. The empty cells are: a held-out static-vs-baseline comparison, a fold-local reader evaluation with token-matched baselines, and an all-event held-out closure.
 
-**Risk.** Option A's residual risk is that the reader result stays mixed; that is already priced into the "does not automatically transfer" framing and remains defensible. Options B and C open unbounded new experiment programmes with no guaranteed positive outcome.
+**Remaining workload.** Bounded and frozen-checkpoint-only: Gap A, the combined Gap B+C reader run, Gap F, optionally Gap D. No training, no new selector, no new dataset. Running Gap B and Gap C together avoids duplicating the Qwen cost.
 
-**Continuity with the current UMER codebase.** Option A reuses the frozen artifacts, the evaluation, bootstrap and manifest machinery as-is. No change to MS-TSR, the Static Selector, the Proxy or the prompt.
+**Risk.** Option A1's residual risk is that the reader result stays mixed and that the all-event held-out closure does not change the Dynamic V1 verdict. Both are already priced into the current framing ("does not automatically transfer"; Dynamic V1 REJECTED). Options B and C open unbounded new experiment programmes with no guaranteed positive outcome.
 
-**Why not simply "do more".** Two refinement attempts have already been tried and rejected with measured causes. The minimum work that makes the existing claims reviewable is to fill the two baseline cells and stop.
+**Continuity with the current UMER codebase.** Option A1 reuses the frozen artifacts, the evaluation, bootstrap and manifest machinery as-is. No change to MS-TSR, the Static Selector, the Proxy or the prompt.
+
+**Why not simply "do more".** Two refinement attempts have already been tried and rejected with measured causes. The minimum work that makes the existing claims reviewable is to close Gaps A, B+C and F and stop.
+
+## Consolidation Finalization Audit
+
+E1 split corrected:
+YES — reported split VALIDATION (training split TRAIN); the earlier TRAIN labeling was wrong.
+
+E2 canonical migrated to all-event:
+YES — PHEME 0.85669 / 0.85482 / 0.85382 (Static / Random / Semantic, delta +0.00186); Ma-Weibo 0.93387 / 0.91357 / 0.90893 (delta +0.02030). Values read from `results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json`.
+
+Historical E2 readiness preserved:
+YES — candidate-conditioned, retained as HISTORICAL_ONLY / audit only (PHEME FAIL, Ma-Weibo PASS, overall PARTIAL).
+
+E3 no-candidate scope audited:
+YES — runner behavior: the held-out runner dropped event-cutoffs with `candidate_count == 0`; expected rows 199,602, actual rows 173,277, rows with `n_candidates == 0` = 0; missing-row rate (PHEME 0.18630, Ma-Weibo 0.05693) matches the validation no-candidate rate (0.18774 / 0.05071). Artifacts: `E3_NO_CANDIDATE_SCOPE_AUDIT.md`, `e3_no_candidate_scope_audit.json`.
+
+E3 held-out canonical status:
+CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE — the relative negative finding (Dynamic V1 not supported) is retained; no re-run was performed; validation all-event diagnostics are not a held-out substitute.
+
+Reader contribution status:
+VALIDATION-PILOT / FINAL-EVIDENCE-PENDING
+
+Recommended next option:
+A1
+
+Required next gaps:
+A + B + C  (Gap B and Gap C combined into one reader experiment; plus Gap F for the all-event held-out closure)
+
+New experiment executed:
+NO
 
 ## 16. STOP Decision
 
-STOP. This round performed read / audit / aggregate / summarize / document only. No training, no Qwen inference, no held-out test, no selector change, no gate retuning, no deletion of failed experiments. V3-C and full E4 remain **NOT APPROVED** and require new explicit approval.
+STOP. This round was the consolidation finalization: read / audit / trace / relabel / correct documentation / update verifier and tests only. No training, no inference, no Qwen, no held-out re-run, no Gap A/B/C implementation, no selector or MS-TSR change. V3-C, full E4, and Gap A/B/C execution remain **NOT APPROVED** and require new explicit approval.
 
 ## Verifier
 issues = 0 (stages=11, claims={'SUPPORTED': 9, 'PARTIAL': 0, 'REJECTED': 1, 'DIAGNOSTIC_ONLY': 2})

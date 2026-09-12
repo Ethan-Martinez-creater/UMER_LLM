@@ -22,7 +22,7 @@ No TC-DSCR artifact is cited here. The related-work section may only position th
 | Component | Evidence | Split | Commit | Caveat |
 |---|---|---|---|---|
 | Causal snapshot construction (all events, real cutoff) | `results/tcdscr/dynamic_v2_protocol/protocol_manifest.json` | VALIDATION | a0a0d31 | — |
-| Static Evidence Utility Selector | `results/tcdscr/formal_e2_corrected/readiness/e2_summary.json` | VALIDATION | beaac68 | dataset-dependent effect |
+| Static Evidence Utility Selector | `results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json` | VALIDATION (all-event) | a0a0d31 | dataset-dependent effect; the held-out comparison (Gap A) does not exist yet |
 | MS-TSR minimal-sufficient compression | `results/tcdscr/dynamic_v3/ms_tsr_summary.json` | VALIDATION | 656c611 | present as compression component only; ΔMacro-F1 = 0 is structural |
 | Reader prompt (v3b-2) and parser | `results/tcdscr/dynamic_v3_reader/prompts/`, `run_manifest.json` | VALIDATION | 063f0df | prompt frozen once |
 
@@ -39,11 +39,11 @@ No TC-DSCR artifact is cited here. The related-work section may only position th
 
 | Claim | Numbers | Artifact | Split | Commit |
 |---|---|---|---|---|
-| Static utility beats simple baselines | PHEME 0.85591 / 0.85372 / 0.85254; Ma-Weibo 0.93503 / 0.91408 / 0.90908 | `results/tcdscr/formal_e2_corrected/readiness/e2_summary.json` | VALIDATION | beaac68 |
-| Dynamic V1 does not improve | Δ +0.0001037 / +0.0000120, CIs cross zero | `results/tcdscr/formal_e3_test/e3_test_summary.json`, `results/tcdscr/e3_failure_diagnosis/bootstrap_fixed.json` | HELD_OUT_TEST | f7ec0ac / 1d97fd1 |
+| Static utility beats simple baselines | all-event: PHEME 0.85669 / 0.85482 / 0.85382; Ma-Weibo 0.93387 / 0.91357 / 0.90893 | `results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json` | VALIDATION | a0a0d31 |
+| Dynamic V1 does not improve | Δ +0.0001037 / +0.0000120, CIs cross zero | `results/tcdscr/formal_e3_test/e3_test_summary.json`, `results/tcdscr/e3_failure_diagnosis/bootstrap_fixed.json` | CONDITIONAL_HELD_OUT (candidate-conditioned; see scope audit) | f7ec0ac / 1d97fd1 |
 | MS-TSR compresses heavily with no proxy decision change | 57.9% / 82.7% token reduction, prediction change 0 | `results/tcdscr/dynamic_v3/ms_tsr_summary.json` | VALIDATION | 656c611 |
 
-Main-results tables must be restricted to HELD_OUT_TEST rows for any "our method improves" statement. The only held-out numbers available are the E3 Dynamic-V1 results, and they are negative.
+Main-results tables must not contain any "our method improves" statement from held-out data: the only held-out run is candidate-conditioned (`CONDITIONAL_HELD_OUT`) and its verdict is negative. The historical candidate-conditioned E2 readiness values must not appear as absolute metrics; use the all-event values above. Artifact for historical readiness (audit only): `results/tcdscr/formal_e2_corrected/readiness/e2_summary.json`.
 
 ## Ablation
 
@@ -63,6 +63,13 @@ Main-results tables must be restricted to HELD_OUT_TEST rows for any "our method
 
 **Placement rule.** This section must always be labeled "validation-only reader pilot". It must not appear in the main test table, and no significance claim may be made for PHEME.
 
+| Reader section | Status | Evidence |
+|---|---|---|
+| Current | VALIDATION PILOT | `results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json` |
+| Future closure | Gap B + Gap C (one combined fold-local held-out reader run) | `NEXT_EXPERIMENT_GAPS.md` |
+
+Contribution D is therefore reported as `VALIDATION-PILOT SUPPORTED; FINAL HELD-OUT EVIDENCE PENDING`.
+
 ## Analysis
 
 | Claim | Numbers | Artifact | Split | Commit |
@@ -81,10 +88,12 @@ Main-results tables must be restricted to HELD_OUT_TEST rows for any "our method
 |---|---|---|
 | Reader pilot is validation-only, one reader, one prompt | `results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json` | VALIDATION PILOT |
 | Reader pilot mixes outer-fold pools (contamination risk) | `results/tcdscr/v3b_failure_diagnosis/cross_fold_development_audit.json` | DIAGNOSTIC |
-| Static utility effect is dataset-dependent (PHEME below readiness threshold) | `results/tcdscr/formal_e2_corrected/readiness/e2_summary.json` | VALIDATION |
+| Static utility effect is dataset-dependent (PHEME below readiness threshold) | `results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json` | VALIDATION |
 | Pre-fix structural statistics were degenerate | `PROTOCOL_CORRECTIONS.md` P03, `results/tcdscr/v3b_failure_diagnosis/structural_role_analysis.json` | DIAGNOSTIC |
-| No held-out reader evaluation exists | this map (Reader Transfer section) | — |
-| No context-compression baseline (Static top-k / random / utility-only) has been run under the reader | `NEXT_EXPERIMENT_GAPS.md` Gap C | — |
+| No all-event held-out evaluation exists (the held-out run is candidate-conditioned) | `results/tcdscr/research_consolidation/E3_NO_CANDIDATE_SCOPE_AUDIT.md` | DIAGNOSTIC |
+| Static utility has no held-out baseline comparison | `NEXT_EXPERIMENT_GAPS.md` Gap A | — |
+| Reader transfer has no fold-local held-out evaluation | `NEXT_EXPERIMENT_GAPS.md` Gap B | — |
+| Reader comparison has no token-matched compression baselines | `NEXT_EXPERIMENT_GAPS.md` Gap C | — |
 
 ## Prohibited combinations
 
@@ -93,3 +102,6 @@ Main-results tables must be restricted to HELD_OUT_TEST rows for any "our method
 - Any claim of statistical significance for the PHEME reader delta.
 - Any citation that resolves only through `results/tcdscr/formal_e2/` (INVALID).
 - Any pre-correction (candidate-conditioned) absolute value as canonical.
+- E3 held-out absolute Macro-F1 presented as all-event canonical (it is `CONDITIONAL_HELD_OUT`).
+- Validation all-event diagnostics presented as a substitute for the held-out result.
+- The historical candidate-conditioned E2 readiness values presented as the paper's absolute metric.

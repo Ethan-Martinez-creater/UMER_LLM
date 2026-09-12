@@ -10,11 +10,22 @@
     "DIAGNOSTIC": 2
   },
   "status_note": "status_counts.DIAGNOSTIC counts claims whose status is DIAGNOSTIC_ONLY",
+  "protocol_status_taxonomy": ["ALL_EVENT", "CANDIDATE_CONDITIONED", "VALIDATION_PILOT", "HELD_OUT", "DIAGNOSTIC"],
+  "consolidation_finalization": {
+    "finalization_commit": "47aa201",
+    "e1_reported_split": "VALIDATION",
+    "e2_canonical_protocol": "ALL_EVENT",
+    "e3_held_out_status": "CONDITIONAL_HELD_OUT",
+    "recommended_option": "A1",
+    "must_have_gaps": ["Gap A", "Gap B", "Gap C"],
+    "new_experiment_executed": false
+  },
   "evidence_strength_definition": {
-    "STRONG": "held-out test + protocol clean + paired statistics",
-    "MODERATE": "validation across folds/seeds, or independent reader pilot",
+    "STRONG": "clean held-out test (all-event protocol) + paired statistics",
+    "MODERATE": "validation across folds/seeds, independent validation reader pilot, or a held-out run with an audited protocol gap",
     "WEAK": "small subgroup, post-hoc, or descriptive diagnostic"
   },
+  "evidence_strength_note": "C01 is a protocol claim: its STRONG rating refers to protocol enforcement rather than to a predictive effect.",
   "claims": [
     {
       "claim_id": "C01",
@@ -29,8 +40,10 @@
         "cutoff_columns": [5, 15, 30, 60, 180, 360]
       },
       "evidence_strength": "STRONG",
+      "strength_scope": "protocol enforcement, not predictive-effect evidence; all E1/E2/E3 evidence cited here is validation-fold evidence",
       "limitations": [
-        "The protocol is a design requirement, not an empirical effect; its support is that every stage used it and the leakage verifier passed."
+        "The protocol is a design requirement, not an empirical effect; its support is that every stage used it and the leakage verifier passed.",
+        "The E3 held-out run that used this protocol skipped no-candidate snapshots (scope audit CASE_B), so the protocol is enforced at the validation level and only partially evidenced at the held-out level."
       ],
       "allowed_in_paper": true,
       "artifacts": [
@@ -59,7 +72,8 @@
       "evidence_strength": "MODERATE",
       "limitations": [
         "The correction changes metric denominators, so pre-correction absolute numbers are DEPRECATED rather than wrong.",
-        "The shift is small on both datasets because no-candidate snapshots are mostly early-cutoff events with few candidates."
+        "The shift is small on both datasets because no-candidate snapshots are mostly early-cutoff events with few candidates.",
+        "The E3 held-out run predates the correction and skipped no-candidate snapshots (scope audit CASE_B), so the correction is evidenced on validation metrics; the all-event held-out cell is a recorded MUST_HAVE gap."
       ],
       "allowed_in_paper": true,
       "artifacts": [
@@ -69,22 +83,24 @@
     },
     {
       "claim_id": "C03",
-      "claim": "A causal-propagation-based Static Utility Selector identifies more useful social evidence than random or semantic-similarity selection.",
+      "claim": "A causal-propagation-based Static Utility Selector outperforms random and semantic selection under the corrected all-event protocol, with a strong dataset-dependent effect.",
       "claim_type": "METHOD",
       "status": "SUPPORTED",
-      "supporting_stage": ["E2-CORRECTED"],
+      "supporting_stage": ["E2-CORRECTED", "V2-PROTOCOL-CORRECTION"],
       "datasets": ["pheme", "maweibo"],
       "split_used": "VALIDATION",
+      "protocol_status": "ALL_EVENT",
       "metrics": {
-        "pheme": {"static": 0.85591, "random": 0.85372, "semantic": 0.85254, "delta_static_minus_best_baseline": 0.00218, "readiness_pass": false},
-        "maweibo": {"static": 0.93503, "random": 0.91408, "semantic": 0.90908, "delta_static_minus_best_baseline": 0.02095, "readiness_pass": true}
+        "pheme": {"static": 0.856688641737558, "random": 0.8548242034988076, "semantic": 0.8538167618085079, "delta_static_minus_best_baseline": 0.0018644382387504, "historical_readiness_pass_candidate_conditioned": false},
+        "maweibo": {"static": 0.9338735968623215, "random": 0.9135689844888084, "semantic": 0.9089295304102168, "delta_static_minus_best_baseline": 0.0203046123735131, "historical_readiness_pass_candidate_conditioned": true},
+        "source": "read from results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json (mean_over_runs_new)"
       },
       "evidence_strength": "MODERATE",
       "limitations": [
-        "The effect is strongly dataset-dependent: Ma-Weibo +2.10 pt, PHEME +0.22 pt, and PHEME does not clear the pre-registered 0.005 readiness threshold.",
-        "The claim must be stated per dataset; the two datasets must not be reported as the same effect size.",
-        "Validation only for E2 readiness; the E3 held-out test used the same selector and is reported under C04.",
-        "The all-event protocol correction slightly changes the absolute E2 values (PHEME static 0.85572 -> 0.85669)."
+        "The effect is strongly dataset-dependent: Ma-Weibo +0.02030, PHEME +0.00186.",
+        "PHEME remains below the original +0.005 readiness threshold; that historical readiness verdict was computed on the candidate-conditioned metric and is retained for audit only.",
+        "Validation only for this claim; a held-out, fold-local comparison against random and semantic selection does not exist yet (Gap A).",
+        "The claim must be stated per dataset; the two datasets must not be reported as the same effect size."
       ],
       "allowed_in_paper": true,
       "artifacts": [
@@ -100,16 +116,20 @@
       "supporting_stage": ["E3-VALIDATION", "E3-TEST", "E3-DIAGNOSIS"],
       "datasets": ["pheme", "maweibo"],
       "split_used": "HELD_OUT_TEST",
+      "protocol_status": "CANDIDATE_CONDITIONED",
+      "held_out_status": "CONDITIONAL_HELD_OUT",
       "metrics": {
         "pheme": {"n_rows": 94104, "static": 0.84643, "dynamic": 0.84653, "delta_macro_f1": 0.0001037, "bootstrap_ci": [-0.0000502, 0.0002557], "corrected_ci": [-0.0000969, 0.0003214], "delta_flip_rate": 0.000687, "n_positive_folds": 3, "n_negative_folds": 1},
         "maweibo": {"n_rows": 79173, "static": 0.92678, "dynamic": 0.92679, "delta_macro_f1": 0.0000120, "bootstrap_ci": [-0.0000999, 0.0001204], "corrected_ci": [-0.0001399, 0.0001614], "delta_flip_rate": -0.0000153, "n_positive_folds": 3, "n_negative_folds": 2},
         "overall_status": "WEAK_POSITIVE",
         "recommendation": "REVIEW_DYNAMIC_DESIGN"
       },
-      "evidence_strength": "STRONG",
+      "evidence_strength": "MODERATE",
       "limitations": [
         "The verdict is REJECTED as a method because both paired bootstrap CIs cross zero; the positive point estimates are not established.",
-        "It remains a supported negative finding: the point-wise dynamic bonus is measurable but not sufficient."
+        "It remains a supported negative finding: the point-wise dynamic bonus is measurable but not sufficient.",
+        "SCOPE AUDIT: the held-out run skipped no-candidate snapshots (173,277 of 199,602 expected rows), so the absolute Macro-F1 values are CONDITIONAL_HELD_OUT / DEPRECATED_ABSOLUTE and this claim is MODERATE, not held-out-STRONG.",
+        "The relative verdict is robust to that gap: on a no-candidate snapshot both arms predict source-only, so restoring those rows would move both arms toward the same value and cannot turn the negative delta positive."
       ],
       "negative_finding_supported": true,
       "allowed_in_paper": true,
@@ -126,6 +146,8 @@
       "supporting_stage": ["E3-DIAGNOSIS"],
       "datasets": ["pheme", "maweibo"],
       "split_used": "HELD_OUT_TEST",
+      "protocol_status": "CANDIDATE_CONDITIONED",
+      "held_out_status": "CONDITIONAL_HELD_OUT",
       "metrics": {
         "pheme": {"u_std": 6.8016, "bonus_std": 0.2666, "bonus_to_utility_std_ratio": 0.0392, "mean_abs_bonus_over_mean_abs_u": 0.0535, "exact_match_rate": 0.9052, "jaccard_mean": 0.9691, "ranking_changed_selection_same": 0.1990, "pred_change_given_selection_change": 0.0071, "spearman_mean": 0.9882},
         "maweibo": {"u_std": 11.6088, "bonus_std": 0.2206, "bonus_to_utility_std_ratio": 0.0190, "mean_abs_bonus_over_mean_abs_u": 0.0224, "exact_match_rate": 0.8852, "jaccard_mean": 0.9753, "ranking_changed_selection_same": 0.4865, "pred_change_given_selection_change": 0.0043, "spearman_mean": 0.9984},
@@ -134,7 +156,8 @@
       "evidence_strength": "MODERATE",
       "limitations": [
         "Post-hoc on the frozen E3 test runs; reported as an explanation of the failure, not as a new experiment.",
-        "The proxy-insensitivity component is a proxy property and cannot be generalized to real LLM readers."
+        "The proxy-insensitivity component is a proxy property and cannot be generalized to real LLM readers.",
+        "The underlying E3 held-out rows are candidate-conditioned (scope audit CASE_B), which does not change the direction of this diagnostic."
       ],
       "allowed_in_paper": true,
       "artifacts": [
@@ -226,10 +249,12 @@
         "v3b_reader": {"pheme_delta_macro_f1": 0.01974, "pheme_ci": [-0.02192, 0.06144], "pheme_label": "WEAK_TRANSFER", "maweibo_delta_macro_f1": -0.00933, "maweibo_ci": [-0.04010, 0.02129], "maweibo_label": "TRANSFER_FAIL", "overall": "PARTIAL"}
       },
       "evidence_strength": "MODERATE",
+      "contribution_status": "VALIDATION-PILOT SUPPORTED; FINAL HELD-OUT EVIDENCE PENDING",
       "limitations": [
         "One frozen reader (Qwen3-8B), one prompt version, one validation-only pilot of 300 paired samples per dataset.",
         "The correct wording is 'does not automatically transfer', never 'never transfers'.",
-        "The Ma-Weibo degradation is inside its own confidence interval and must not be read as proof that compression is harmful."
+        "The Ma-Weibo degradation is inside its own confidence interval and must not be read as proof that compression is harmful.",
+        "No fold-local held-out reader evaluation exists yet (Gap B), so this remains a validation-pilot contribution."
       ],
       "allowed_in_paper": true,
       "artifacts": [

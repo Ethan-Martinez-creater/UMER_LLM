@@ -1,0 +1,67 @@
+{
+ "audit_version": "1.0",
+ "runner": {
+  "entry_point": "scripts/tcdscr_run_e3_test.py",
+  "item_build": "scripts/tcdscr_run_e3_test.py main(): for ev in events['test']: for c in PRIMARY_CUTOFFS: items.append(build_light_item(...)) -- one item per event-cutoff, no candidate filter",
+  "row_build": "scripts/tcdscr_run_e3.py collect_event_data()",
+  "trajectory": "scripts/tcdscr_run_e3.py run_event_trajectory(): appends one row per (event, cutoff) carrying n_candidates = len(cand_ids); no early continue",
+  "current_source_keeps_zero_candidate": true,
+  "current_source_note": "The on-disk collect_event_data now carries the Dynamic V2 protocol correction ('no-candidate snapshots are kept in the trajectory'); this correction was applied to the same file AFTER the E3 held-out artifacts were produced.",
+  "artifacts_observed_skip": true,
+  "artifacts_observed_note": "The frozen prediction rows contain no row with n_candidates == 0 and are short by exactly the no-candidate fraction, so the run that produced these artifacts skipped them."
+ },
+ "per_dataset": {
+  "pheme": {
+   "n_runs": 15,
+   "n_test_events": 19275,
+   "expected_rows": 115650,
+   "actual_rows": 94104,
+   "zero_candidate_rows": 0,
+   "manifest_n_rows": 94104,
+   "expected_matches_actual": false,
+   "manifest_matches_actual": true,
+   "zero_candidate_row_rate": 0.0
+  },
+  "maweibo": {
+   "n_runs": 15,
+   "n_test_events": 13992,
+   "expected_rows": 83952,
+   "actual_rows": 79173,
+   "zero_candidate_rows": 0,
+   "manifest_n_rows": 79173,
+   "expected_matches_actual": false,
+   "manifest_matches_actual": true,
+   "zero_candidate_row_rate": 0.0
+  }
+ },
+ "totals": {
+  "n_runs": 30,
+  "n_test_events": 33267,
+  "expected_rows": 199602,
+  "actual_rows": 173277,
+  "zero_candidate_rows": 0
+ },
+ "cross_check": {
+  "pheme": {
+   "validation_mean_no_candidate_rate": 0.1877431906614786,
+   "held_out_missing_row_rate": 0.18630350194552528,
+   "abs_gap": 0.001439688715953319,
+   "consistent": true
+  },
+  "maweibo": {
+   "validation_mean_no_candidate_rate": 0.05071301247771837,
+   "held_out_missing_row_rate": 0.0569253859348199,
+   "abs_gap": 0.0062123734571015304,
+   "consistent": true
+  }
+ },
+ "cross_check_consistent": true,
+ "scope_verdict": "CASE_B_ZERO_CANDIDATE_SKIPPED",
+ "held_out_status": "CONDITIONAL_HELD_OUT",
+ "notes": [
+  "expected_rows = sum(n_test_events) * 6 (six primary cutoffs)",
+  "zero_candidate_rows counts prediction rows with n_candidates == 0",
+  "cross_check compares the missing-row rate against the validation no-candidate rate",
+  "audit is read-only over the frozen E3 test artifacts"
+ ]
+}

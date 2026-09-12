@@ -35,6 +35,21 @@
     "overwrite historical experiment artifacts"
   ],
   "consolidation_artifacts_root": "results/tcdscr/research_consolidation/",
+  "consolidation_finalization": {
+    "finalization_commit": "47aa201",
+    "e1_split_corrected": true,
+    "e1_training_split": "TRAIN",
+    "e1_reported_evaluation_split": "VALIDATION",
+    "e2_canonical_all_event": true,
+    "historical_e2_readiness_preserved": true,
+    "historical_e2_readiness_protocol": "CANDIDATE_CONDITIONED",
+    "e3_no_candidate_scope_audited": true,
+    "e3_scope_verdict": "CASE_B_ZERO_CANDIDATE_SKIPPED",
+    "e3_held_out_status": "CONDITIONAL_HELD_OUT",
+    "recommended_option": "A1",
+    "must_have_gaps": ["Gap A", "Gap B", "Gap C"],
+    "new_experiment_executed": false
+  },
   "evidence_split_taxonomy": [
     "TRAIN",
     "VALIDATION",
