@@ -1,0 +1,34 @@
+{
+ "n_issues": 0,
+ "issues": [],
+ "consolidation_root": "results/tcdscr/research_consolidation",
+ "n_stages": 11,
+ "ledger_claims": {
+  "SUPPORTED": 9,
+  "PARTIAL": 0,
+  "REJECTED": 1,
+  "DIAGNOSTIC_ONLY": 2
+ },
+ "n_prohibited_claims": 7,
+ "recommendation": "MS_TSR_COMPRESSION_ONLY",
+ "v3c_approved": false,
+ "full_e4_approved": false,
+ "notes": [
+  "all registry commits resolve in git history",
+  "no tracked file changed; new files limited to the consolidation whitelist"
+ ],
+ "checks": [
+  "all required consolidation artifacts exist",
+  "all commits referenced by the registry resolve in git",
+  "all canonical numbers trace to an existing result artifact",
+  "validation results are not mislabeled as held-out test",
+  "the V3-B reader stage is labeled a validation pilot",
+  "deprecated metrics and artifact roots are not marked canonical",
+  "all seven prohibited claims are present",
+  "MS_TSR_COMPRESSION_ONLY is preserved",
+  "V3-C and full E4 remain NOT APPROVED",
+  "no new Qwen generation artifact created (frozen hashes unchanged)",
+  "no new model checkpoint or training output added",
+  "no selector/algorithm implementation changed"
+ ]
+}

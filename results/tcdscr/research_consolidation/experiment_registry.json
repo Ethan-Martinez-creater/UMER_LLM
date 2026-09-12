@@ -1,0 +1,432 @@
+{
+  "registry_version": "1.0",
+  "created_utc": "2026-09-12T07:43:15Z",
+  "freeze_commit": "c96ccbddbc5aeecfd62efa5e162ad0aff33290c2",
+  "n_stages": 11,
+  "n_stages_note": "11 registry stages cover all 12 rows listed in the consolidation protocol: 'Dynamic V2 / MF-TSR' and 'MF-TSR validation' describe the same stage (V2-MF-TSR); the protocol-correction stage is listed separately as V2-PROTOCOL-CORRECTION.",
+  "split_taxonomy": ["TRAIN", "VALIDATION", "HELD_OUT_TEST", "DIAGNOSTIC"],
+  "status_taxonomy": ["SUPPORTED", "PARTIAL", "REJECTED", "DIAGNOSTIC_ONLY"],
+  "stages": [
+    {
+      "stage_id": "E1",
+      "stage_name": "Formal E1 — Causal Encoder (random vs UMER init)",
+      "commit_sha": "db3c269",
+      "commit_note": "finalization commit 26029af (fold-parity audit, cap-aware diagnostic, epochs_run fix)",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "TRAIN",
+      "model_components_used": ["causal graph encoder", "source-only head", "cutoff-conditioned head"],
+      "trainable_components": ["causal encoder"],
+      "frozen_components": [],
+      "main_objective": "Train a causally-constructed propagation encoder on real cutoffs; test whether the causal initialization (UMER init) beats random init.",
+      "primary_comparator": "random init",
+      "primary_metrics": ["macro_f1", "accuracy", "rumor_f1"],
+      "gate_definition": "Readiness gate for downstream stages: UMER init must be at least as good as random init at every primary cutoff.",
+      "actual_outcome": {
+        "pheme": {
+          "umer_macro_f1": {"SOURCE_ONLY": 0.8527, "5": 0.8597, "360": 0.8654},
+          "random_macro_f1": {"SOURCE_ONLY": 0.8464, "5": 0.8478, "360": 0.8507},
+          "delta_umer_minus_random": {"SOURCE_ONLY": 0.00632, "5": 0.01184, "360": 0.01477}
+        },
+        "maweibo": {
+          "umer_macro_f1": {"SOURCE_ONLY": 0.7194, "5": 0.8970, "360": 0.9474},
+          "random_macro_f1": {"SOURCE_ONLY": 0.7066, "5": 0.8871, "360": 0.9415},
+          "delta_umer_minus_random": {"SOURCE_ONLY": 0.01285, "5": 0.00992, "360": 0.00586}
+        },
+        "n_runs": 60
+      },
+      "status": "SUPPORTED",
+      "main_artifacts": [
+        "results/tcdscr/formal_e1/formal_e1_summary.json",
+        "results/tcdscr/formal_e1/E1_REPORT.md",
+        "results/tcdscr/formal_e1_finalization/E1_FINALIZATION_REPORT.md"
+      ],
+      "known_caveats": [
+        "The UMER-vs-random advantage is small (0.6-1.5 pt Macro-F1) and measured on validation only.",
+        "Finalization found a fold-parity issue in the first submission; corrected in 26029af but E1 itself was not retrained."
+      ],
+      "protocol_issues_discovered_later": [
+        "The later no-candidate snapshot correction (V2 protocol correction) showed that all early-cutoff evaluation must keep candidate_count = 0 events; E1's source-only vs cutoff-conditioned comparison is not affected because E1 never drops events, but the correction changed the E2/E3 metric denominator used downstream."
+      ]
+    },
+    {
+      "stage_id": "E2-CORRECTED",
+      "stage_name": "Corrected E2 — Static Utility Selector readiness",
+      "commit_sha": "beaac68",
+      "commit_note": "first (invalid) E2 submission 1c987f1 retained under results/tcdscr/formal_e2/",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen causal encoder", "static utility selector", "proxy classifier"],
+      "trainable_components": ["static utility selector"],
+      "frozen_components": ["causal encoder (E1)", "proxy classifier contract"],
+      "main_objective": "Train the static utility selector and verify it beats simple baselines (random selection, semantic similarity) under the frozen encoder.",
+      "primary_comparator": "random top-k and semantic-similarity top-k",
+      "primary_metrics": ["macro_f1 (primary cutoff = mean over 5/15/30/60/180/360)"],
+      "gate_definition": "readiness gate: static Macro-F1 - best simple baseline >= 0.005 on both datasets",
+      "actual_outcome": {
+        "pheme": {
+          "static": 0.85591,
+          "random": 0.85372,
+          "semantic": 0.85254,
+          "delta_static_minus_best_baseline": 0.00218,
+          "readiness_pass": false
+        },
+        "maweibo": {
+          "static": 0.93503,
+          "random": 0.91408,
+          "semantic": 0.90908,
+          "delta_static_minus_best_baseline": 0.02095,
+          "readiness_pass": true
+        },
+        "status": "PARTIAL",
+        "recommendation": "STOP_FOR_RESEARCH_REVIEW",
+        "datasets_passing": ["maweibo"],
+        "n_runs": 30
+      },
+      "status": "PARTIAL",
+      "main_artifacts": [
+        "results/tcdscr/formal_e2_corrected/readiness/e2_summary.json",
+        "results/tcdscr/formal_e2_corrected/E2_CORRECTED_READINESS_REPORT.md"
+      ],
+      "known_caveats": [
+        "The effect is dataset-dependent: +2.1 pt on Ma-Weibo but +0.22 pt on PHEME (below the 0.5 pt readiness threshold).",
+        "The first E2 submission was INVALID due to a proxy train/eval contract mismatch; its numbers must not be cited."
+      ],
+      "protocol_issues_discovered_later": [
+        "The corrected-E2 metric was conditioned on candidate_count > 0; the later all-event correction changed the absolute values (PHEME static 0.85572 -> 0.85669, Ma-Weibo unchanged in direction)."
+      ]
+    },
+    {
+      "stage_id": "E3-VALIDATION",
+      "stage_name": "E3 / Dynamic V1 validation — point-wise novelty+persistence reranking",
+      "commit_sha": "80dc1e5",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen encoder", "frozen static selector", "dynamic novelty/persistence bonus", "proxy classifier"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "static selector", "proxy"],
+      "main_objective": "Add a point-wise temporal dynamic bonus (novelty + persistence) on top of static utility and check whether it improves early detection on validation.",
+      "primary_comparator": "static selector",
+      "primary_metrics": ["macro_f1", "flip_rate", "evidence_tokens", "selection change / prediction change"],
+      "gate_definition": "readiness gate for the held-out test: dynamic - static Macro-F1 >= 0.005 with no flip-rate blow-up, on both datasets",
+      "actual_outcome": {
+        "readiness": "PASS -> START_E3_TEST",
+        "n_runs": 30,
+        "configs": 36
+      },
+      "status": "PARTIAL",
+      "main_artifacts": [
+        "results/tcdscr/formal_e3/E3_READINESS_REPORT.md",
+        "results/tcdscr/formal_e3/e3_verify.json"
+      ],
+      "known_caveats": [
+        "Validation readiness passed, but the held-out test did not confirm it (see E3-TEST).",
+        "The later score-scale diagnosis showed the dynamic bonus std is only 1.9-3.9% of the utility std, which explains why reranking rarely changes the selection."
+      ],
+      "protocol_issues_discovered_later": [
+        "E3 validation used the pre-correction metric that conditioned on candidate_count > 0; the all-event re-diagnostic is recorded in dynamic_v2_protocol/e3_v1_all_event_diagnostic.json."
+      ]
+    },
+    {
+      "stage_id": "E3-TEST",
+      "stage_name": "E3 held-out test (Dynamic V1)",
+      "commit_sha": "f7ec0ac",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "HELD_OUT_TEST",
+      "model_components_used": ["frozen 30 fold configs (5 folds x 3 seeds)", "dynamic V1 reranking", "proxy classifier"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "selector", "proxy", "fold configs"],
+      "main_objective": "Confirm the Dynamic V1 validation gain on the untouched outer test split.",
+      "primary_comparator": "static selector",
+      "primary_metrics": ["macro_f1", "flip_rate", "paired bootstrap CI (10000, seed 3090)", "exact McNemar"],
+      "gate_definition": "dynamic - static Macro-F1 > 0 with bootstrap CI excluding 0",
+      "actual_outcome": {
+        "pheme": {"n_rows": 94104, "static": 0.84643, "dynamic": 0.84653, "delta": 0.0001037, "ci": [-0.0000502, 0.0002557], "n_positive_folds": 3, "n_negative_folds": 1},
+        "maweibo": {"n_rows": 79173, "static": 0.92678, "dynamic": 0.92679, "delta": 0.0000120, "ci": [-0.0000999, 0.0001204], "n_positive_folds": 3, "n_negative_folds": 2},
+        "overall_status": "WEAK_POSITIVE",
+        "recommendation": "REVIEW_DYNAMIC_DESIGN",
+        "n_runs": 30,
+        "n_failed": 0
+      },
+      "status": "REJECTED",
+      "main_artifacts": [
+        "results/tcdscr/formal_e3_test/e3_test_summary.json",
+        "results/tcdscr/formal_e3_test/E3_TEST_REPORT.md"
+      ],
+      "known_caveats": [
+        "Positive point estimates on both datasets but both bootstrap CIs cross zero; the method is not established as an improvement.",
+        "The bootstrap CI in the original E3 test artifact lost multiplicity; see PROTOCOL_CORRECTIONS."
+      ],
+      "protocol_issues_discovered_later": [
+        "Bootstrap multiplicity bug (with-replacement resample collapsed into a unique-event dict) made the original CIs invalid; the corrected CIs are in e3_failure_diagnosis/bootstrap_fixed.json and remain compatible with the REJECTED verdict."
+      ]
+    },
+    {
+      "stage_id": "E3-DIAGNOSIS",
+      "stage_name": "E3 failure diagnosis (Q1-Q11)",
+      "commit_sha": "1d97fd1",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "HELD_OUT_TEST",
+      "model_components_used": ["frozen runs from E3 test", "static vs dynamic selection dumps"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "selector", "proxy", "dynamic V1"],
+      "main_objective": "Explain why Dynamic V1 failed to improve on static despite a validation readiness pass.",
+      "primary_comparator": "static selector",
+      "primary_metrics": ["ranking Spearman", "selection change rate", "prediction change rate", "bonus/utility scale ratio", "stage-wise and selection-pressure strata"],
+      "gate_definition": "diagnostic only (no gate)",
+      "actual_outcome": {
+        "overall": "MIXED_CAUSES",
+        "causes": [
+          "DYNAMIC_RANKING_RARELY_CHANGES (pheme signal=0.0392)",
+          "DYNAMIC_RANKING_RARELY_CHANGES (maweibo signal=0.0190)",
+          "SELECTION_CHANGES_BUT_PROXY_INSENSITIVE (maweibo signal=0.0043)"
+        ],
+        "pheme": {"spearman_mean": 0.9882, "exact_match_rate": 0.9052, "pred_change_given_selection_change": 0.0071, "net_correction_gain": 9},
+        "maweibo": {"spearman_mean": 0.9984, "exact_match_rate": 0.8852, "pred_change_given_selection_change": 0.0043, "net_correction_gain": 1},
+        "recommendation": "REDESIGN_DYNAMIC"
+      },
+      "status": "DIAGNOSTIC_ONLY",
+      "main_artifacts": [
+        "results/tcdscr/e3_failure_diagnosis/E3_FAILURE_DIAGNOSIS_REPORT.md",
+        "results/tcdscr/e3_failure_diagnosis/bootstrap_fixed.json",
+        "results/tcdscr/e3_failure_diagnosis/score_scale_analysis.json",
+        "results/tcdscr/e3_failure_diagnosis/selection_to_prediction_effect.json"
+      ],
+      "known_caveats": [
+        "All diagnosis is post-hoc on the frozen held-out runs; no causal claim is made.",
+        "The proxy's insensitivity to evidence set replacement is a proxy property, not a general reader property."
+      ],
+      "protocol_issues_discovered_later": []
+    },
+    {
+      "stage_id": "V2-PROTOCOL-CORRECTION",
+      "stage_name": "No-candidate snapshot protocol correction",
+      "commit_sha": "a0a0d31",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen corrected-E2 encoder/selector/proxy"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "selector", "proxy"],
+      "main_objective": "Re-evaluate E2 and E3-V1 with every event kept at every real cutoff (candidate_count = 0 included) instead of conditioning on candidate_count > 0.",
+      "primary_comparator": "old candidate-conditioned metric",
+      "primary_metrics": ["macro_f1 (all events)", "no_candidate_rate"],
+      "gate_definition": "protocol correction: conditioned evaluation is prohibited",
+      "actual_outcome": {
+        "no_candidate_rate": {
+          "pheme": {"5": 0.35525, "15": 0.21868, "30": 0.17198, "60": 0.14358, "180": 0.12140},
+          "maweibo": {"5": 0.12674, "15": 0.07540, "30": 0.05027, "60": 0.02941, "180": 0.01390}
+        },
+        "e2_all_event_vs_old": {
+          "pheme": {"static": [0.85669, 0.85572], "random": [0.85482, 0.85352], "semantic": [0.85382, 0.85232]},
+          "note": "values are [new_all_event, old_candidates_only] mean over runs"
+        },
+        "test_split_read": false,
+        "no_retraining": true
+      },
+      "status": "SUPPORTED",
+      "main_artifacts": [
+        "results/tcdscr/dynamic_v2_protocol/protocol_manifest.json",
+        "results/tcdscr/dynamic_v2_protocol/no_candidate_audit.json",
+        "results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json",
+        "results/tcdscr/dynamic_v2_protocol/e3_v1_all_event_diagnostic.json"
+      ],
+      "known_caveats": [
+        "The correction is a protocol finding; it changed metric denominators, so pre-correction absolute numbers are DEPRECATED.",
+        "Ma-Weibo has a much lower 5m no-candidate rate (12.7%) than PHEME (35.5%), so conditioning affected PHEME more."
+      ],
+      "protocol_issues_discovered_later": []
+    },
+    {
+      "stage_id": "V2-MF-TSR",
+      "stage_name": "Dynamic V2 / MF-TSR validation — marginal-fidelity set refinement",
+      "commit_sha": "a0a0d31",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen encoder", "frozen selector", "frozen proxy", "MF-TSR set refiner (ADD/REMOVE, teacher-KL fidelity objective)"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "selector", "proxy"],
+      "main_objective": "Refine the static evidence set so that the proxy's full-graph distribution is preserved, using a set-level marginal-fidelity objective instead of point-wise reranking.",
+      "primary_comparator": "static selector",
+      "primary_metrics": ["macro_f1", "evidence tokens", "flip rate", "set change rate", "distortion reduction"],
+      "gate_definition": "MF-TSR Macro-F1 - Static Macro-F1 >= -0.002 with token reduction >= 30% and no relative flip increase > 5%",
+      "actual_outcome": {
+        "pheme": {"static": 0.85669, "mf_tsr": 0.85962, "delta": 0.00293, "tokens": [472.77, 178.69], "gate": "FAIL", "path": "MF_TSR_NOT_SUPPORTED"},
+        "maweibo": {"static": 0.93381, "mf_tsr": 0.93095, "delta": -0.00286, "tokens": [855.55, 516.33], "gate": "FAIL", "path": "MF_TSR_NOT_SUPPORTED"},
+        "overall": "FAIL",
+        "recommendation": "REDESIGN_OR_REMOVE_DYNAMIC",
+        "set_change_rate_by_stage": {
+          "pheme": {"Very Early": 0.5610, "Early": 0.7506, "Mid": 0.8139},
+          "maweibo": {"Very Early": 0.8300, "Early": 0.9266, "Mid": 0.9755}
+        }
+      },
+      "status": "REJECTED",
+      "main_artifacts": [
+        "results/tcdscr/dynamic_v2/mf_tsr_summary.json",
+        "results/tcdscr/dynamic_v2/MF_TSR_VALIDATION_REPORT.md"
+      ],
+      "known_caveats": [
+        "Set refinement did change the context substantially (set change rate 0.56-0.98) yet the proxy decision barely moved.",
+        "Teacher-KL distortion reduction is not equivalent to downstream discriminative sufficiency."
+      ],
+      "protocol_issues_discovered_later": []
+    },
+    {
+      "stage_id": "V3-A-MS-TSR",
+      "stage_name": "Dynamic V3-A / MS-TSR proxy validation — minimal-sufficient temporal set refinement",
+      "commit_sha": "656c611",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen encoder", "frozen selector", "frozen proxy", "MS-TSR greedy forward/backward refiner", "dual-view consensus gate (C1) + signed-margin gate (C2, alpha)"],
+      "trainable_components": [],
+      "frozen_components": ["encoder", "selector", "proxy"],
+      "main_objective": "Find a minimum-cost evidence subset that preserves the static decision (C1) and retains a fraction alpha of the static signed margin (C2).",
+      "primary_comparator": "static selector (and static fallback)",
+      "primary_metrics": ["macro_f1", "token reduction", "relative flip increase", "dual-view agreement", "sufficiency success", "static fallback rate"],
+      "gate_definition": "Delta Macro-F1 >= -0.002 AND token reduction >= 30% AND relative flip increase <= 5%",
+      "actual_outcome": {
+        "pheme": {"static": 0.85669, "ms_tsr": 0.85669, "delta": 0.0, "token_reduction": 0.57859, "alpha_all_folds": 0.8, "dual_view_agreement": 0.94730, "compression_attempt_rate": 0.77103, "static_fallback_rate": 0.28189},
+        "maweibo": {"static": 0.93381, "ms_tsr": 0.93381, "delta": 0.0, "token_reduction": 0.82738, "alpha_all_folds": 0.8, "dual_view_agreement": 0.97323, "compression_attempt_rate": 0.92579, "static_fallback_rate": 0.07818},
+        "overall": "MS_TSR_PROXY_PASS",
+        "recommendation": "START_V3_B_READER_TRANSFER_PILOT",
+        "prediction_change_rate": 0.0,
+        "n_runs": 30,
+        "n_rows": 319680
+      },
+      "status": "SUPPORTED",
+      "main_artifacts": [
+        "results/tcdscr/dynamic_v3/ms_tsr_summary.json",
+        "results/tcdscr/dynamic_v3/MS_TSR_VALIDATION_REPORT.md"
+      ],
+      "known_caveats": [
+        "Delta Macro-F1 = 0 is a structural consequence of condition C1 plus static fallback, not an empirical gain; the classification part of the gate carries no evidential weight.",
+        "The proxy is insensitive to evidence substitution, so proxy-level 'no loss' does not imply real-reader 'no loss'.",
+        "Fold-local alpha collapsed to the loosest grid point (0.8) in every fold, so the C2 margin never bound."
+      ],
+      "protocol_issues_discovered_later": [
+        "The alpha freeze to 0.8 in every fold motivated freezing alpha = 0.8 for the V3-B reader pilot."
+      ]
+    },
+    {
+      "stage_id": "V3-B-READER",
+      "stage_name": "Dynamic V3-B — Frozen Qwen3-8B reader-transfer pilot",
+      "commit_sha": "063f0df",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen Qwen3-8B reader (no fine-tune)", "frozen static selector", "frozen MS-TSR (alpha=0.8, budget=1024)", "paired Static vs MS context"],
+      "trainable_components": [],
+      "frozen_components": ["Qwen3-8B", "encoder", "selector", "proxy", "MS-TSR", "prompt (v3b-2)"],
+      "main_objective": "Test whether the minimal-sufficient social context defined by the frozen proxy transfers to a completely independent frozen Qwen3-8B reader.",
+      "primary_comparator": "Static reader arm (static selected evidence rendered with the identical prompt)",
+      "primary_metrics": ["macro_f1 (paired)", "social token reduction", "unsupported citation rate", "paired bootstrap CI", "exact McNemar", "ECE", "confidence delta"],
+      "gate_definition": "Delta Macro-F1 >= -0.005 AND social token reduction >= 30% AND unsupported citation rate <= 1%",
+      "actual_outcome": {
+        "pheme": {"n": 300, "static": 0.62781, "ms": 0.64755, "delta": 0.01974, "ci": [-0.02192, 0.06144], "token_reduction": 0.68700, "unsupported_citation_rate": 0.0, "gate": "PASS", "label": "WEAK_TRANSFER", "mcnemar_p": 0.4296, "confidence_delta": -0.0587},
+        "maweibo": {"n": 300, "static": 0.88252, "ms": 0.87319, "delta": -0.00933, "ci": [-0.04010, 0.02129], "token_reduction": 0.85322, "unsupported_citation_rate": 0.0, "gate": "FAIL", "label": "TRANSFER_FAIL", "mcnemar_p": 0.6776, "confidence_delta": -0.0567},
+        "overall": "PARTIAL",
+        "recommendation": "STOP_FOR_RESEARCH_REVIEW",
+        "n_paired": 600,
+        "n_arm_evaluations": 1200,
+        "sampling_seed": 3090,
+        "context_source_seed": 2000,
+        "alpha": 0.8,
+        "budget": 1024,
+        "determinism_warnings": 0,
+        "n_context_overflow": 0,
+        "prompt_version": "v3b-2"
+      },
+      "status": "PARTIAL",
+      "main_artifacts": [
+        "results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json",
+        "results/tcdscr/dynamic_v3_reader/V3_B_READER_TRANSFER_REPORT.md",
+        "results/tcdscr/dynamic_v3_reader/run_manifest.json",
+        "results/tcdscr/dynamic_v3_reader/sampling_manifest.json"
+      ],
+      "known_caveats": [
+        "Validation-only pilot; the PHEME point estimate is not statistically significant (bootstrap CI crosses zero).",
+        "Not final held-out evidence and must not be placed in a test table.",
+        "The pilot mixes five outer-fold validation pools, so it cannot be used to design a global heuristic without contaminating the original test split."
+      ],
+      "protocol_issues_discovered_later": [
+        "Cross-fold contamination: 285/285 PHEME and 275/275 Ma-Weibo sampled events also appear in another fold's test split (rate 1.0)."
+      ]
+    },
+    {
+      "stage_id": "V3-B-DIAGNOSIS",
+      "stage_name": "V3-B reader-transfer failure diagnosis",
+      "commit_sha": "fb55106",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["frozen V3-B artifacts", "frozen MS-TSR snapshot/semantic/structural traces", "frozen Static Utility scores"],
+      "trainable_components": [],
+      "frozen_components": ["all V3-B artifacts", "no new Qwen inference performed"],
+      "main_objective": "Explain why proxy-defined sufficiency transferred on PHEME but failed on Ma-Weibo.",
+      "primary_comparator": "CC/CW/WC/WW paired outcome groups",
+      "primary_metrics": ["compression severity", "evidence-count threshold", "reader evidence loss rate", "proxy margin retention", "citation alignment", "cutoff / selection-pressure / label strata", "cross-fold contamination"],
+      "gate_definition": "diagnostic only (fixed thresholds fixed before analysis)",
+      "actual_outcome": {
+        "groups": {"pheme": {"CC": 172, "CW": 17, "WC": 23, "WW": 88}, "maweibo": {"CC": 252, "CW": 13, "WC": 10, "WW": 25}},
+        "root_cause_flags": ["PROXY_READER_MARGIN_MISMATCH", "DATASET_SPECIFIC_CONTEXT_NEED"],
+        "not_triggered": ["OVER_COMPRESSION", "READER_SENSITIVE_EVIDENCE_REMOVAL", "STATIC_UTILITY_READER_MISALIGNMENT", "NO_CLEAR_MECHANISM"],
+        "recommendation": "MS_TSR_COMPRESSION_ONLY",
+        "cross_dataset": {
+          "pheme": {"mean_reader_evidence_loss_rate": 0.67300, "mean_proxy_margin_retention": 1.21646, "auc_utility_citation": 0.43702, "citation_removal_gap": -0.06764, "mean_static_units": 6.05, "mean_ms_units": 1.18333},
+          "maweibo": {"mean_reader_evidence_loss_rate": 0.84813, "mean_proxy_margin_retention": 1.27774, "auc_utility_citation": 0.61583, "citation_removal_gap": 0.00048, "mean_static_units": 9.83333, "mean_ms_units": 1.10333}
+        },
+        "cross_fold_contamination": {
+          "pheme": {"n_sampled_events": 285, "n_in_any_other_fold_test": 285, "rate": 1.0},
+          "maweibo": {"n_sampled_events": 275, "n_in_any_other_fold_test": 275, "rate": 1.0}
+        }
+      },
+      "status": "DIAGNOSTIC_ONLY",
+      "main_artifacts": [
+        "results/tcdscr/v3b_failure_diagnosis/diagnosis_summary.json",
+        "results/tcdscr/v3b_failure_diagnosis/V3B_FAILURE_DIAGNOSIS_REPORT.md"
+      ],
+      "known_caveats": [
+        "Post-hoc diagnostic on 600 validation samples; no new Qwen inference.",
+        "A root cause that was not triggered under the predefined rule is not proven absent.",
+        "No proxy-side signal cleared the fixed thresholds, so no reader-calibration rule is justified."
+      ],
+      "protocol_issues_discovered_later": [
+        "Structural degree/leaf extraction used edge positions as degree-map keys; fixed in the finalization stage."
+      ]
+    },
+    {
+      "stage_id": "V3-B-FINALIZATION",
+      "stage_name": "V3-B failure diagnosis finalization (structural bug fix)",
+      "commit_sha": "c96ccbd",
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "model_components_used": ["same frozen artifacts as V3-B diagnosis (deterministic feature re-extraction only)"],
+      "trainable_components": [],
+      "frozen_components": ["Qwen3-8B", "all V3-B artifacts", "MS-TSR", "Static Selector", "proxy"],
+      "main_objective": "Fix the structural degree/leaf bug (edge position vs node ID) and confirm that no root cause or recommendation changes.",
+      "primary_comparator": "pre-fix diagnosis",
+      "primary_metrics": ["node degree", "child_count", "is_leaf", "frozen artifact hashes", "root-cause flags", "recommendation"],
+      "gate_definition": "diagnostic only; frozen hashes must be unchanged or FROZEN_ARTIFACT_VIOLATION",
+      "actual_outcome": {
+        "structural_bug_fixed": true,
+        "frozen_artifacts_unchanged": true,
+        "original_metrics_reproduced": true,
+        "root_causes_changed": false,
+        "recommendation_changed": false,
+        "requires_research_review": false,
+        "final_recommendation": "MS_TSR_COMPRESSION_ONLY",
+        "structural_after_fix": {
+          "pheme": {"qwen_cited": {"mean_degree": 1.184, "mean_child_count": 0.192, "leaf_rate": 0.838}, "ms_retained": {"mean_degree": 1.127, "mean_child_count": 0.176, "leaf_rate": 0.841}, "ms_removed": {"mean_degree": 1.208, "mean_child_count": 0.225, "leaf_rate": 0.807}},
+          "maweibo": {"qwen_cited": {"mean_degree": 1.223, "mean_child_count": 0.223, "leaf_rate": 0.923}, "ms_retained": {"mean_degree": 1.227, "mean_child_count": 0.227, "leaf_rate": 0.918}, "ms_removed": {"mean_degree": 1.264, "mean_child_count": 0.264, "leaf_rate": 0.918}}
+        }
+      },
+      "status": "SUPPORTED",
+      "main_artifacts": [
+        "results/tcdscr/v3b_failure_diagnosis/diagnosis_summary.json",
+        "results/tcdscr/v3b_failure_diagnosis/V3B_FAILURE_DIAGNOSIS_REPORT.md",
+        "results/tcdscr/v3b_failure_diagnosis/frozen_artifacts.json"
+      ],
+      "known_caveats": [
+        "The fix touched only degree / leaf / child-count structural diagnostics; it did not change any detection, compression, citation or margin result.",
+        "After the fix, no stable reader-risk structural signal emerged; the largest difference (Ma-Weibo retained vs removed source-child rate 0.699 vs 0.852) remains a candidate observation only."
+      ],
+      "protocol_issues_discovered_later": []
+    }
+  ]
+}

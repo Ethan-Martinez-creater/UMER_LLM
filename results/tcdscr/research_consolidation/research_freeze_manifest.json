@@ -1,0 +1,45 @@
+{
+  "freeze_commit": "c96ccbddbc5aeecfd62efa5e162ad0aff33290c2",
+  "freeze_commit_short": "c96ccbd",
+  "created_utc": "2026-09-12T07:43:15Z",
+  "new_training_allowed": false,
+  "new_qwen_inference_allowed": false,
+  "held_out_test_allowed": false,
+  "v3c_approved": false,
+  "full_e4_approved": false,
+  "final_v3_recommendation": "MS_TSR_COMPRESSION_ONLY",
+  "consolidation_scope": [
+    "read",
+    "audit",
+    "aggregate",
+    "summarize",
+    "document"
+  ],
+  "forbidden_this_round": [
+    "retrain E1",
+    "retrain E2",
+    "rerun Dynamic V1/V2/V3",
+    "modify MS-TSR",
+    "modify Static Selector",
+    "modify Proxy",
+    "add heuristic",
+    "resample V3-B",
+    "new Qwen generation",
+    "change prompt",
+    "fine-tune Qwen",
+    "run V3-C",
+    "run outer held-out test",
+    "run full E4",
+    "silently retune existing gates from current results",
+    "delete failed experiments",
+    "overwrite historical experiment artifacts"
+  ],
+  "consolidation_artifacts_root": "results/tcdscr/research_consolidation/",
+  "evidence_split_taxonomy": [
+    "TRAIN",
+    "VALIDATION",
+    "HELD_OUT_TEST",
+    "DIAGNOSTIC"
+  ],
+  "note": "This manifest freezes the research state; it does not assert that the frozen state is positive. Failed and rejected stages are preserved in the registry."
+}

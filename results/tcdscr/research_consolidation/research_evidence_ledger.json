@@ -1,0 +1,312 @@
+{
+  "ledger_version": "1.0",
+  "created_utc": "2026-09-12T07:43:15Z",
+  "freeze_commit": "c96ccbddbc5aeecfd62efa5e162ad0aff33290c2",
+  "claim_count": 12,
+  "status_counts": {
+    "SUPPORTED": 9,
+    "PARTIAL": 0,
+    "REJECTED": 1,
+    "DIAGNOSTIC": 2
+  },
+  "status_note": "status_counts.DIAGNOSTIC counts claims whose status is DIAGNOSTIC_ONLY",
+  "evidence_strength_definition": {
+    "STRONG": "held-out test + protocol clean + paired statistics",
+    "MODERATE": "validation across folds/seeds, or independent reader pilot",
+    "WEAK": "small subgroup, post-hoc, or descriptive diagnostic"
+  },
+  "claims": [
+    {
+      "claim_id": "C01",
+      "claim": "Social propagation context must be constructed at the real detection cutoff; future nodes must never enter an early-detection snapshot.",
+      "claim_type": "PROTOCOL",
+      "status": "SUPPORTED",
+      "supporting_stage": ["E1", "E2-CORRECTED", "E3-VALIDATION", "E3-TEST", "V2-PROTOCOL-CORRECTION", "V3-A-MS-TSR", "V3-B-READER"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "future_leakage_verifier": "passes on every stage (0 leakage findings)",
+        "cutoff_columns": [5, 15, 30, 60, 180, 360]
+      },
+      "evidence_strength": "STRONG",
+      "limitations": [
+        "The protocol is a design requirement, not an empirical effect; its support is that every stage used it and the leakage verifier passed."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v2_protocol/protocol_manifest.json",
+        "results/tcdscr/formal_e1/formal_e1_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C02",
+      "claim": "Events with no reply yet at an early cutoff must remain in the evaluation set; dropping them conditions the metric on the presence of social evidence.",
+      "claim_type": "PROTOCOL_FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V2-PROTOCOL-CORRECTION"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "no_candidate_rate": {
+          "pheme": {"5": 0.35525, "15": 0.21868, "30": 0.17198, "60": 0.14358, "180": 0.12140},
+          "maweibo": {"5": 0.12674, "15": 0.07540, "30": 0.05027, "60": 0.02941, "180": 0.01390}
+        },
+        "e2_metric_shift_new_minus_old": {
+          "pheme": {"static": 0.00097, "random": 0.00130, "semantic": 0.00150},
+          "note": "new = all events at real cutoff; old = conditioned on candidate_count > 0"
+        }
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "The correction changes metric denominators, so pre-correction absolute numbers are DEPRECATED rather than wrong.",
+        "The shift is small on both datasets because no-candidate snapshots are mostly early-cutoff events with few candidates."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v2_protocol/no_candidate_audit.json",
+        "results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json"
+      ]
+    },
+    {
+      "claim_id": "C03",
+      "claim": "A causal-propagation-based Static Utility Selector identifies more useful social evidence than random or semantic-similarity selection.",
+      "claim_type": "METHOD",
+      "status": "SUPPORTED",
+      "supporting_stage": ["E2-CORRECTED"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"static": 0.85591, "random": 0.85372, "semantic": 0.85254, "delta_static_minus_best_baseline": 0.00218, "readiness_pass": false},
+        "maweibo": {"static": 0.93503, "random": 0.91408, "semantic": 0.90908, "delta_static_minus_best_baseline": 0.02095, "readiness_pass": true}
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "The effect is strongly dataset-dependent: Ma-Weibo +2.10 pt, PHEME +0.22 pt, and PHEME does not clear the pre-registered 0.005 readiness threshold.",
+        "The claim must be stated per dataset; the two datasets must not be reported as the same effect size.",
+        "Validation only for E2 readiness; the E3 held-out test used the same selector and is reported under C04.",
+        "The all-event protocol correction slightly changes the absolute E2 values (PHEME static 0.85572 -> 0.85669)."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/formal_e2_corrected/readiness/e2_summary.json",
+        "results/tcdscr/dynamic_v2_protocol/e2_corrected_all_event_metrics.json"
+      ]
+    },
+    {
+      "claim_id": "C04",
+      "claim": "Point-wise novelty/persistence dynamic reranking (Dynamic V1) does not improve rumor detection over the static selector.",
+      "claim_type": "METHOD",
+      "status": "REJECTED",
+      "supporting_stage": ["E3-VALIDATION", "E3-TEST", "E3-DIAGNOSIS"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "HELD_OUT_TEST",
+      "metrics": {
+        "pheme": {"n_rows": 94104, "static": 0.84643, "dynamic": 0.84653, "delta_macro_f1": 0.0001037, "bootstrap_ci": [-0.0000502, 0.0002557], "corrected_ci": [-0.0000969, 0.0003214], "delta_flip_rate": 0.000687, "n_positive_folds": 3, "n_negative_folds": 1},
+        "maweibo": {"n_rows": 79173, "static": 0.92678, "dynamic": 0.92679, "delta_macro_f1": 0.0000120, "bootstrap_ci": [-0.0000999, 0.0001204], "corrected_ci": [-0.0001399, 0.0001614], "delta_flip_rate": -0.0000153, "n_positive_folds": 3, "n_negative_folds": 2},
+        "overall_status": "WEAK_POSITIVE",
+        "recommendation": "REVIEW_DYNAMIC_DESIGN"
+      },
+      "evidence_strength": "STRONG",
+      "limitations": [
+        "The verdict is REJECTED as a method because both paired bootstrap CIs cross zero; the positive point estimates are not established.",
+        "It remains a supported negative finding: the point-wise dynamic bonus is measurable but not sufficient."
+      ],
+      "negative_finding_supported": true,
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/formal_e3_test/e3_test_summary.json",
+        "results/tcdscr/e3_failure_diagnosis/bootstrap_fixed.json"
+      ]
+    },
+    {
+      "claim_id": "C05",
+      "claim": "The Dynamic V1 bonus failed for two measurable reasons: its score scale is too small relative to the utility scale, and selection changes are mostly invisible to the frozen proxy (budget masking).",
+      "claim_type": "DIAGNOSTIC",
+      "status": "DIAGNOSTIC_ONLY",
+      "supporting_stage": ["E3-DIAGNOSIS"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "HELD_OUT_TEST",
+      "metrics": {
+        "pheme": {"u_std": 6.8016, "bonus_std": 0.2666, "bonus_to_utility_std_ratio": 0.0392, "mean_abs_bonus_over_mean_abs_u": 0.0535, "exact_match_rate": 0.9052, "jaccard_mean": 0.9691, "ranking_changed_selection_same": 0.1990, "pred_change_given_selection_change": 0.0071, "spearman_mean": 0.9882},
+        "maweibo": {"u_std": 11.6088, "bonus_std": 0.2206, "bonus_to_utility_std_ratio": 0.0190, "mean_abs_bonus_over_mean_abs_u": 0.0224, "exact_match_rate": 0.8852, "jaccard_mean": 0.9753, "ranking_changed_selection_same": 0.4865, "pred_change_given_selection_change": 0.0043, "spearman_mean": 0.9984},
+        "overall": "MIXED_CAUSES"
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "Post-hoc on the frozen E3 test runs; reported as an explanation of the failure, not as a new experiment.",
+        "The proxy-insensitivity component is a proxy property and cannot be generalized to real LLM readers."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/e3_failure_diagnosis/score_scale_analysis.json",
+        "results/tcdscr/e3_failure_diagnosis/selection_to_prediction_effect.json",
+        "results/tcdscr/e3_failure_diagnosis/ranking_change_analysis.json"
+      ]
+    },
+    {
+      "claim_id": "C06",
+      "claim": "Set-level refinement (MF-TSR) can change the evidence context substantially while preserving the proxy decision.",
+      "claim_type": "METHOD",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V2-MF-TSR"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"set_change_rate": {"Very Early": 0.5610, "Early": 0.7506, "Mid": 0.8139}, "tokens": [472.77, 178.69], "delta_macro_f1": 0.00293},
+        "maweibo": {"set_change_rate": {"Very Early": 0.8300, "Early": 0.9266, "Mid": 0.9755}, "tokens": [855.55, 516.33], "delta_macro_f1": -0.00286},
+        "overall": "FAIL"
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "This claim is about context change only. It must NOT be read as a classification improvement: Ma-Weibo degraded and the overall gate FAILED.",
+        "The refinement is driven by a teacher-KL fidelity objective; C07 shows that objective is not a valid downstream surrogate."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v2/mf_tsr_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C07",
+      "claim": "Teacher (full-graph) fidelity is not equivalent to discriminative sufficiency: reducing the teacher-distribution distortion does not reliably improve downstream classification.",
+      "claim_type": "FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V2-MF-TSR"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"delta_macro_f1": 0.00293, "token_reduction": 0.6222},
+        "maweibo": {"delta_macro_f1": -0.00286, "token_reduction": 0.3964},
+        "gate": "FAIL on both datasets"
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "Supported by two datasets under one fidelity objective and one refiner design; it is a methodological finding, not a theorem.",
+        "The measurement uses the frozen proxy, which is itself only weakly sensitive to set replacement."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v2/mf_tsr_summary.json",
+        "results/tcdscr/dynamic_v2/MF_TSR_VALIDATION_REPORT.md"
+      ]
+    },
+    {
+      "claim_id": "C08",
+      "claim": "Social context contains substantial redundancy: a minimal-sufficient subset can preserve the proxy decision while removing most social tokens.",
+      "claim_type": "FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V3-A-MS-TSR"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"mean_token_reduction": 0.57859, "median_token_reduction": 0.8058, "mean_static_units": 6.0655, "dual_view_agreement_rate": 0.94730, "compression_attempt_rate": 0.77103, "static_fallback_rate": 0.28189},
+        "maweibo": {"mean_token_reduction": 0.82738, "median_token_reduction": 0.9453, "mean_static_units": 9.8333, "dual_view_agreement_rate": 0.97323, "compression_attempt_rate": 0.92579, "static_fallback_rate": 0.07818},
+        "prediction_change_rate": 0.0
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "The preserved decision is the frozen proxy's decision, by construction (condition C1 plus static fallback); this is redundancy of the proxy decision, not proof of reader sufficiency.",
+        "Compression on PHEME is bimodal (p25 = 0), so the mean alone overstates the typical case."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v3/ms_tsr_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C09",
+      "claim": "Proxy-defined sufficiency does not automatically transfer to an independent frozen LLM reader.",
+      "claim_type": "FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V3-A-MS-TSR", "V3-B-READER", "V3-B-DIAGNOSIS"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "v3a_proxy": {"pheme_delta_macro_f1": 0.0, "maweibo_delta_macro_f1": 0.0, "prediction_change_rate": 0.0, "note": "unchanged by construction of C1"},
+        "v3b_reader": {"pheme_delta_macro_f1": 0.01974, "pheme_ci": [-0.02192, 0.06144], "pheme_label": "WEAK_TRANSFER", "maweibo_delta_macro_f1": -0.00933, "maweibo_ci": [-0.04010, 0.02129], "maweibo_label": "TRANSFER_FAIL", "overall": "PARTIAL"}
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "One frozen reader (Qwen3-8B), one prompt version, one validation-only pilot of 300 paired samples per dataset.",
+        "The correct wording is 'does not automatically transfer', never 'never transfers'.",
+        "The Ma-Weibo degradation is inside its own confidence interval and must not be read as proof that compression is harmful."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json",
+        "results/tcdscr/dynamic_v3/ms_tsr_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "claim": "The amount of social context a reader needs is dataset-dependent.",
+      "claim_type": "FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V3-B-READER", "V3-B-DIAGNOSIS"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"mean_static_units": 6.05, "mean_ms_units": 1.18333, "mean_static_cited_count": 4.66, "mean_ms_cited_count": 1.13, "mean_token_reduction": 0.68700, "delta_macro_f1": 0.01974},
+        "maweibo": {"mean_static_units": 9.83333, "mean_ms_units": 1.10333, "mean_static_cited_count": 7.65333, "mean_ms_cited_count": 1.05667, "mean_token_reduction": 0.85322, "delta_macro_f1": -0.00933},
+        "observation": "MS-TSR compresses both datasets to about one evidence unit, yet the reader transfer outcome differs by dataset."
+      },
+      "evidence_strength": "MODERATE",
+      "limitations": [
+        "Based on a validation reader pilot only.",
+        "The diagnosis could not find a stable proxy-side signal that predicts which dataset or sample will degrade; the claim is descriptive and does not license a per-dataset rule."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/v3b_failure_diagnosis/diagnosis_summary.json",
+        "results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "claim": "Reducing the evidence context lowers the reader's stated confidence; this is a diagnostic observation, not a quality improvement.",
+      "claim_type": "DIAGNOSTIC",
+      "status": "DIAGNOSTIC_ONLY",
+      "supporting_stage": ["V3-B-READER"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"mean_confidence_delta": -0.05867, "ece_static": 0.17767, "ece_ms": 0.19367, "static_confidence": 0.61500, "ms_confidence": 0.55633},
+        "maweibo": {"mean_confidence_delta": -0.05667, "ece_static": 0.19000, "ece_ms": 0.24067, "static_confidence": 0.72133, "ms_confidence": 0.66467},
+        "ece_bins": 10
+      },
+      "evidence_strength": "WEAK",
+      "limitations": [
+        "Self-reported confidence from one model and prompt; calibration is measured with 10 bins over 300 samples per dataset.",
+        "The confidence drop must NOT be interpreted as improved hallucination behaviour: ECE became worse, not better, on both datasets.",
+        "On Ma-Weibo the MS arm is less confident on correct answers than on wrong ones, so the confidence signal is not even monotone with correctness there."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json"
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "claim": "Fabricated evidence-ID references were not observed in the reader pilot: every cited E# existed in the supplied block.",
+      "claim_type": "FINDING",
+      "status": "SUPPORTED",
+      "supporting_stage": ["V3-B-READER"],
+      "datasets": ["pheme", "maweibo"],
+      "split_used": "VALIDATION",
+      "metrics": {
+        "pheme": {"static_valid_citation_rate": 1.0, "static_unsupported_citation_rate": 0.0, "ms_valid_citation_rate": 1.0, "ms_unsupported_citation_rate": 0.0, "static_cited_total": 1398, "ms_cited_total": 339},
+        "maweibo": {"static_valid_citation_rate": 1.0, "static_unsupported_citation_rate": 0.0, "ms_valid_citation_rate": 1.0, "ms_unsupported_citation_rate": 0.0, "static_cited_total": 2296, "ms_cited_total": 317}
+      },
+      "evidence_strength": "WEAK",
+      "limitations": [
+        "Narrow scope only: the check covers whether a cited E# exists in the supplied evidence block. It does not verify that the cited evidence actually supports the reason, and it does not cover any other form of hallucination.",
+        "The claim must be phrased as 'fabricated evidence-ID references were not observed'. It must never be phrased as 'LLM hallucination was eliminated'.",
+        "Measured on 600 validation pilot generations with one model and one prompt."
+      ],
+      "allowed_in_paper": true,
+      "artifacts": [
+        "results/tcdscr/dynamic_v3_reader/reader_transfer_summary.json"
+      ]
+    }
+  ]
+}
