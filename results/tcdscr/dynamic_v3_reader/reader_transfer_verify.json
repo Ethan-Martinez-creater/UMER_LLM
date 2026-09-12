@@ -1,0 +1,23 @@
+{
+ "n_issues": 0,
+ "issues": [],
+ "samples": 600,
+ "generations": 1200,
+ "determinism_warnings": 0,
+ "checks": [
+  "300 unique paired samples per dataset",
+  "one Static and one MS generation per sample",
+  "manifest frozen before generations",
+  "sampling seed 3090 / context seed 2000 / alpha 0.8 / budget 1024",
+  "validation only, no test events",
+  "prompt evidence reproduces the frozen V3-A selection",
+  "MS evidence order is snapshot (timestamp ascending) order",
+  "paired source text identical; only the evidence block differs",
+  "one frozen model/config, do_sample=false, temperature=0",
+  "Qwen weights frozen, no fine-tuning",
+  "no Qwen output used for selection",
+  "bootstrap CI and multiplicity reproduce",
+  "fallback pair contexts identical",
+  "unsupported evidence ids recounted from raw text"
+ ]
+}

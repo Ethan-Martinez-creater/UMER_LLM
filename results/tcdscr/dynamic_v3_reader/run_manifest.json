@@ -1,0 +1,57 @@
+{
+ "model_path": "/data/jyz/next/model/qwen3-8b",
+ "prompt_version": "v3b-2",
+ "config_sha256": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30",
+ "index_sha256": "f9fdbcb91c23971c13ec5d5f2573d2349e8f61f2f049371ec699281748fdb1bc",
+ "shards": [
+  {
+   "file": "model-00001-of-00005.safetensors",
+   "bytes": 3996250744,
+   "sha256": "31d6a825ae35f11fb85b195b4c42c146c051e446433125a215336abdf95cbf5f"
+  },
+  {
+   "file": "model-00002-of-00005.safetensors",
+   "bytes": 3993160032,
+   "sha256": "5991236cea6fe21f3d43cab0f0e84448734fbbe0789816202989f2ddc9d18282"
+  },
+  {
+   "file": "model-00003-of-00005.safetensors",
+   "bytes": 3959604768,
+   "sha256": "c5185c4794be2d8a9784d5753c9922db38df478ce11f9ed0b415b7304d896836"
+  },
+  {
+   "file": "model-00004-of-00005.safetensors",
+   "bytes": 3187841392,
+   "sha256": "b5ee7de71fbf17db3d5704e0c8f2bc7d005ca9e1d7ca2aeb19827b0cfcaa917a"
+  },
+  {
+   "file": "model-00005-of-00005.safetensors",
+   "bytes": 1244659840,
+   "sha256": "20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff"
+  }
+ ],
+ "weight_shards_sha256": "b26df35264664d35515faa952273e0bb7f40de410c96059a8fc2e1ce4c66530f",
+ "model_class": "Qwen3ForCausalLM",
+ "dtype": "torch.bfloat16",
+ "device": "cuda:0",
+ "n_parameters": 8190735360,
+ "transformers": "4.57.6",
+ "torch": "2.7.1+cu128",
+ "tokenizer_class": "Qwen2TokenizerFast",
+ "decoding": {
+  "do_sample": false,
+  "num_beams": 1,
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "top_p": null,
+  "top_k": null,
+  "temperature_note": "greedy decoding; do_sample=false makes temperature inactive, recorded as 0 for the frozen protocol"
+ },
+ "chat_template_sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+ "trainable_parameters_updated": 0,
+ "finetuned": false,
+ "n_planned_samples": 600,
+ "started_utc": "2026-09-12T04:08:42Z",
+ "n_generations": 1200,
+ "finished_utc": "2026-09-12T04:38:15Z"
+}

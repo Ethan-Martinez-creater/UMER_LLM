@@ -1,0 +1,38 @@
+{
+ "determinism": {
+  "n_fallback_pairs": 64,
+  "n_identical_prompt_hash": 64,
+  "n_identical_raw_output": 64,
+  "determinism_warnings": 0,
+  "determinism_warning_samples": []
+ },
+ "parse_failures": {
+  "static": 0,
+  "ms": 0
+ },
+ "unpaired_sample_ids": [],
+ "citation": {
+  "static": {
+   "n_runs": 300,
+   "n_cited_total": 1398,
+   "valid_citation_rate": 1.0,
+   "unsupported_citation_count": 0,
+   "unsupported_citation_rate": 0.0,
+   "no_citation_rate": 0.16,
+   "mean_cited_evidence_count": 4.66,
+   "cited_over_supplied": 0.7702479338842976,
+   "reason_invalid_evidence_reference_rate": 0.0
+  },
+  "ms": {
+   "n_runs": 300,
+   "n_cited_total": 339,
+   "valid_citation_rate": 1.0,
+   "unsupported_citation_count": 0,
+   "unsupported_citation_rate": 0.0,
+   "no_citation_rate": 0.17666666666666667,
+   "mean_cited_evidence_count": 1.13,
+   "cited_over_supplied": 0.9549295774647887,
+   "reason_invalid_evidence_reference_rate": 0.0
+  }
+ }
+}
