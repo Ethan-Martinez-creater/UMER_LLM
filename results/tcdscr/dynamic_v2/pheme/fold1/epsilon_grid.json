@@ -1,0 +1,26 @@
+{
+ "fold": 1,
+ "dataset": "pheme",
+ "candidates": {
+  "0.0": {
+   "mf_tsr_mean_primary_macro_f1": 0.8645483320686399,
+   "static_mean_primary_macro_f1": 0.8622672343913432,
+   "mf_tsr_flip_rate": 0.014526588845654992,
+   "mean_moves_per_snapshot": 4.36305663640294
+  },
+  "0.01": {
+   "mf_tsr_mean_primary_macro_f1": 0.8645483320686399,
+   "static_mean_primary_macro_f1": 0.8622672343913432,
+   "mf_tsr_flip_rate": 0.014526588845654992,
+   "mean_moves_per_snapshot": 4.338413316039776
+  },
+  "0.05": {
+   "mf_tsr_mean_primary_macro_f1": 0.863785095044988,
+   "static_mean_primary_macro_f1": 0.8622672343913432,
+   "mf_tsr_flip_rate": 0.01569390402075227,
+   "mean_moves_per_snapshot": 3.506485084306096
+  }
+ },
+ "selected_epsilon": 0.01,
+ "rule": "validation-only; highest pooled MF-TSR mean-primary Macro-F1, ties -> lower flip rate -> fewer moves -> smaller epsilon"
+}

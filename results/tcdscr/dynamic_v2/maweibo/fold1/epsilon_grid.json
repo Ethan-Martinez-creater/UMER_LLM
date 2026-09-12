@@ -1,0 +1,26 @@
+{
+ "fold": 1,
+ "dataset": "maweibo",
+ "candidates": {
+  "0.0": {
+   "mf_tsr_mean_primary_macro_f1": 0.9246775619437425,
+   "static_mean_primary_macro_f1": 0.925979975359756,
+   "mf_tsr_flip_rate": 0.029590017825311943,
+   "mean_moves_per_snapshot": 6.089572192513369
+  },
+  "0.01": {
+   "mf_tsr_mean_primary_macro_f1": 0.9246775619437425,
+   "static_mean_primary_macro_f1": 0.925979975359756,
+   "mf_tsr_flip_rate": 0.029590017825311943,
+   "mean_moves_per_snapshot": 5.842245989304813
+  },
+  "0.05": {
+   "mf_tsr_mean_primary_macro_f1": 0.9254188865379995,
+   "static_mean_primary_macro_f1": 0.925979975359756,
+   "mf_tsr_flip_rate": 0.029233511586452765,
+   "mean_moves_per_snapshot": 4.2498514557338085
+  }
+ },
+ "selected_epsilon": 0.05,
+ "rule": "validation-only; highest pooled MF-TSR mean-primary Macro-F1, ties -> lower flip rate -> fewer moves -> smaller epsilon"
+}

@@ -203,8 +203,9 @@ def collect_event_data(encoder, selector, items, device):
             n = item["num_nodes"]
             src = item["source_pos"]
             cand = [i for i in range(n) if i != src]
-            if not cand:
-                continue
+            # Protocol correction (Dynamic V2 §2): no-candidate snapshots
+            # are kept in the trajectory (empty selection, z_sel = 0
+            # prediction) instead of being skipped out of the metrics.
             cand_idx = torch.tensor(cand, dtype=torch.long, device=device)
             sem = item["sem"].to(device)
             struct3 = item["summary"].to(device)
@@ -212,8 +213,11 @@ def collect_event_data(encoder, selector, items, device):
             units_index = {u2["node_id"]: cand[i]
                            for i, u2 in enumerate(units)}
             h_cand = node_repr[cand_idx]
-            u = selector(h_cand, event_repr, sem[cand_idx], sem[src],
-                         struct3[cand_idx]).detach()
+            if not cand:
+                u = torch.empty(0, device=device)
+            else:
+                u = selector(h_cand, event_repr, sem[cand_idx], sem[src],
+                             struct3[cand_idx]).detach()
             by_event.setdefault(item["event_id"], []).append({
                 "cutoff": item["cutoff_minutes"],
                 "label": item["label"],

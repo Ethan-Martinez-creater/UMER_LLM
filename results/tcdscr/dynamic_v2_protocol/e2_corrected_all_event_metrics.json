@@ -1,0 +1,424 @@
+{
+ "protocol": "new metric: ALL events at the real cutoff; old corrected-E2 metric: conditioned on candidate_count > 0",
+ "budget": 1024,
+ "datasets": {
+  "pheme": {
+   "mean_over_runs_new": {
+    "static": 0.856688641737558,
+    "random": 0.8548242034988076,
+    "semantic": 0.8538167618085079
+   },
+   "mean_over_runs_old": {
+    "static": 0.8557205505338684,
+    "random": 0.853524186296833,
+    "semantic": 0.8523170709420275
+   },
+   "delta_new_minus_old": {
+    "static": 0.0009680912036895695,
+    "random": 0.0013000172019745904,
+    "semantic": 0.0014996908664803854
+   },
+   "per_fold": {
+    "fold0": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.8635602963900535,
+       "random": 0.8600376741911413,
+       "semantic": 0.8578324335443727
+      },
+      "old_candidates_only": {
+       "static": 0.8608413617368441,
+       "random": 0.8566554985911293,
+       "semantic": 0.8541056314191272
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.8592570791370043,
+       "random": 0.8578905164220108,
+       "semantic": 0.8568750504449746
+      },
+      "old_candidates_only": {
+       "static": 0.8545618965851226,
+       "random": 0.8529048103232605,
+       "semantic": 0.851779083460182
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.8432647813923824,
+       "random": 0.8389923836384976,
+       "semantic": 0.839881744502184
+      },
+      "old_candidates_only": {
+       "static": 0.8362363558894573,
+       "random": 0.831314932651113,
+       "semantic": 0.8322211626617756
+      }
+     }
+    },
+    "fold1": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.8646770657769013,
+       "random": 0.8621975993541214,
+       "semantic": 0.8616723442796456
+      },
+      "old_candidates_only": {
+       "static": 0.8575048180494323,
+       "random": 0.8545422025869479,
+       "semantic": 0.853880865088048
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.8448149763137284,
+       "random": 0.840528419886443,
+       "semantic": 0.8396900530446967
+      },
+      "old_candidates_only": {
+       "static": 0.839722523651964,
+       "random": 0.8348066161010727,
+       "semantic": 0.8338370475561337
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.8773096610833999,
+       "random": 0.8768887944571006,
+       "semantic": 0.8768916918180595
+      },
+      "old_candidates_only": {
+       "static": 0.8728047465173364,
+       "random": 0.8722766729577941,
+       "semantic": 0.8723213548459811
+      }
+     }
+    },
+    "fold2": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.8439115494028843,
+       "random": 0.8429461270500788,
+       "semantic": 0.8400344207881604
+      },
+      "old_candidates_only": {
+       "static": 0.8518981392690779,
+       "random": 0.8507507838107581,
+       "semantic": 0.84726254373137
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.8601669880660182,
+       "random": 0.8570544854830399,
+       "semantic": 0.8562596432194818
+      },
+      "old_candidates_only": {
+       "static": 0.8822379074214238,
+       "random": 0.8785613661550425,
+       "semantic": 0.8776470546548335
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.842114235312676,
+       "random": 0.8404941401716695,
+       "semantic": 0.838046565954787
+      },
+      "old_candidates_only": {
+       "static": 0.8435686085598664,
+       "random": 0.8415956796813021,
+       "semantic": 0.8385847185995589
+      }
+     }
+    },
+    "fold3": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.8503307367679221,
+       "random": 0.8485587192623533,
+       "semantic": 0.8477922285673313
+      },
+      "old_candidates_only": {
+       "static": 0.8476042487863052,
+       "random": 0.8455841401957079,
+       "semantic": 0.84465262284118
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.8397171992427648,
+       "random": 0.8404195911751543,
+       "semantic": 0.8378688040796601
+      },
+      "old_candidates_only": {
+       "static": 0.8366554575059134,
+       "random": 0.8374337043456966,
+       "semantic": 0.8344809061253371
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.8529919543935024,
+       "random": 0.8501307121829141,
+       "semantic": 0.847382108917662
+      },
+      "old_candidates_only": {
+       "static": 0.8538371873221835,
+       "random": 0.8504384999480622,
+       "semantic": 0.8471413427909158
+      }
+     }
+    },
+    "fold4": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.8686299643532055,
+       "random": 0.8675764517615461,
+       "semantic": 0.8659903492831621
+      },
+      "old_candidates_only": {
+       "static": 0.855811170416584,
+       "random": 0.8544744294476655,
+       "semantic": 0.8525484440620992
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.8788461992882781,
+       "random": 0.8785222625971674,
+       "semantic": 0.8798693939760523
+      },
+      "old_candidates_only": {
+       "static": 0.8719736784628176,
+       "random": 0.8716380931949481,
+       "semantic": 0.8731917977092682
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.8607369391426496,
+       "random": 0.8601251748488767,
+       "semantic": 0.8611645947073877
+      },
+      "old_candidates_only": {
+       "static": 0.8705501578336987,
+       "random": 0.8698853644619963,
+       "semantic": 0.8711014885846012
+      }
+     }
+    }
+   }
+  },
+  "maweibo": {
+   "mean_over_runs_new": {
+    "static": 0.9338735968623215,
+    "random": 0.9135689844888084,
+    "semantic": 0.9089295304102168
+   },
+   "mean_over_runs_old": {
+    "static": 0.9350558488145194,
+    "random": 0.9139445843843265,
+    "semantic": 0.9090430147579556
+   },
+   "delta_new_minus_old": {
+    "static": -0.0011822519521978991,
+    "random": -0.00037559989551805284,
+    "semantic": -0.00011348434773872373
+   },
+   "per_fold": {
+    "fold0": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.9344364027279152,
+       "random": 0.9075972981123098,
+       "semantic": 0.9036545316528385
+      },
+      "old_candidates_only": {
+       "static": 0.9341411005462247,
+       "random": 0.9058907033837648,
+       "semantic": 0.9016917954919178
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.9358038636993912,
+       "random": 0.9021915934180122,
+       "semantic": 0.9019005404965202
+      },
+      "old_candidates_only": {
+       "static": 0.9373802548519953,
+       "random": 0.901830335321811,
+       "semantic": 0.9016845396277704
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.9322506121678534,
+       "random": 0.9309187229206288,
+       "semantic": 0.9273241971325157
+      },
+      "old_candidates_only": {
+       "static": 0.9343313890733427,
+       "random": 0.9330802887682615,
+       "semantic": 0.9291811024346183
+      }
+     }
+    },
+    "fold1": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.93446426503395,
+       "random": 0.9255234946563645,
+       "semantic": 0.916187919619504
+      },
+      "old_candidates_only": {
+       "static": 0.9361981644281459,
+       "random": 0.9271694305313094,
+       "semantic": 0.9169797264505979
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.9228904562577225,
+       "random": 0.9197326062498408,
+       "semantic": 0.9099727872934346
+      },
+      "old_candidates_only": {
+       "static": 0.9327261437311867,
+       "random": 0.9293058113147094,
+       "semantic": 0.9189918747293059
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.9219248047899257,
+       "random": 0.8726815949282903,
+       "semantic": 0.8793943901307383
+      },
+      "old_candidates_only": {
+       "static": 0.9226205415271682,
+       "random": 0.8710683920726182,
+       "semantic": 0.8782340093979051
+      }
+     }
+    },
+    "fold2": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.9451807450285,
+       "random": 0.9389195699852393,
+       "semantic": 0.9232975585831821
+      },
+      "old_candidates_only": {
+       "static": 0.9449828155766723,
+       "random": 0.9385037911017542,
+       "semantic": 0.9219169756737031
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.9264507359114518,
+       "random": 0.8893952372554536,
+       "semantic": 0.8865733332466174
+      },
+      "old_candidates_only": {
+       "static": 0.9316246136392884,
+       "random": 0.8927300355068182,
+       "semantic": 0.8899935988764082
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.9291240421807806,
+       "random": 0.9251023738406426,
+       "semantic": 0.9170669185568081
+      },
+      "old_candidates_only": {
+       "static": 0.930684190298893,
+       "random": 0.9263099263651542,
+       "semantic": 0.9177817587319875
+      }
+     }
+    },
+    "fold3": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.9415977054837826,
+       "random": 0.8999451164237091,
+       "semantic": 0.9105754866537734
+      },
+      "old_candidates_only": {
+       "static": 0.9410570591710264,
+       "random": 0.897984747487564,
+       "semantic": 0.9085311644042312
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.9416056798419676,
+       "random": 0.9366586630232269,
+       "semantic": 0.9331359174626455
+      },
+      "old_candidates_only": {
+       "static": 0.9403258242733878,
+       "random": 0.935301776089398,
+       "semantic": 0.9314949935051685
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.9474109133321332,
+       "random": 0.9442796551001932,
+       "semantic": 0.9433930807272207
+      },
+      "old_candidates_only": {
+       "static": 0.9470030238451028,
+       "random": 0.9436981511383079,
+       "semantic": 0.942831591801185
+      }
+     }
+    },
+    "fold4": {
+     "2000": {
+      "new_all_event": {
+       "static": 0.9242214855821529,
+       "random": 0.8811241759580203,
+       "semantic": 0.8694875761031566
+      },
+      "old_candidates_only": {
+       "static": 0.9249743220799248,
+       "random": 0.8806318838813151,
+       "semantic": 0.8686497146884355
+      }
+     },
+     "2001": {
+      "new_all_event": {
+       "static": 0.9358068597509016,
+       "random": 0.9326067315576099,
+       "semantic": 0.9123903626267914
+      },
+      "old_candidates_only": {
+       "static": 0.9347271148686672,
+       "random": 0.9317257216757596,
+       "semantic": 0.9109868449361977
+      }
+     },
+     "2002": {
+      "new_all_event": {
+       "static": 0.9349353811463944,
+       "random": 0.8968579339025888,
+       "semantic": 0.899588355867507
+      },
+      "old_candidates_only": {
+       "static": 0.933061174306767,
+       "random": 0.89393777112635,
+       "semantic": 0.8966955306199003
+      }
+     }
+    }
+   }
+  }
+ }
+}

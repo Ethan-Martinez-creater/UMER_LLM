@@ -1,0 +1,22 @@
+{
+ "issues": [],
+ "n_issues": 0,
+ "runs": 30,
+ "rows": 239760,
+ "no_candidate_rows": 31176,
+ "events_without_candidates": 0,
+ "checks": [
+  "validation coverage at all 6 cutoffs (no-candidate included)",
+  "no test events read",
+  "no future nodes",
+  "no future memory",
+  "frozen encoder/selector/proxy",
+  "budget <= 1024",
+  "atomic evidence units",
+  "no novelty/persistence bonus",
+  "epsilon in grid",
+  "max steps <= 20",
+  "gain >= epsilon",
+  "distortion <= static or fallback"
+ ]
+}

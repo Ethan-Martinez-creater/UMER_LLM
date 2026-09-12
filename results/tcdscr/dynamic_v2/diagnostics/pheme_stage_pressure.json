@@ -1,0 +1,45 @@
+{
+ "stages": {
+  "Very Early": {
+   "static_macro_f1": 0.852528627343896,
+   "mf_tsr_macro_f1": 0.8558291905269698,
+   "delta": 0.0033005631830737903,
+   "set_change_rate": 0.5610246433203632
+  },
+  "Early": {
+   "static_macro_f1": 0.8582363156624062,
+   "mf_tsr_macro_f1": 0.8611219542479175,
+   "delta": 0.0028856385855112964,
+   "set_change_rate": 0.7506485084306096
+  },
+  "Mid": {
+   "static_macro_f1": 0.8593022827719204,
+   "mf_tsr_macro_f1": 0.8618982167915938,
+   "delta": 0.0025959340196734402,
+   "set_change_rate": 0.8138780804150454
+  }
+ },
+ "pressure": {
+  "low": {
+   "static_macro_f1": 0.8629236387461064,
+   "mf_tsr_macro_f1": 0.8626368492015427,
+   "delta": -0.00028678954456371473,
+   "set_change_rate": 0.07633601478777714,
+   "n_snapshots": 14590
+  },
+  "high": {
+   "static_macro_f1": 0.8529070539856367,
+   "mf_tsr_macro_f1": 0.8598126102460698,
+   "delta": 0.006905556260433187,
+   "set_change_rate": 1.0,
+   "n_snapshots": 21727
+  },
+  "medium": {
+   "static_macro_f1": 0.854198778525104,
+   "mf_tsr_macro_f1": 0.8534021900069975,
+   "delta": -0.0007965885181064447,
+   "set_change_rate": 0.9973995428320326,
+   "n_snapshots": 9943
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "fold": 3,
+ "dataset": "pheme",
+ "epsilon": 0.05,
+ "per_seed": {
+  "2000": {
+   "static_mean_primary": 0.8503307367679221,
+   "mf_tsr_mean_primary": 0.8525171108249827,
+   "flip_rate": {
+    "static": 0.01556420233463035,
+    "mf_tsr": 0.01867704280155642
+   }
+  },
+  "2001": {
+   "static_mean_primary": 0.8397171992427648,
+   "mf_tsr_mean_primary": 0.8364919002545751,
+   "flip_rate": {
+    "static": 0.012451361867704281,
+    "mf_tsr": 0.012451361867704281
+   }
+  },
+  "2002": {
+   "static_mean_primary": 0.8529919543935024,
+   "mf_tsr_mean_primary": 0.8498019420809823,
+   "flip_rate": {
+    "static": 0.013618677042801557,
+    "mf_tsr": 0.015953307392996108
+   }
+  }
+ },
+ "static_mean_primary_macro_f1": 0.8476799634680631,
+ "mf_tsr_mean_primary_macro_f1": 0.84627031772018
+}

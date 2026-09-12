@@ -1,0 +1,468 @@
+{
+ "pheme": {
+  "scope": "validation events only",
+  "per_fold": {
+   "fold0": {
+    "5": {
+     "events_total": 514,
+     "events_with_candidates": 330,
+     "events_without_candidates": 184,
+     "no_candidate_rate": 0.35797665369649806
+    },
+    "15": {
+     "events_total": 514,
+     "events_with_candidates": 397,
+     "events_without_candidates": 117,
+     "no_candidate_rate": 0.22762645914396887
+    },
+    "30": {
+     "events_total": 514,
+     "events_with_candidates": 430,
+     "events_without_candidates": 84,
+     "no_candidate_rate": 0.16342412451361868
+    },
+    "60": {
+     "events_total": 514,
+     "events_with_candidates": 444,
+     "events_without_candidates": 70,
+     "no_candidate_rate": 0.13618677042801555
+    },
+    "180": {
+     "events_total": 514,
+     "events_with_candidates": 454,
+     "events_without_candidates": 60,
+     "no_candidate_rate": 0.11673151750972763
+    },
+    "360": {
+     "events_total": 514,
+     "events_with_candidates": 459,
+     "events_without_candidates": 55,
+     "no_candidate_rate": 0.10700389105058365
+    }
+   },
+   "fold1": {
+    "5": {
+     "events_total": 514,
+     "events_with_candidates": 340,
+     "events_without_candidates": 174,
+     "no_candidate_rate": 0.33852140077821014
+    },
+    "15": {
+     "events_total": 514,
+     "events_with_candidates": 409,
+     "events_without_candidates": 105,
+     "no_candidate_rate": 0.20428015564202334
+    },
+    "30": {
+     "events_total": 514,
+     "events_with_candidates": 426,
+     "events_without_candidates": 88,
+     "no_candidate_rate": 0.17120622568093385
+    },
+    "60": {
+     "events_total": 514,
+     "events_with_candidates": 443,
+     "events_without_candidates": 71,
+     "no_candidate_rate": 0.13813229571984437
+    },
+    "180": {
+     "events_total": 514,
+     "events_with_candidates": 457,
+     "events_without_candidates": 57,
+     "no_candidate_rate": 0.11089494163424124
+    },
+    "360": {
+     "events_total": 514,
+     "events_with_candidates": 461,
+     "events_without_candidates": 53,
+     "no_candidate_rate": 0.10311284046692606
+    }
+   },
+   "fold2": {
+    "5": {
+     "events_total": 514,
+     "events_with_candidates": 333,
+     "events_without_candidates": 181,
+     "no_candidate_rate": 0.3521400778210117
+    },
+    "15": {
+     "events_total": 514,
+     "events_with_candidates": 406,
+     "events_without_candidates": 108,
+     "no_candidate_rate": 0.21011673151750973
+    },
+    "30": {
+     "events_total": 514,
+     "events_with_candidates": 424,
+     "events_without_candidates": 90,
+     "no_candidate_rate": 0.17509727626459143
+    },
+    "60": {
+     "events_total": 514,
+     "events_with_candidates": 441,
+     "events_without_candidates": 73,
+     "no_candidate_rate": 0.14202334630350194
+    },
+    "180": {
+     "events_total": 514,
+     "events_with_candidates": 450,
+     "events_without_candidates": 64,
+     "no_candidate_rate": 0.1245136186770428
+    },
+    "360": {
+     "events_total": 514,
+     "events_with_candidates": 451,
+     "events_without_candidates": 63,
+     "no_candidate_rate": 0.122568093385214
+    }
+   },
+   "fold3": {
+    "5": {
+     "events_total": 514,
+     "events_with_candidates": 319,
+     "events_without_candidates": 195,
+     "no_candidate_rate": 0.37937743190661477
+    },
+    "15": {
+     "events_total": 514,
+     "events_with_candidates": 394,
+     "events_without_candidates": 120,
+     "no_candidate_rate": 0.23346303501945526
+    },
+    "30": {
+     "events_total": 514,
+     "events_with_candidates": 429,
+     "events_without_candidates": 85,
+     "no_candidate_rate": 0.16536964980544747
+    },
+    "60": {
+     "events_total": 514,
+     "events_with_candidates": 442,
+     "events_without_candidates": 72,
+     "no_candidate_rate": 0.14007782101167315
+    },
+    "180": {
+     "events_total": 514,
+     "events_with_candidates": 450,
+     "events_without_candidates": 64,
+     "no_candidate_rate": 0.1245136186770428
+    },
+    "360": {
+     "events_total": 514,
+     "events_with_candidates": 453,
+     "events_without_candidates": 61,
+     "no_candidate_rate": 0.11867704280155641
+    }
+   },
+   "fold4": {
+    "5": {
+     "events_total": 514,
+     "events_with_candidates": 335,
+     "events_without_candidates": 179,
+     "no_candidate_rate": 0.34824902723735407
+    },
+    "15": {
+     "events_total": 514,
+     "events_with_candidates": 402,
+     "events_without_candidates": 112,
+     "no_candidate_rate": 0.2178988326848249
+    },
+    "30": {
+     "events_total": 514,
+     "events_with_candidates": 419,
+     "events_without_candidates": 95,
+     "no_candidate_rate": 0.18482490272373542
+    },
+    "60": {
+     "events_total": 514,
+     "events_with_candidates": 431,
+     "events_without_candidates": 83,
+     "no_candidate_rate": 0.1614785992217899
+    },
+    "180": {
+     "events_total": 514,
+     "events_with_candidates": 447,
+     "events_without_candidates": 67,
+     "no_candidate_rate": 0.1303501945525292
+    },
+    "360": {
+     "events_total": 514,
+     "events_with_candidates": 449,
+     "events_without_candidates": 65,
+     "no_candidate_rate": 0.1264591439688716
+    }
+   }
+  },
+  "pooled_over_folds": {
+   "5": {
+    "events_total": 2570,
+    "events_with_candidates": 1657,
+    "events_without_candidates": 913,
+    "no_candidate_rate": 0.35525291828793776
+   },
+   "15": {
+    "events_total": 2570,
+    "events_with_candidates": 2008,
+    "events_without_candidates": 562,
+    "no_candidate_rate": 0.21867704280155642
+   },
+   "30": {
+    "events_total": 2570,
+    "events_with_candidates": 2128,
+    "events_without_candidates": 442,
+    "no_candidate_rate": 0.17198443579766537
+   },
+   "60": {
+    "events_total": 2570,
+    "events_with_candidates": 2201,
+    "events_without_candidates": 369,
+    "no_candidate_rate": 0.14357976653696497
+   },
+   "180": {
+    "events_total": 2570,
+    "events_with_candidates": 2258,
+    "events_without_candidates": 312,
+    "no_candidate_rate": 0.12140077821011673
+   },
+   "360": {
+    "events_total": 2570,
+    "events_with_candidates": 2273,
+    "events_without_candidates": 297,
+    "no_candidate_rate": 0.11556420233463036
+   }
+  }
+ },
+ "maweibo": {
+  "scope": "validation events only",
+  "per_fold": {
+   "fold0": {
+    "5": {
+     "events_total": 374,
+     "events_with_candidates": 332,
+     "events_without_candidates": 42,
+     "no_candidate_rate": 0.11229946524064172
+    },
+    "15": {
+     "events_total": 374,
+     "events_with_candidates": 344,
+     "events_without_candidates": 30,
+     "no_candidate_rate": 0.08021390374331551
+    },
+    "30": {
+     "events_total": 374,
+     "events_with_candidates": 353,
+     "events_without_candidates": 21,
+     "no_candidate_rate": 0.05614973262032086
+    },
+    "60": {
+     "events_total": 374,
+     "events_with_candidates": 360,
+     "events_without_candidates": 14,
+     "no_candidate_rate": 0.0374331550802139
+    },
+    "180": {
+     "events_total": 374,
+     "events_with_candidates": 366,
+     "events_without_candidates": 8,
+     "no_candidate_rate": 0.0213903743315508
+    },
+    "360": {
+     "events_total": 374,
+     "events_with_candidates": 368,
+     "events_without_candidates": 6,
+     "no_candidate_rate": 0.016042780748663103
+    }
+   },
+   "fold1": {
+    "5": {
+     "events_total": 374,
+     "events_with_candidates": 322,
+     "events_without_candidates": 52,
+     "no_candidate_rate": 0.13903743315508021
+    },
+    "15": {
+     "events_total": 374,
+     "events_with_candidates": 346,
+     "events_without_candidates": 28,
+     "no_candidate_rate": 0.0748663101604278
+    },
+    "30": {
+     "events_total": 374,
+     "events_with_candidates": 353,
+     "events_without_candidates": 21,
+     "no_candidate_rate": 0.05614973262032086
+    },
+    "60": {
+     "events_total": 374,
+     "events_with_candidates": 362,
+     "events_without_candidates": 12,
+     "no_candidate_rate": 0.03208556149732621
+    },
+    "180": {
+     "events_total": 374,
+     "events_with_candidates": 369,
+     "events_without_candidates": 5,
+     "no_candidate_rate": 0.013368983957219251
+    },
+    "360": {
+     "events_total": 374,
+     "events_with_candidates": 370,
+     "events_without_candidates": 4,
+     "no_candidate_rate": 0.0106951871657754
+    }
+   },
+   "fold2": {
+    "5": {
+     "events_total": 374,
+     "events_with_candidates": 325,
+     "events_without_candidates": 49,
+     "no_candidate_rate": 0.13101604278074866
+    },
+    "15": {
+     "events_total": 374,
+     "events_with_candidates": 345,
+     "events_without_candidates": 29,
+     "no_candidate_rate": 0.07754010695187166
+    },
+    "30": {
+     "events_total": 374,
+     "events_with_candidates": 356,
+     "events_without_candidates": 18,
+     "no_candidate_rate": 0.0481283422459893
+    },
+    "60": {
+     "events_total": 374,
+     "events_with_candidates": 364,
+     "events_without_candidates": 10,
+     "no_candidate_rate": 0.026737967914438502
+    },
+    "180": {
+     "events_total": 374,
+     "events_with_candidates": 368,
+     "events_without_candidates": 6,
+     "no_candidate_rate": 0.016042780748663103
+    },
+    "360": {
+     "events_total": 374,
+     "events_with_candidates": 370,
+     "events_without_candidates": 4,
+     "no_candidate_rate": 0.0106951871657754
+    }
+   },
+   "fold3": {
+    "5": {
+     "events_total": 374,
+     "events_with_candidates": 319,
+     "events_without_candidates": 55,
+     "no_candidate_rate": 0.14705882352941177
+    },
+    "15": {
+     "events_total": 374,
+     "events_with_candidates": 341,
+     "events_without_candidates": 33,
+     "no_candidate_rate": 0.08823529411764706
+    },
+    "30": {
+     "events_total": 374,
+     "events_with_candidates": 351,
+     "events_without_candidates": 23,
+     "no_candidate_rate": 0.06149732620320856
+    },
+    "60": {
+     "events_total": 374,
+     "events_with_candidates": 362,
+     "events_without_candidates": 12,
+     "no_candidate_rate": 0.03208556149732621
+    },
+    "180": {
+     "events_total": 374,
+     "events_with_candidates": 370,
+     "events_without_candidates": 4,
+     "no_candidate_rate": 0.0106951871657754
+    },
+    "360": {
+     "events_total": 374,
+     "events_with_candidates": 372,
+     "events_without_candidates": 2,
+     "no_candidate_rate": 0.0053475935828877
+    }
+   },
+   "fold4": {
+    "5": {
+     "events_total": 374,
+     "events_with_candidates": 335,
+     "events_without_candidates": 39,
+     "no_candidate_rate": 0.10427807486631016
+    },
+    "15": {
+     "events_total": 374,
+     "events_with_candidates": 353,
+     "events_without_candidates": 21,
+     "no_candidate_rate": 0.05614973262032086
+    },
+    "30": {
+     "events_total": 374,
+     "events_with_candidates": 363,
+     "events_without_candidates": 11,
+     "no_candidate_rate": 0.029411764705882353
+    },
+    "60": {
+     "events_total": 374,
+     "events_with_candidates": 367,
+     "events_without_candidates": 7,
+     "no_candidate_rate": 0.01871657754010695
+    },
+    "180": {
+     "events_total": 374,
+     "events_with_candidates": 371,
+     "events_without_candidates": 3,
+     "no_candidate_rate": 0.008021390374331552
+    },
+    "360": {
+     "events_total": 374,
+     "events_with_candidates": 374,
+     "events_without_candidates": 0,
+     "no_candidate_rate": 0.0
+    }
+   }
+  },
+  "pooled_over_folds": {
+   "5": {
+    "events_total": 1870,
+    "events_with_candidates": 1633,
+    "events_without_candidates": 237,
+    "no_candidate_rate": 0.1267379679144385
+   },
+   "15": {
+    "events_total": 1870,
+    "events_with_candidates": 1729,
+    "events_without_candidates": 141,
+    "no_candidate_rate": 0.07540106951871657
+   },
+   "30": {
+    "events_total": 1870,
+    "events_with_candidates": 1776,
+    "events_without_candidates": 94,
+    "no_candidate_rate": 0.05026737967914439
+   },
+   "60": {
+    "events_total": 1870,
+    "events_with_candidates": 1815,
+    "events_without_candidates": 55,
+    "no_candidate_rate": 0.029411764705882353
+   },
+   "180": {
+    "events_total": 1870,
+    "events_with_candidates": 1844,
+    "events_without_candidates": 26,
+    "no_candidate_rate": 0.013903743315508022
+   },
+   "360": {
+    "events_total": 1870,
+    "events_with_candidates": 1854,
+    "events_without_candidates": 16,
+    "no_candidate_rate": 0.008556149732620321
+   }
+  }
+ }
+}

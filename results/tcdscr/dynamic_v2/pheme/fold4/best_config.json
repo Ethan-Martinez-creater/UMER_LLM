@@ -1,0 +1,11 @@
+{
+ "dataset": "pheme",
+ "fold": 4,
+ "budget": 1024,
+ "epsilon": 0.01,
+ "validation_static_macro_f1": 0.8694043675947111,
+ "validation_mf_tsr_macro_f1": 0.8703889038813747,
+ "static_flip_rate": 0.012451361867704281,
+ "mf_tsr_flip_rate": 0.010505836575875487,
+ "selection_scope": "validation-only (fold-local, \u00a726)"
+}

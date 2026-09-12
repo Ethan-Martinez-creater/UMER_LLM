@@ -253,6 +253,27 @@ def evaluate_arms_on_items(encoder, selector, proxy, items, budget_selector,
         src = item["source_pos"]
         cand = [i for i in range(n) if i != src]
         if not cand:
+            # Protocol correction (Dynamic V2 §2): a snapshot without any
+            # reply candidate still produces a prediction for every arm
+            # through the empty-selection contract (z_sel = zero vector);
+            # the event/cutoff is never skipped out of the metrics.
+            results[cutoff]["e1_full"].append(
+                (item["label"], int(logits_full.argmax(dim=-1))))
+            z_sel = torch.zeros(768, device=device)
+            logits = proxy.classify(node_repr[src], z_sel)
+            p = F.softmax(logits, dim=-1)
+            pred = int(logits.argmax(dim=-1))
+            for arm in ARM_NAMES:
+                results[cutoff][arm].append((item["label"], pred))
+                rows.append({
+                    "event_id": item["event_id"], "cutoff": cutoff,
+                    "gold": item["label"], "method": arm, "pred": pred,
+                    "p_rumor": float(p[1]),
+                    "selected_node_ids": [],
+                    "selected_count": 0,
+                    "evidence_tokens": 0,
+                    "source_id": item["source_id"],
+                })
             return
         cand_idx = torch.tensor(cand, dtype=torch.long, device=device)
         h_cand = node_repr[cand_idx]
@@ -502,6 +523,11 @@ def run_one(args, dataset, fold, seed):
                 src = item["source_pos"]
                 cand = [i for i in range(n) if i != src]
                 if not cand:
+                    # Training-only skip: the selector/proxy soft loss is
+                    # undefined without candidates (softmax over an empty
+                    # score vector). The prediction/metrics path above is
+                    # protocol-corrected; training never drops a snapshot
+                    # that has candidates.
                     continue
                 cand_idx = torch.tensor(cand, dtype=torch.long,
                                         device=device)

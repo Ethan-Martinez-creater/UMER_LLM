@@ -1,0 +1,33 @@
+{
+ "fold": 1,
+ "dataset": "maweibo",
+ "epsilon": 0.05,
+ "per_seed": {
+  "2000": {
+   "static_mean_primary": 0.93446426503395,
+   "mf_tsr_mean_primary": 0.9309057166134712,
+   "flip_rate": {
+    "static": 0.026203208556149733,
+    "mf_tsr": 0.027807486631016044
+   }
+  },
+  "2001": {
+   "static_mean_primary": 0.9228904562577225,
+   "mf_tsr_mean_primary": 0.9228995450170322,
+   "flip_rate": {
+    "static": 0.028342245989304814,
+    "mf_tsr": 0.03208556149732621
+   }
+  },
+  "2002": {
+   "static_mean_primary": 0.9205852047875954,
+   "mf_tsr_mean_primary": 0.9224513979834952,
+   "flip_rate": {
+    "static": 0.033155080213903745,
+    "mf_tsr": 0.027807486631016044
+   }
+  }
+ },
+ "static_mean_primary_macro_f1": 0.925979975359756,
+ "mf_tsr_mean_primary_macro_f1": 0.9254188865379995
+}

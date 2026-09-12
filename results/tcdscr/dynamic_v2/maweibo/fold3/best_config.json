@@ -1,0 +1,11 @@
+{
+ "dataset": "maweibo",
+ "fold": 3,
+ "budget": 1024,
+ "epsilon": 0.01,
+ "validation_static_macro_f1": 0.9436867489634543,
+ "validation_mf_tsr_macro_f1": 0.942608324510382,
+ "static_flip_rate": 0.021033868092691622,
+ "mf_tsr_flip_rate": 0.02602495543672014,
+ "selection_scope": "validation-only (fold-local, \u00a726)"
+}

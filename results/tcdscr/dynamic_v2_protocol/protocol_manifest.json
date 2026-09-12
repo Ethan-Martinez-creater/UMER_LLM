@@ -1,0 +1,14 @@
+{
+ "stage": "dynamic_v2_protocol_correction",
+ "scope": "validation events only",
+ "stages_run": [
+  "audit",
+  "e2",
+  "e3v1"
+ ],
+ "budget": 1024,
+ "no_retraining": true,
+ "test_split_read": false,
+ "encoder_selector_proxy": "frozen corrected E2 checkpoints only",
+ "notes": "executed in two launches (audit, then e2+e3v1); e2 re-run twice for driver fixes, per-run artifacts resumed by skip"
+}
