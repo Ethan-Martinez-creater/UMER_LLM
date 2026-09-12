@@ -1,0 +1,50 @@
+{
+ "qwen": {
+  "key": "qwen",
+  "model_id": "Qwen/Qwen3-8B",
+  "model_path": "",
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "thinking": false,
+  "weight_hash": "",
+  "tokenizer_hash": "",
+  "chat_template_hash": "",
+  "transformers_version": "",
+  "device_config": "cuda",
+  "model_path_exists": false,
+  "expected_model_id": "Qwen/Qwen3-8B",
+  "loaded": false
+ },
+ "glm": {
+  "key": "glm",
+  "model_id": "zai-org/glm-4-9b-chat-hf",
+  "model_path": "",
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "thinking": false,
+  "weight_hash": "",
+  "tokenizer_hash": "",
+  "chat_template_hash": "",
+  "transformers_version": "",
+  "device_config": "cuda",
+  "model_path_exists": false,
+  "expected_model_id": "zai-org/glm-4-9b-chat-hf",
+  "loaded": false
+ },
+ "internlm": {
+  "key": "internlm",
+  "model_id": "internlm/internlm3-8b-instruct",
+  "model_path": "",
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "thinking": false,
+  "weight_hash": "",
+  "tokenizer_hash": "",
+  "chat_template_hash": "",
+  "transformers_version": "",
+  "device_config": "cuda",
+  "model_path_exists": false,
+  "expected_model_id": "internlm/internlm3-8b-instruct",
+  "loaded": false
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "mode": "pilot",
+ "issues": 0,
+ "pending": 1,
+ "checks": [
+  {
+   "check": "pilot_artifacts",
+   "status": "pending",
+   "detail": "pilot not executed yet: E:\\Graduate_work_folder\\Graduate_Project_Worksapace\\UMER\\results\\cr_tser\\manifests\\event_split.json missing"
+  }
+ ]
+}

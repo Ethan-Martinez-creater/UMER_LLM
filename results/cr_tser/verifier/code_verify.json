@@ -1,0 +1,72 @@
+{
+ "mode": "code",
+ "issues": 0,
+ "pending": 0,
+ "checks": [
+  {
+   "check": "package_layout",
+   "status": "pass",
+   "detail": "all \u00a728 files present"
+  },
+  {
+   "check": "frozen_constants",
+   "status": "pass",
+   "detail": "all frozen constants match the plan"
+  },
+  {
+   "check": "split_sizes",
+   "status": "pass",
+   "detail": "SPLIT_SIZES={'foundation_train': 80, 'utility_train': 50, 'utility_dev': 15, 'utility_eval': 25}"
+  },
+  {
+   "check": "cutoffs_exact",
+   "status": "pass",
+   "detail": "cutoffs=(15, 60, 360)"
+  },
+  {
+   "check": "reader_models_exact",
+   "status": "pass",
+   "detail": "readers={'qwen': 'Qwen/Qwen3-8B', 'glm': 'zai-org/glm-4-9b-chat-hf', 'internlm': 'internlm/internlm3-8b-instruct'}"
+  },
+  {
+   "check": "loro_rotations",
+   "status": "pass",
+   "detail": "rotations=(('qwen', 'glm', 'internlm'), ('qwen', 'internlm', 'glm'), ('glm', 'internlm', 'qwen'))"
+  },
+  {
+   "check": "utility_z_dim",
+   "status": "pass",
+   "detail": "z_dim=1286"
+  },
+  {
+   "check": "loss_weights",
+   "status": "pass",
+   "detail": "loss weights 1.0/0.5/0.5/0.01"
+  },
+  {
+   "check": "required_tests",
+   "status": "pass",
+   "detail": "all 23 \u00a735 tests present"
+  },
+  {
+   "check": "bitte_no_1021_signature",
+   "status": "pass",
+   "detail": "BiTTE must not use the retired 1021D adjacency signature"
+  },
+  {
+   "check": "src_reader_gold_proxy_independent",
+   "status": "pass",
+   "detail": "SRC uses only MiniLM + Qwen tokenizer"
+  },
+  {
+   "check": "weibo22_fail_closed",
+   "status": "pass",
+   "detail": "Weibo22 refuses pseudo-time and raises when timestamps are absent"
+  },
+  {
+   "check": "no_timestamp_synthesis",
+   "status": "pass",
+   "detail": "adapter documents that original_order is never time"
+  }
+ ]
+}

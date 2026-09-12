@@ -1,0 +1,35 @@
+{
+ "dataset": "Weibo22",
+ "base_dir": "E:/Graduate_work_folder/Graduate_Project_Worksapace/UMER/data_raw/weibo22/extracted",
+ "event_count": 4174,
+ "label_distribution": {
+  "0": 2087,
+  "1": 2087
+ },
+ "topic_distribution": {
+  "covid-19": 2171,
+  "other": 2003
+ },
+ "source_text_coverage": 0.0,
+ "reply_text_coverage": 0.0,
+ "timestamp_coverage": 0.0,
+ "parent_coverage": 0.9956609512641872,
+ "duplicate_ids": 0,
+ "negative_timestamps": 0,
+ "child_earlier_than_parent_count": 0,
+ "unresolvable_parent_rate": 0.0,
+ "events_with_ge1_valid_reply": 3173,
+ "events_viable_15m": 0,
+ "events_viable_1h": 0,
+ "events_viable_6h": 0,
+ "release_defects": {
+  "raw_text_available": false,
+  "absolute_node_timestamp": false,
+  "source_absolute_timestamp": false,
+  "vocabulary_index_text_only": true,
+  "trees_without_label": 0,
+  "has_node_index": true
+ },
+ "verdict": "WEIBO22_TEMPORAL_UNAVAILABLE",
+ "verdict_reason": "the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built"
+}

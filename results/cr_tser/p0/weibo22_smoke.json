@@ -1,0 +1,5 @@
+{
+ "status": "UNAVAILABLE",
+ "reason": "Weibo22 temporal fields unavailable (WEIBO22_TEMPORAL_UNAVAILABLE): the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built",
+ "audit_verdict": "WEIBO22_TEMPORAL_UNAVAILABLE"
+}
