@@ -262,6 +262,61 @@ def _check_no_heuristic(issues):
         issues.append("diagnosis script writes python source")
 
 
+def _check_structural_consistency(diag_root, issues):
+    """§7/§16 structural checks.
+
+    ``snapshot["edge_index"]`` stores node *positions*, so the aggregation must
+    map positions to ids; leaf must be ``child_count == 0`` and never the
+    undirected degree.  On every checked snapshot the edge count must equal the
+    summed child count and equal half the summed undirected degree.
+    """
+    path = os.path.join(diag_root, "node_level_features.jsonl")
+    if not os.path.exists(path):
+        issues.append("missing node_level_features.jsonl")
+        return
+    rows = load_jsonl(path)
+    step = max(1, len(rows) // 40)
+    for row in rows[::step][:40]:
+        c = row.get("consistency")
+        if not c:
+            issues.append(f"{row['sample_id']}: missing structural "
+                          "consistency record")
+            continue
+        if c["sum_child_count"] != c["n_edges"]:
+            issues.append(f"{row['sample_id']}: sum(child_count)="
+                          f"{c['sum_child_count']} != edges={c['n_edges']}")
+        if c["sum_degree"] != 2 * c["n_edges"]:
+            issues.append(f"{row['sample_id']}: sum(degree)="
+                          f"{c['sum_degree']} != 2*edges={2 * c['n_edges']}")
+        for nid, feats in row.get("nodes", {}).items():
+            if feats.get("is_leaf") != (feats.get("child_count", 0) == 0):
+                issues.append(f"{row['sample_id']}/{nid}: leaf flag does not "
+                              "follow child_count")
+                break
+        # a reply node may legitimately be a leaf, but the aggregation must not
+        # have collapsed: at least one node in the snapshot carries an edge
+        if c["n_edges"] > 0 and c["sum_degree"] == 0:
+            issues.append(f"{row['sample_id']}: degree collapsed to zero on a "
+                          "snapshot with edges")
+    struct_path = os.path.join(diag_root, "structural_role_analysis.json")
+    if not os.path.exists(struct_path):
+        issues.append("missing structural_role_analysis.json")
+        return
+    struct = load_json(struct_path)
+    for ds, groups in struct.items():
+        means = [s.get("mean_degree") for s in groups.values()
+                 if s and s.get("n")]
+        if means and all(m in (None, 0) for m in means):
+            issues.append(f"{ds}: mean_degree collapsed across every "
+                          "structural group (position/id key bug)")
+        for gname, s in groups.items():
+            if not s or not s.get("n"):
+                continue
+            leaf_rate = s.get("is_leaf_rate", s.get("leaf_rate"))
+            if leaf_rate is not None and not 0.0 <= leaf_rate <= 1.0:
+                issues.append(f"{ds}/{gname}: leaf rate out of range")
+
+
 def _refresh_report(diag_root, result):
     path = os.path.join(diag_root, "V3B_FAILURE_DIAGNOSIS_REPORT.md")
     if not os.path.exists(path):
@@ -287,6 +342,7 @@ def verify(reader_root, diag_root):
     _check_metrics(reader_root, diag_root, issues)
     _check_citations(reader_root, issues)
     _check_node_features(reader_root, diag_root, issues)
+    _check_structural_consistency(diag_root, issues)
     _check_validation_only(reader_root, diag_root, issues)
     _check_cross_fold_metadata_only(diag_root, issues)
     _check_no_heuristic(issues)
@@ -307,6 +363,12 @@ def verify(reader_root, diag_root):
             "Static/MS Macro-F1 reproduce the original detection",
             "citations mapped only from frozen parsed outputs",
             "node features inside the causal snapshot (no future nodes)",
+            "edge positions converted to node IDs before structural "
+            "aggregation",
+            "leaf defined by child_count == 0 (not undirected degree)",
+            "sum(child_count) == edge count on checked snapshots",
+            "sum(degree) == 2 * edge count on checked snapshots",
+            "frozen V3-B artifact hashes unchanged",
             "diagnosis samples are fold-local validation events",
             "cross-fold audit is fold metadata only",
             "diagnosis writes no selector/heuristic code",

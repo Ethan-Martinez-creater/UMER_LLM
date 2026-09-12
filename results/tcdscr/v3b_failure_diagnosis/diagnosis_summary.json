@@ -214,7 +214,17 @@
    "pheme": "ab1a3e4b67f1a22d40b250b96911c0ec18846098b382399ecca484750985ba17",
    "maweibo": "9578e8fe48a86c86c1a730725e89e8a1d434a5eba02ff9faf153367ee7dc0c7c"
   },
-  "created_utc": "2026-09-12T06:32:48Z",
+  "created_utc": "2026-09-12T07:25:00Z",
   "no_new_qwen_generation": true
+ },
+ "finalization": {
+  "structural_bug_fixed": true,
+  "frozen_artifacts_unchanged": true,
+  "frozen_artifacts_previously_present": true,
+  "original_metrics_reproduced": true,
+  "root_causes_changed": false,
+  "recommendation_changed": false,
+  "requires_research_review": false,
+  "final_recommendation": "MS_TSR_COMPRESSION_ONLY"
  }
 }

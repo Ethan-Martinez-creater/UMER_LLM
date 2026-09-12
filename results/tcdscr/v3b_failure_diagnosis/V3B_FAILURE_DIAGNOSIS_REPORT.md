@@ -577,12 +577,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.4636730964981266,
     "mean_relevance": 0.4652135896146058,
     "mean_depth": 1.4493284493284493,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1953601953601953,
+    "mean_child_count": 0.21855921855921856,
     "mean_elapsed_seconds": 1473.3675213675215,
     "mean_reply_tokens": 25.36141636141636,
     "mean_parent_tokens": 30.463980463980462,
     "mean_pair_tokens": 76.86568986568986,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8107448107448108,
     "is_source_child_rate": 0.7619047619047619,
     "is_memory_previous_rate": 0.031746031746031744,
     "depth_group_rates": {
@@ -601,12 +602,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.7710933078759612,
     "mean_relevance": 0.409337857403798,
     "mean_depth": 1.2320441988950277,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1104972375690607,
+    "mean_child_count": 0.16574585635359115,
     "mean_elapsed_seconds": 1145.0883977900553,
     "mean_reply_tokens": 21.558011049723756,
     "mean_parent_tokens": 28.281767955801104,
     "mean_pair_tokens": 70.89502762430939,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8453038674033149,
     "is_source_child_rate": 0.6850828729281768,
     "is_memory_previous_rate": 0.5580110497237569,
     "depth_group_rates": {
@@ -627,12 +629,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 0.3122578250778305,
     "mean_relevance": 0.4697043508080604,
     "mean_depth": 1.5314685314685315,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2167832167832169,
+    "mean_child_count": 0.2517482517482518,
     "mean_elapsed_seconds": 1415.6363636363637,
     "mean_reply_tokens": 27.706293706293707,
     "mean_parent_tokens": 33.37762237762238,
     "mean_pair_tokens": 82.32167832167832,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.7762237762237763,
     "is_source_child_rate": 0.7482517482517482,
     "is_memory_previous_rate": 0.02097902097902098,
     "depth_group_rates": {
@@ -651,12 +654,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 2.71226760049661,
     "mean_relevance": 0.3925844188502049,
     "mean_depth": 0.6666666666666666,
-    "mean_degree": 0.0,
+    "mean_degree": 0.8666666666666667,
+    "mean_child_count": 0.06666666666666667,
     "mean_elapsed_seconds": 903.5333333333333,
     "mean_reply_tokens": 14.933333333333334,
     "mean_parent_tokens": 23.8,
     "mean_pair_tokens": 60.46666666666667,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.9333333333333333,
     "is_source_child_rate": 0.6,
     "is_memory_previous_rate": 0.7333333333333333,
     "depth_group_rates": {
@@ -677,12 +681,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 4.86858468834431,
     "mean_relevance": 0.4618390899398304,
     "mean_depth": 1.5161290322580645,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1806451612903226,
+    "mean_child_count": 0.18064516129032257,
     "mean_elapsed_seconds": 1147.3612903225805,
     "mean_reply_tokens": 27.27741935483871,
     "mean_parent_tokens": 30.26451612903226,
     "mean_pair_tokens": 78.3741935483871,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8258064516129032,
     "is_source_child_rate": 0.7870967741935484,
     "is_memory_previous_rate": 0.04516129032258064,
     "depth_group_rates": {
@@ -701,12 +706,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 4.053725641544746,
     "mean_relevance": 0.4333516156811048,
     "mean_depth": 1.3043478260869565,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1304347826086956,
+    "mean_child_count": 0.17391304347826086,
     "mean_elapsed_seconds": 1311.4347826086957,
     "mean_reply_tokens": 19.565217391304348,
     "mean_parent_tokens": 30.130434782608695,
     "mean_pair_tokens": 70.73913043478261,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8695652173913043,
     "is_source_child_rate": 0.8260869565217391,
     "is_memory_previous_rate": 0.5217391304347826,
     "depth_group_rates": {
@@ -727,12 +733,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": -0.43635027436406865,
     "mean_relevance": 0.4343022478327168,
     "mean_depth": 1.5042735042735043,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2478632478632479,
+    "mean_child_count": 0.24786324786324787,
     "mean_elapsed_seconds": 1864.2535612535612,
     "mean_reply_tokens": 25.655270655270655,
     "mean_parent_tokens": 33.21367521367522,
     "mean_pair_tokens": 79.92307692307692,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8034188034188035,
     "is_source_child_rate": 0.7834757834757835,
     "is_memory_previous_rate": 0.05128205128205128,
     "depth_group_rates": {
@@ -742,24 +749,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     },
     "temporal_group_rates": {
      "oldest_quartile": 0.2962962962962963,
-     "middle_50": 0.5242165242165242,
-     "newest_quartile": 0.1794871794871795
-    }
-   },
-   "retained": {
-    "n": 128,
-    "mean_utility": 1.1043347072263714,
-    "mean_relevance": 0.39700909548334984,
-    "mean_depth": 1.4296875,
-    "mean_degree": 0.0,
-    "mean_elapsed_seconds": 1356.8046875,
-    "mean_reply_tokens": 24.0234375,
-    "mean_parent_tokens": 31.3359375,
-    "mean_pair_tokens": 76.375,
-    "is_leaf_rate": 1.0,
-    "is_source_child_rate": 0.734375,
-    "is_memory_previous_rate": 0.6953125,
-    "depth_group_rates
+     "middle
 ```
 
 ## 5. What Evidence Did Qwen Actually Cite?
@@ -777,12 +767,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.1363396043049114,
     "mean_relevance": 0.4806815788519994,
     "mean_depth": 1.3028350515463918,
-    "mean_degree": 0.0,
+    "mean_degree": 1.175257731958763,
+    "mean_child_count": 0.18556701030927836,
     "mean_elapsed_seconds": 1288.2242268041236,
     "mean_reply_tokens": 24.46778350515464,
     "mean_parent_tokens": 30.905927835051546,
     "mean_pair_tokens": 76.33376288659794,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8414948453608248,
     "is_source_child_rate": 0.8195876288659794,
     "is_memory_previous_rate": 0.13659793814432988,
     "depth_group_rates": {
@@ -801,12 +792,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 2.84605634739689,
     "mean_relevance": 0.3664784682825849,
     "mean_depth": 1.78125,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1964285714285714,
+    "mean_child_count": 0.29017857142857145,
     "mean_elapsed_seconds": 1849.4955357142858,
     "mean_reply_tokens": 25.383928571428573,
     "mean_parent_tokens": 27.169642857142858,
     "mean_pair_tokens": 73.88392857142857,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.7321428571428571,
     "is_source_child_rate": 0.5,
     "is_memory_previous_rate": 0.09375,
     "depth_group_rates": {
@@ -831,12 +823,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": -0.2838313697892077,
     "mean_relevance": 0.4854315888866016,
     "mean_depth": 1.5630252100840336,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2521008403361344,
+    "mean_child_count": 0.2605042016806723,
     "mean_elapsed_seconds": 1590.1596638655462,
     "mean_reply_tokens": 27.201680672268907,
     "mean_parent_tokens": 35.30252100840336,
     "mean_pair_tokens": 83.66386554621849,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.773109243697479,
     "is_source_child_rate": 0.8067226890756303,
     "is_memory_previous_rate": 0.07563025210084033,
     "depth_group_rates": {
@@ -855,12 +848,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 3.0541747691921697,
     "mean_relevance": 0.3920545992512848,
     "mean_depth": 1.1025641025641026,
-    "mean_degree": 0.0,
+    "mean_degree": 0.9743589743589743,
+    "mean_child_count": 0.15384615384615385,
     "mean_elapsed_seconds": 686.1538461538462,
     "mean_reply_tokens": 24.333333333333332,
     "mean_parent_tokens": 23.82051282051282,
     "mean_pair_tokens": 69.82051282051282,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8461538461538461,
     "is_source_child_rate": 0.5128205128205128,
     "is_memory_previous_rate": 0.1282051282051282,
     "depth_group_rates": {
@@ -885,12 +879,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 4.025768965165051,
     "mean_relevance": 0.45252129252047174,
     "mean_depth": 1.317829457364341,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1627906976744187,
+    "mean_child_count": 0.16279069767441862,
     "mean_elapsed_seconds": 964.1162790697674,
     "mean_reply_tokens": 27.170542635658915,
     "mean_parent_tokens": 31.26356589147287,
     "mean_pair_tokens": 79.27906976744185,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8527131782945736,
     "is_source_child_rate": 0.8682170542635659,
     "is_memory_previous_rate": 0.10852713178294573,
     "depth_group_rates": {
@@ -909,12 +904,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 6.704941223318479,
     "mean_relevance": 0.47299794624894415,
     "mean_depth": 1.9387755102040816,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2040816326530612,
+    "mean_child_count": 0.22448979591836735,
     "mean_elapsed_seconds": 1706.795918367347,
     "mean_reply_tokens": 23.93877551020408,
     "mean_parent_tokens": 27.571428571428573,
     "mean_pair_tokens": 72.40816326530613,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.7755102040816326,
     "is_source_child_rate": 0.5918367346938775,
     "is_memory_previous_rate": 0.10204081632653061,
     "depth_group_rates": {
@@ -939,23 +935,10 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 0.41780333823579197,
     "mean_relevance": 0.457730549198382,
     "mean_depth": 1.3101604278074865,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1871657754010696,
+    "mean_child_count": 0.19518716577540107,
     "mean_elapsed_seconds": 1838.6122994652405,
-    "mean_reply_tokens": 25.02139037433155,
-    "mean_parent_tokens": 33.32887700534759,
-    "mean_pair_tokens": 79.41711229946524,
-    "is_leaf_rate": 1.0,
-    "is_source_child_rate": 0.839572192513369,
-    "is_memory_previous_rate": 0.24598930481283424,
-    "depth_group_rates": {
-     "depth1": 0.8475935828877005,
-     "depth2": 0.06684491978609626,
-     "depth>=3": 0.0855614973262032
-    },
-    "temporal_group_rates": {
-     "oldest_quartile": 0.3877005347593583,
-     "middle_50": 0.45187165775401067,
-     "newest_quartile": 0.1604278
+    "mean_reply_tokens": 25.02139037
 ```
 
 ## 6. Reader-Sensitive Evidence Loss
@@ -1721,12 +1704,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.08984709938639,
     "mean_relevance": 0.4723474509313252,
     "mean_depth": 1.3283261802575108,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1838340486409156,
+    "mean_child_count": 0.19241773962804007,
     "mean_elapsed_seconds": 1431.261087267525,
     "mean_reply_tokens": 25.09799713876967,
     "mean_parent_tokens": 31.96137339055794,
     "mean_pair_tokens": 78.05436337625179,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8376251788268956,
     "is_source_child_rate": 0.8283261802575107,
     "is_memory_previous_rate": 0.15808297567954221,
     "depth_group_rates": {
@@ -1745,12 +1729,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.717125172949576,
     "mean_relevance": 0.4056575500154887,
     "mean_depth": 1.2853025936599423,
-    "mean_degree": 0.0,
+    "mean_degree": 1.1268011527377522,
+    "mean_child_count": 0.17579250720461095,
     "mean_elapsed_seconds": 1223.7694524495678,
     "mean_reply_tokens": 22.04899135446686,
     "mean_parent_tokens": 29.337175792507203,
     "mean_pair_tokens": 72.45533141210375,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8414985590778098,
     "is_source_child_rate": 0.7089337175792507,
     "is_memory_previous_rate": 0.6138328530259366,
     "depth_group_rates": {
@@ -1769,12 +1754,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 1.256725351096509,
     "mean_relevance": 0.45790381470699765,
     "mean_depth": 1.4775204359673024,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2084468664850136,
+    "mean_child_count": 0.22479564032697547,
     "mean_elapsed_seconds": 1526.783378746594,
     "mean_reply_tokens": 25.862397820163487,
     "mean_parent_tokens": 31.384196185286104,
     "mean_pair_tokens": 78.2874659400545,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.8072207084468664,
     "is_source_child_rate": 0.7683923705722071,
     "is_memory_previous_rate": 0.03678474114441417,
     "depth_group_rates": {
@@ -1795,12 +1781,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 4.682673687821105,
     "mean_relevance": 0.4066587065406212,
     "mean_depth": 1.1790069686411149,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2225609756097562,
+    "mean_child_count": 0.2225609756097561,
     "mean_elapsed_seconds": 1941.3837108013938,
     "mean_reply_tokens": 12.765243902439025,
     "mean_parent_tokens": 54.15766550522648,
     "mean_pair_tokens": 87.84756097560975,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.9229094076655052,
     "is_source_child_rate": 0.8793554006968641,
     "is_memory_previous_rate": 0.048344947735191636,
     "depth_group_rates": {
@@ -1819,12 +1806,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 0.48209840612253174,
     "mean_relevance": 0.36764087905046383,
     "mean_depth": 1.3125,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2265625,
+    "mean_child_count": 0.2265625,
     "mean_elapsed_seconds": 1830.6640625,
     "mean_reply_tokens": 10.53125,
     "mean_parent_tokens": 53.47265625,
     "mean_pair_tokens": 84.86328125,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.91796875,
     "is_source_child_rate": 0.69921875,
     "is_memory_previous_rate": 0.3671875,
     "depth_group_rates": {
@@ -1843,12 +1831,13 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "mean_utility": 3.967884660035416,
     "mean_relevance": 0.4025869904934531,
     "mean_depth": 1.212694877505568,
-    "mean_degree": 0.0,
+    "mean_degree": 1.2635486265775797,
+    "mean_child_count": 0.2635486265775798,
     "mean_elapsed_seconds": 2085.4736451373424,
     "mean_reply_tokens": 12.724944320712694,
     "mean_parent_tokens": 51.52746844840386,
     "mean_pair_tokens": 85.21417965850037,
-    "is_leaf_rate": 1.0,
+    "is_leaf_rate": 0.9175946547884187,
     "is_source_child_rate": 0.852264291017075,
     "is_memory_previous_rate": 0.016332590942835932,
     "depth_group_rates": {
@@ -1890,19 +1879,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
     "n": 143,
     "mean_reply_tokens": 27.706293706293707,
     "mean_parent_tokens": 33.37762237762238,
-    "mean_pair_tokens": 82.32167832167832,
-    "question_rate": 0.07692307692307693,
-    "exclamation_rate": 0.1048951048951049,
-    "url_rate": 0.18181818181818182,
-    "mean_mention_count": 1.6853146853146854
-   },
-   "wc_removed": {
-    "n": 155,
-    "mean_reply_tokens": 27.27741935483871,
-    "mean_parent_tokens": 30.26451612903226,
-    "mean_pair_tokens": 78.3741935483871,
-    "question_rate": 0.18064516129032257,
-    "exclamation_rate": 0.096774193548
+    "mean_pair_tokens": 82.3216783216783
 ```
 
 ## 15. PHEME vs Ma-Weibo
@@ -2021,7 +1998,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
 
 ## Root Causes
 
-### OVER_COMPRESSION: not flagged
+### OVER_COMPRESSION: not triggered under the predefined diagnostic rule
 
 ```json
 {
@@ -2037,7 +2014,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
 }
 ```
 
-### PROXY_READER_MARGIN_MISMATCH: FLAGGED
+### PROXY_READER_MARGIN_MISMATCH: TRIGGERED
 
 ```json
 {
@@ -2051,7 +2028,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
 }
 ```
 
-### READER_SENSITIVE_EVIDENCE_REMOVAL: not flagged
+### READER_SENSITIVE_EVIDENCE_REMOVAL: not triggered under the predefined diagnostic rule
 
 ```json
 {
@@ -2066,7 +2043,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
 }
 ```
 
-### STATIC_UTILITY_READER_MISALIGNMENT: not flagged
+### STATIC_UTILITY_READER_MISALIGNMENT: not triggered under the predefined diagnostic rule
 
 ```json
 {
@@ -2078,7 +2055,7 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
 }
 ```
 
-### DATASET_SPECIFIC_CONTEXT_NEED: FLAGGED
+### DATASET_SPECIFIC_CONTEXT_NEED: TRIGGERED
 
 ```json
 {
@@ -2098,6 +2075,19 @@ Post-hoc diagnosis over the frozen 600 paired samples / 1200 generations. No new
  "note": "same MS-TSR transfers on PHEME but not on Ma-Weibo"
 }
 ```
+
+Root-cause labels above are rule-based diagnostics with thresholds fixed before the analysis. A label that was not triggered means the descriptive statistics do not show that signal as sufficient to explain the transfer failure; it is not a proof that the mechanism is absent.
+
+## Finalization Audit
+
+- Structural bug fixed: YES
+  A structural-feature extraction bug in the previous diagnosis used edge position indices as degree-map keys while querying by node IDs, so degree collapsed to 0 and every node looked like a leaf. This affected only degree / leaf / child-count structural diagnostics. It did NOT affect: frozen Qwen generations, Static/MS detection metrics, compression metrics, citation mapping, reader-evidence-loss analysis, Proxy margin analysis, label asymmetry, cutoff analysis, cross-fold audit, or the final recommendation.
+- Frozen V3-B artifacts unchanged: YES (sampling manifest / prompts / parsed / raw hashes re-checked against the previous frozen_artifacts.json)
+- Original V3-B metrics reproduced: YES
+- Root causes changed: NO
+- Recommendation changed: NO
+- Final recommendation: MS_TSR_COMPRESSION_ONLY
+- Requires research review: NO (set only if the corrected structural statistics overturned a root cause or the recommendation)
 
 ## Candidate Risk Signals
 

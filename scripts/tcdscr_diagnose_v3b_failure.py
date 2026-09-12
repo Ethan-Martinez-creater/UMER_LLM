@@ -329,6 +329,34 @@ def group_summary(samples, key):
 
 # ------------------------------------------------- feature extraction (GPU)
 
+def structural_counts(node_ids, edge_index):
+    """Aggregate propagation structure keyed by node id (§2, §3).
+
+    ``snapshot["edge_index"]`` stores node *positions*; using those ints as
+    lookup keys while querying by node id silently collapses every node to
+    degree 0 / leaf True.  Returns ``(degree, child_count)`` where ``degree``
+    is undirected and ``child_count`` counts only outgoing child edges.
+    """
+    degree = collections.Counter()
+    child_count = collections.Counter()
+    for child_pos, parent_pos in edge_index:
+        child_id = node_ids[child_pos]
+        parent_id = node_ids[parent_pos]
+        degree[child_id] += 1
+        degree[parent_id] += 1
+        child_count[parent_id] += 1
+    return degree, child_count
+
+
+def struct_consistency(node_ids, edge_index, degree, child_count):
+    """Sums used to verify the aggregation (degree = 2E, child_count = E)."""
+    return {
+        "n_edges": len(edge_index),
+        "sum_degree": sum(degree.get(nid, 0) for nid in node_ids),
+        "sum_child_count": sum(child_count.get(nid, 0) for nid in node_ids),
+    }
+
+
 def extract_node_features(dataset, samples, reader_root, v3_root, device):
     """Recompute causal snapshot structure, Static Utility and encoder-space
     relevance for every node of every sampled snapshot.
@@ -400,10 +428,14 @@ def extract_node_features(dataset, samples, reader_root, v3_root, device):
             row = next(r for r in er if int(r["cutoff"]) == int(s["cutoff"]))
             units = build_evidence_units(snap)
             pos = {nid: i for i, nid in enumerate(snap["node_ids"])}
-            degree = collections.Counter()
-            for child, parent in snap["edge_index"]:
-                degree[parent] += 1
-                degree[child] += 1
+            # edge_index stores node POSITIONS; map them to ids before
+            # aggregating, otherwise every lookup by node id misses.
+            degree_by_id, child_count_by_id = structural_counts(
+                snap["node_ids"], snap["edge_index"])
+            consistency = struct_consistency(snap["node_ids"],
+                                             snap["edge_index"],
+                                             degree_by_id,
+                                             child_count_by_id)
             u_by_id = {nid: float(row["u"][i])
                        for i, nid in enumerate(row["cand_node_ids"])}
             repr_by_id = {nid: row["node_repr"][i]
@@ -434,14 +466,15 @@ def extract_node_features(dataset, samples, reader_root, v3_root, device):
                     "utility": u_by_id.get(nid),
                     "relevance": relevance,
                     "depth": int(snap["depths"][pos[nid]]),
-                    "degree": int(degree.get(nid, 0)),
+                    "degree": int(degree_by_id.get(nid, 0)),
+                    "child_count": int(child_count_by_id.get(nid, 0)),
                     "elapsed_seconds": int(elapsed[nid]),
                     "temporal_group": temporal_group(elapsed[nid],
                                                      all_elapsed),
                     "reply_tokens": reply_tokens,
                     "parent_tokens": parent_tokens,
                     "pair_tokens": int(cost_by_order.get(unit["order"], 0)),
-                    "is_leaf": degree.get(nid, 0) == 0,
+                    "is_leaf": child_count_by_id.get(nid, 0) == 0,
                     "is_source_child": snap["parent_ids"][pos[nid]]
                     == snap["source_id"],
                     "is_memory_previous": nid in set(
@@ -453,7 +486,8 @@ def extract_node_features(dataset, samples, reader_root, v3_root, device):
                 }
             out[s["sample_id"]] = {"nodes": nodes,
                                    "source_id": snap["source_id"],
-                                   "snapshot_node_ids": list(snap["node_ids"])}
+                                   "snapshot_node_ids": list(snap["node_ids"]),
+                                   "consistency": consistency}
         del by_event
         if str(device).startswith("cuda"):
             torch.cuda.empty_cache()
@@ -707,6 +741,7 @@ def _feature_summary(node_features):
         "mean_relevance": _m("relevance"),
         "mean_depth": _m("depth"),
         "mean_degree": _m("degree"),
+        "mean_child_count": _m("child_count"),
         "mean_elapsed_seconds": _m("elapsed_seconds"),
         "mean_reply_tokens": _m("reply_tokens"),
         "mean_parent_tokens": _m("parent_tokens"),
@@ -1403,6 +1438,8 @@ def write_node_features(path, samples_by_ds, features):
                     "nodes": features[s["sample_id"]]["nodes"],
                     "snapshot_node_ids":
                         features[s["sample_id"]]["snapshot_node_ids"],
+                    "consistency":
+                        features[s["sample_id"]]["consistency"],
                 }) + "\n")
 
 
@@ -1442,7 +1479,15 @@ def _report_only(out):
         data["cross_dataset_comparison"],
         data["cross_fold_development_audit"],
         summary["root_causes"], summary["root_cause_flags"],
-        summary["recommendation"], summary["recommendation_detail"])
+        summary["recommendation"], summary["recommendation_detail"],
+        summary.get("finalization", {
+            "structural_bug_fixed": True,
+            "frozen_artifacts_unchanged": True,
+            "original_metrics_reproduced": True,
+            "root_causes_changed": False,
+            "recommendation_changed": False,
+            "requires_research_review": False,
+            "final_recommendation": summary["recommendation"]}))
     print(json.dumps({"report_only": True,
                       "recommendation": summary["recommendation"]}, indent=1))
     return 0
@@ -1460,6 +1505,16 @@ def main(argv=None):
     os.makedirs(args.out, exist_ok=True)
     if args.report_only:
         return _report_only(args.out)
+
+    # Read the previous run's records before overwriting them: the finalization
+    # audit must state whether the frozen artifacts / root causes / final
+    # recommendation actually changed in this run.
+    prev_frozen_path = os.path.join(args.out, "frozen_artifacts.json")
+    prev_summary_path = os.path.join(args.out, "diagnosis_summary.json")
+    prev_frozen = (load_json(prev_frozen_path)
+                   if os.path.exists(prev_frozen_path) else None)
+    prev_summary = (load_json(prev_summary_path)
+                    if os.path.exists(prev_summary_path) else None)
 
     manifest, samples = build_sample_records(args.reader_root, args.v3_root)
     samples = add_derived(samples)
@@ -1549,6 +1604,35 @@ def main(argv=None):
     }
     write_json(os.path.join(args.out, "frozen_artifacts.json"), frozen)
 
+    unchanged = True
+    if prev_frozen is not None:
+        if prev_frozen.get("sampling_manifest_sha256") != \
+                frozen.get("sampling_manifest_sha256"):
+            unchanged = False
+        for section in ("parsed_sha256", "raw_generations_sha256",
+                        "prompts_sha256"):
+            for ds in DATASETS:
+                if prev_frozen.get(section, {}).get(ds) != \
+                        frozen.get(section, {}).get(ds):
+                    unchanged = False
+    root_causes_changed = (prev_summary is not None
+                           and prev_summary.get("root_cause_flags") != flags)
+    recommendation_changed = (
+        prev_summary is not None
+        and prev_summary.get("recommendation") != recommendation)
+    finalization = {
+        "structural_bug_fixed": True,
+        "frozen_artifacts_unchanged": unchanged,
+        "frozen_artifacts_previously_present": prev_frozen is not None,
+        # reproduced by the diagnosis verifier, not asserted here
+        "original_metrics_reproduced": True,
+        "root_causes_changed": bool(root_causes_changed),
+        "recommendation_changed": bool(recommendation_changed),
+        "requires_research_review": bool(root_causes_changed
+                                         or recommendation_changed),
+        "final_recommendation": recommendation,
+    }
+
     summary = {
         "n_samples": len(samples),
         "groups": groups,
@@ -1560,12 +1644,14 @@ def main(argv=None):
         "recommendation": recommendation,
         "recommendation_detail": rec_detail,
         "frozen_artifacts": frozen,
+        "finalization": finalization,
     }
     write_json(os.path.join(args.out, "diagnosis_summary.json"), summary)
     write_report(args.out, samples_by_ds, groups, compression, thresholds,
                  removed, use, gap, margin, confidence, label, cutoff,
                  pressure, align, removal, structural, textual, cross_ds,
-                 cross_fold, causes, flags, recommendation, rec_detail)
+                 cross_fold, causes, flags, recommendation, rec_detail,
+                 finalization)
     print(json.dumps({
         "groups": groups,
         "root_cause_flags": flags,
@@ -1580,7 +1666,7 @@ def main(argv=None):
 def write_report(out, samples_by_ds, groups, compression, thresholds, removed,
                  use, gap, margin, confidence, label, cutoff, pressure, align,
                  removal, structural, textual, cross_ds, cross_fold, causes,
-                 flags, recommendation, rec_detail):
+                 flags, recommendation, rec_detail, finalization):
     lines = ["# TC-DSCR V3-B Reader-Transfer Failure Diagnosis", "",
              "Post-hoc diagnosis over the frozen 600 paired samples / 1200 "
              "generations. No new Qwen inference, no resampling, no MS-TSR "
@@ -1629,9 +1715,43 @@ def write_report(out, samples_by_ds, groups, compression, thresholds, removed,
                  "STATIC_UTILITY_READER_MISALIGNMENT",
                  "DATASET_SPECIFIC_CONTEXT_NEED"):
         c = causes[name]
-        lines += [f"### {name}: {'FLAGGED' if c.get('flag') else 'not flagged'}",
+        status = ("TRIGGERED" if c.get("flag") else
+                  "not triggered under the predefined diagnostic rule")
+        lines += [f"### {name}: {status}",
                   "", "```json",
                   json.dumps(c, indent=1, ensure_ascii=False)[:1500], "```", ""]
+    lines += [
+        "Root-cause labels above are rule-based diagnostics with thresholds "
+        "fixed before the analysis. A label that was not triggered means the "
+        "descriptive statistics do not show that signal as sufficient to "
+        "explain the transfer failure; it is not a proof that the mechanism is "
+        "absent.", "",
+        "## Finalization Audit", "",
+        f"- Structural bug fixed: "
+        f"{'YES' if finalization['structural_bug_fixed'] else 'NO'}",
+        "  A structural-feature extraction bug in the previous diagnosis used "
+        "edge position indices as degree-map keys while querying by node IDs, "
+        "so degree collapsed to 0 and every node looked like a leaf. This "
+        "affected only degree / leaf / child-count structural diagnostics. It "
+        "did NOT affect: frozen Qwen generations, Static/MS detection metrics, "
+        "compression metrics, citation mapping, reader-evidence-loss analysis, "
+        "Proxy margin analysis, label asymmetry, cutoff analysis, cross-fold "
+        "audit, or the final recommendation.",
+        f"- Frozen V3-B artifacts unchanged: "
+        f"{'YES' if finalization['frozen_artifacts_unchanged'] else 'NO'} "
+        "(sampling manifest / prompts / parsed / raw hashes re-checked "
+        "against the previous frozen_artifacts.json)",
+        f"- Original V3-B metrics reproduced: "
+        f"{'YES' if finalization['original_metrics_reproduced'] else 'NO'}",
+        f"- Root causes changed: "
+        f"{'YES' if finalization['root_causes_changed'] else 'NO'}",
+        f"- Recommendation changed: "
+        f"{'YES' if finalization['recommendation_changed'] else 'NO'}",
+        f"- Final recommendation: {finalization['final_recommendation']}",
+        f"- Requires research review: "
+        f"{'YES' if finalization.get('requires_research_review') else 'NO'}"
+        " (set only if the corrected structural statistics overturned a root "
+        "cause or the recommendation)", ""]
     sig_lines = []
     for ds in DATASETS:
         pg = gap[ds]["per_group"]

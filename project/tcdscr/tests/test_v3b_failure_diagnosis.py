@@ -213,3 +213,82 @@ def test_statistics_helpers():
     assert D.odds_ratio(1, 0, 1, 1) is None
     assert D.quantiles([1, 2, 3, 4])["median"] == 3
     assert D.quantiles([])["n"] == 0
+
+
+# --------------------------------- structural regression (position vs id)
+
+def _synthetic_snapshot():
+    """String node ids so a position-keyed implementation cannot pass by luck."""
+    node_ids = ["source", "reply_A", "reply_B", "reply_C"]
+    edge_index = [[1, 0], [2, 0], [3, 1]]
+    return node_ids, edge_index
+
+
+def test_structural_features_use_node_ids_not_positions():
+    node_ids, edge_index = _synthetic_snapshot()
+    degree, child_count = D.structural_counts(node_ids, edge_index)
+    assert degree["source"] == 2 and child_count["source"] == 2
+    assert degree["reply_A"] == 2 and child_count["reply_A"] == 1
+    assert degree["reply_B"] == 1 and child_count["reply_B"] == 0
+    assert degree["reply_C"] == 1 and child_count["reply_C"] == 0
+    assert all(isinstance(k, str) for k in degree), \
+        "aggregation must be keyed by node id, not position"
+    assert all(k in node_ids for k in degree)
+
+
+def test_leaf_uses_child_count_not_degree():
+    node_ids, edge_index = _synthetic_snapshot()
+    degree, child_count = D.structural_counts(node_ids, edge_index)
+    leaf = {nid: child_count.get(nid, 0) == 0 for nid in node_ids}
+    assert leaf["source"] is False
+    assert leaf["reply_A"] is False
+    assert leaf["reply_B"] is True
+    assert leaf["reply_C"] is True
+    # reply_B has a parent but no child: a leaf, yet not degree == 0
+    assert leaf["reply_B"] is True and degree["reply_B"] == 1
+    assert leaf["reply_A"] is False and degree["reply_A"] == 2
+
+
+def test_degree_sum_matches_two_edges():
+    node_ids, edge_index = _synthetic_snapshot()
+    degree, child_count = D.structural_counts(node_ids, edge_index)
+    c = D.struct_consistency(node_ids, edge_index, degree, child_count)
+    assert c["n_edges"] == 3
+    assert c["sum_degree"] == 2 * c["n_edges"] == 6
+
+
+def test_child_count_sum_matches_edges():
+    node_ids, edge_index = _synthetic_snapshot()
+    degree, child_count = D.structural_counts(node_ids, edge_index)
+    c = D.struct_consistency(node_ids, edge_index, degree, child_count)
+    assert c["sum_child_count"] == c["n_edges"] == 3
+
+
+def _diag_root():
+    local = Path(__file__).resolve().parents[3] / "results" / "tcdscr" / \
+        "v3b_failure_diagnosis"
+    if local.exists():
+        return local
+    server = Path("/data/jyz/next/llm/results/tcdscr/v3b_failure_diagnosis")
+    if server.exists():
+        return server
+    return None
+
+
+def test_frozen_reader_artifact_hashes_unchanged():
+    root = _reader_root()
+    diag = _diag_root()
+    if root is None or diag is None:
+        pytest.skip("frozen V3-B / diagnosis artifacts not present")
+    frozen = json.loads((diag / "frozen_artifacts.json").read_text(
+        encoding="utf-8"))
+    assert D.sha256_file(str(root / "sampling_manifest.json")) == \
+        frozen["sampling_manifest_sha256"]
+    for ds in ("pheme", "maweibo"):
+        assert D.sha256_file(str(root / "parsed" / f"{ds}.jsonl")) == \
+            frozen["parsed_sha256"][ds]
+        assert D.sha256_file(
+            str(root / "raw_generations" / f"{ds}.jsonl")) == \
+            frozen["raw_generations_sha256"][ds]
+        assert D.sha256_file(str(root / "prompts" / f"{ds}.jsonl")) == \
+            frozen["prompts_sha256"][ds]
