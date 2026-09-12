@@ -1,0 +1,48 @@
+{
+ "dataset": "pheme",
+ "fold": 4,
+ "candidates": {
+  "0.8": {
+   "static_macro_f1": 0.8694043675947111,
+   "ms_macro_f1": 0.8694043675947111,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.01245136186770428,
+   "ms_flip_rate": 0.01245136186770428,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.5844765461038126,
+   "eligible": true
+  },
+  "0.9": {
+   "static_macro_f1": 0.8694043675947111,
+   "ms_macro_f1": 0.8694043675947111,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.01245136186770428,
+   "ms_flip_rate": 0.01245136186770428,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.5830177840999499,
+   "eligible": true
+  },
+  "0.95": {
+   "static_macro_f1": 0.8694043675947111,
+   "ms_macro_f1": 0.8694043675947111,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.01245136186770428,
+   "ms_flip_rate": 0.01245136186770428,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.5806805728903651,
+   "eligible": true
+  },
+  "1.0": {
+   "static_macro_f1": 0.8694043675947111,
+   "ms_macro_f1": 0.8694043675947111,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.01245136186770428,
+   "ms_flip_rate": 0.01245136186770428,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.5766165021868112,
+   "eligible": true
+  }
+ },
+ "selected_alpha": "0.8",
+ "rule": "\u00a716: among alphas with delta Macro-F1 >= -0.002 and relative flip increase <= 5%, take the largest token reduction (ties -> smaller alpha)"
+}

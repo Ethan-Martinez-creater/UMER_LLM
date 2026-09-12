@@ -1,0 +1,9 @@
+{
+ "dataset": "pheme",
+ "fold": 2,
+ "alpha": 0.8,
+ "mean_token_reduction": 0.5716627920876379,
+ "mean_static_tokens": 472.61835278858626,
+ "mean_ms_tokens": 88.26977950713359,
+ "unit_reduction": 0.8003425146282289
+}

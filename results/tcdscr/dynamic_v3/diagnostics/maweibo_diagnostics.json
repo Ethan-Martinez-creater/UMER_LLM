@@ -1,0 +1,69 @@
+{
+ "margin_stratified": {
+  "low_confidence": {
+   "n_snapshots": 8416,
+   "static_margin_boundary": {
+    "q25": 1.913193941116333,
+    "q75": 4.115837097167969
+   },
+   "mean_token_reduction": 0.6512597010099891,
+   "static_macro_f1": 0.7936534457047253,
+   "ms_macro_f1": 0.7936534457047253,
+   "delta_macro_f1": 0.0,
+   "fallback_rate": 0.2712690114068441,
+   "dual_view_agreement_rate": 0.8967442965779467
+  },
+  "medium": {
+   "n_snapshots": 16830,
+   "static_margin_boundary": {
+    "q25": 1.913193941116333,
+    "q75": 4.115837097167969
+   },
+   "mean_token_reduction": 0.8763004532900095,
+   "static_macro_f1": 0.965112748677327,
+   "ms_macro_f1": 0.965112748677327,
+   "delta_macro_f1": 0.0,
+   "fallback_rate": 0.01277480689245395,
+   "dual_view_agreement_rate": 0.9980986333927511
+  },
+  "high_confidence": {
+   "n_snapshots": 8414,
+   "static_margin_boundary": {
+    "q25": 1.913193941116333,
+    "q75": 4.115837097167969
+   },
+   "mean_token_reduction": 0.9057076215193576,
+   "static_macro_f1": 0.9901663254795574,
+   "ms_macro_f1": 0.9901663254795574,
+   "delta_macro_f1": 0.0,
+   "fallback_rate": 0.0,
+   "dual_view_agreement_rate": 1.0
+  }
+ },
+ "stage_wise": {
+  "Very Early": {
+   "static_macro_f1": 0.9143488039195358,
+   "ms_macro_f1": 0.9143488039195358,
+   "delta": 0.0,
+   "mean_token_reduction": 0.7301129413750921,
+   "context_churn": 0.7288770053475936,
+   "n_snapshots": 11220
+  },
+  "Early": {
+   "static_macro_f1": 0.9387648930064239,
+   "ms_macro_f1": 0.9387648930064239,
+   "delta": 0.0,
+   "mean_token_reduction": 0.8448857457820816,
+   "context_churn": 0.40240641711229946,
+   "n_snapshots": 11220
+  },
+  "Mid": {
+   "static_macro_f1": 0.9483935373645278,
+   "ms_macro_f1": 0.9483935373645278,
+   "delta": 0.0,
+   "mean_token_reduction": 0.9071548066070856,
+   "context_churn": 0.306951871657754,
+   "n_snapshots": 11220
+  }
+ }
+}

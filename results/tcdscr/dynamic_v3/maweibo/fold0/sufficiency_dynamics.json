@@ -1,0 +1,40 @@
+{
+ "dataset": "maweibo",
+ "fold": 0,
+ "alpha": 0.8,
+ "sufficiency": {
+  "n_snapshots": 6732,
+  "dual_view_agreement_rate": 0.9783125371360666,
+  "compression_attempt_rate": 0.9269162210338681,
+  "sufficiency_success_rate": 1.0,
+  "static_fallback_rate": 0.07724917569477155,
+  "prediction_change_rate": 0.0
+ },
+ "compression": {
+  "mean_token_reduction": 0.8335473091659872,
+  "median_token_reduction": 0.9475247524752475,
+  "p25_token_reduction": 0.873015873015873,
+  "p75_token_reduction": 0.9646017699115044,
+  "mean_static_tokens": 862.305109922757,
+  "mean_ms_tokens": 77.49955436720143,
+  "mean_static_units": 10.381758764111705,
+  "mean_ms_units": 1.09640522875817,
+  "unit_reduction": 0.8943911861496637
+ },
+ "temporal": {
+  "memory_survival_rate": 0.2987267202697426,
+  "adjacent_set_jaccard": 0.28749762375352467,
+  "context_churn": 0.7125023762464753
+ },
+ "reader_margin": {
+  "mean_static_margin": 3.238291547004525,
+  "mean_ms_margin": 3.6162545441257516,
+  "mean_margin_retention": 1.5030900672525893
+ },
+ "search": {
+  "mean_add_count": 0.9640522875816994,
+  "mean_remove_count": 0.05095068330362448,
+  "max_pool_size": 97,
+  "mean_pool_size": 47.89928698752228
+ }
+}

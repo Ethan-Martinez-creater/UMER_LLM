@@ -1,0 +1,48 @@
+{
+ "dataset": "maweibo",
+ "fold": 2,
+ "candidates": {
+  "0.8": {
+   "static_macro_f1": 0.9334363570282919,
+   "ms_macro_f1": 0.9334363570282919,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.028163992869875223,
+   "ms_flip_rate": 0.028163992869875223,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.8315660558190657,
+   "eligible": true
+  },
+  "0.9": {
+   "static_macro_f1": 0.9334363570282919,
+   "ms_macro_f1": 0.9334363570282919,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.028163992869875223,
+   "ms_flip_rate": 0.028163992869875223,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.8266408404977151,
+   "eligible": true
+  },
+  "0.95": {
+   "static_macro_f1": 0.9334363570282919,
+   "ms_macro_f1": 0.9334363570282919,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.028163992869875223,
+   "ms_flip_rate": 0.028163992869875223,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.8223409204389321,
+   "eligible": true
+  },
+  "1.0": {
+   "static_macro_f1": 0.9334363570282919,
+   "ms_macro_f1": 0.9334363570282919,
+   "delta_macro_f1": 0.0,
+   "static_flip_rate": 0.028163992869875223,
+   "ms_flip_rate": 0.028163992869875223,
+   "relative_flip_increase": 0.0,
+   "mean_token_reduction": 0.8137706529977017,
+   "eligible": true
+  }
+ },
+ "selected_alpha": "0.8",
+ "rule": "\u00a716: among alphas with delta Macro-F1 >= -0.002 and relative flip increase <= 5%, take the largest token reduction (ties -> smaller alpha)"
+}

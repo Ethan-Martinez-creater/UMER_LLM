@@ -1,0 +1,21 @@
+{
+ "issues": [],
+ "n_issues": 0,
+ "runs": 30,
+ "rows": 319680,
+ "no_candidate_rows": 41568,
+ "checks": [
+  "validation coverage at all 6 cutoffs x all alphas",
+  "no-candidate snapshots included",
+  "no test events read",
+  "no future nodes",
+  "no future memory",
+  "frozen encoder/selector/proxy",
+  "budget <= 1024",
+  "alpha in frozen grid",
+  "ADD+REMOVE only (no SWAP)",
+  "candidate pool bound",
+  "sufficiency consistency (decision + margin)",
+  "fallback keeps the Static set"
+ ]
+}

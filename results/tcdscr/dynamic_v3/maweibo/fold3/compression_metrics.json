@@ -1,0 +1,9 @@
+{
+ "dataset": "maweibo",
+ "fold": 3,
+ "alpha": 0.8,
+ "mean_token_reduction": 0.8194142772637264,
+ "mean_static_tokens": 839.0311942959001,
+ "mean_ms_tokens": 78.64393939393939,
+ "unit_reduction": 0.8882138144772777
+}
