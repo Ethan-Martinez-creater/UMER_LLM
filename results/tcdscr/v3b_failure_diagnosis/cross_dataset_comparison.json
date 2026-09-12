@@ -1,0 +1,88 @@
+{
+ "pheme": {
+  "n": 300,
+  "static_macro_f1": 0.6278123637826781,
+  "ms_macro_f1": 0.6475524475524477,
+  "delta_macro_f1": 0.019740083769769545,
+  "mean_static_social_tokens": 445.74666666666667,
+  "mean_ms_social_tokens": 80.28666666666666,
+  "mean_token_reduction": 0.6870030537478812,
+  "mean_static_units": 6.05,
+  "mean_ms_units": 1.1833333333333333,
+  "mean_static_cited_count": 4.66,
+  "mean_ms_cited_count": 1.13,
+  "mean_reader_evidence_loss_rate": 0.6729987825225922,
+  "mean_proxy_margin_retention": 1.2164629912591185,
+  "mean_confidence_delta": -0.05866666666666666,
+  "citation_removal_gap": -0.06763516225646093,
+  "auc_utility_citation": 0.43701691007708854,
+  "cw": 17,
+  "wc": 23,
+  "cutoff_delta_macro_f1": {
+   "5": 0.018677772655740776,
+   "15": 0.09939979505196894,
+   "30": -0.026284405109374576,
+   "60": 0.04001600640256098,
+   "180": -0.03832218506131557,
+   "360": 0.022186147186147087
+  },
+  "label_delta_accuracy": {
+   "RUMOR": 0.017857142857142794,
+   "NON_RUMOR": 0.021276595744680882
+  },
+  "cw_vs_cc_wc": {
+   "cw_mean_reduction": 0.8834619597677035,
+   "cc_wc_mean_reduction": 0.6985378101699578,
+   "cw_mean_ms_units": 1.0,
+   "cc_wc_mean_ms_units": 1.0666666666666667
+  },
+  "cw_loss_rate": 0.855162321338792,
+  "cc_loss_rate": 0.6752640173835821,
+  "wc_loss_rate": 0.8399526198439243,
+  "proxy_margin_spearman_confidence": -0.08569219292038606,
+  "proxy_margin_spearman_transition": 0.0750769778303865
+ },
+ "maweibo": {
+  "n": 300,
+  "static_macro_f1": 0.8825174825174824,
+  "ms_macro_f1": 0.8731924360400445,
+  "delta_macro_f1": -0.009325046477437926,
+  "mean_static_social_tokens": 831.6766666666666,
+  "mean_ms_social_tokens": 82.99333333333334,
+  "mean_token_reduction": 0.8532185469392266,
+  "mean_static_units": 9.833333333333334,
+  "mean_ms_units": 1.1033333333333333,
+  "mean_static_cited_count": 7.653333333333333,
+  "mean_ms_cited_count": 1.0566666666666666,
+  "mean_reader_evidence_loss_rate": 0.848133507382717,
+  "mean_proxy_margin_retention": 1.2777351565450081,
+  "mean_confidence_delta": -0.05666666666666668,
+  "citation_removal_gap": 0.00048348943515652554,
+  "auc_utility_citation": 0.6158296838538503,
+  "cw": 13,
+  "wc": 10,
+  "cutoff_delta_macro_f1": {
+   "5": 0.001847290640394128,
+   "15": -0.0013581190051779046,
+   "30": -0.01904143299831995,
+   "60": -0.01787278357932709,
+   "180": -0.060120201926924466,
+   "360": 0.04099749020189647
+  },
+  "label_delta_accuracy": {
+   "RUMOR": -0.05555555555555558,
+   "NON_RUMOR": 0.04347826086956519
+  },
+  "cw_vs_cc_wc": {
+   "cw_mean_reduction": 0.8909096300538507,
+   "cc_wc_mean_reduction": 0.8512740324303241,
+   "cw_mean_ms_units": 1.0,
+   "cc_wc_mean_ms_units": 1.099236641221374
+  },
+  "cw_loss_rate": 0.9100050276520864,
+  "cc_loss_rate": 0.8380884147727096,
+  "wc_loss_rate": 0.9838888888888888,
+  "proxy_margin_spearman_confidence": 0.02057297452754712,
+  "proxy_margin_spearman_transition": -0.0928829726654661
+ }
+}

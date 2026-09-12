@@ -1,0 +1,86 @@
+{
+ "pheme": {
+  "qwen_cited": {
+   "n": 1398,
+   "mean_reply_tokens": 25.09799713876967,
+   "mean_parent_tokens": 31.96137339055794,
+   "mean_pair_tokens": 78.05436337625179,
+   "question_rate": 0.15021459227467812,
+   "exclamation_rate": 0.11373390557939914,
+   "url_rate": 0.17310443490701002,
+   "mean_mention_count": 1.4492131616595136
+  },
+  "ms_removed": {
+   "n": 1468,
+   "mean_reply_tokens": 25.862397820163487,
+   "mean_parent_tokens": 31.384196185286104,
+   "mean_pair_tokens": 78.2874659400545,
+   "question_rate": 0.15190735694822888,
+   "exclamation_rate": 0.10694822888283378,
+   "url_rate": 0.16076294277929154,
+   "mean_mention_count": 1.5163487738419619
+  },
+  "cw_removed": {
+   "n": 143,
+   "mean_reply_tokens": 27.706293706293707,
+   "mean_parent_tokens": 33.37762237762238,
+   "mean_pair_tokens": 82.32167832167832,
+   "question_rate": 0.07692307692307693,
+   "exclamation_rate": 0.1048951048951049,
+   "url_rate": 0.18181818181818182,
+   "mean_mention_count": 1.6853146853146854
+  },
+  "wc_removed": {
+   "n": 155,
+   "mean_reply_tokens": 27.27741935483871,
+   "mean_parent_tokens": 30.26451612903226,
+   "mean_pair_tokens": 78.3741935483871,
+   "question_rate": 0.18064516129032257,
+   "exclamation_rate": 0.0967741935483871,
+   "url_rate": 0.13548387096774195,
+   "mean_mention_count": 1.4903225806451612
+  }
+ },
+ "maweibo": {
+  "qwen_cited": {
+   "n": 2296,
+   "mean_reply_tokens": 12.765243902439025,
+   "mean_parent_tokens": 54.15766550522648,
+   "mean_pair_tokens": 87.84756097560975,
+   "question_rate": 0.005226480836236934,
+   "exclamation_rate": 0.0039198606271777,
+   "url_rate": 0.014808362369337979,
+   "mean_mention_count": 0.2896341463414634
+  },
+  "ms_removed": {
+   "n": 2694,
+   "mean_reply_tokens": 12.724944320712694,
+   "mean_parent_tokens": 51.52746844840386,
+   "mean_pair_tokens": 85.21417965850037,
+   "question_rate": 0.004454342984409799,
+   "exclamation_rate": 0.002969561989606533,
+   "url_rate": 0.012620638455827766,
+   "mean_mention_count": 0.31403118040089084
+  },
+  "cw_removed": {
+   "n": 111,
+   "mean_reply_tokens": 14.837837837837839,
+   "mean_parent_tokens": 57.93693693693694,
+   "mean_pair_tokens": 93.67567567567568,
+   "question_rate": 0.018018018018018018,
+   "exclamation_rate": 0.0,
+   "url_rate": 0.0,
+   "mean_mention_count": 0.2702702702702703
+  },
+  "wc_removed": {
+   "n": 109,
+   "mean_reply_tokens": 10.495412844036696,
+   "mean_parent_tokens": 57.93577981651376,
+   "mean_pair_tokens": 89.39449541284404,
+   "question_rate": 0.0,
+   "exclamation_rate": 0.0,
+   "url_rate": 0.027522935779816515,
+   "mean_mention_count": 0.1926605504587156
+  }
+ }
+}

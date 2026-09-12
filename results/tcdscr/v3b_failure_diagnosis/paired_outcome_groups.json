@@ -1,0 +1,18 @@
+{
+ "pheme": {
+  "CC": 172,
+  "CW": 17,
+  "WC": 23,
+  "WW": 88,
+  "n": 300,
+  "net_correction": 6
+ },
+ "maweibo": {
+  "CC": 252,
+  "CW": 13,
+  "WC": 10,
+  "WW": 25,
+  "n": 300,
+  "net_correction": -3
+ }
+}

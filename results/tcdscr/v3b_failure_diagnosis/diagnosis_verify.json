@@ -1,0 +1,34 @@
+{
+ "n_issues": 0,
+ "issues": [],
+ "samples": 600,
+ "groups": {
+  "pheme": {
+   "CC": 172,
+   "CW": 17,
+   "WC": 23,
+   "WW": 88
+  },
+  "maweibo": {
+   "CC": 252,
+   "CW": 13,
+   "WC": 10,
+   "WW": 25
+  }
+ },
+ "root_cause_flags": [
+  "PROXY_READER_MARGIN_MISMATCH",
+  "DATASET_SPECIFIC_CONTEXT_NEED"
+ ],
+ "recommendation": "MS_TSR_COMPRESSION_ONLY",
+ "checks": [
+  "frozen manifest / prompts / parsed / raw sha256 unchanged",
+  "CC/CW/WC/WW reproduce the frozen parsed rows and V3-B summary",
+  "Static/MS Macro-F1 reproduce the original detection",
+  "citations mapped only from frozen parsed outputs",
+  "node features inside the causal snapshot (no future nodes)",
+  "diagnosis samples are fold-local validation events",
+  "cross-fold audit is fold metadata only",
+  "diagnosis writes no selector/heuristic code"
+ ]
+}

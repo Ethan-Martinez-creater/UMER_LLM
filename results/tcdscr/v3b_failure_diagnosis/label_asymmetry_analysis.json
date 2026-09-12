@@ -1,0 +1,66 @@
+{
+ "pheme": {
+  "RUMOR": {
+   "n": 112,
+   "static_accuracy": 0.7410714285714286,
+   "ms_accuracy": 0.7589285714285714,
+   "delta_accuracy": 0.017857142857142794,
+   "cw": 6,
+   "wc": 8,
+   "mean_token_reduction": 0.669746063552588,
+   "mean_evidence_count_reduction": 0.6527730943093892,
+   "mean_reader_evidence_loss_rate": 0.6636766159372539,
+   "confusion_transitions": {
+    "RUMOR->NON_RUMOR": 6,
+    "NON_RUMOR->RUMOR": 8
+   }
+  },
+  "NON_RUMOR": {
+   "n": 188,
+   "static_accuracy": 0.5638297872340425,
+   "ms_accuracy": 0.5851063829787234,
+   "delta_accuracy": 0.021276595744680882,
+   "cw": 11,
+   "wc": 15,
+   "mean_token_reduction": 0.697269870699511,
+   "mean_evidence_count_reduction": 0.6788291411988355,
+   "mean_reader_evidence_loss_rate": 0.6785448816303243,
+   "confusion_transitions": {
+    "RUMOR->NON_RUMOR": 15,
+    "NON_RUMOR->RUMOR": 11
+   }
+  }
+ },
+ "maweibo": {
+  "RUMOR": {
+   "n": 162,
+   "static_accuracy": 0.8950617283950617,
+   "ms_accuracy": 0.8395061728395061,
+   "delta_accuracy": -0.05555555555555558,
+   "cw": 10,
+   "wc": 1,
+   "mean_token_reduction": 0.8084511202305013,
+   "mean_evidence_count_reduction": 0.7788561043544081,
+   "mean_reader_evidence_loss_rate": 0.7816330882624997,
+   "confusion_transitions": {
+    "RUMOR->NON_RUMOR": 10,
+    "NON_RUMOR->RUMOR": 1
+   }
+  },
+  "NON_RUMOR": {
+   "n": 138,
+   "static_accuracy": 0.8695652173913043,
+   "ms_accuracy": 0.9130434782608695,
+   "delta_accuracy": 0.04347826086956519,
+   "cw": 3,
+   "wc": 9,
+   "mean_token_reduction": 0.9025943852209082,
+   "mean_evidence_count_reduction": 0.8709441172696811,
+   "mean_reader_evidence_loss_rate": 0.9214795578829552,
+   "confusion_transitions": {
+    "RUMOR->NON_RUMOR": 9,
+    "NON_RUMOR->RUMOR": 3
+   }
+  }
+ }
+}

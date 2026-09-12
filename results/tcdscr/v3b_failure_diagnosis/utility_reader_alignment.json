@@ -1,0 +1,34 @@
+{
+ "pheme": {
+  "n_evidence": 1815,
+  "n_cited": 1398,
+  "n_uncited": 417,
+  "mean_utility_cited": 1.08984709938639,
+  "mean_utility_uncited": 2.1993021714172776,
+  "auc_utility_predicts_citation": 0.43701691007708854,
+  "topk": {
+   "top1_recall": 0.30374173886078704,
+   "top1_n": 252,
+   "top3_recall": 0.555910447577114,
+   "top3_n": 252,
+   "top5_recall": 0.7115891714106002,
+   "top5_n": 252
+  }
+ },
+ "maweibo": {
+  "n_evidence": 2950,
+  "n_cited": 2296,
+  "n_uncited": 654,
+  "mean_utility_cited": 4.682673687821105,
+  "mean_utility_uncited": 0.09400562517663937,
+  "auc_utility_predicts_citation": 0.6158296838538503,
+  "topk": {
+   "top1_recall": 0.1974771059834403,
+   "top1_n": 286,
+   "top3_recall": 0.43258308537481344,
+   "top3_n": 286,
+   "top5_recall": 0.6199784420555654,
+   "top5_n": 286
+  }
+ }
+}

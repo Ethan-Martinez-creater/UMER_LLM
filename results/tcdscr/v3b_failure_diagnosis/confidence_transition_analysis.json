@@ -1,0 +1,102 @@
+{
+ "pheme": {
+  "per_group": {
+   "CC": {
+    "n": 172,
+    "mean_static_confidence": 0.6119186046511631,
+    "mean_ms_confidence": 0.550581395348837,
+    "mean_confidence_delta": -0.061337209302325585
+   },
+   "CW": {
+    "n": 17,
+    "mean_static_confidence": 0.8058823529411764,
+    "mean_ms_confidence": 0.5882352941176471,
+    "mean_confidence_delta": -0.2176470588235294
+   },
+   "WC": {
+    "n": 23,
+    "mean_static_confidence": 0.6782608695652174,
+    "mean_ms_confidence": 0.6630434782608696,
+    "mean_confidence_delta": -0.015217391304347806
+   },
+   "WW": {
+    "n": 88,
+    "mean_static_confidence": 0.5676136363636364,
+    "mean_ms_confidence": 0.5335227272727274,
+    "mean_confidence_delta": -0.03409090909090908
+   }
+  },
+  "correctness_cells": {
+   "static_correct__ms_correct": {
+    "n": 172,
+    "mean_static_confidence": 0.6119186046511631,
+    "mean_ms_confidence": 0.550581395348837
+   },
+   "static_correct__ms_wrong": {
+    "n": 17,
+    "mean_static_confidence": 0.8058823529411764,
+    "mean_ms_confidence": 0.5882352941176471
+   },
+   "static_wrong__ms_correct": {
+    "n": 23,
+    "mean_static_confidence": 0.6782608695652174,
+    "mean_ms_confidence": 0.6630434782608696
+   },
+   "static_wrong__ms_wrong": {
+    "n": 88,
+    "mean_static_confidence": 0.5676136363636364,
+    "mean_ms_confidence": 0.5335227272727274
+   }
+  }
+ },
+ "maweibo": {
+  "per_group": {
+   "CC": {
+    "n": 252,
+    "mean_static_confidence": 0.7281746031746026,
+    "mean_ms_confidence": 0.6561507936507938,
+    "mean_confidence_delta": -0.07202380952380955
+   },
+   "CW": {
+    "n": 13,
+    "mean_static_confidence": 0.6692307692307692,
+    "mean_ms_confidence": 0.7115384615384616,
+    "mean_confidence_delta": 0.04230769230769231
+   },
+   "WC": {
+    "n": 10,
+    "mean_static_confidence": 0.575,
+    "mean_ms_confidence": 0.7999999999999999,
+    "mean_confidence_delta": 0.225
+   },
+   "WW": {
+    "n": 25,
+    "mean_static_confidence": 0.738,
+    "mean_ms_confidence": 0.6719999999999999,
+    "mean_confidence_delta": -0.066
+   }
+  },
+  "correctness_cells": {
+   "static_correct__ms_correct": {
+    "n": 252,
+    "mean_static_confidence": 0.7281746031746026,
+    "mean_ms_confidence": 0.6561507936507938
+   },
+   "static_correct__ms_wrong": {
+    "n": 13,
+    "mean_static_confidence": 0.6692307692307692,
+    "mean_ms_confidence": 0.7115384615384616
+   },
+   "static_wrong__ms_correct": {
+    "n": 10,
+    "mean_static_confidence": 0.575,
+    "mean_ms_confidence": 0.7999999999999999
+   },
+   "static_wrong__ms_wrong": {
+    "n": 25,
+    "mean_static_confidence": 0.738,
+    "mean_ms_confidence": 0.6719999999999999
+   }
+  }
+ }
+}

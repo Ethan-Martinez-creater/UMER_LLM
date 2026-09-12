@@ -1,0 +1,150 @@
+{
+ "pheme": {
+  "qwen_cited": {
+   "n": 1398,
+   "mean_utility": 1.08984709938639,
+   "mean_relevance": 0.4723474509313252,
+   "mean_depth": 1.3283261802575108,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 1431.261087267525,
+   "mean_reply_tokens": 25.09799713876967,
+   "mean_parent_tokens": 31.96137339055794,
+   "mean_pair_tokens": 78.05436337625179,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.8283261802575107,
+   "is_memory_previous_rate": 0.15808297567954221,
+   "depth_group_rates": {
+    "depth1": 0.8433476394849786,
+    "depth2": 0.07582260371959942,
+    "depth>=3": 0.08082975679542204
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.3726752503576538,
+    "middle_50": 0.47067238912732473,
+    "newest_quartile": 0.15665236051502146
+   }
+  },
+  "ms_retained": {
+   "n": 347,
+   "mean_utility": 1.717125172949576,
+   "mean_relevance": 0.4056575500154887,
+   "mean_depth": 1.2853025936599423,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 1223.7694524495678,
+   "mean_reply_tokens": 22.04899135446686,
+   "mean_parent_tokens": 29.337175792507203,
+   "mean_pair_tokens": 72.45533141210375,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.7089337175792507,
+   "is_memory_previous_rate": 0.6138328530259366,
+   "depth_group_rates": {
+    "depth1": 0.7752161383285303,
+    "depth2": 0.11527377521613832,
+    "depth>=3": 0.10951008645533142
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.4553314121037464,
+    "middle_50": 0.41786743515850144,
+    "newest_quartile": 0.12680115273775217
+   }
+  },
+  "ms_removed": {
+   "n": 1468,
+   "mean_utility": 1.256725351096509,
+   "mean_relevance": 0.45790381470699765,
+   "mean_depth": 1.4775204359673024,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 1526.783378746594,
+   "mean_reply_tokens": 25.862397820163487,
+   "mean_parent_tokens": 31.384196185286104,
+   "mean_pair_tokens": 78.2874659400545,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.7683923705722071,
+   "is_memory_previous_rate": 0.03678474114441417,
+   "depth_group_rates": {
+    "depth1": 0.7915531335149864,
+    "depth2": 0.09128065395095368,
+    "depth>=3": 0.11716621253405994
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.2997275204359673,
+    "middle_50": 0.5081743869209809,
+    "newest_quartile": 0.19209809264305178
+   }
+  }
+ },
+ "maweibo": {
+  "qwen_cited": {
+   "n": 2296,
+   "mean_utility": 4.682673687821105,
+   "mean_relevance": 0.4066587065406212,
+   "mean_depth": 1.1790069686411149,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 1941.3837108013938,
+   "mean_reply_tokens": 12.765243902439025,
+   "mean_parent_tokens": 54.15766550522648,
+   "mean_pair_tokens": 87.84756097560975,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.8793554006968641,
+   "is_memory_previous_rate": 0.048344947735191636,
+   "depth_group_rates": {
+    "depth1": 0.8793554006968641,
+    "depth2": 0.08449477351916376,
+    "depth>=3": 0.03614982578397213
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.281794425087108,
+    "middle_50": 0.48301393728222997,
+    "newest_quartile": 0.23519163763066203
+   }
+  },
+  "ms_retained": {
+   "n": 256,
+   "mean_utility": 0.48209840612253174,
+   "mean_relevance": 0.36764087905046383,
+   "mean_depth": 1.3125,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 1830.6640625,
+   "mean_reply_tokens": 10.53125,
+   "mean_parent_tokens": 53.47265625,
+   "mean_pair_tokens": 84.86328125,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.69921875,
+   "is_memory_previous_rate": 0.3671875,
+   "depth_group_rates": {
+    "depth1": 0.69921875,
+    "depth2": 0.29296875,
+    "depth>=3": 0.0078125
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.31640625,
+    "middle_50": 0.4765625,
+    "newest_quartile": 0.20703125
+   }
+  },
+  "ms_removed": {
+   "n": 2694,
+   "mean_utility": 3.967884660035416,
+   "mean_relevance": 0.4025869904934531,
+   "mean_depth": 1.212694877505568,
+   "mean_degree": 0.0,
+   "mean_elapsed_seconds": 2085.4736451373424,
+   "mean_reply_tokens": 12.724944320712694,
+   "mean_parent_tokens": 51.52746844840386,
+   "mean_pair_tokens": 85.21417965850037,
+   "is_leaf_rate": 1.0,
+   "is_source_child_rate": 0.852264291017075,
+   "is_memory_previous_rate": 0.016332590942835932,
+   "depth_group_rates": {
+    "depth1": 0.852264291017075,
+    "depth2": 0.10579064587973273,
+    "depth>=3": 0.04194506310319228
+   },
+   "temporal_group_rates": {
+    "oldest_quartile": 0.26280623608017817,
+    "middle_50": 0.5025983667409057,
+    "newest_quartile": 0.23459539717891612
+   }
+  }
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "sampling_manifest_sha256": "ab0e8ac2023fe88db69ce08acc4c24908fd72d76a08d88355e6c7d51bda730fd",
+ "parsed_sha256": {
+  "pheme": "132dd2dff070f8ad3c1f01af0be73ce86f87b7e25b706eefc1207007ca4a373d",
+  "maweibo": "7b1b2e2f6a523b11bbc8d1c686c64b98aacedae67aea25b0c293dca6cda7c961"
+ },
+ "raw_generations_sha256": {
+  "pheme": "c815ddb51edac26c93d839b4855ce688e83bb6422c4e682fd98e81643b20f28e",
+  "maweibo": "47d8328ca5ba3b39bcd72c1a8739a6a12646678bae332283dd1bc309c3f53e3f"
+ },
+ "prompts_sha256": {
+  "pheme": "ab1a3e4b67f1a22d40b250b96911c0ec18846098b382399ecca484750985ba17",
+  "maweibo": "9578e8fe48a86c86c1a730725e89e8a1d434a5eba02ff9faf153367ee7dc0c7c"
+ },
+ "created_utc": "2026-09-12T06:32:48Z",
+ "no_new_qwen_generation": true
+}

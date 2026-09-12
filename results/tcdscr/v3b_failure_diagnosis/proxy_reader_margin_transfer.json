@@ -1,0 +1,88 @@
+{
+ "pheme": {
+  "bins": {
+   "<0.80": {
+    "n": 0,
+    "cw_rate": null,
+    "wc_rate": null,
+    "disagreement_rate": null,
+    "mean_confidence_delta": null
+   },
+   "0.80-0.90": {
+    "n": 2,
+    "cw_rate": 0.5,
+    "wc_rate": 0.0,
+    "disagreement_rate": 0.5,
+    "mean_confidence_delta": -0.425
+   },
+   "0.90-0.95": {
+    "n": 5,
+    "cw_rate": 0.0,
+    "wc_rate": 0.4,
+    "disagreement_rate": 0.4,
+    "mean_confidence_delta": -0.019999999999999997
+   },
+   "0.95-1.00": {
+    "n": 111,
+    "cw_rate": 0.02702702702702703,
+    "wc_rate": 0.018018018018018018,
+    "disagreement_rate": 0.04504504504504504,
+    "mean_confidence_delta": -0.021171171171171167
+   },
+   ">1.00": {
+    "n": 182,
+    "cw_rate": 0.07142857142857142,
+    "wc_rate": 0.1043956043956044,
+    "disagreement_rate": 0.17582417582417584,
+    "mean_confidence_delta": -0.07857142857142857
+   }
+  },
+  "n_compressed": 236,
+  "n_static_margin_nonpositive": 0,
+  "spearman_retention_confidence_delta": -0.08569219292038606,
+  "spearman_retention_transition": 0.0750769778303865
+ },
+ "maweibo": {
+  "bins": {
+   "<0.80": {
+    "n": 0,
+    "cw_rate": null,
+    "wc_rate": null,
+    "disagreement_rate": null,
+    "mean_confidence_delta": null
+   },
+   "0.80-0.90": {
+    "n": 15,
+    "cw_rate": 0.0,
+    "wc_rate": 0.13333333333333333,
+    "disagreement_rate": 0.13333333333333333,
+    "mean_confidence_delta": -0.0066666666666666576
+   },
+   "0.90-0.95": {
+    "n": 16,
+    "cw_rate": 0.0625,
+    "wc_rate": 0.0,
+    "disagreement_rate": 0.0625,
+    "mean_confidence_delta": -0.05312499999999998
+   },
+   "0.95-1.00": {
+    "n": 47,
+    "cw_rate": 0.0,
+    "wc_rate": 0.0,
+    "disagreement_rate": 0.0,
+    "mean_confidence_delta": -0.03085106382978723
+   },
+   ">1.00": {
+    "n": 222,
+    "cw_rate": 0.05405405405405406,
+    "wc_rate": 0.036036036036036036,
+    "disagreement_rate": 0.09009009009009009,
+    "mean_confidence_delta": -0.06576576576576579
+   }
+  },
+  "n_compressed": 279,
+  "n_static_margin_nonpositive": 0,
+  "spearman_retention_confidence_delta": 0.02057297452754712,
+  "spearman_retention_transition": -0.0928829726654661
+ }
+}

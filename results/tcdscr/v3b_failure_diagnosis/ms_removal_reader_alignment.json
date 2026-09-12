@@ -1,0 +1,66 @@
+{
+ "pheme": {
+  "all": {
+   "n": 300,
+   "p_remove_given_cited": 0.7932761087267525,
+   "p_remove_given_uncited": 0.8609112709832134,
+   "citation_removal_gap": -0.06763516225646093,
+   "cited_total": 1398,
+   "uncited_total": 417,
+   "cited_removed": 1109,
+   "uncited_removed": 359
+  },
+  "CW": {
+   "n": 17,
+   "p_remove_given_cited": 0.9159663865546218,
+   "p_remove_given_uncited": 0.8717948717948718,
+   "citation_removal_gap": 0.04417151475975001,
+   "cited_total": 119,
+   "uncited_total": 39,
+   "cited_removed": 109,
+   "uncited_removed": 34
+  },
+  "WC": {
+   "n": 23,
+   "p_remove_given_cited": 0.8682170542635659,
+   "p_remove_given_uncited": 0.8775510204081632,
+   "citation_removal_gap": -0.009333966144597361,
+   "cited_total": 129,
+   "uncited_total": 49,
+   "cited_removed": 112,
+   "uncited_removed": 43
+  }
+ },
+ "maweibo": {
+  "all": {
+   "n": 300,
+   "p_remove_given_cited": 0.9133275261324042,
+   "p_remove_given_uncited": 0.9128440366972477,
+   "citation_removal_gap": 0.00048348943515652554,
+   "cited_total": 2296,
+   "uncited_total": 654,
+   "cited_removed": 2097,
+   "uncited_removed": 597
+  },
+  "CW": {
+   "n": 13,
+   "p_remove_given_cited": 0.9313725490196079,
+   "p_remove_given_uncited": 0.9411764705882353,
+   "citation_removal_gap": -0.009803921568627416,
+   "cited_total": 102,
+   "uncited_total": 17,
+   "cited_removed": 95,
+   "uncited_removed": 16
+  },
+  "WC": {
+   "n": 10,
+   "p_remove_given_cited": 0.9746835443037974,
+   "p_remove_given_uncited": 0.9411764705882353,
+   "citation_removal_gap": 0.03350707371556216,
+   "cited_total": 79,
+   "uncited_total": 34,
+   "cited_removed": 77,
+   "uncited_removed": 32
+  }
+ }
+}

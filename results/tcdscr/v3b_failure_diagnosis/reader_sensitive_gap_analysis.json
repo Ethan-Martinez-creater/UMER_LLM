@@ -1,0 +1,76 @@
+{
+ "pheme": {
+  "per_group": {
+   "CC": {
+    "n": 172,
+    "loss_rate": 0.6752640173835821,
+    "mean_loss_count": 3.5988372093023258,
+    "samples_with_loss": 111
+   },
+   "CW": {
+    "n": 17,
+    "loss_rate": 0.855162321338792,
+    "mean_loss_count": 6.411764705882353,
+    "samples_with_loss": 16
+   },
+   "WC": {
+    "n": 23,
+    "loss_rate": 0.8399526198439243,
+    "mean_loss_count": 4.869565217391305,
+    "samples_with_loss": 23
+   },
+   "WW": {
+    "n": 88,
+    "loss_rate": 0.5750349875349875,
+    "mean_loss_count": 3.0568181818181817,
+    "samples_with_loss": 51
+   }
+  },
+  "cw_2x2": {
+   "a_loss_cw": 16,
+   "b_no_loss_cw": 1,
+   "c_loss_non_cw": 185,
+   "d_no_loss_non_cw": 98
+  },
+  "odds_ratio": 8.475675675675676,
+  "fisher_p": 0.014760996407054413,
+  "n": 300
+ },
+ "maweibo": {
+  "per_group": {
+   "CC": {
+    "n": 252,
+    "loss_rate": 0.8380884147727096,
+    "mean_loss_count": 7.003968253968254,
+    "samples_with_loss": 217
+   },
+   "CW": {
+    "n": 13,
+    "loss_rate": 0.9100050276520864,
+    "mean_loss_count": 7.3076923076923075,
+    "samples_with_loss": 13
+   },
+   "WC": {
+    "n": 10,
+    "loss_rate": 0.9838888888888888,
+    "mean_loss_count": 7.7,
+    "samples_with_loss": 10
+   },
+   "WW": {
+    "n": 25,
+    "loss_rate": 0.8572874458874459,
+    "mean_loss_count": 6.4,
+    "samples_with_loss": 24
+   }
+  },
+  "cw_2x2": {
+   "a_loss_cw": 13,
+   "b_no_loss_cw": 0,
+   "c_loss_non_cw": 251,
+   "d_no_loss_non_cw": 36
+  },
+  "odds_ratio": null,
+  "fisher_p": 0.3781149469199706,
+  "n": 300
+ }
+}

@@ -1,0 +1,94 @@
+{
+ "pheme": {
+  "NO_CANDIDATE": {
+   "n": 48,
+   "cw": 0,
+   "wc": 0,
+   "net_correction": 0,
+   "mean_token_reduction": null,
+   "mean_selected_count_reduction": null,
+   "mean_reader_evidence_loss_rate": null,
+   "mean_proxy_margin_retention": 1.0,
+   "mean_confidence_delta": 0.0
+  },
+  "LOW": {
+   "n": 207,
+   "cw": 10,
+   "wc": 18,
+   "net_correction": 8,
+   "mean_token_reduction": 0.6411960140728645,
+   "mean_selected_count_reduction": 0.6234847392669216,
+   "mean_reader_evidence_loss_rate": 0.6238665588303269,
+   "mean_proxy_margin_retention": 1.2376793198862979,
+   "mean_confidence_delta": -0.05990338164251209
+  },
+  "MEDIUM": {
+   "n": 40,
+   "cw": 6,
+   "wc": 5,
+   "net_correction": -1,
+   "mean_token_reduction": 0.8921205852030116,
+   "mean_selected_count_reduction": 0.8748398721376661,
+   "mean_reader_evidence_loss_rate": 0.8925916791541791,
+   "mean_proxy_margin_retention": 1.3741673774294438,
+   "mean_confidence_delta": -0.10874999999999999
+  },
+  "HIGH": {
+   "n": 5,
+   "cw": 1,
+   "wc": 0,
+   "net_correction": -1,
+   "mean_token_reduction": 0.9424742446525126,
+   "mean_selected_count_reduction": 0.9121478521478522,
+   "mean_reader_evidence_loss_rate": 0.9503296703296703,
+   "mean_proxy_margin_retention": 1.1545166128187998,
+   "mean_confidence_delta": -0.17
+  }
+ },
+ "maweibo": {
+  "NO_CANDIDATE": {
+   "n": 14,
+   "cw": 0,
+   "wc": 0,
+   "net_correction": 0,
+   "mean_token_reduction": null,
+   "mean_selected_count_reduction": null,
+   "mean_reader_evidence_loss_rate": null,
+   "mean_proxy_margin_retention": 1.0,
+   "mean_confidence_delta": 0.0
+  },
+  "LOW": {
+   "n": 65,
+   "cw": 4,
+   "wc": 0,
+   "net_correction": -4,
+   "mean_token_reduction": 0.6714415007936143,
+   "mean_selected_count_reduction": 0.6547193494994211,
+   "mean_reader_evidence_loss_rate": 0.6509857236780312,
+   "mean_proxy_margin_retention": 1.287392654370837,
+   "mean_confidence_delta": -0.009230769230769225
+  },
+  "MEDIUM": {
+   "n": 35,
+   "cw": 0,
+   "wc": 1,
+   "net_correction": 1,
+   "mean_token_reduction": 0.8721818699122,
+   "mean_selected_count_reduction": 0.8554877429908487,
+   "mean_reader_evidence_loss_rate": 0.8547846756418185,
+   "mean_proxy_margin_retention": 1.2974553386936334,
+   "mean_confidence_delta": -0.1
+  },
+  "HIGH": {
+   "n": 186,
+   "cw": 9,
+   "wc": 9,
+   "net_correction": 0,
+   "mean_token_reduction": 0.9131744162693919,
+   "mean_selected_count_reduction": 0.875150467095139,
+   "mean_reader_evidence_loss_rate": 0.9157776743275335,
+   "mean_proxy_margin_retention": 1.2915542342748436,
+   "mean_confidence_delta": -0.06935483870967744
+  }
+ }
+}
