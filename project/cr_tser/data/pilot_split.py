@@ -15,50 +15,54 @@ from collections import defaultdict
 
 from ..config.pilot_config import (CUTOFFS_MIN, PARTITION_SEED, SPLIT_SIZES,
                                    SPLIT_TOTAL)
-from .snapshot_bridge import count_parent_cycles
+from .snapshot_bridge import count_parent_cycles, valid_reply_parent_units
 
 
 class SplitError(ValueError):
     """Raised when the event pool cannot satisfy the frozen split sizes."""
 
 
-def viable_event_ids(events, cutoffs=CUTOFFS_MIN):
-    """Event ids able to produce a valid Reply–Parent unit (plan §5, V2 §8).
+def viable_event_ids(events, cutoffs=CUTOFFS_MIN, eligibility=None):
+    """Event ids able to produce a usable snapshot (plan §5, V2 §8).
 
     This filter must run **before** the split: a label registry can reference
     events whose released data yields nothing, and sampling from it first
     would put unusable events into the pilot.
 
-    Amendment V2 §7/§8 tightens the rule: a usable reply must be ``VALID``
-    (not ``EMPTY_TEXT`` / ``MISSING_PARENT`` / ``EXTERNAL_PARENT`` /
-    ``TEMPORAL_INVALID_NODE``), it must have a resolved in-event parent, and
-    both must fall inside the same causal cutoff. Only true timestamps and the
-    causal rule are used — never row/node order.
+    ``eligibility="v2_strict"`` (the Ma-Weibo primary) tightens the rule per
+    amendment V2 §7/§8: the event needs a ``VALID`` source, no cycle among the
+    valid nodes and a real Reply–Parent unit — a ``VALID`` reply whose parent
+    is itself ``VALID``, textual and causally ordered — inside one cutoff.
+    Every other dataset keeps the V1 rule (any non-``TEMPORAL_INVALID_NODE``
+    reply inside the cutoff), so the amendment does not change PHEME's
+    historical viability behaviour. Only true timestamps are used; never
+    row/node order.
     """
+    strict = eligibility == "v2_strict"
     viable = []
     for event in events:
         t0 = event["source_timestamp"]
-        by_id = {node["node_id"]: node for node in event["nodes"]}
-        source = by_id.get(event["source_id"])
-        if source is None or source["status"] != "VALID":
-            continue
-        if count_parent_cycles(event) > 0:
-            continue
-        units = []
-        for node in event["nodes"]:
-            if node["node_id"] == event["source_id"] \
-                    or node["status"] != "VALID":
+        if strict:
+            by_id = {node["node_id"]: node for node in event["nodes"]}
+            source = by_id.get(event["source_id"])
+            if source is None or source["status"] != "VALID":
                 continue
-            parent_id = node["parent_id"]
-            if parent_id is None or parent_id not in by_id:
+            if count_parent_cycles(event) > 0:
                 continue
-            parent = by_id[parent_id]
-            if parent["timestamp"] <= node["timestamp"]:
-                units.append((node["timestamp"], parent["timestamp"]))
+            units = valid_reply_parent_units(event)
+            for cutoff in cutoffs:
+                limit = t0 + int(cutoff) * 60
+                if any(reply_ts <= limit and parent_ts <= limit
+                       for reply_ts, parent_ts in units):
+                    viable.append(event["event_id"])
+                    break
+            continue
         for cutoff in cutoffs:
             limit = t0 + int(cutoff) * 60
-            if any(reply_ts <= limit and parent_ts <= limit
-                   for reply_ts, parent_ts in units):
+            if any(node["node_id"] != event["source_id"]
+                   and node["status"] != "TEMPORAL_INVALID_NODE"
+                   and node["timestamp"] <= limit
+                   for node in event["nodes"]):
                 viable.append(event["event_id"])
                 break
     return viable

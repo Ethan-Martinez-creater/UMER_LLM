@@ -349,6 +349,11 @@
    "detail": "statuses={'7_s': 'VALID', '7_a': 'VALID', '7_b': 'EMPTY_TEXT', '7_c': 'VALID'} units=['7_a', '7_c']"
   },
   {
+   "check": "pheme_keeps_v1_evidence_units",
+   "status": "pass",
+   "detail": "pheme units=['7_a', '7_b', '7_c']"
+  },
+  {
    "check": "maweibo_viability_filter_runs",
    "status": "pass",
    "detail": "every fixture event has a valid Reply\u2013Parent unit"
@@ -387,6 +392,31 @@
    "check": "v2_scientific_constants_unchanged",
    "status": "pass",
    "detail": "amendment V2 changes dataset roles only"
+  },
+  {
+   "check": "eligibility_is_dataset_aware",
+   "status": "pass",
+   "detail": "strict=['b'] v1=['a', 'b']"
+  },
+  {
+   "check": "invalid_parent_cannot_form_unit",
+   "status": "pass",
+   "detail": "a VALID child must not smuggle an invalid parent"
+  },
+  {
+   "check": "v1_historical_immutable:code_verify.json",
+   "status": "pass",
+   "detail": "sha256=edc76e509262d126 expected=edc76e509262d126"
+  },
+  {
+   "check": "v1_historical_immutable:pilot_verify.json",
+   "status": "pass",
+   "detail": "sha256=a45dc514df41882a expected=a45dc514df41882a"
+  },
+  {
+   "check": "v1_verifier_dir_immutable",
+   "status": "pass",
+   "detail": "sha256=efae6c5a47d1a93a expected=efae6c5a47d1a93a"
   }
  ]
 }

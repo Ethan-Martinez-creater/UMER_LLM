@@ -60,16 +60,28 @@ def build_evidence_units(snapshot: dict) -> list:
     source_id = snapshot["source_id"]
     pos = {nid: i for i, nid in enumerate(node_ids)}
     statuses = snapshot.get("statuses")
+    # Amendment V2 §7 applies **only** where the orchestration contract says so
+    # (the Ma-Weibo primary). Read from explicit snapshot metadata; never guess
+    # the dataset. Every other dataset keeps the V1 behaviour, so PHEME's
+    # historical missing/external-parent evidence is not silently deleted.
+    strict = snapshot.get("eligibility") == "v2_strict"
     units = []
     for i, nid in enumerate(node_ids):
         if nid == source_id:
             continue
-        # Amendment V2 §7: only VALID nodes may form a textual evidence unit.
-        # EMPTY_TEXT / MISSING_PARENT / EXTERNAL_PARENT / TEMPORAL_INVALID_NODE
-        # nodes are audited but never become an evidence unit.
-        if statuses is not None and statuses[i] != "VALID":
-            continue
         parent_id = parent_ids[i]
+        if strict:
+            if statuses is None or statuses[i] != "VALID":
+                continue
+            if not str(texts[i] or "").strip():
+                continue
+            if parent_id is None or parent_id not in pos:
+                continue
+            parent_pos = pos[parent_id]
+            if statuses[parent_pos] != "VALID":
+                continue
+            if not str(texts[parent_pos] or "").strip():
+                continue
         parent_text = None
         if parent_id is not None and parent_id in pos:
             parent_text = texts[pos[parent_id]]

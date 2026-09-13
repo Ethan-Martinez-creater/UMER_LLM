@@ -482,6 +482,102 @@ P1-P4 = NOT RUN
 FORMAL PILOT = NOT RUN
 ```
 
+---
+
+# 17. V2-M0 closure hotfix (dataset/orchestration only, experiments NOT RUN)
+
+Five issues found when the V2-M0 migration was reviewed. Only dataset /
+orchestration / report code, tests and the verifier changed.
+
+## 17.1 Eligibility filtering is dataset-aware again
+
+`build_evidence_units()` had been changed to skip every `status != "VALID"`
+node for **all** datasets, which silently altered the V1/PHEME evidence-unit
+semantics. That unconditional filter is gone. The contract is now explicit and
+dataset-scoped:
+
+* `pilot_config.V2_STRICT_ELIGIBILITY_DATASETS = (PRIMARY_DATASET,)` is the
+  single source of truth;
+* `cr_tser_common.eligibility_for(dataset)` returns `"v2_strict"` for Ma-Weibo
+  and `None` otherwise;
+* `snapshot_artifacts()` stamps `snapshot["eligibility"]` from that contract, so
+  `build_evidence_units()` reads **explicit snapshot metadata** — it never
+  guesses a dataset from a string.
+
+Ma-Weibo therefore enforces the V2 node contract while PHEME keeps the V1
+behaviour (its historical missing/external-parent evidence is no longer
+deleted). Regression:
+`test_same_non_valid_reply_excluded_only_for_maweibo`,
+`test_eligibility_for_is_explicit`, `test_pheme_keeps_v1_evidence_units`.
+
+## 17.2 Strict Ma-Weibo Reply–Parent eligibility
+
+A V2 textual Reply–Parent unit now requires **all** of: reply
+`status == "VALID"`; parent present in the event; parent `status == "VALID"`;
+non-empty reply text; non-empty parent text; `parent.timestamp <=
+reply.timestamp`. A `VALID` child can no longer smuggle an `EMPTY_TEXT` /
+`MISSING_PARENT` / `EXTERNAL_PARENT` parent into a unit. The same predicate is
+shared by `valid_reply_parent_units()`, the Ma-Weibo viability calculation
+(`viable_cutoffs` / `event_viable`), `pilot_split.viable_event_ids(...,
+eligibility="v2_strict")` and the `"v2_strict"` branch of
+`build_evidence_units()`. Tests:
+`test_valid_child_with_empty_text_parent_has_no_unit`,
+`test_valid_child_with_invalid_status_parent_has_no_unit`,
+`test_valid_child_with_valid_textual_parent_has_unit`,
+`test_invalid_parent_does_not_add_to_viable_pool`.
+
+## 17.3 PHEME smoke is fail-closed
+
+`status = "OK"` no longer depends on `future_leakage == []` alone. `pheme_smoke`
+now verifies, on a real event, that the raw event loads, source text, reply
+text, timestamps and parent relations are recoverable, all three 15m/1h/6h
+snapshots build, and leakage is zero; otherwise it returns
+`PHEME_SMOKE_FAIL` with an explicit `failures` list. A few unresolved parents
+are normal in PHEME, so the contract requires at least one *resolved* relation
+rather than one per reply. Tests: the six `test_pheme_smoke_*` cases.
+
+## 17.4 V2 aggregator / report carries no V1 primary semantics
+
+`compute_gates()` no longer reads `weibo22_reason`; the P0 detail is generated
+from the V2 readiness fields (`maweibo_integrity`, `maweibo_viable`,
+`pheme_smoke`, `readers_ready`, `ab_sanity_ok`) via `_p0_detail()`. The report
+title is now “CR-TSER V2 Feasibility Pilot — Ma-Weibo primary”, the gate
+section says “Ma-Weibo primary”, the B2/S6 copy says they never enter a
+Ma-Weibo primary gate, and the module docstring states P1–P4 are
+Ma-Weibo-primary with Weibo22 a rejected candidate. Test:
+`test_v2_report_is_maweibo_primary` (asserts `primary = maweibo`,
+`secondary = pheme`, no “Weibo22 primary”, and that a planted `weibo22_reason`
+is never surfaced).
+
+## 17.5 V1 namespace restored and frozen
+
+`results/cr_tser/verifier/code_verify.json` was restored byte-for-byte to the
+frozen baseline `b5cfa168245c46347e0f12833a4ef1017e93e94f`. The verifier now
+writes **only** under `results/cr_tser_v2/verifier/` (a `--protocol v1` run
+writes `v1_*.json` there), and pins the V1 artifacts
+(`v1_historical_immutable:*`) plus the whole V1 verifier directory
+(`v1_verifier_dir_immutable`) so a V2 run can never rewrite V1 history.
+
+The Ma-Weibo audit ratios `parent_resolution_coverage`, `missing_parent_rate`
+and `external_parent_rate` now use the **non-source reply count** as
+denominator (plus new `reply_node_count` / `reply_status_counts` fields), so
+the source node no longer dilutes them.
+
+## 17.6 Verification (closure hotfix)
+
+* `python -m pytest project/cr_tser/tests -q` → **128 passed** (15 new).
+* `python scripts/cr_tser_verify_pilot.py --mode code --protocol v2` →
+  **issues = 0**.
+* `python scripts/cr_tser_verify_pilot.py --mode code --protocol v1` →
+  **issues = 0** (writes `results/cr_tser_v2/verifier/v1_code_verify.json`).
+* `python scripts/cr_tser_verify_pilot.py --mode pilot --protocol v2` →
+  **issues = 0, pending = 1** (no manifests; V2 P0 not run).
+* The V1 verifier directory hash is unchanged after a V2 verifier run
+  (`efae6c5a…`), proving the historical namespace is read-only.
+* `python -m compileall project/cr_tser scripts` → clean.
+* No V2 P0, reader loading, A/B real-reader sanity, manifest, utility label,
+  predictor training, Stage-A freeze, held-out evaluation or P1–P4 was run.
+
 
 
 

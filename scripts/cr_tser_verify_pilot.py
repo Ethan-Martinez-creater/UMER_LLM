@@ -20,6 +20,7 @@ not executed yet are reported as ``pending`` and do not count as issues.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -90,6 +91,19 @@ REQUIRED_TESTS = [
 ]
 
 RETIRED_IN_CORE = ("1021", "proxy", "ms_tsr", "ms-tsr", "mf_tsr", "mf-tsr")
+
+#: The V1 namespace is read-only history (amendment V2 §22). A V2 run writes
+#: only under ``results/cr_tser_v2``; these pins prove the historical V1
+#: evidence was not silently rewritten by the dataset migration.
+V1_FROZEN_VERIFIER_DIR = "results/cr_tser/verifier"
+V1_FROZEN_ARTIFACTS = {
+    "results/cr_tser/verifier/code_verify.json":
+        "edc76e509262d12602d2c1f422ab07883950c25bb0e3ea5d5fbcd15cf2e68a27",
+    "results/cr_tser/verifier/pilot_verify.json":
+        "a45dc514df41882a8999d02b31b786521c667774b9b1867586437491defdc408",
+}
+V1_FROZEN_VERIFIER_DIR_SHA256 = \
+    "efae6c5a47d1a93af3052842b16967532b32bacd6276fba77b603a9cb57188f2"
 
 
 class Report:
@@ -292,6 +306,7 @@ def _verify_semantics(report):
 
     # --- P0 boundary failure must block PASS ---
     try:
+        import cr_tser_common as common
         import cr_tser_p0_audit as p0
         audit = {"verdict": "WEIBO22_TEMPORAL_READY"}
         readers = {"qwen": {"model_path_exists": True, "loaded": True}}
@@ -981,6 +996,7 @@ def _verify_v2_migration(report):
 
     # 3.-10. bridge + composite source + viability + firewall (executed)
     try:
+        import cr_tser_common as common
         import cr_tser_p0_audit as p0
         from cr_tser.config.pilot_config import (V1_RESULTS_ROOT,
                                                  V2_RESULTS_ROOT,
@@ -1079,12 +1095,21 @@ def _verify_v2_migration(report):
             event = bridge.load_events(raw_dir, label_file)[0]
             statuses = {n["node_id"]: n["status"] for n in event["nodes"]}
             snapshot = build_causal_snapshot(event, 360)
+            # the Ma-Weibo orchestration stamps the eligibility contract; the
+            # PHEME path leaves it unset and keeps the V1 behaviour
+            snapshot["eligibility"] = common.eligibility_for("maweibo")
             unit_ids = {u["node_id"] for u in build_evidence_units(snapshot)}
+            pheme_snapshot = build_causal_snapshot(event, 360)
+            pheme_units = {u["node_id"]
+                           for u in build_evidence_units(pheme_snapshot)}
             report.add("empty_text_not_an_evidence_unit",
                        statuses["7_b"] == "EMPTY_TEXT"
                        and "7_b" not in unit_ids
                        and "7_c" in unit_ids,
                        f"statuses={statuses} units={sorted(unit_ids)}")
+            report.add("pheme_keeps_v1_evidence_units",
+                       "7_b" in pheme_units,
+                       f"pheme units={sorted(pheme_units)}")
 
         # viability filter runs before the split and < 170 blocks P0
         from cr_tser.data.pilot_split import viable_event_ids
@@ -1093,7 +1118,8 @@ def _verify_v2_migration(report):
                                                          replies=1)
             events = bridge.load_events(raw_dir, label_file)
             report.add("maweibo_viability_filter_runs",
-                       len(viable_event_ids(events)) == len(events),
+                       len(viable_event_ids(events, eligibility="v2_strict"))
+                       == len(events),
                        "every fixture event has a valid Reply–Parent unit")
 
         good_readers = {k: {"model_path_exists": True, "loaded": True}
@@ -1195,6 +1221,85 @@ def _verify_v2_migration(report):
                     C.PHEME_MEAN_DELTA_MIN)
                == (0.05, 0.10, 0.02, 0.02, 0.01, -0.005, -0.005),
                "amendment V2 changes dataset roles only")
+
+    # 16. dataset-aware eligibility: PHEME keeps the V1 evidence-unit contract
+    try:
+        from cr_tser.config.pilot_config import (PRIMARY_DATASET,
+                                                 V2_STRICT_ELIGIBILITY_DATASETS)
+        from cr_tser.intervention.evidence_units import build_evidence_units
+        from cr_tser.data.snapshot_bridge import valid_reply_parent_units
+
+        def _snapshot(eligibility, statuses, parent_ids, texts):
+            return {"node_ids": ["s", "a", "b"], "texts": texts,
+                    "parent_ids": parent_ids, "timestamps": [0, 10, 20],
+                    "elapsed_seconds": [0, 10, 20], "source_id": "s",
+                    "depths": [0, 1, 2], "statuses": statuses,
+                    "eligibility": eligibility}
+
+        # reply "a" is VALID but its parent "s" is EMPTY_TEXT
+        snap = _snapshot("v2_strict", ["EMPTY_TEXT", "VALID", "VALID"],
+                         [None, "s", "a"], ["", "reply a", "reply b"])
+        strict_units = {u["node_id"] for u in build_evidence_units(snap)}
+        v1_snap = dict(snap, eligibility=None)
+        v1_units = {u["node_id"] for u in build_evidence_units(v1_snap)}
+        report.add("eligibility_is_dataset_aware",
+                   "a" not in strict_units and {"a", "b"} <= v1_units
+                   and V2_STRICT_ELIGIBILITY_DATASETS == (PRIMARY_DATASET,),
+                   f"strict={sorted(strict_units)} v1={sorted(v1_units)}")
+
+        event = {"event_id": "e", "source_id": "s",
+                 "nodes": [
+                     {"node_id": "s", "parent_id": None, "timestamp": 0,
+                      "text": "", "original_order": 0, "status": "EMPTY_TEXT"},
+                     {"node_id": "a", "parent_id": "s", "timestamp": 10,
+                      "text": "reply a", "original_order": 1,
+                      "status": "VALID"}]}
+        report.add("invalid_parent_cannot_form_unit",
+                   valid_reply_parent_units(event) == [],
+                   "a VALID child must not smuggle an invalid parent")
+    except Exception as exc:
+        report.add("eligibility_is_dataset_aware", False, f"error: {exc}")
+        report.add("invalid_parent_cannot_form_unit", False, f"error: {exc}")
+
+    _verify_v1_historical_immutable(report)
+
+
+def _dir_sha256(path: str) -> str:
+    h = hashlib.sha256()
+    for root, dirs, files in os.walk(path):
+        dirs.sort()
+        for name in sorted(files):
+            full = os.path.join(root, name)
+            rel = os.path.relpath(full, path)
+            h.update(rel.encode())
+            h.update(b"\x00")
+            with open(full, "rb") as fh:
+                h.update(fh.read())
+            h.update(b"\x00")
+    return h.hexdigest()
+
+
+def _verify_v1_historical_immutable(report):
+    """V1 historical artifacts must stay byte-identical (amendment §22)."""
+    for rel, want in V1_FROZEN_ARTIFACTS.items():
+        path = REPO / rel
+        if not path.exists():
+            report.add(f"v1_historical_immutable:{path.name}", False,
+                       f"{rel} is missing")
+            continue
+        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        report.add(f"v1_historical_immutable:{path.name}", got == want,
+                   f"sha256={got[:16]} expected={want[:16]}")
+    directory = REPO / V1_FROZEN_VERIFIER_DIR
+    if not directory.exists():
+        report.add("v1_verifier_dir_immutable", False,
+                   f"{V1_FROZEN_VERIFIER_DIR} is missing")
+        return
+    got = _dir_sha256(str(directory))
+    report.add("v1_verifier_dir_immutable",
+               got == V1_FROZEN_VERIFIER_DIR_SHA256,
+               f"sha256={got[:16]} expected="
+               f"{V1_FROZEN_VERIFIER_DIR_SHA256[:16]}")
 
 
 def _pkg(rel):
@@ -1500,17 +1605,20 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     from cr_tser.config.pilot_config import V1_RESULTS_ROOT, V2_RESULTS_ROOT
 
-    default_root = V2_RESULTS_ROOT if args.protocol == "v2" else V1_RESULTS_ROOT
+    read_root = V2_RESULTS_ROOT if args.protocol == "v2" else V1_RESULTS_ROOT
     report = Report()
     if args.mode == "code":
         verify_code(report, args.protocol)
     else:
         root = args.results_root or os.environ.get(
-            "CRTSER_OUT_ROOT", str(REPO / default_root))
+            "CRTSER_OUT_ROOT", str(REPO / read_root))
         verify_pilot(report, root)
     payload = report.to_dict(args.mode)
-    out = args.out or str(REPO / default_root / "verifier" /
-                          f"{args.mode}_verify.json")
+    # Every run writes into the V2 namespace: the V1 directory is frozen
+    # history and must never be rewritten by a verifier re-run (amendment §22).
+    out_name = (f"{args.mode}_verify.json" if args.protocol == "v2"
+                else f"v1_{args.mode}_verify.json")
+    out = args.out or str(REPO / V2_RESULTS_ROOT / "verifier" / out_name)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=1)

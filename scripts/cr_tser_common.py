@@ -111,8 +111,27 @@ def canonical_tokenizer(path: str):
                                          local_files_only=True)
 
 
-def snapshot_artifacts(event, cutoff, encoder, tokenizer):
-    """Everything one (event, cutoff) contributes to the pilot."""
+def eligibility_for(dataset: str):
+    """Explicit evidence-eligibility contract per dataset (amendment V2 §7).
+
+    Returns ``"v2_strict"`` for the Ma-Weibo primary (only ``VALID`` replies
+    with a ``VALID`` textual parent may form an evidence unit) and ``None`` for
+    every other dataset, which keeps the V1 evidence-unit behaviour — PHEME's
+    historical missing/external-parent evidence must not be deleted by the
+    dataset amendment.
+    """
+    from cr_tser.config.pilot_config import V2_STRICT_ELIGIBILITY_DATASETS
+    return "v2_strict" if dataset in V2_STRICT_ELIGIBILITY_DATASETS else None
+
+
+def snapshot_artifacts(event, cutoff, encoder, tokenizer, eligibility=None):
+    """Everything one (event, cutoff) contributes to the pilot.
+
+    ``eligibility`` is stamped onto the snapshot so
+    :func:`cr_tser.intervention.evidence_units.build_evidence_units` can apply
+    the dataset-specific contract from explicit metadata rather than guessing
+    it. When omitted it is derived from the encoder's dataset.
+    """
     from cr_tser.data.structural_stats import structural_scalars
     from cr_tser.intervention.evidence_units import build_evidence_units
     from cr_tser.intervention.intervention_generator import \
@@ -120,6 +139,9 @@ def snapshot_artifacts(event, cutoff, encoder, tokenizer):
     from cr_tser.intervention.semantic_reference import build_src
 
     snap = build_causal_snapshot(event, cutoff)
+    if eligibility is None:
+        eligibility = eligibility_for(getattr(encoder, "dataset", "") or "")
+    snap["eligibility"] = eligibility
     units = build_evidence_units(snap)
     if not units:
         return {"snapshot": snap, "units": [], "src": None,

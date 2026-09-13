@@ -154,6 +154,7 @@ def audit_maweibo(raw_dir: str, label_file: str, limit=None) -> dict:
         raw_dir and os.path.isdir(raw_dir)) else []
 
     status_counts = Counter()
+    reply_status = Counter()
     n_events_ok = 0
     n_nodes = 0
     n_reply_nodes = 0
@@ -191,6 +192,7 @@ def audit_maweibo(raw_dir: str, label_file: str, limit=None) -> dict:
                 n_nodes_with_ts += 1
             if node["node_id"] != source_id:
                 n_reply_nodes += 1
+                reply_status[node["status"]] += 1
                 if str(node.get("text") or "").strip():
                     n_reply_with_text += 1
         source = next(n for n in nodes if n["node_id"] == source_id)
@@ -216,7 +218,9 @@ def audit_maweibo(raw_dir: str, label_file: str, limit=None) -> dict:
     def _cov(num, den):
         return (num / den) if den else 0.0
 
-    resolvable = status_counts["VALID"] + status_counts["EMPTY_TEXT"]
+    # reply–parent ratios use the non-source reply count as denominator: the
+    # source node has no parent and must not dilute (or inflate) them.
+    resolvable_replies = reply_status["VALID"] + reply_status["EMPTY_TEXT"]
     return {
         "dataset": "maweibo",
         "raw_dir": os.path.abspath(raw_dir) if raw_dir else raw_dir,
@@ -231,18 +235,22 @@ def audit_maweibo(raw_dir: str, label_file: str, limit=None) -> dict:
         "source_timestamp_coverage": _cov(n_source_ts_ok, n_events_ok),
         "reply_text_coverage": _cov(n_reply_with_text, n_reply_nodes),
         "timestamp_coverage": _cov(n_nodes_with_ts, n_nodes),
-        "parent_resolution_coverage": _cov(resolvable, n_nodes),
+        "parent_resolution_coverage": _cov(resolvable_replies, n_reply_nodes),
+        "reply_node_count": n_reply_nodes,
         "duplicate_ids": duplicate_id_events,
         "cycle_count": cycle_events,
         "multi_root_event_count": multi_root_events,
-        "missing_parent_count": status_counts["MISSING_PARENT"],
-        "missing_parent_rate": _cov(status_counts["MISSING_PARENT"], n_nodes),
-        "external_parent_count": status_counts["EXTERNAL_PARENT"],
-        "external_parent_rate": _cov(status_counts["EXTERNAL_PARENT"], n_nodes),
+        "missing_parent_count": reply_status["MISSING_PARENT"],
+        "missing_parent_rate": _cov(reply_status["MISSING_PARENT"],
+                                    n_reply_nodes),
+        "external_parent_count": reply_status["EXTERNAL_PARENT"],
+        "external_parent_rate": _cov(reply_status["EXTERNAL_PARENT"],
+                                     n_reply_nodes),
         "empty_text_count": status_counts["EMPTY_TEXT"],
         "temporal_invalid_node_count":
             status_counts["TEMPORAL_INVALID_NODE"],
         "node_status_counts": dict(sorted(status_counts.items())),
+        "reply_status_counts": dict(sorted(reply_status.items())),
         "events_with_ge1_valid_reply_parent_unit": n_valid_unit_events,
         "events_viable_15m": viable["15"],
         "events_viable_1h": viable["60"],

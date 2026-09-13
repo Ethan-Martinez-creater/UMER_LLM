@@ -252,11 +252,20 @@ def maweibo_integrity_check(paths, raw=None, labels=None) -> dict:
 
 
 def pheme_smoke(paths) -> dict:
-    """P0-B: PHEME entry smoke — load, text, timestamps, parents, snapshots."""
+    """P0-B: PHEME entry smoke — fail closed unless the whole pipeline works.
+
+    ``status="OK"`` requires, on at least one real event: a loadable raw event,
+    recoverable source text, reply text, timestamps and parent relations,
+    constructible 15m/1h/6h causal snapshots, and zero future leakage. A few
+    missing/external parents are normal in PHEME, so the contract requires at
+    least one *resolved* parent relation rather than one per reply.
+    """
     raw = getattr(paths, "pheme_raw", "")
-    out = {"dataset": "pheme", "raw_dir": raw, "labels_generated": False}
+    out = {"dataset": "pheme", "raw_dir": raw, "labels_generated": False,
+           "cutoffs": list(CUTOFFS_MIN)}
     if not raw or not os.path.isdir(raw):
         out.update({"status": "PHEME_RAW_MISSING",
+                    "failures": ["pheme_raw_missing"],
                     "reason": "CRTSER_PHEME_RAW is unset or not a directory"})
         return out
     try:
@@ -266,36 +275,70 @@ def pheme_smoke(paths) -> dict:
         ids = pheme_adapter.event_ids(raw)
         out["n_events"] = len(ids)
         if not ids:
-            out["status"] = "PHEME_RAW_EMPTY"
+            out.update({"status": "PHEME_RAW_EMPTY", "failures": ["no_events"]})
             return out
-        _eid, topic, label, folder = ids[0]
-        event = pheme_adapter.load_event(topic, label, folder)
-        out["sample_event_id"] = _eid
-        out["source_text_available"] = bool(
-            str(event["nodes"][0].get("text") or "").strip())
-        out["reply_text_available"] = any(
-            str(n.get("text") or "").strip() for n in event["nodes"][1:])
-        out["timestamps_available"] = all(
-            n.get("timestamp") is not None for n in event["nodes"])
-        out["parent_relation_available"] = all(
-            n.get("parent_id") is not None for n in event["nodes"][1:])
-        built, leakage = [], []
-        t0 = event["source_timestamp"]
-        for cutoff in CUTOFFS_MIN:
-            snap = build_causal_snapshot(event, cutoff)
-            built.append({"cutoff_minutes": cutoff,
-                          "n_nodes": len(snap["node_ids"])})
-            limit = t0 + int(cutoff) * 60
-            late = [nid for nid, ts in zip(snap["node_ids"],
-                                           snap["timestamps"]) if ts > limit]
-            if late:
-                leakage.append({"cutoff_minutes": cutoff, "nodes": late[:5]})
-        out["snapshots_built"] = built
-        out["future_leakage"] = leakage
-        out["status"] = "OK" if not leakage else "FUTURE_LEAKAGE"
+        chosen, failures = None, []
+        for _eid, topic, label, folder in ids[:5]:
+            try:
+                event = pheme_adapter.load_event(topic, label, folder)
+            except Exception as exc:  # noqa: BLE001 - audit data
+                failures = [f"load_error:{type(exc).__name__}"]
+                continue
+            failures = []
+            if not str(event["nodes"][0].get("text") or "").strip():
+                failures.append("no_source_text")
+            if not any(str(n.get("text") or "").strip()
+                       for n in event["nodes"][1:]):
+                failures.append("no_reply_text")
+            if not all(n.get("timestamp") is not None
+                       for n in event["nodes"]):
+                failures.append("no_timestamps")
+            known = {n["node_id"] for n in event["nodes"]}
+            if not any(n.get("parent_id") in known
+                       for n in event["nodes"][1:]):
+                failures.append("no_parent_relation")
+            snapshots, leakage = [], []
+            t0 = event["source_timestamp"]
+            for cutoff in CUTOFFS_MIN:
+                try:
+                    snap = build_causal_snapshot(event, cutoff)
+                except Exception as exc:  # noqa: BLE001 - audit data
+                    failures.append(f"cutoff_build_failed:{cutoff}:"
+                                    f"{type(exc).__name__}")
+                    continue
+                snapshots.append({"cutoff_minutes": cutoff,
+                                  "n_nodes": len(snap["node_ids"])})
+                limit = t0 + int(cutoff) * 60
+                late = [nid for nid, ts in zip(snap["node_ids"],
+                                               snap["timestamps"])
+                        if ts > limit]
+                if late:
+                    leakage.append({"cutoff_minutes": cutoff,
+                                    "nodes": late[:5]})
+            if leakage:
+                failures.append("future_leakage")
+            out["sample_event_id"] = _eid
+            out["source_text_available"] = "no_source_text" not in failures
+            out["reply_text_available"] = "no_reply_text" not in failures
+            out["timestamps_available"] = "no_timestamps" not in failures
+            out["parent_relation_available"] = \
+                "no_parent_relation" not in failures
+            out["snapshots_built"] = snapshots
+            out["future_leakage"] = leakage
+            if not failures:
+                chosen = _eid
+                break
+        out["failures"] = failures
+        out["status"] = "OK" if chosen is not None else "PHEME_SMOKE_FAIL"
+        if chosen is None:
+            out["reason"] = ("no PHEME event satisfied the full smoke contract "
+                             "(load / text / timestamp / parent / snapshots / "
+                             "no future leakage)")
+        return out
     except Exception as exc:  # pragma: no cover - environment dependent
-        out["status"] = f"ERROR: {type(exc).__name__}: {exc}"
-    return out
+        out.update({"status": "PHEME_SMOKE_FAIL",
+                    "failures": [f"{type(exc).__name__}: {exc}"]})
+        return out
 
 
 def evaluate_readiness_v2(audit, pheme, readers, sanity, readers_checked,

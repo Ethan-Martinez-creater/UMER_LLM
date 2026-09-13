@@ -188,6 +188,14 @@ WEIBO22_STATUS = "REJECTED_PRIMARY_CANDIDATE"
 #: (amendment §8, §10).
 V2_MIN_VIABLE_EVENTS = SPLIT_TOTAL
 
+#: Datasets whose evidence units follow the strict V2 node-eligibility
+#: contract (amendment §7). This is an explicit orchestration contract, not a
+#: string guess: only the Ma-Weibo primary filters units by node status.
+#: PHEME keeps the V1 evidence-unit behaviour, so the amendment never deletes
+#: its historical missing/external-parent evidence.
+V2_STRICT_ELIGIBILITY_DATASETS = (PRIMARY_DATASET,)
+
+
 #: Artifact namespaces. V1 is historical and read-only; formal V2 runs write
 #: into their own root so a V1 artifact can never be overwritten (amendment
 #: §22).

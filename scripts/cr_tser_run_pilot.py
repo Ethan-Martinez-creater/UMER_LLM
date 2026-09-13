@@ -2,21 +2,24 @@
 """CR-TSER pilot orchestrator, gate evaluation and report (plan §26, §36–§38).
 
 Reads the per-dataset artifact namespaces produced by the stage scripts, so
-PHEME and Weibo22 results can coexist without overwriting each other:
+the Ma-Weibo primary and the PHEME secondary can coexist without overwriting
+each other:
 
     manifests/<dataset>/...
     utility_labels/<dataset>/labels.jsonl
     predictor/<dataset>/...
     unseen_reader/<dataset>/rotation_<heldout>.json
 
-Gate discipline (review fixes):
+Gate discipline (dataset protocol amendment V2):
 
-* **P1–P4 are Weibo22-primary.** PHEME contributes only the secondary
-  condition and can never produce ``FULL_GO`` (plan §25);
+* **P1–P4 are Ma-Weibo-primary** (amendment §3.1). PHEME contributes only the
+  secondary condition and can never produce ``FULL_GO`` (amendment §17);
+  Weibo22 is a **rejected primary candidate** and never enters a V2 P1–P4 loop;
 * **P2** consumes reader- and snapshot-matched pairs;
 * **P3** requires the plan §24 event-level paired bootstrap of ΔMacro-F1 and
   pools all three LORO rotations instead of reporting only the first;
-* **B2 / S6** (legacy TC-DSCR) are PHEME-only and never reach a Weibo22 gate.
+* **B2 / S6** (legacy TC-DSCR) are PHEME-only diagnostics and never reach a
+  Ma-Weibo primary gate.
 """
 from __future__ import annotations
 
@@ -124,7 +127,7 @@ def legacy_b2_diagnostic(out_root, dataset=SECONDARY_DATASET):
     The artifact is produced by the PHEME legacy execution stage from the
     frozen TC-DSCR components; the aggregator only *reads and reports* it.
     It is never an input to a gate, so a missing artifact degrades to
-    ``None`` instead of failing a Weibo22 condition.
+    ``None`` instead of failing a Ma-Weibo primary condition.
     """
     return _read_json(os.path.join(out_root, "unseen_reader", dataset,
                                    "b2_legacy_diagnostic.json"))
@@ -281,10 +284,32 @@ def utility_prediction_gate(out_root, dataset, split):
     return gate
 
 
+def _p0_detail(p0):
+    """V2 P0 detail generated from the Ma-Weibo / PHEME readiness fields.
+
+    The historical V1 ``weibo22_reason`` is deliberately never read here:
+    Weibo22 is a rejected primary candidate, not part of the V2 primary
+    decision (amendment §21, §28).
+    """
+    if not p0:
+        return "no P0 readiness artifact (V2 P0 has not run)"
+    if p0.get("protocol") != "v2":
+        return ("P0 readiness artifact is not protocol v2; run "
+                "`cr_tser_p0_audit.py --protocol v2`")
+    return "; ".join([
+        f"maweibo_integrity={p0.get('maweibo_source_integrity')}",
+        f"maweibo_viable={p0.get('maweibo_viable_events')}/"
+        f"{p0.get('maweibo_viable_required')}",
+        f"pheme_smoke={p0.get('pheme_smoke')}",
+        f"readers_ready={p0.get('readers_ready')}",
+        f"ab_sanity_ok={p0.get('ab_sanity_ok')}",
+    ])
+
+
 def compute_gates(out_root, datasets=(PRIMARY_DATASET, SECONDARY_DATASET)):
     p0 = _read_json(os.path.join(out_root, "p0", "p0_readiness.json"), {})
     gates = {"P0": {"pass": p0.get("P0") == "P0_PASS",
-                    "detail": p0.get("weibo22_reason", "")}}
+                    "detail": _p0_detail(p0)}}
     reports = {}
     for dataset in datasets:
         split = _read_json(os.path.join(out_root, "manifests", dataset,
@@ -353,8 +378,10 @@ def write_report(out_root, gates, reports, decision, datasets):
                "datasets": list(datasets)}
     common.write_json(os.path.join(out_root, "CR_TSER_PILOT_SUMMARY.json"),
                       summary)
-    lines = ["# CR-TSER Feasibility Pilot", "",
+    lines = ["# CR-TSER V2 Feasibility Pilot — Ma-Weibo primary", "",
              "## Protocol Freeze", "",
+             "- dataset protocol amendment V2: primary = Ma-Weibo, "
+             "secondary = PHEME; Weibo22 = rejected primary candidate",
              "- seed 7319; split 80/50/15/25; cutoffs 15m/1h/6h; "
              "B_ref=1024; B_pilot=floor(0.5*Tokens(C_ref))",
              "- readers: Qwen3-8B / GLM-4-9B-Chat / InternLM3-8B-Instruct "
@@ -368,14 +395,17 @@ def write_report(out_root, gates, reports, decision, datasets):
                 continue
             lines += [f"### {name}", "", "```json",
                       json.dumps(report, indent=1)[:4000], "```", ""]
-    lines += ["## GO / NO-GO Gates (Weibo22 primary)", ""]
+    lines += ["## GO / NO-GO Gates (Ma-Weibo primary)", ""]
     for key in ("P0", "P1", "P2", "P3", "P4"):
         entry = gates.get(key, {})
-        lines.append(f"- **{key}**: pass=`{entry.get('pass')}`")
+        detail = entry.get("detail")
+        suffix = f" ({detail})" if detail else ""
+        lines.append(f"- **{key}**: pass=`{entry.get('pass')}`{suffix}")
     lines += ["", "## PHEME Secondary Evidence", "",
               f"- enabled B2/S6 legacy diagnostics: "
               f"`{decision['legacy_diagnostics']['b2_s6_enabled_datasets']}`",
-              "- B2/S6 are diagnostic only; they never enter a Weibo22 gate",
+              "- B2/S6 are diagnostic only; they never enter a Ma-Weibo "
+              "primary gate",
               ""]
     b2 = decision["legacy_diagnostics"].get("b2_legacy_tcdscr")
     lines += ["### PHEME B2 legacy TC-DSCR diagnostic", ""]

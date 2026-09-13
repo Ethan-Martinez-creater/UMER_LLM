@@ -117,11 +117,16 @@ def test_external_parent_is_audited_and_never_a_unit(tmp_path):
     assert bridge.valid_reply_parent_units(event) == []
     assert not bridge.event_viable(event)
     snapshot = build_causal_snapshot(event, 360)
+    snapshot["eligibility"] = "v2_strict"     # Ma-Weibo contract
     unit_ids = {u["node_id"] for u in build_evidence_units(snapshot)}
     assert "9_a" not in unit_ids
     assert all(pid is None for nid, pid in
                zip(snapshot["node_ids"], snapshot["parent_ids"])
                if nid == "9_a")
+    # PHEME keeps the V1 behaviour on the same snapshot
+    pheme_snapshot = build_causal_snapshot(event, 360)
+    pheme_units = {u["node_id"] for u in build_evidence_units(pheme_snapshot)}
+    assert "9_a" in pheme_units
 
 
 def test_empty_text_is_audited_and_not_a_unit(tmp_path):
@@ -139,8 +144,13 @@ def test_empty_text_is_audited_and_not_a_unit(tmp_path):
     statuses = {n["node_id"]: n["status"] for n in event["nodes"]}
     assert statuses["7_b"] == "EMPTY_TEXT"
     snapshot = build_causal_snapshot(event, 360)
+    snapshot["eligibility"] = "v2_strict"     # Ma-Weibo contract
     unit_ids = {u["node_id"] for u in build_evidence_units(snapshot)}
     assert "7_b" not in unit_ids and "7_a" in unit_ids
+    # PHEME keeps the V1 behaviour on the same snapshot
+    pheme_snapshot = build_causal_snapshot(event, 360)
+    pheme_units = {u["node_id"] for u in build_evidence_units(pheme_snapshot)}
+    assert "7_b" in pheme_units
 
 
 def test_temporal_invalid_node_not_in_snapshot(tmp_path):
@@ -234,7 +244,7 @@ def test_viability_filter_precedes_split(tmp_path):
     raw2 = _write_raw(tmp_path, "2000", posts)
     labels = _write_labels(tmp_path, ["eid:1000 label:1", "eid:2000 label:0"])
     events = bridge.load_events(raw2, labels)
-    viable = viable_event_ids(events)
+    viable = viable_event_ids(events, eligibility="v2_strict")
     assert viable == ["1000"]
 
 

@@ -81,7 +81,8 @@ def build_manifests(dataset, paths, out_root, force=False):
 
     events = common.load_dataset_events(dataset, paths)
     # ---- viability filtering happens BEFORE any split (plan §5) ----
-    viable = set(viable_event_ids(events, CUTOFFS_MIN))
+    viable = set(viable_event_ids(events, CUTOFFS_MIN,
+                                  eligibility=common.eligibility_for(dataset)))
     registry = {e["event_id"]: int(e["label"]) for e in events
                 if e["event_id"] in viable}
     if not viable:

@@ -170,10 +170,14 @@ def snapshot_has_replies(snapshot: dict) -> bool:
 def valid_reply_parent_units(event: dict) -> list:
     """``[(reply_ts, parent_ts), ...]`` for every real Reply–Parent unit.
 
-    Amendment V2 §7: a unit requires a ``VALID`` reply with a resolved,
-    in-event parent whose timestamp does not follow the reply's. Nodes with
-    ``EMPTY_TEXT`` / ``MISSING_PARENT`` / ``EXTERNAL_PARENT`` /
-    ``TEMPORAL_INVALID_NODE`` never produce one.
+    Amendment V2 §7 — a unit requires **all** of:
+
+    * reply ``status == "VALID"``;
+    * the parent exists in the event and its ``status == "VALID"`` (a
+      ``VALID`` child cannot smuggle an ``EMPTY_TEXT`` / ``MISSING_PARENT`` /
+      ``EXTERNAL_PARENT`` parent into a unit);
+    * both texts are non-empty (it is a *textual* unit);
+    * ``parent.timestamp <= reply.timestamp`` (causally ordered).
     """
     source_id = event["source_id"]
     by_id = {node["node_id"]: node for node in event["nodes"]}
@@ -181,12 +185,19 @@ def valid_reply_parent_units(event: dict) -> list:
     for node in event["nodes"]:
         if node["node_id"] == source_id or node["status"] != "VALID":
             continue
+        if not str(node.get("text") or "").strip():
+            continue
         parent_id = node["parent_id"]
         if parent_id is None or parent_id not in by_id:
             continue
         parent = by_id[parent_id]
-        if parent["timestamp"] <= node["timestamp"]:
-            units.append((node["timestamp"], parent["timestamp"]))
+        if parent["status"] != "VALID":
+            continue
+        if not str(parent.get("text") or "").strip():
+            continue
+        if parent["timestamp"] > node["timestamp"]:
+            continue
+        units.append((node["timestamp"], parent["timestamp"]))
     return units
 
 

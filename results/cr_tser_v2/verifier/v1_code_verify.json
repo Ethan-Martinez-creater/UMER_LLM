@@ -121,7 +121,7 @@
   {
    "check": "primary_secondary_separated",
    "status": "pass",
-   "detail": "Weibo22 drives P1-P4; PHEME is secondary only"
+   "detail": "the primary dataset drives P1-P4; PHEME is secondary only"
   },
   {
    "check": "b2_s6_pheme_only",
