@@ -4,8 +4,8 @@
  "weibo22_source_of_record": "raw_release",
  "weibo22_reason": "the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built",
  "readers_ready": false,
- "readers_checked": false,
- "ab_sanity_ok": null,
- "ab_boundaries_ok": null,
+ "readers_checked": true,
+ "ab_sanity_ok": false,
+ "ab_boundaries_ok": false,
  "next_step": "STOP: a P0 prerequisite is unmet (plan §25); do not generate interventions"
 }

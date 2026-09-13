@@ -1,0 +1,40 @@
+{
+ "python_version": "3.11.15",
+ "reader_model_paths": {
+  "qwen": "",
+  "glm": "",
+  "internlm": ""
+ },
+ "reader_model_path_exists": {
+  "qwen": false,
+  "glm": false,
+  "internlm": false
+ },
+ "semantic_model_path": "",
+ "semantic_model_exists": false,
+ "canonical_tokenizer_path": "",
+ "canonical_tokenizer_exists": false,
+ "hf_cache": {
+  "cache_dir": "C:\\Users\\PC/.cache/huggingface/hub",
+  "exists": true,
+  "entries": [
+   ".locks",
+   "datasets--difraud--difraud",
+   "models--google-bert--bert-base-chinese",
+   "models--sentence-transformers--all-MiniLM-L6-v2",
+   "models--siebert--sentiment-roberta-large-english",
+   "version.txt"
+  ],
+  "frozen_reader_matches": {
+   "qwen": [],
+   "glm": [],
+   "internlm": []
+  },
+  "found_any_frozen_reader": false
+ },
+ "torch_version": "2.5.1+cu118",
+ "cuda_available": true,
+ "cuda_device_count": 1,
+ "transformers_version": "5.14.1",
+ "reader_preflight_can_load": false
+}

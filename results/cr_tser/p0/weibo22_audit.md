@@ -16,4 +16,15 @@
 - **events_viable_6h**: 0
 - **verdict**: WEIBO22_TEMPORAL_UNAVAILABLE
 
+| plan §4.1 required field | status |
+|---|---|
+| event_source_id | `FIELD_PRESENT` |
+| binary_rumor_label | `FIELD_PRESENT` |
+| source_text | `FIELD_MISSING` |
+| source_timestamp | `FIELD_MISSING` |
+| reply_repost_text | `FIELD_MISSING` |
+| reply_repost_timestamp | `FIELD_MISSING` |
+| current_node_id | `FIELD_PRESENT` |
+| parent_node_id | `FIELD_PRESENT` |
+
 > the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built

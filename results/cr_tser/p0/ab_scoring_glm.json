@@ -1,0 +1,10 @@
+{
+ "model_id": "zai-org/glm-4-9b-chat-hf",
+ "n_examples": 20,
+ "identical_predictions": false,
+ "loaded": false,
+ "scoring_mode": "teacher_forced_logprob_sum",
+ "generated_text_used": false,
+ "generated_confidence_used": false,
+ "status": "MODEL_PATH_MISSING"
+}

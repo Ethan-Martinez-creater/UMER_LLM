@@ -1,0 +1,17 @@
+{
+ "key": "internlm",
+ "model_id": "internlm/internlm3-8b-instruct",
+ "model_path": "",
+ "dtype": "bfloat16",
+ "device": "cuda",
+ "thinking": false,
+ "weight_hash": "",
+ "tokenizer_hash": "",
+ "chat_template_hash": "",
+ "transformers_version": "5.14.1",
+ "device_config": "cuda",
+ "reader_identity_hash": "457374eaa822745528efd8953e57f6b63298b32504cf9fd2c3cb87c2994db785",
+ "model_path_exists": false,
+ "expected_model_id": "internlm/internlm3-8b-instruct",
+ "loaded": false
+}

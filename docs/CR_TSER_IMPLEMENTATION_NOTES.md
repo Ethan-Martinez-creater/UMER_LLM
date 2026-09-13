@@ -275,6 +275,84 @@ formal aggregator contract does not" kind.
   configured, so `P0_PASS` was **not** fabricated.
 * `compileall` clean.
 
+---
+
+# 15. P0 prerequisite resolution and preflight (code only — formal pilot NOT RUN)
+
+The frozen plan's P0 asks whether a strict temporal Weibo22 pilot can be run on
+real data at all. This round resolves the data question and runs the readiness
+preflight; it runs no pilot stage.
+
+## 15.1 Weibo22 source resolution
+
+The local `data_raw/weibo22` archives were verified **byte-for-byte** against
+the official KPG release: each archive's git blob SHA-1 equals the blob hash
+recorded from `github.com/kkkkk001/KPG` at `data/Weibo` during the preflight
+(`Weibo_label_All.zip` → `9550ee43…`, `data.TD_RvNN.vol_5000.zip` →
+`46f9af6a…`). Release tag `v1` (2024-06-28, "Release the dataset Weibo22")
+carries no assets, `data/Weibo` was added by a single commit (`a9019754d8`,
+2024-04-09), and the repository holds only these two archives for Weibo — i.e.
+the complete public Weibo22 release.
+
+Raw-field verdict (plan §4.1): event/source id, binary label, node id and
+parent id are present; **source text, reply text, source timestamp and per-node
+timestamp are absent**. Nodes carry `vol_5000` bag-of-words indices
+(`index:frequency`), not text, and there is no timestamp column in either file.
+The label file carries exactly `2087` rumor + `2087` non-rumor source events,
+matching the CUHK dataset description, so the dataset identity is settled and
+only the temporal fields are unpublished.
+
+Rejected candidates, with provenance recorded in
+`results/cr_tser/p0/weibo22_source_audit.json`: the CUHK RDM project page
+(description of the dataset, no downloadable data package); Zenodo
+"Weibo-Covid-19" (doi:10.5281/zenodo.13787781 — a different, keyword-filtered
+vaccine-discourse corpus with no 2087+2087 rumor labels); and Ma-Weibo (plan
+§4.3 forbids substituting it for Weibo22).
+
+## 15.2 P0 verdict
+
+`python scripts/cr_tser_p0_audit.py --weibo22-raw data_raw/weibo22/extracted --readers --sanity`
+produced the readiness file from code, unedited:
+
+```text
+P0 = P0_FAIL
+weibo22_temporal = WEIBO22_TEMPORAL_UNAVAILABLE
+weibo22_source_of_record = raw_release
+readers_ready = false; ab_sanity_ok = false
+```
+
+Two further prerequisites are also unmet on this machine and are recorded
+rather than worked around: `CRTSER_PHEME_RAW` is unset, so the PHEME smoke is
+`PHEME_RAW_MISSING`; and none of the three frozen readers is present locally
+(no `Qwen/Qwen3-8B`, `zai-org/glm-4-9b-chat-hf` or
+`internlm/internlm3-8b-instruct` weights, empty HF-cache matches), so the frozen
+reader load/hash + A/B teacher-forced preflight cannot run and is reported as
+`MODEL_PATH_MISSING`. No substitute model was used.
+
+## 15.3 Evidence package
+
+`scripts/cr_tser_p0_preflight.py` (new, read-only; no frozen code changed)
+writes the package under `results/cr_tser/p0/`: `P0_REPORT.md`,
+`weibo22_provenance.json`, `weibo22_source_audit.json`,
+`weibo22_temporal_audit.json`, `weibo22_audit.{json,md}`,
+`weibo22_smoke.json`, `pheme_adapter_smoke.json`, `environment_probe.json`,
+`reader_identity_{qwen,glm,internlm}.json`,
+`ab_scoring_{qwen,glm,internlm}.json`, alongside the frozen-script outputs
+`reader_audit.json`, `label_scoring_sanity.json`, `p0_readiness.json` and
+`P0_READINESS.md`.
+
+## 15.4 Verification
+
+* `python -m pytest project/cr_tser/tests -q` → **94 passed** (frozen code
+  untouched).
+* `python scripts/cr_tser_verify_pilot.py --mode code` → **60 checks,
+  issues = 0**.
+* `python scripts/cr_tser_verify_pilot.py --mode pilot` → **issues = 0,
+  pending = 1** (no manifests; the pilot has not run and must not).
+* `compileall` clean.
+* No manifest, utility label, predictor training, Stage-A freeze, held-out
+  evaluation or P1–P4 run was performed in this round.
+
 
 
 

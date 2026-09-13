@@ -1,0 +1,86 @@
+{
+ "raw_base": "E:\\Graduate_work_folder\\Graduate_Project_Worksapace\\UMER\\data_raw\\weibo22",
+ "candidates": [
+  {
+   "source_name": "KPG official repository — data/Weibo",
+   "source_url": "https://github.com/kkkkk001/KPG",
+   "local_origin": "data_raw/weibo22/{Weibo_label_All.zip,data.TD_RvNN.vol_5000.zip}",
+   "download_date": "pre-existing local copy; re-downloaded 2026-09-13",
+   "archive_names": [
+    "Weibo_label_All.zip",
+    "data.TD_RvNN.vol_5000.zip"
+   ],
+   "release": "tag v1 (2024-06-28) — 'Release the dataset Weibo22'; no release assets",
+   "branch": "main",
+   "path_history": "data/Weibo touched by a single commit a9019754d8 (2024-04-09, 'add weibo')",
+   "claimed_dataset_identity": "Weibo22 (CUHK/KPG COVID-19 Weibo propagation dataset, 2087 rumor + 2087 non-rumor source events)",
+   "pinned_blobs": {
+    "Weibo_label_All.zip": "9550ee43a895d043e3e142d6d422b965103032d2",
+    "data.TD_RvNN.vol_5000.zip": "46f9af6aec86819e172eb1a6a21d7532e030d5f6"
+   },
+   "event_count": 4174,
+   "directly_attributable_to_weibo22": true,
+   "verdict": "ACCEPT_AS_WEIBO22_SOURCE",
+   "verdict_reason": "the local archives are byte-identical to the official repository blobs (verified by git blob SHA-1) and the label file carries exactly 2087/2087 rumor/non-rumor events matching the CUHK description"
+  },
+  {
+   "source_name": "CUHK RDM fund — Weibo22/KPG project description",
+   "source_url": "https://www.lib.cuhk.edu.hk/en/research/data/rdm-funds-grants/rdmdf2022/",
+   "claimed_dataset_identity": "the same CUHK Weibo platform COVID-19 dataset (Nov 2019 – Mar 2022, 2087 rumors + 2087 non-rumors, propagation records)",
+   "data_package_published": false,
+   "directly_attributable_to_weibo22": true,
+   "verdict": "DESCRIPTION_ONLY_NO_DATA_PACKAGE",
+   "verdict_reason": "the project page describes the dataset and its propagation records but publishes no downloadable raw archive with per-node timestamps"
+  },
+  {
+   "source_name": "Zenodo 'Weibo-Covid-19' (Song, Yunya; doi:10.5281/zenodo.13787781)",
+   "source_url": "https://zenodo.org/records/13787781",
+   "claimed_dataset_identity": "Weibo COVID-19 vaccine discourse corpus",
+   "files": [
+    "follower_uuid.json",
+    "tweet_spider_by_tweet_id_uuid.json",
+    "repost.json",
+    "comment.json"
+   ],
+   "directly_attributable_to_weibo22": false,
+   "verdict": "REJECT_SOURCE",
+   "verdict_reason": "different Weibo corpus (keyword-filtered vaccine discourse with follower/repost/comment tables); it carries no 2087+2087 rumor/non-rumor event labels and is not the KPG/CUHK Weibo22 dataset"
+  },
+  {
+   "source_name": "Ma-Weibo (Ma et al., IJCAI 2016)",
+   "source_url": "https://www.ijcai.org/Proceedings/16/Papers/537.pdf",
+   "claimed_dataset_identity": "Ma-Weibo rumor propagation dataset",
+   "directly_attributable_to_weibo22": false,
+   "verdict": "REJECT_SOURCE",
+   "verdict_reason": "plan §4.3 forbids substituting Ma-Weibo for Weibo22 and forbids using a Ma-Weibo checkpoint for it"
+  }
+ ],
+ "local_file_hashes": {
+  "Weibo_label_All.zip": {
+   "present": true,
+   "bytes": 38203,
+   "git_blob_sha1": "9550ee43a895d043e3e142d6d422b965103032d2",
+   "sha256": "451e51bc28a74ff26a19d212acab8796baf468928a908da5ac49b104b88e9ea0"
+  },
+  "data.TD_RvNN.vol_5000.zip": {
+   "present": true,
+   "bytes": 7541566,
+   "git_blob_sha1": "46f9af6aec86819e172eb1a6a21d7532e030d5f6",
+   "sha256": "f58ab42ee01b29a62987a3e6668af18c3dd3148d91d6c6d717a859bbbdcb550f"
+  }
+ },
+ "blob_verification": {
+  "Weibo_label_All.zip": {
+   "pinned_git_blob_sha1": "9550ee43a895d043e3e142d6d422b965103032d2",
+   "local_git_blob_sha1": "9550ee43a895d043e3e142d6d422b965103032d2",
+   "match": true
+  },
+  "data.TD_RvNN.vol_5000.zip": {
+   "pinned_git_blob_sha1": "46f9af6aec86819e172eb1a6a21d7532e030d5f6",
+   "local_git_blob_sha1": "46f9af6aec86819e172eb1a6a21d7532e030d5f6",
+   "match": true
+  }
+ },
+ "all_accepted_blobs_match": true,
+ "conclusion": "the local Weibo22 archives are byte-identical to the official KPG release blobs"
+}

@@ -1,0 +1,15 @@
+{
+ "dataset": "pheme",
+ "raw_dir": "",
+ "expected_layout": "all-rnr-annotated-threads/<topic>/<label>/<thread>",
+ "labels_generated": false,
+ "purpose": "confirm the secondary pipeline can build 15m/1h/6h causal snapshots without future-node leakage; PHEME can never satisfy the pilot GO decision (plan §4.2, §25)",
+ "status": "PHEME_RAW_MISSING",
+ "reason": "CRTSER_PHEME_RAW is unset or not a directory on this machine",
+ "source_text_available": null,
+ "reply_text_available": null,
+ "timestamps_available": null,
+ "parent_relation_available": null,
+ "snapshots_built": [],
+ "future_leakage": null
+}
