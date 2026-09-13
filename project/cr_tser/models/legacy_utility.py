@@ -136,19 +136,60 @@ class LegacyPHEMEUtility:
             return classify_selected(self.proxy, h_source, sel_repr)
 
     def b2_surface(self, h_source, sel_repr):
-        """B2 artifact surface: static classification, explicitly diagnostic."""
+        """B2 artifact surface: static classification, explicitly diagnostic.
+
+        The label convention matches TC-DSCR E2/E3 (``p_rumor = p[1]``), so the
+        B2 Macro-F1 is directly comparable with the frozen legacy numbers.
+        """
         import torch
         logits = self.static_classification(h_source, sel_repr)
-        probs = torch.softmax(logits.float(), dim=-1)
+        flat = logits.reshape(-1).float()
+        probs = torch.softmax(flat, dim=-1)
         return {
-            "static_logits": logits.tolist(),
-            "p_rumor": float(probs.reshape(-1)[0]),
-            "p_nonrumor": float(probs.reshape(-1)[1]),
+            "static_logits": flat.tolist(),
+            "predicted_index": int(torch.argmax(flat).item()),
+            "p_rumor": float(probs[1]) if probs.numel() > 1
+            else float("nan"),
+            "p_nonrumor": float(probs[0]),
             "diagnostic_only": True,
             "participates_in_primary_gate": False,
             "utility_definition": "StaticUtilitySelector(h, event_repr, sem, "
                                   "sem_src, struct3)",
         }
+
+    def b2_items(self, items, selections, device=None, forward_batch=None):
+        """Frozen Proxy classification over light items (B2 diagnostic only).
+
+        ``selections`` is the frozen S6 Utility-TM subset per item and the
+        classification contract is TC-DSCR's hard path,
+        ``classify_selected(proxy, h_source, mean(selected h_i))``. Nothing is
+        trained, and the Proxy output never reaches S6 or a pilot gate.
+        """
+        import torch
+        device = device or self.device
+        if forward_batch is None:
+            from tcdscr_run_e2 import encoder_forward_batch as forward_batch
+        outs = forward_batch(self.encoder, list(items), device)
+        results = []
+        for item, selection, (node_repr, _event_repr, _logits) in zip(
+                items, selections, outs):
+            source_pos = int(item["source_pos"])
+            positions = {nid: i for i, nid in enumerate(item["node_ids"])}
+            indices = [positions[nid] for nid in selection
+                       if nid in positions and positions[nid] != source_pos]
+            if indices:
+                index_tensor = torch.tensor(
+                    indices, dtype=torch.long,
+                    device=getattr(node_repr, "device", device))
+                sel_repr = node_repr[index_tensor]
+            else:
+                sel_repr = None
+            surface = self.b2_surface(node_repr[source_pos], sel_repr)
+            surface["n_selected"] = len(indices)
+            surface["selected_node_ids"] = [item["node_ids"][i]
+                                            for i in indices]
+            results.append(surface)
+        return results
 
     def fingerprint(self) -> dict:
         """Identity of the frozen components, for the verifier."""

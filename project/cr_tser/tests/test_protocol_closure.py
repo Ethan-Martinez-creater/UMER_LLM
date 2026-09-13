@@ -1,9 +1,14 @@
-"""Protocol-closure tests (final fix round).
+"""Protocol-closure tests (final fix round + code-freeze hotfix).
 
 Pins: S6 uses the frozen StaticUtilitySelector (not the Proxy), P3 keeps every
 LORO rotation's predictions, P3/P4 fail closed on incomplete rotations, P0
 normalized coverage cannot produce a false READY, frozen subsets are immutable,
 and ``CRTSER_SMOKE`` resolves to the smoke namespace.
+
+The hotfix round adds the *aggregator* contract: Stage-B rotation identity must
+survive ``compute_gates`` (three rotations complete, two fail closed, PHEME
+complete three), Stage A must be write-once, and the PHEME B2 legacy diagnostic
+must reach the report through a real ``b2_surface`` without touching a gate.
 """
 from __future__ import annotations
 
@@ -15,6 +20,7 @@ import torch
 import torch.nn as nn
 
 from ..config.pilot_config import paths_from_env
+from ..models.legacy_utility import LegacyPHEMEUtility
 
 
 # --------------------------------------------------------------------------
@@ -325,3 +331,347 @@ def test_crtser_smoke_env_builds_smoke_root():
     assert paths.out_root.endswith("smoke")
     plain = paths_from_env({"CRTSER_OUT_ROOT": "/tmp/out"})
     assert plain.out_root == "/tmp/out"
+
+
+# --------------------------------------------------------------------------
+# 6. aggregator contract — Stage-B rotation identity must survive
+#    ``compute_gates``, because a lost identity makes every three-rotation
+#    condition fail closed on complete evidence.
+# --------------------------------------------------------------------------
+THREE_HELD_OUT = ("internlm", "glm", "qwen")
+
+
+def _write_aggregator_tree(root, dataset, held_readers, delta=0.05,
+                           token_ok=True, p0="P0_PASS"):
+    """Formal-shape artifacts: identity at the top level, Δ nested."""
+    import os as _os
+    _os.makedirs(_os.path.join(root, "manifests", dataset), exist_ok=True)
+    with open(_os.path.join(root, "manifests", dataset, "event_split.json"),
+              "w", encoding="utf-8") as fh:
+        json.dump({"dataset": dataset, "utility_eval": [], "utility_train": [],
+                   "utility_dev": [], "foundation_train": [], "unused": []}, fh)
+    _os.makedirs(_os.path.join(root, "unseen_reader", dataset), exist_ok=True)
+    for held in held_readers:
+        with open(_os.path.join(root, "unseen_reader", dataset,
+                                f"rotation_{held}.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump({"stage": "B_score_heldout", "dataset": dataset,
+                       "held_out_reader": held,
+                       "delta": {"delta": delta, "primary_macro_f1": 0.5,
+                                 "best_simple_macro_f1": 0.5 - delta,
+                                 "token_target_ok": token_ok}}, fh)
+    _os.makedirs(_os.path.join(root, "p0"), exist_ok=True)
+    with open(_os.path.join(root, "p0", "p0_readiness.json"), "w",
+              encoding="utf-8") as fh:
+        json.dump({"P0": p0}, fh)
+    return str(root)
+
+
+def test_aggregator_preserves_three_rotation_identity(tmp_path):
+    import cr_tser_run_pilot as pilot
+    from ..evaluation.unseen_reader import EXPECTED_HELDOUT_READERS
+    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    gates, _reports, decision = pilot.compute_gates(root)
+    p4 = gates["P4"]
+    assert p4["rotation_completeness"]["complete"] is True
+    # the identity itself must survive, not merely the row count
+    assert p4["rotation_completeness"]["distinct_held_out"] == \
+        sorted(EXPECTED_HELDOUT_READERS)
+    assert p4["pass"] is True
+    # PHEME evidence is genuinely absent, not read as a pass
+    assert decision["pheme_evidence_complete"] is False
+    assert decision["decision"] != "FULL_GO"
+
+
+def test_aggregator_two_rotations_fail_closed(tmp_path):
+    import cr_tser_run_pilot as pilot
+    root = _write_aggregator_tree(str(tmp_path), "weibo22",
+                                  THREE_HELD_OUT[:2])
+    gates, _reports, _decision = pilot.compute_gates(root)
+    assert gates["P4"]["rotation_completeness"]["complete"] is False
+    assert gates["P4"]["pass"] is False
+
+
+def test_aggregator_recognizes_complete_pheme_secondary(tmp_path):
+    import cr_tser_run_pilot as pilot
+    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    _write_aggregator_tree(root, "pheme", THREE_HELD_OUT)
+    gates, _reports, decision = pilot.compute_gates(root)
+    assert gates["P4"]["rotation_completeness"]["complete"] is True
+    assert gates["P4"]["pass"] is True
+    assert decision["pheme_evidence_complete"] is True
+    assert decision["pheme_secondary"] is True
+
+
+def test_aggregator_incomplete_pheme_never_full_go(tmp_path):
+    import cr_tser_run_pilot as pilot
+    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    _write_aggregator_tree(root, "pheme", THREE_HELD_OUT[:2])
+    gates, _reports, decision = pilot.compute_gates(root)
+    assert gates["P4"]["pass"] is True          # primary evidence complete
+    assert decision["pheme_evidence_complete"] is False
+    assert decision["decision"] != "FULL_GO"    # secondary cannot be a pass
+
+
+# --------------------------------------------------------------------------
+# 7. Stage A is write-once — a second freeze must fail and change nothing
+# --------------------------------------------------------------------------
+class _Tok:
+    def __call__(self, text, add_special_tokens=True):
+        return {"input_ids": list(range(len(str(text).split())))}
+
+
+def _freeze_paths():
+    import types
+    return types.SimpleNamespace(semantic_model="m", canonical_tokenizer="t")
+
+
+def _freeze_environment(monkeypatch, root):
+    """A minimal synthetic Stage-A environment (no real data or encoders)."""
+    import os as _os
+    import cr_tser_common as common
+    import cr_tser_run_selection as selection
+
+    _os.makedirs(_os.path.join(root, "manifests", "pheme"), exist_ok=True)
+    with open(_os.path.join(root, "manifests", "pheme", "event_split.json"),
+              "w", encoding="utf-8") as fh:
+        json.dump({"dataset": "pheme", "utility_eval": ["e1"],
+                   "utility_train": [], "utility_dev": [],
+                   "foundation_train": [], "unused": []}, fh)
+    event = {"event_id": "e1", "label": 1, "source_id": "n0",
+             "source_timestamp": 1000,
+             "nodes": [{"node_id": "n0", "parent_id": None, "timestamp": 1000,
+                        "text": "src", "original_order": 0,
+                        "status": "VALID"},
+                       {"node_id": "n1", "parent_id": "n0", "timestamp": 1060,
+                        "text": "reply", "original_order": 1,
+                        "status": "VALID"}]}
+    item = {"event_id": "e1", "cutoff_minutes": 60, "label": 1,
+            "num_nodes": 2, "node_ids": ["n0", "n1"], "source_pos": 0}
+    art = {"zero_reply": False, "units": [{"node_id": "n1"}],
+           "src": {"selected_node_ids": ["n1"], "total_tokens": 10},
+           "snapshot": {"node_ids": ["n0", "n1"]},
+           "semantic": torch.zeros(2, 384)}
+    fake_arms = {name: {"selected_node_ids": ["n1"], "total_tokens": 5,
+                        "target_tokens": 10, "content_hash": "h"}
+                 for name in ("S0_src_full", "S1_random_tm", "S2_semantic_tm",
+                              "S3a_source", "S3b_source", "S4_shared",
+                              "S5_cross_reader_robust",
+                              "S6_legacy_utility_tm")}
+    monkeypatch.setattr(common, "load_dataset_events",
+                        lambda dataset, paths: [event])
+    monkeypatch.setattr(common, "CrSemanticEncoder",
+                        lambda model, dataset, device="cpu": nn.Module())
+    monkeypatch.setattr(common, "canonical_tokenizer", lambda path: _Tok())
+    monkeypatch.setattr(common, "snapshot_artifacts",
+                        lambda e, c, enc, tok: art)
+    monkeypatch.setattr(common, "source_fingerprint_for",
+                        lambda dataset, paths: {})
+    monkeypatch.setattr(selection, "_load_predictor",
+                        lambda out_root, dataset, readers: {
+                            "predictions": {}, "prediction_coverage": {}})
+    monkeypatch.setattr(selection, "_load_single_predictions",
+                        lambda out_root, dataset, reader: {})
+    monkeypatch.setattr(selection, "_legacy_item",
+                        lambda e, snapshot, sem_rows: item)
+    monkeypatch.setattr(selection, "all_arms", lambda *a, **k: dict(fake_arms))
+    return item
+
+
+def test_stage_a_is_write_once(tmp_path, monkeypatch):
+    import cr_tser_run_selection as selection
+    root = str(tmp_path)
+    _freeze_environment(monkeypatch, root)
+    paths = _freeze_paths()
+    first = selection.freeze_subsets("pheme", paths, root, max_snapshots=1)
+    assert len(first) == 3
+
+    path = selection._frozen_path(root, "pheme", "internlm")
+    with open(path, encoding="utf-8") as fh:
+        before = fh.read()
+    with open(path + ".sha256", encoding="utf-8") as fh:
+        before_sha = fh.read()
+
+    # a second freeze — even with a different predictor — must not overwrite
+    monkeypatch.setattr(selection, "_load_predictor",
+                        lambda out_root, dataset, readers: {
+                            "predictions": {"changed": True},
+                            "prediction_coverage": {"changed": True}})
+    with pytest.raises(selection.FrozenSubsetAlreadyExists):
+        selection.freeze_subsets("pheme", paths, root, max_snapshots=1)
+    with open(path, encoding="utf-8") as fh:
+        assert fh.read() == before
+    with open(path + ".sha256", encoding="utf-8") as fh:
+        assert fh.read() == before_sha
+    # the frozen artifact still verifies after the refused second freeze
+    assert selection.load_frozen_subsets(root, "pheme", "internlm")
+
+
+def test_stage_a_refuses_when_a_single_rotation_exists(tmp_path, monkeypatch):
+    import os as _os
+    import cr_tser_run_selection as selection
+    root = str(tmp_path)
+    _freeze_environment(monkeypatch, root)
+    _os.makedirs(selection.frozen_dir(root, "pheme"), exist_ok=True)
+    record = {"stage": "A_freeze_subsets", "dataset": "pheme",
+              "held_out_reader": "glm", "subsets": []}
+    record["sha256"] = selection._canonical_sha(record)
+    path = selection._frozen_path(root, "pheme", "glm")
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(record, fh)
+    with pytest.raises(selection.FrozenSubsetAlreadyExists):
+        selection.freeze_subsets("pheme", _freeze_paths(), root)
+
+
+# --------------------------------------------------------------------------
+# 8. PHEME B2 legacy diagnostic — real surface into the artifact, never a gate
+# --------------------------------------------------------------------------
+class _B2Selector(nn.Module):
+    def forward(self, *args):
+        return torch.zeros(1)
+
+
+class _B2Proxy(nn.Module):
+    """Deterministic classification; index 1 is *rumor* (TC-DSCR convention)."""
+
+    def __init__(self, table=None):
+        super().__init__()
+        self.table = table or [[0.0, 9.0]]
+        self.calls = 0
+
+    def classify(self, h_source, z_sel):
+        index = min(self.calls, len(self.table) - 1)
+        self.calls += 1
+        return torch.tensor(self.table[index])
+
+
+class _B2Scorer(LegacyPHEMEUtility):
+    """Real ``b2_items``/``b2_surface`` path with a stubbed S6 selector."""
+
+    def score_items(self, items, device=None):
+        return [{nid: 0.1 for nid in item["node_ids"]
+                 if nid != item["node_ids"][item["source_pos"]]}
+                for item in items]
+
+
+def _b2_scorer(proxy):
+    return _B2Scorer("pheme", encoder=nn.Module(), selector=_B2Selector(),
+                     proxy=proxy)
+
+
+def test_b2_surface_outputs_enter_pheme_artifact(tmp_path, monkeypatch):
+    import os as _os
+    import cr_tser_run_selection as selection
+    import tcdscr_run_e2
+    monkeypatch.setattr(
+        tcdscr_run_e2, "encoder_forward_batch",
+        lambda encoder, items, device, batch_size=32: [
+            (torch.zeros(it["num_nodes"], 768), torch.zeros(768),
+             torch.zeros(2)) for it in items])
+    scorer = _b2_scorer(_B2Proxy())
+    item = {"event_id": "e1", "cutoff_minutes": 60, "label": 1,
+            "num_nodes": 2, "node_ids": ["n0", "n1"], "source_pos": 0}
+    frozen = [{"held_out_reader": "internlm", "sha256": "sha-a"},
+              {"held_out_reader": "glm", "sha256": "sha-b"},
+              {"held_out_reader": "qwen", "sha256": "sha-c"}]
+    payload = selection._write_b2_diagnostic(
+        "pheme", str(tmp_path), scorer, [item], [["n1"]], frozen)
+    path = _os.path.join(str(tmp_path), "unseen_reader", "pheme",
+                         "b2_legacy_diagnostic.json")
+    assert _os.path.exists(path)
+    on_disk = json.loads(open(path, encoding="utf-8").read())
+    assert on_disk["diagnostic"] == "B2_legacy_tcdscr"
+    assert on_disk["diagnostic_only"] is True
+    assert on_disk["participates_in_primary_gate"] is False
+    assert on_disk["never_in_p3_baseline_competition"] is True
+    assert on_disk["never_in_p4_primary_comparison"] is True
+    assert on_disk["frozen_fingerprint"]["s6_score_source"] == \
+        "StaticUtilitySelector"
+    assert on_disk["frozen_subset_sha256"] == {
+        "internlm": "sha-a", "glm": "sha-b", "qwen": "sha-c"}
+    # the metric is the real Proxy surface (gold=1, p[1] maximal -> pred 1)
+    assert on_disk["metrics"]["n"] == 1
+    assert on_disk["metrics"]["accuracy"] == 1.0
+    row = on_disk["rows"][0]
+    assert row["pred"] == 1 and row["gold"] == 1
+    assert row["p_rumor"] > row["p_nonrumor"]
+    assert payload["n_snapshots"] == 1
+
+
+def test_pheme_legacy_freeze_writes_b2_artifact(tmp_path, monkeypatch):
+    """The PHEME legacy execution stage itself produces the B2 artifact."""
+    import os as _os
+    import cr_tser_run_selection as selection
+    import tcdscr_run_e2
+    root = str(tmp_path)
+    _freeze_environment(monkeypatch, root)
+    monkeypatch.setattr(
+        tcdscr_run_e2, "encoder_forward_batch",
+        lambda encoder, items, device, batch_size=32: [
+            (torch.zeros(it["num_nodes"], 768), torch.zeros(768),
+             torch.zeros(2)) for it in items])
+    records = selection.freeze_subsets("pheme", _freeze_paths(), root,
+                                       max_snapshots=1, legacy=True,
+                                       legacy_scorer=_b2_scorer(_B2Proxy()))
+    assert all(record["legacy_s6_enabled"] for record in records)
+    path = _os.path.join(root, "unseen_reader", "pheme",
+                         "b2_legacy_diagnostic.json")
+    assert _os.path.exists(path)
+    artifact = json.loads(open(path, encoding="utf-8").read())
+    assert artifact["stage"] == "C_b2_legacy_diagnostic"
+    assert artifact["dataset"] == "pheme"
+    assert artifact["rows"][0]["selected_node_ids"] == ["n1"]
+    assert artifact["frozen_subset_sha256"] == {
+        record["held_out_reader"]: record["sha256"] for record in records}
+
+
+def test_b2_artifact_does_not_change_weibo22_gates(tmp_path):
+    import os as _os
+    import cr_tser_run_pilot as pilot
+    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    _write_aggregator_tree(root, "pheme", THREE_HELD_OUT)
+    gates_before, _r, decision_before = pilot.compute_gates(root)
+    assert decision_before["legacy_diagnostics"]["b2_legacy_tcdscr"] is None
+    with open(_os.path.join(root, "unseen_reader", "pheme",
+                            "b2_legacy_diagnostic.json"), "w",
+              encoding="utf-8") as fh:
+        json.dump({"dataset": "pheme", "diagnostic": "B2_legacy_tcdscr",
+                   "diagnostic_only": True,
+                   "participates_in_primary_gate": False,
+                   "metrics": {"accuracy": 0.9, "macro_f1": 0.9, "n": 4},
+                   "rows": [{"event_id": "e1"}, {"event_id": "e2"},
+                            {"event_id": "e3"}]}, fh)
+    gates_after, _r2, decision_after = pilot.compute_gates(root)
+    assert gates_after == gates_before
+    b2 = decision_after["legacy_diagnostics"]["b2_legacy_tcdscr"]
+    assert b2["diagnostic"] == "B2_legacy_tcdscr"
+    assert b2["n_rows"] == 3          # rows are summarised, never re-scored
+    assert "rows" not in b2
+
+
+def test_b2_is_never_part_of_p3_or_p4_comparison(tmp_path):
+    import cr_tser_run_pilot as pilot
+    from ..config.pilot_config import SIMPLE_BASELINE_ARMS
+    from ..evaluation.unseen_reader import (best_simple_baseline,
+                                            rotation_delta)
+    root = _p3_fixture(tmp_path, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
+                                  "glm_internlm": 0.3})
+    gate = pilot.utility_prediction_gate(root, "weibo22",
+                                         {"utility_eval": ["e1"]})
+    assert set(gate["per_model_metrics"]) <= {
+        "B3_text_graph", "B0_text", "B1_scalar_structure"}
+    assert "S6_legacy_utility_tm" not in gate["per_model_metrics"]
+
+    metrics = {"S1_random_tm": {"macro_f1": 0.10, "mean_social_tokens": 1},
+               "S2_semantic_tm": {"macro_f1": 0.20, "mean_social_tokens": 1},
+               "S5_cross_reader_robust": {"macro_f1": 0.50,
+                                          "mean_social_tokens": 1},
+               "S6_legacy_utility_tm": {"macro_f1": 0.99,
+                                        "mean_social_tokens": 1}}
+    name, _ = best_simple_baseline(metrics)
+    assert name in SIMPLE_BASELINE_ARMS
+    assert name != "S6_legacy_utility_tm"
+    delta = rotation_delta(metrics)
+    assert delta["best_simple_arm"] == name
+    assert delta["delta"] == pytest.approx(0.50 - 0.20)
+

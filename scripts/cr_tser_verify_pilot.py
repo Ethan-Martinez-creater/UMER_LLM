@@ -401,6 +401,7 @@ def _verify_semantics(report):
                    "cr_tser_run_selection.py"),
                "S3a/S3b must come from single-reader-trained artifacts")
     _verify_protocol_closure(report)
+    _verify_code_freeze_hotfix(report)
 
 
 def _write_p3_fixture(root, rotations):
@@ -637,6 +638,280 @@ def _verify_protocol_closure(report):
                    f"out_root={paths.out_root}")
     except Exception as exc:
         report.add("crtser_smoke_env_resolves", False, f"error: {exc}")
+
+
+def _agg_tree(root, dataset, held_readers, delta=0.05):
+    """Formal-shape Stage-B artifacts: identity top level, Δ nested."""
+    os.makedirs(os.path.join(root, "manifests", dataset), exist_ok=True)
+    with open(os.path.join(root, "manifests", dataset, "event_split.json"),
+              "w", encoding="utf-8") as fh:
+        json.dump({"dataset": dataset, "utility_eval": []}, fh)
+    os.makedirs(os.path.join(root, "unseen_reader", dataset), exist_ok=True)
+    for held in held_readers:
+        with open(os.path.join(root, "unseen_reader", dataset,
+                               f"rotation_{held}.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump({"stage": "B_score_heldout", "dataset": dataset,
+                       "held_out_reader": held,
+                       "delta": {"delta": delta, "primary_macro_f1": 0.5,
+                                 "best_simple_macro_f1": 0.5 - delta,
+                                 "token_target_ok": True}}, fh)
+    os.makedirs(os.path.join(root, "p0"), exist_ok=True)
+    with open(os.path.join(root, "p0", "p0_readiness.json"), "w",
+              encoding="utf-8") as fh:
+        json.dump({"P0": "P0_PASS"}, fh)
+
+
+def _verify_aggregator_rotation_identity(report):
+    """A lost ``held_out_reader`` must be caught at the aggregator, not just
+    inside ``gate_p4`` (the code-freeze hotfix regression)."""
+    import tempfile
+    held = ("internlm", "glm", "qwen")
+    try:
+        import cr_tser_run_pilot as pilot
+        with tempfile.TemporaryDirectory() as tmp:
+            _agg_tree(tmp, "weibo22", held)
+            _agg_tree(tmp, "pheme", held)
+            gates, _reports, decision = pilot.compute_gates(tmp)
+            p4 = gates.get("P4", {})
+            completeness = p4.get("rotation_completeness", {})
+            report.add(
+                "p4_rotation_identity_preserved",
+                completeness.get("complete") is True
+                and completeness.get("distinct_held_out") == sorted(held)
+                and p4.get("pass") is True,
+                f"complete={completeness.get('complete')} "
+                f"distinct={completeness.get('distinct_held_out')} "
+                f"pass={p4.get('pass')}")
+            report.add(
+                "pheme_rotation_identity_complete",
+                decision.get("pheme_evidence_complete") is True
+                and decision.get("pheme_secondary") is True,
+                f"pheme_complete={decision.get('pheme_evidence_complete')}")
+        with tempfile.TemporaryDirectory() as tmp:
+            _agg_tree(tmp, "weibo22", held[:2])
+            gates, _reports, _decision = pilot.compute_gates(tmp)
+            p4 = gates.get("P4", {})
+            report.add(
+                "incomplete_rotations_fail_closed",
+                p4.get("pass") is False
+                and p4.get("rotation_completeness", {}).get("complete")
+                is False,
+                f"two rotations -> pass={p4.get('pass')}")
+    except Exception as exc:
+        report.add("p4_rotation_identity_preserved", False, f"error: {exc}")
+        report.add("pheme_rotation_identity_complete", False, f"error: {exc}")
+        report.add("incomplete_rotations_fail_closed", False, f"error: {exc}")
+
+
+def _verify_freeze_write_once(report):
+    """Execute a real double-freeze: the second Stage A must raise and leave
+    the frozen JSON/hash byte-identical."""
+    import tempfile
+    import types
+    import torch
+    import cr_tser_common as common
+    import cr_tser_run_selection as selection
+
+    originals = []
+
+    def patch(obj, name, value):
+        originals.append((obj, name, getattr(obj, name)))
+        setattr(obj, name, value)
+
+    try:
+        event = {"event_id": "e1", "label": 1, "source_id": "n0",
+                 "source_timestamp": 1000,
+                 "nodes": [{"node_id": "n0", "parent_id": None,
+                            "timestamp": 1000, "text": "src",
+                            "original_order": 0, "status": "VALID"},
+                           {"node_id": "n1", "parent_id": "n0",
+                            "timestamp": 1060, "text": "reply",
+                            "original_order": 1, "status": "VALID"}]}
+        item = {"event_id": "e1", "cutoff_minutes": 60, "label": 1,
+                "num_nodes": 2, "node_ids": ["n0", "n1"], "source_pos": 0}
+        art = {"zero_reply": False, "units": [{"node_id": "n1"}],
+               "src": {"selected_node_ids": ["n1"], "total_tokens": 10},
+               "snapshot": {"node_ids": ["n0", "n1"]},
+               "semantic": torch.zeros(2, 384)}
+        arms = {name: {"selected_node_ids": ["n1"], "total_tokens": 5,
+                       "target_tokens": 10, "content_hash": "h"}
+                for name in ("S0_src_full", "S1_random_tm", "S2_semantic_tm",
+                             "S3a_source", "S3b_source", "S4_shared",
+                             "S5_cross_reader_robust",
+                             "S6_legacy_utility_tm")}
+        patch(common, "load_dataset_events", lambda dataset, paths: [event])
+        patch(common, "CrSemanticEncoder",
+              lambda model, dataset, device="cpu": torch.nn.Module())
+        patch(common, "canonical_tokenizer", lambda path: _FakeTokenizer())
+        patch(common, "snapshot_artifacts", lambda e, c, enc, tok: art)
+        patch(common, "source_fingerprint_for", lambda dataset, paths: {})
+        patch(selection, "_load_predictor",
+              lambda out_root, dataset, readers: {"predictions": {},
+                                                  "prediction_coverage": {}})
+        patch(selection, "_load_single_predictions",
+              lambda out_root, dataset, reader: {})
+        patch(selection, "_legacy_item", lambda e, snapshot, sem_rows: item)
+        patch(selection, "all_arms", lambda *a, **k: dict(arms))
+        paths = types.SimpleNamespace(semantic_model="m",
+                                      canonical_tokenizer="t")
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "manifests", "pheme"),
+                        exist_ok=True)
+            with open(os.path.join(tmp, "manifests", "pheme",
+                                   "event_split.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump({"dataset": "pheme", "utility_eval": ["e1"]}, fh)
+            selection.freeze_subsets("pheme", paths, tmp, max_snapshots=1)
+            path = selection._frozen_path(tmp, "pheme", "internlm")
+            with open(path, encoding="utf-8") as fh:
+                before = fh.read()
+            with open(path + ".sha256", encoding="utf-8") as fh:
+                before_sha = fh.read()
+            patch(selection, "_load_predictor",
+                  lambda out_root, dataset, readers: {
+                      "predictions": {"changed": True},
+                      "prediction_coverage": {"changed": True}})
+            try:
+                selection.freeze_subsets("pheme", paths, tmp, max_snapshots=1)
+                refused = False
+            except selection.FrozenSubsetAlreadyExists:
+                refused = True
+            unchanged = (open(path, encoding="utf-8").read() == before
+                         and open(path + ".sha256", encoding="utf-8").read()
+                         == before_sha)
+            report.add("frozen_subset_write_once", refused and unchanged,
+                       f"second freeze refused={refused} unchanged={unchanged}")
+    except Exception as exc:
+        report.add("frozen_subset_write_once", False, f"error: {exc}")
+    finally:
+        for obj, name, value in reversed(originals):
+            setattr(obj, name, value)
+
+
+def _verify_b2_artifact_contract(report):
+    """The PHEME B2 diagnostic must be produced by the real frozen surface,
+    reach the report, and never touch a Weibo22 gate."""
+    import tempfile
+    import torch
+    import torch.nn as nn
+    import cr_tser_run_pilot as pilot
+    import cr_tser_run_selection as selection
+    import tcdscr_run_e2
+    from cr_tser.models.legacy_utility import LegacyPHEMEUtility
+
+    class _Sel(nn.Module):
+        def forward(self, *args):
+            return torch.zeros(1)
+
+    class _Proxy(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.calls = 0
+
+        def classify(self, h_source, z_sel):
+            self.calls += 1
+            return torch.tensor([[0.0, 9.0]])
+
+    class _Scorer(LegacyPHEMEUtility):
+        def score_items(self, items, device=None):
+            return [{nid: 0.1 for nid in item["node_ids"]
+                     if nid != item["node_ids"][item["source_pos"]]}
+                    for item in items]
+
+    original = tcdscr_run_e2.encoder_forward_batch
+    tcdscr_run_e2.encoder_forward_batch = (
+        lambda encoder, items, device, batch_size=32: [
+            (torch.zeros(it["num_nodes"], 768), torch.zeros(768),
+             torch.zeros(2)) for it in items])
+    held = ("internlm", "glm", "qwen")
+    try:
+        scorer = _Scorer("pheme", encoder=nn.Module(), selector=_Sel(),
+                         proxy=_Proxy())
+        item = {"event_id": "e1", "cutoff_minutes": 60, "label": 1,
+                "num_nodes": 2, "node_ids": ["n0", "n1"], "source_pos": 0}
+        with tempfile.TemporaryDirectory() as tmp:
+            payload = selection._write_b2_diagnostic(
+                "pheme", tmp, scorer, [item], [["n1"]],
+                [{"held_out_reader": reader, "sha256": "s"}
+                 for reader in held])
+            path = os.path.join(tmp, "unseen_reader", "pheme",
+                                "b2_legacy_diagnostic.json")
+            with open(path, encoding="utf-8") as fh:
+                on_disk = json.load(fh)
+            report.add(
+                "b2_surface_enters_pheme_artifact",
+                payload["metrics"]["accuracy"] == 1.0
+                and on_disk["diagnostic"] == "B2_legacy_tcdscr"
+                and on_disk["diagnostic_only"] is True
+                and on_disk["participates_in_primary_gate"] is False
+                and on_disk["frozen_fingerprint"]["s6_score_source"]
+                == "StaticUtilitySelector"
+                and sorted(on_disk["frozen_subset_sha256"]) == sorted(held),
+                f"metrics={payload['metrics']}")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            _agg_tree(tmp, "weibo22", held)
+            _agg_tree(tmp, "pheme", held)
+            before, _r, _d = pilot.compute_gates(tmp)
+            with open(os.path.join(tmp, "unseen_reader", "pheme",
+                                   "b2_legacy_diagnostic.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump({"dataset": "pheme",
+                           "diagnostic": "B2_legacy_tcdscr",
+                           "diagnostic_only": True,
+                           "participates_in_primary_gate": False,
+                           "metrics": {"accuracy": 0.9, "macro_f1": 0.9,
+                                       "n": 4},
+                           "rows": [1, 2, 3]}, fh)
+            after, _r2, decision = pilot.compute_gates(tmp)
+            b2 = decision["legacy_diagnostics"]["b2_legacy_tcdscr"]
+            report.add("b2_never_changes_gates",
+                       after == before and b2["n_rows"] == 3
+                       and "rows" not in b2,
+                       f"gates_identical={after == before} "
+                       f"n_rows={b2['n_rows']}")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_p3_fixture(tmp, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
+                                    "glm_internlm": 0.3})
+            gate = pilot.utility_prediction_gate(tmp, "weibo22",
+                                                 {"utility_eval": ["e1"]})
+            report.add(
+                "b2_excluded_from_p3_comparison",
+                "S6_legacy_utility_tm" not in gate["per_model_metrics"]
+                and set(gate["per_model_metrics"]) <= {
+                    "B3_text_graph", "B0_text", "B1_scalar_structure"},
+                f"P3 models={sorted(gate['per_model_metrics'])}")
+
+        from cr_tser.config.pilot_config import SIMPLE_BASELINE_ARMS
+        from cr_tser.evaluation.unseen_reader import best_simple_baseline
+        metrics = {"S1_random_tm": {"macro_f1": 0.10},
+                   "S2_semantic_tm": {"macro_f1": 0.20},
+                   "S5_cross_reader_robust": {"macro_f1": 0.50},
+                   "S6_legacy_utility_tm": {"macro_f1": 0.99}}
+        chosen, _ = best_simple_baseline(metrics)
+        report.add("b2_excluded_from_p4_comparison",
+                   chosen in SIMPLE_BASELINE_ARMS
+                   and chosen != "S6_legacy_utility_tm",
+                   f"best simple baseline selected {chosen!r}")
+    except Exception as exc:
+        report.add("b2_surface_enters_pheme_artifact", False, f"error: {exc}")
+        report.add("b2_never_changes_gates", False, f"error: {exc}")
+        report.add("b2_excluded_from_p3_comparison", False, f"error: {exc}")
+        report.add("b2_excluded_from_p4_comparison", False, f"error: {exc}")
+    finally:
+        tcdscr_run_e2.encoder_forward_batch = original
+
+
+def _verify_code_freeze_hotfix(report):
+    """Execute the code-freeze hotfix contracts (aggregator, freeze, B2)."""
+    scripts_dir = str(REPO / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    _verify_aggregator_rotation_identity(report)
+    _verify_freeze_write_once(report)
+    _verify_b2_artifact_contract(report)
 
 
 def _pkg(rel):

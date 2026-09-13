@@ -246,5 +246,35 @@ evaluation or pilot run was performed.
   per-node timestamps, so `P0_PASS` was **not** fabricated.
 * `compileall` clean over `project/cr_tser` and `scripts/cr_tser_*.py`.
 
+---
+
+# 13. Code freeze hotfix (code only — formal pilot NOT RUN)
+
+Three integration/protocol defects, all of the "the unit test passes but the
+formal aggregator contract does not" kind.
+
+| # | Finding | Fix (location) | Test | Verifier check |
+|---|---|---|---|---|
+| 1 | `compute_gates` passed only `record["delta"]` into `gate_p4`/`pheme_secondary`, but Stage-B artifacts keep `held_out_reader` at the top level — so three complete rotations reached `rotation_completeness` as three identity-less rows and every P4/PHEME condition failed closed on valid evidence | The aggregator rebuilds the rotation contract, `{"held_out_reader": record["held_out_reader"], **record["delta"]}`, for both the Weibo22 primary and the PHEME secondary; `legacy_diagnostics` also records `participates_in_primary_gate=False` | `test_aggregator_preserves_three_rotation_identity`, `test_aggregator_two_rotations_fail_closed`, `test_aggregator_recognizes_complete_pheme_secondary`, `test_aggregator_incomplete_pheme_never_full_go` | `p4_rotation_identity_preserved` (asserts `distinct_held_out == {glm,internlm,qwen}`, not merely a count), `pheme_rotation_identity_complete`, `incomplete_rotations_fail_closed` |
+| 2 | Stage A rewrote `unseen_reader/<dataset>/frozen/rotation_<held>.json` and its `.sha256` on every call, so a re-freeze with a different predictor silently changed what Stage B was scored on | `freeze_subsets` now calls `assert_unfrozen` **before any expensive work**; an existing frozen artifact raises `FrozenSubsetAlreadyExists`. There is deliberately no `--force`: a restart means explicitly removing the unused artifact set. Stage B still only reads/verifies; `--smoke` keeps its own namespace | `test_stage_a_is_write_once` (real first freeze, then a second freeze with a changed predictor, then byte-identity of the JSON and hash), `test_stage_a_refuses_when_a_single_rotation_exists` | `frozen_subset_write_once` (executes the double-freeze and asserts `refused and unchanged`) |
+| 3 | B2 existed only as `b2_surface()`, so the PHEME legacy continuity diagnostic never reached an artifact or the report | The PHEME legacy execution stage (`--legacy` freeze) now calls `LegacyPHEMEUtility.b2_items` — the real frozen Proxy path, `classify_selected(proxy, h_source, mean(selected h_i))`, with `p_rumor = p[1]` aligned to TC-DSCR — and writes `unseen_reader/pheme/b2_legacy_diagnostic.json` (dataset, `B2_legacy_tcdscr`, `diagnostic_only`, `participates_in_primary_gate=false`, frozen fingerprint, frozen subset hashes, per-cutoff metrics, per-snapshot rows). `compute_gates` reads it into `legacy_diagnostics.b2_legacy_tcdscr` (rows summarised, never re-scored) and `write_report` prints it. S6 is untouched | `test_b2_surface_outputs_enter_pheme_artifact`, `test_pheme_legacy_freeze_writes_b2_artifact`, `test_b2_artifact_does_not_change_weibo22_gates`, `test_b2_is_never_part_of_p3_or_p4_comparison` | `b2_surface_enters_pheme_artifact`, `b2_never_changes_gates` (identical gate dicts with/without the artifact), `b2_excluded_from_p3_comparison`, `b2_excluded_from_p4_comparison` |
+
+## 14. Final verification (code freeze hotfix)
+
+* `python -m pytest project/cr_tser/tests -q` → **94 passed** (10 new
+  integration tests, including the end-to-end synthetic aggregation:
+  three Stage-B rotation artifacts → `compute_gates()` → P4 completeness
+  `true`; three PHEME artifacts → PHEME completeness `true`).
+* `python scripts/cr_tser_verify_pilot.py --mode code` → **60 checks,
+  issues = 0** (the eight new checks execute the contracts rather than grep
+  for them).
+* `python scripts/cr_tser_verify_pilot.py --mode pilot` → **issues = 0,
+  pending = 1** (pilot not executed).
+* `python scripts/cr_tser_p0_audit.py` → `P0_FAIL` /
+  `WEIBO22_TEMPORAL_UNAVAILABLE`; no timestamp-bearing Weibo22 export is
+  configured, so `P0_PASS` was **not** fabricated.
+* `compileall` clean.
+
+
 
 

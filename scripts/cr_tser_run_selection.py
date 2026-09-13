@@ -58,6 +58,10 @@ class FrozenSubsetChanged(RuntimeError):
     """Raised when a frozen subset artifact no longer matches its hash."""
 
 
+class FrozenSubsetAlreadyExists(RuntimeError):
+    """Raised when Stage A would overwrite an already frozen subset."""
+
+
 def _source_text(event):
     return next(n["text"] for n in event["nodes"]
                 if n["node_id"] == event["source_id"])
@@ -101,14 +105,18 @@ def predictions_for_snapshot(payload_predictions, dataset, event_id, cutoff,
     return out
 
 
-def _legacy_scores(legacy_scorer, event, snapshot, sem_rows, units, src):
+def _legacy_item(event, snapshot, sem_rows):
+    """Light TC-DSCR item for one snapshot; S6 and B2 share it."""
+    from tcdscr_run_e2 import build_light_item
+    return build_light_item(event, snapshot, sem_rows)
+
+
+def _legacy_scores(legacy_scorer, item):
     """Frozen Static Utility ``u_i`` for every S6 candidate (PHEME only)."""
     if legacy_scorer is None:
         return {}
     if not hasattr(legacy_scorer, "score_items"):
-        return dict(legacy_scorer(event, snapshot, units, src))
-    from tcdscr_run_e2 import build_light_item
-    item = build_light_item(event, snapshot, sem_rows)
+        return dict(legacy_scorer(item))
     return legacy_scorer.score_items([item], device=legacy_scorer.device)[0]
 
 
@@ -126,11 +134,95 @@ def _frozen_path(out_root, dataset, held):
     return os.path.join(frozen_dir(out_root, dataset), f"rotation_{held}.json")
 
 
+def existing_frozen_rotations(out_root, dataset):
+    """Held-out readers whose frozen subset artifact is already on disk."""
+    return [rotation[2] for rotation in LORO_ROTATIONS
+            if os.path.exists(_frozen_path(out_root, dataset, rotation[2]))]
+
+
+def assert_unfrozen(dataset, out_root):
+    """Stage A is write-once (plan §33).
+
+    The frozen evidence subset is the audit anchor of Stage B, so rewriting the
+    JSON together with its ``.sha256`` would silently change what the held-out
+    reader is scored on. There is deliberately no ``--force`` escape hatch: a
+    restart is an explicit researcher action that removes the whole unused
+    artifact set, never an automatic overwrite. The check runs before any
+    expensive work so a second Stage A fails immediately and leaves the
+    existing artifacts byte-identical.
+    """
+    existing = existing_frozen_rotations(out_root, dataset)
+    if existing:
+        raise FrozenSubsetAlreadyExists(
+            f"frozen evidence subsets already exist for {dataset}: {existing}; "
+            "Stage A is write-once (plan §33). Remove the unused artifact set "
+            "explicitly before re-freezing.")
+
+
 # --------------------------------------------------------------------------
 # Stage A — subset construction (no held-out reader anywhere in this path)
 # --------------------------------------------------------------------------
+def _write_b2_diagnostic(dataset, out_root, legacy_scorer, items, selections,
+                         frozen_records):
+    """PHEME-only B2 continuity diagnostic artifact (plan §17 B2).
+
+    The surface comes from the frozen TC-DSCR Proxy through
+    ``LegacyPHEMEUtility.b2_surface`` and is recorded for the pilot report
+    only. It is excluded from P0–P4, the P3 baseline competition and the P4
+    primary comparison by construction — the aggregator reads it but never
+    scores it.
+    """
+    from cr_tser.evaluation.unseen_reader import reader_metrics
+    surfaces = legacy_scorer.b2_items(items, selections)
+    golds = [int(item["label"]) for item in items]
+    preds = [int(surface["predicted_index"]) for surface in surfaces]
+    rows = [{"event_id": item["event_id"],
+             "cutoff": int(item["cutoff_minutes"]),
+             "gold": int(item["label"]),
+             "pred": int(surface["predicted_index"]),
+             "p_rumor": surface["p_rumor"],
+             "p_nonrumor": surface["p_nonrumor"],
+             "n_selected": surface["n_selected"],
+             "selected_node_ids": surface["selected_node_ids"]}
+            for item, surface in zip(items, surfaces)]
+    metrics_by_cutoff = {}
+    for cutoff in sorted({row["cutoff"] for row in rows}):
+        picked = [row for row in rows if row["cutoff"] == cutoff]
+        metrics_by_cutoff[str(cutoff)] = reader_metrics(
+            [row["gold"] for row in picked], [row["pred"] for row in picked])
+    payload = {
+        "stage": "C_b2_legacy_diagnostic",
+        "dataset": dataset,
+        "diagnostic": "B2_legacy_tcdscr",
+        "diagnostic_only": True,
+        "participates_in_primary_gate": False,
+        "excluded_from_gates": ["P0", "P1", "P2", "P3", "P4"],
+        "never_in_p3_baseline_competition": True,
+        "never_in_p4_primary_comparison": True,
+        "selection_arm": "S6_legacy_utility_tm",
+        "utility_definition": "StaticUtilitySelector(h_i, event_repr, sem_i, "
+                              "sem_src, struct3_i)",
+        "classification_contract": "classify_selected(proxy, h_source, "
+                                   "mean(selected h_i))",
+        "frozen_fingerprint": legacy_scorer.fingerprint(),
+        "frozen_subset_sha256": {
+            record["held_out_reader"]: record["sha256"]
+            for record in frozen_records},
+        "n_snapshots": len(rows),
+        "metrics": reader_metrics(golds, preds) if rows else {},
+        "metrics_by_cutoff": metrics_by_cutoff,
+        "rows": rows,
+        "note": "PHEME-only continuity diagnostic; it can never change the "
+                "GO/NO-GO recommendation (plan §17 B2, §25)",
+    }
+    common.write_json(os.path.join(out_root, "unseen_reader", dataset,
+                                   "b2_legacy_diagnostic.json"), payload)
+    return payload
+
+
 def freeze_subsets(dataset, paths, out_root, max_snapshots=None, legacy=False,
                    legacy_scorer=None, single_predictions=None):
+    assert_unfrozen(dataset, out_root)
     common.assert_frozen_source(dataset, paths, out_root, "freeze_subsets")
     split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
@@ -149,8 +241,9 @@ def freeze_subsets(dataset, paths, out_root, max_snapshots=None, legacy=False,
     arms_used = [a for a in SELECTION_ARMS if a != "S6_legacy_utility_tm"] + \
         (["S6_legacy_utility_tm"] if legacy else [])
     os.makedirs(frozen_dir(out_root, dataset), exist_ok=True)
+    legacy_items, legacy_selections = [], []
     out = []
-    for rotation in LORO_ROTATIONS:
+    for rotation_index, rotation in enumerate(LORO_ROTATIONS):
         train_readers, held = list(rotation[:2]), rotation[2]
         payload = _load_predictor(out_root, dataset, train_readers)
         predictions_artifact = payload["predictions"]
@@ -175,15 +268,24 @@ def freeze_subsets(dataset, paths, out_root, max_snapshots=None, legacy=False,
                     snapshot_predictions[slot] = predictions_for_snapshot(
                         {"single": singles.get(reader_key, {})}, dataset,
                         event_id, cutoff, "single")
+                item = None
                 if legacy:
                     sem_rows = {nid: art["semantic"][i] for i, nid in
                                 enumerate(art["snapshot"]["node_ids"])}
+                    item = _legacy_item(events[event_id], art["snapshot"],
+                                        sem_rows)
                     snapshot_predictions["legacy"] = _legacy_scores(
-                        legacy_scorer, events[event_id], art["snapshot"],
-                        sem_rows, units, src)
+                        legacy_scorer, item)
                 arms = all_arms(units, src, snapshot_predictions, tokenizer,
                                 train_readers, PARTITION_SEED,
                                 include_legacy=legacy)
+                if legacy and rotation_index == 0:
+                    # B2 is dataset-level, not rotation-level: the frozen
+                    # selector sees the same candidates in every rotation, so
+                    # the diagnostic is collected once from the first pass.
+                    legacy_items.append(item)
+                    legacy_selections.append(
+                        list(arms["S6_legacy_utility_tm"]["selected_node_ids"]))
                 for arm_name, arm in arms.items():
                     rows.append({
                         "event_id": event_id, "cutoff": cutoff,
@@ -218,6 +320,9 @@ def freeze_subsets(dataset, paths, out_root, max_snapshots=None, legacy=False,
         with open(path + ".sha256", "w", encoding="utf-8") as fh:
             fh.write(record["sha256"])
         out.append(record)
+    if legacy and legacy_items:
+        _write_b2_diagnostic(dataset, out_root, legacy_scorer, legacy_items,
+                             legacy_selections, out)
     return out
 
 

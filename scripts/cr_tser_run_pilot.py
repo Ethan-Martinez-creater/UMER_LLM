@@ -119,6 +119,27 @@ def load_interaction_records(out_root, dataset):
     return records
 
 
+def legacy_b2_diagnostic(out_root, dataset=SECONDARY_DATASET):
+    """PHEME-only B2 legacy TC-DSCR diagnostic artifact (plan §17 B2).
+
+    The artifact is produced by the PHEME legacy execution stage from the
+    frozen TC-DSCR components; the aggregator only *reads and reports* it.
+    It is never an input to a gate, so a missing artifact degrades to
+    ``None`` instead of failing a Weibo22 condition.
+    """
+    return _read_json(os.path.join(out_root, "unseen_reader", dataset,
+                                   "b2_legacy_diagnostic.json"))
+
+
+def _b2_summary(artifact):
+    """Diagnostic surface for the report: identity + metrics, not the rows."""
+    if not artifact:
+        return None
+    summary = {k: v for k, v in artifact.items() if k != "rows"}
+    summary["n_rows"] = len(artifact.get("rows", []))
+    return summary
+
+
 def _pred_record(gold_sign, gold_cont, entry, active):
     """One evaluation row built from a model's **own** prediction artifact.
 
@@ -295,18 +316,34 @@ def compute_gates(out_root, datasets=(PRIMARY_DATASET, SECONDARY_DATASET)):
                                              dataset,
                                              f"rotation_{held}.json"))
             if record:
+                # The Stage-B artifact keeps ``held_out_reader`` at the top
+                # level and the Δ table under ``delta``; the aggregator must
+                # recombine both or ``rotation_completeness`` sees three
+                # anonymous rows and every P4/PHEME condition fails closed on
+                # a lost identity even when the evidence is complete.
+                rotation_result = {
+                    "held_out_reader": record.get("held_out_reader") or held,
+                    **record["delta"],
+                }
                 (rotations if dataset == PRIMARY_DATASET
-                 else pheme_rotations).append(record["delta"])
+                 else pheme_rotations).append(rotation_result)
     if rotations:
         gates["P4"] = gate_p4(rotations)
     pheme = pheme_secondary(pheme_rotations) if pheme_rotations else None
     decision = final_decision(gates, pheme)
     decision["primary_dataset"] = PRIMARY_DATASET
+    b2 = legacy_b2_diagnostic(out_root)
     decision["legacy_diagnostics"] = {
         "b2_s6_enabled_datasets": [d for d in datasets
                                    if legacy_arm_enabled(d)],
         "excluded_from_primary": True,
+        "participates_in_primary_gate": False,
+        "b2_legacy_tcdscr": _b2_summary(b2),
     }
+    if b2 is None:
+        decision["legacy_diagnostics"]["b2_note"] = (
+            "no PHEME B2 artifact; run the PHEME legacy stage with --legacy "
+            "(diagnostic only, never a gate input)")
     return gates, reports, decision
 
 
@@ -339,7 +376,16 @@ def write_report(out_root, gates, reports, decision, datasets):
     lines += ["", "## PHEME Secondary Evidence", "",
               f"- enabled B2/S6 legacy diagnostics: "
               f"`{decision['legacy_diagnostics']['b2_s6_enabled_datasets']}`",
-              "", "## Final Recommendation", "",
+              "- B2/S6 are diagnostic only; they never enter a Weibo22 gate",
+              ""]
+    b2 = decision["legacy_diagnostics"].get("b2_legacy_tcdscr")
+    lines += ["### PHEME B2 legacy TC-DSCR diagnostic", ""]
+    if b2:
+        lines += ["```json", json.dumps(b2, indent=1)[:2500], "```", ""]
+    else:
+        lines += [f"- not available: "
+                  f"{decision['legacy_diagnostics'].get('b2_note', '')}", ""]
+    lines += ["## Final Recommendation", "",
               f"```\n{decision['recommendation']}\n```", "",
               f"- decision: `{decision['decision']}`",
               f"- failed gates: {decision.get('failed_gates', [])}"]

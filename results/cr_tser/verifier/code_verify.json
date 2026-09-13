@@ -262,6 +262,46 @@
    "check": "crtser_smoke_env_resolves",
    "status": "pass",
    "detail": "out_root=/tmp/out\\smoke"
+  },
+  {
+   "check": "p4_rotation_identity_preserved",
+   "status": "pass",
+   "detail": "complete=True distinct=['glm', 'internlm', 'qwen'] pass=True"
+  },
+  {
+   "check": "pheme_rotation_identity_complete",
+   "status": "pass",
+   "detail": "pheme_complete=True"
+  },
+  {
+   "check": "incomplete_rotations_fail_closed",
+   "status": "pass",
+   "detail": "two rotations -> pass=False"
+  },
+  {
+   "check": "frozen_subset_write_once",
+   "status": "pass",
+   "detail": "second freeze refused=True unchanged=True"
+  },
+  {
+   "check": "b2_surface_enters_pheme_artifact",
+   "status": "pass",
+   "detail": "metrics={'accuracy': 1.0, 'macro_f1': 0.5, 'rumor_f1': 1.0, 'non_rumor_f1': 0.0, 'n': 1}"
+  },
+  {
+   "check": "b2_never_changes_gates",
+   "status": "pass",
+   "detail": "gates_identical=True n_rows=3"
+  },
+  {
+   "check": "b2_excluded_from_p3_comparison",
+   "status": "pass",
+   "detail": "P3 models=['B0_text', 'B3_text_graph']"
+  },
+  {
+   "check": "b2_excluded_from_p4_comparison",
+   "status": "pass",
+   "detail": "best simple baseline selected 'S2_semantic_tm'"
   }
  ]
 }
