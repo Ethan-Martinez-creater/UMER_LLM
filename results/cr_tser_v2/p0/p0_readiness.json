@@ -1,0 +1,19 @@
+{
+ "protocol": "v2",
+ "P0": "P0_FAIL",
+ "primary_dataset": "maweibo",
+ "secondary_dataset": "pheme",
+ "weibo22_status": "REJECTED_PRIMARY_CANDIDATE",
+ "maweibo_source_integrity": true,
+ "maweibo_source_verdict": "MAWEIBO_READY",
+ "maweibo_viable_events": 4591,
+ "maweibo_viable_required": 170,
+ "maweibo_viable_ok": true,
+ "pheme_smoke": "OK",
+ "pheme_smoke_ok": true,
+ "readers_ready": false,
+ "readers_checked": true,
+ "ab_sanity_ok": false,
+ "ab_boundaries_ok": false,
+ "next_step": "STOP: a V2 P0 prerequisite is unmet (amendment V2 §10)"
+}

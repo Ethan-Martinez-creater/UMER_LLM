@@ -1,0 +1,33 @@
+{
+ "dataset": "pheme",
+ "raw_dir": "E:/Graduate_work_folder/rumor_detection/data/dataset/PHEME_extension/all-rnr-annotated-threads",
+ "labels_generated": false,
+ "cutoffs": [
+  15,
+  60,
+  360
+ ],
+ "n_events": 6425,
+ "sample_event_id": "552783238415265792",
+ "source_text_available": true,
+ "reply_text_available": true,
+ "timestamps_available": true,
+ "parent_relation_available": true,
+ "snapshots_built": [
+  {
+   "cutoff_minutes": 15,
+   "n_nodes": 1
+  },
+  {
+   "cutoff_minutes": 60,
+   "n_nodes": 5
+  },
+  {
+   "cutoff_minutes": 360,
+   "n_nodes": 10
+  }
+ ],
+ "future_leakage": [],
+ "failures": [],
+ "status": "OK"
+}

@@ -1,0 +1,27 @@
+{
+ "git_commit": "fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f",
+ "git_head_subject": "CR-TSER V2-M0 closure hotfix — dataset-aware eligibility, Ma-Weibo unit contract, V2 report, experiments NOT RUN",
+ "protocol_baseline": "fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f",
+ "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+ "executable": "E:\\miniconda3\\envs\\bettafish\\python.exe",
+ "platform": "Windows-10-10.0.19045-SP0",
+ "torch": "2.5.1+cu118",
+ "cuda_version": "11.8",
+ "cuda_available": true,
+ "gpu": {
+  "name": "NVIDIA GeForce GTX 1050 Ti",
+  "total_memory_bytes": 4294836224,
+  "total_memory_gib": 4.0,
+  "free_memory_gib": 3.28,
+  "compute_capability": "6.1"
+ },
+ "transformers": "5.14.1",
+ "reader_model_env": {
+  "CRTSER_QWEN_MODEL": "",
+  "CRTSER_GLM_MODEL": "",
+  "CRTSER_INTERLM_MODEL": "",
+  "CRTSER_CANONICAL_TOKENIZER": "",
+  "CRTSER_SEMANTIC_MODEL": ""
+ },
+ "reader_model_env_note": "all reader model env vars unset: the frozen P0 entry resolved every model_path to the empty string"
+}

@@ -578,6 +578,92 @@ the source node no longer dilutes them.
 * No V2 P0, reader loading, A/B real-reader sanity, manifest, utility label,
   predictor training, Stage-A freeze, held-out evaluation or P1–P4 was run.
 
+# 18. V2-P0 preflight execution (real run, formal pilot NOT RUN)
+
+## 18.1 Baseline
+
+Executed from the approved frozen baseline
+`fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f`, per
+`docs/CR_TSER_V2_P0_EXECUTION_PLAN.md`. **No code was changed in this round.**
+
+Pre-P0 health: `pytest project/cr_tser/tests -q` → 128 passed;
+`verify_pilot.py --mode code --protocol v2` → issues = 0;
+`compileall project/cr_tser scripts` → clean.
+
+## 18.2 Verdict
+
+```text
+P0_FAIL
+```
+
+Sole blocker: the three frozen readers could not be resolved. This machine is
+the **lightweight verification node** — the reader weights are server-side
+resources (`resources/resource_manifest.md`), every `CRTSER_*_MODEL` variable
+was unset, and the only GPU is a 4.00 GiB GTX 1050 Ti, which cannot host an
+8B/9B bf16 reader in any case. The protocol forbids substituting a smaller /
+quantized / API checkpoint, so P0-F and P0-G are a deployment-location result,
+not a data or protocol finding. The heavyweight reader preflight must run on
+the synchronized server.
+
+## 18.3 Data-side checkpoints PASSED (real numbers)
+
+Source of record — `CRTSER_MAWEIBO_RAW` =
+`…/rumor_detection/data/dataset/Ma-WeiBo/Weibo`,
+`CRTSER_MAWEIBO_LABELS` = `…/Ma-WeiBo/Weibo.txt` (original release layout):
+
+| fingerprint | value |
+|---|---|
+| raw JSON files / bytes | 4664 / 3,995,877,128 |
+| raw sha256 | `c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27` |
+| label sha256 | `032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4` |
+| combined_source_sha256 | `b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d` |
+
+Audit (recomputed, historical reference NOT assumed): 4664 raw / 4664 parsed /
+0 invalid; labels 2351×0, 2313×1; source-text 1.0, reply-text
+0.9999955274833517, timestamp 1.0, parent-resolution 0.9999918442343473;
+duplicate_ids 0, cycles 0, multi-root 0; missing-parent 0, external-parent 30;
+temporal-invalid 1; `events_with_ge1_valid_reply_parent_unit` 4663;
+verdict `MAWEIBO_READY`.
+
+Viability (V2 strict Reply–Parent rule): 15m 4296 / 1h 4486 / 6h 4591 →
+`total_viable_events = 4591 >= 170`. Split untouched.
+
+Snapshot integrity: 8 sampled viable events × 3 cutoffs — source present,
+0 future leakage, no cap (`MAX_NODES_CAP=None`), parent visible only when
+present, `parent.ts <= child.ts`, order = `(timestamp, original_order)`,
+unreachable 0. One sample (`10031994215`, 941 nodes at 6h) exceeds the retired
+1021 cap without truncation.
+
+PHEME smoke: `status=OK` (6425 events; sample `552783238415265792`; source /
+reply text, timestamps, ≥1 resolved parent relation, 15m/1h/6h snapshots,
+zero leakage).
+
+## 18.4 Evidence package
+
+Under `results/cr_tser_v2/p0/`: `p0_readiness.json`, `P0_READINESS.md`,
+`P0_EVIDENCE_PACKAGE.md`, `maweibo_audit.json`,
+`maweibo_source_fingerprint.json`, `snapshot_integrity.json`,
+`pheme_smoke.json`, `reader_audit.json`, `label_scoring_sanity.json`,
+`environment.json`, `v1_namespace_baseline.json`. The verdict was produced by
+the frozen entrypoint (`cr_tser_p0_audit.py --protocol v2 --readers --sanity`);
+no artifact was hand-edited.
+
+## 18.5 Verification and namespace protection
+
+* `verify_pilot.py --mode code --protocol v2` → issues = 0.
+* `verify_pilot.py --mode pilot --protocol v2` → issues = 0, pending = 1
+  (`pilot_artifacts`, correct while P1–P4 have not run).
+* `results/cr_tser/` (V1) directory SHA-256 identical before and after the
+  whole round: `c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558`.
+* All V2 output stayed under `results/cr_tser_v2/`.
+
+## 18.6 Not run
+
+formal manifest freeze, intervention generation, utility labels, predictor /
+single-reader / shared-residual training, Stage-A freeze, held-out reader
+evaluation, P1–P4, formal pilot report. No threshold, reader, cutoff, split,
+eligibility rule or method was changed; no fallback was designed.
+
 
 
 

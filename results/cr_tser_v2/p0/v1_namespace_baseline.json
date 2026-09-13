@@ -1,0 +1,6 @@
+{
+ "v1_results_dir_sha256_pre": "c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558",
+ "v1_results_dir_sha256_post": "c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558",
+ "unchanged": true,
+ "note": "results/cr_tser stayed byte-identical across the whole V2-P0 round, including the V2 verifier runs"
+}

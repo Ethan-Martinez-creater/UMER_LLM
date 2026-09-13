@@ -1,0 +1,493 @@
+{
+ "dataset": "maweibo",
+ "eligibility": "v2_strict",
+ "sampling": "first 8 events (streaming, raw order) that satisfy the V2 viability rule",
+ "events_scanned_before_sample_complete": 8,
+ "cutoffs_minutes": [
+  15,
+  60,
+  360
+ ],
+ "samples": [
+  {
+   "event_id": "10031080900",
+   "n_nodes": 108,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 27,
+     "valid_evidence_units": 26,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 27,
+     "num_nodes_after_cap": 27,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 51,
+     "valid_evidence_units": 50,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 51,
+     "num_nodes_after_cap": 51,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 73,
+     "valid_evidence_units": 72,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 73,
+     "num_nodes_after_cap": 73,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10031994215",
+   "n_nodes": 1062,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 144,
+     "valid_evidence_units": 143,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 144,
+     "num_nodes_after_cap": 144,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 494,
+     "valid_evidence_units": 493,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 494,
+     "num_nodes_after_cap": 494,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 941,
+     "valid_evidence_units": 940,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 941,
+     "num_nodes_after_cap": 941,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10276391917",
+   "n_nodes": 204,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 70,
+     "valid_evidence_units": 69,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 70,
+     "num_nodes_after_cap": 70,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 125,
+     "valid_evidence_units": 124,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 125,
+     "num_nodes_after_cap": 125,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 180,
+     "valid_evidence_units": 179,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 180,
+     "num_nodes_after_cap": 180,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10313557537",
+   "n_nodes": 75,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 8,
+     "valid_evidence_units": 7,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 8,
+     "num_nodes_after_cap": 8,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 13,
+     "valid_evidence_units": 12,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 13,
+     "num_nodes_after_cap": 13,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 23,
+     "valid_evidence_units": 22,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 23,
+     "num_nodes_after_cap": 23,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10402071863",
+   "n_nodes": 250,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 43,
+     "valid_evidence_units": 42,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 43,
+     "num_nodes_after_cap": 43,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 82,
+     "valid_evidence_units": 81,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 82,
+     "num_nodes_after_cap": 82,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 139,
+     "valid_evidence_units": 138,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 139,
+     "num_nodes_after_cap": 139,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10826063736",
+   "n_nodes": 456,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 142,
+     "valid_evidence_units": 141,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 142,
+     "num_nodes_after_cap": 142,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 301,
+     "valid_evidence_units": 300,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 301,
+     "num_nodes_after_cap": 301,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 400,
+     "valid_evidence_units": 399,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 400,
+     "num_nodes_after_cap": 400,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10898255329",
+   "n_nodes": 151,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 113,
+     "valid_evidence_units": 112,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 113,
+     "num_nodes_after_cap": 113,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 151,
+     "valid_evidence_units": 150,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 151,
+     "num_nodes_after_cap": 151,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 151,
+     "valid_evidence_units": 150,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 151,
+     "num_nodes_after_cap": 151,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  },
+  {
+   "event_id": "10932789204",
+   "n_nodes": 41,
+   "viable_cutoffs": [
+    "15",
+    "60",
+    "360"
+   ],
+   "has_valid_reply_parent_unit": true,
+   "per_cutoff": [
+    {
+     "cutoff_minutes": 15,
+     "n_nodes": 2,
+     "valid_evidence_units": 1,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 2,
+     "num_nodes_after_cap": 2,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 60,
+     "n_nodes": 4,
+     "valid_evidence_units": 3,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 4,
+     "num_nodes_after_cap": 4,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    },
+    {
+     "cutoff_minutes": 360,
+     "n_nodes": 8,
+     "valid_evidence_units": 7,
+     "source_present": true,
+     "future_leak_count": 0,
+     "cap_hit": false,
+     "max_nodes_cap": null,
+     "num_nodes_before_cap": 8,
+     "num_nodes_after_cap": 8,
+     "unreachable_count": 0,
+     "parent_visibility_ok": true,
+     "parent_time_ok": true,
+     "order_is_timestamp_then_original_order": true,
+     "zero_reply": false
+    }
+   ]
+  }
+ ]
+}
