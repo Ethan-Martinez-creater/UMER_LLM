@@ -183,6 +183,7 @@ class PilotPaths:
 
     weibo22_raw: str = ""
     weibo22_labels: str = ""
+    weibo22_normalized: str = ""
     pheme_raw: str = ""
     semantic_model: str = ""
     qwen_model: str = ""
@@ -212,12 +213,16 @@ def paths_from_env(env=None) -> PilotPaths:
     """
     env = os.environ if env is None else env
     kw = {}
-    for name in ("weibo22_raw", "weibo22_labels", "pheme_raw",
-                 "semantic_model", "qwen_model", "glm_model",
-                 "internlm_model", "canonical_tokenizer", "out_root"):
+    for name in ("weibo22_raw", "weibo22_labels", "weibo22_normalized",
+                 "pheme_raw", "semantic_model", "qwen_model", "glm_model",
+                 "internlm_model", "canonical_tokenizer", "out_root",
+                 "smoke"):
         val = env.get(_ENV_PREFIX + name.upper())
         if val:
             kw[name] = val
+    if env.get(_ENV_PREFIX + "SMOKE"):
+        kw["out_root"] = os.path.join(kw.get("out_root", "results/cr_tser"),
+                                      "smoke")
     return PilotPaths(**kw)
 
 

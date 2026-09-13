@@ -173,3 +173,50 @@ pins it and the verifier check that now guards it. No scientific choice in
    `utility_labels/<dataset>.jsonl` path is still read as a fallback so
    pre-existing local artifacts remain readable.
 
+---
+
+# 8. Final code-complete fix round (code only — formal pilot NOT RUN)
+
+| # | Finding | Fix (location) | Test | Verifier check |
+|---|---|---|---|---|
+| 1 | `--normalized-events` existed only in the manifest builder | `weibo22_normalized` added to `PilotPaths`/`CRTSER_WEIBO22_NORMALIZED`; `cr_tser_common.load_dataset_events`/`dataset_registry` use it, so P0, manifest, labels, training and selection share one frozen source; `data/source_manifest.py` records `path`/`sha256`/`n_files` in `<manifests>/<dataset>/source.json` and `assert_frozen_source` fails every later stage on a changed source | `test_normalized_export_validation_ready_and_unavailable`, `test_raw_release_without_normalized_export_stays_unavailable`, `test_source_fingerprint_detects_change` | `weibo22_normalized_path_wired`, `p0_boundary_failure_blocks_pass` |
+| 2 | P3 could derive `y_pred_sign` from ground-truth correctness | `run_pilot._pred_record` takes `predicted_sign`/`probs` from the model artifact only; `_sign_of` (the correctness-threshold helper) is deleted; B0/B1/B3 each contribute their own `predicted_sign`, three-class probs and continuous utility; `gate_p3` requires the event-level paired bootstrap CI | `test_p3_predicted_sign_comes_from_sign_head_not_correctness`, `test_p3_active_definition_includes_correctness_change`, `test_baseline_predictions_carry_own_sign_head` | `p3_predicted_sign_from_sign_head`, `p3_per_model_predictions` |
+| 3 | B3 Spearman was copied onto baselines | `predict_baseline`/`_average_predictions` now return each model's own `utility`, `probs`, `predicted_sign`; `evaluate_utility` computes per-model Spearman/MAE/AUROC; bootstrap pairs identical `(event,key,reader)` rows | `test_baseline_predictions_carry_own_sign_head` | `p3_per_model_predictions`, `p3_bootstrap_gate` |
+| 4 | The §11 top-20 label cap leaked into selector inference | `make_group` carries `infer_rows` (every `C_ref` candidate) beside the capped `unit_rows`; `infer_z` + `_reader_predictions`/`_shared_predictions` score all candidates; artifacts record `prediction_coverage`; `assert_full_coverage` makes S3/S4/S5/S6 fail closed on a missing candidate score (the silent `0.0` path is gone) | `test_label_cap_does_not_limit_inference_candidates`, `test_missing_candidate_prediction_fails_closed` | `inference_covers_all_candidates`, `selector_missing_prediction_fails_closed` |
+| 5 | B2/S6 kept only a wrapper | `LegacyPHEMEUtility.per_unit_scores`/`score_items` run the real frozen path (TC-DSCR `build_light_item` → frozen encoder → `[h_source; h_i]` → `proxy.head`), `build_legacy_scorer` loads the frozen PHEME checkpoint via `load_frozen_components`, `run_selection` feeds the per-unit scores into S6 packing and refuses non-PHEME | `test_s6_consumes_legacy_scores`, `test_score_items_never_trains_and_is_pheme_only` | `s6_consumes_legacy_scores`, `b2_s6_pheme_only` |
+| 6 | P0 recorded boundaries but did not fail on them | `cr_tser_p0_audit.evaluate_readiness` requires `identical_predictions` **and** `boundaries_ok` for every reader; `weibo22_temporal_check` prefers the normalized export and validates its fields | `test_p0_boundary_failure_blocks_pass` | `p0_boundary_failure_blocks_pass` |
+| 7 | Cache fingerprint too weak | `reader_identity_hash` folds weight/tokenizer/template/dtype/model id; rows record `prompt_ids_hash` (actual tokenized prompt) and `reader_identity_hash`; `FINGERPRINT_FIELDS` covers all eight identities and any mismatch raises `CacheIdentityMismatch` | `test_cache_fingerprint_mismatch_fails_closed`, `test_cache_fails_closed_on_tokenizer_and_template_substitution` | `cache_identity_substitution_fails_closed`, `prompt_hash_full_chat` |
+| 8 | S3a/S3b were reader-conditioned outputs of the two-reader model | `train_single_reader` trains one single-reader selector per reader (same architecture/protocol, three seeds averaged) and writes `predictor/<dataset>/single_<reader>/predictions.json` with `training_readers == [reader]`; `_load_single_predictions` refuses a multi-reader artifact; the two-reader B3 remains the S4/S5 source | `test_single_reader_artifact_guard` | `s3_single_reader_trained` |
+
+## 9. Review-round behaviour changes (final round)
+
+1. `--smoke` now redirects **all** writes to `<out_root>/smoke` (build manifests,
+   labels, predictor, unseen reader), so a mock run can never freeze the formal
+   cache or be mistaken for a formal result.
+2. Every stage after manifest creation calls `assert_frozen_source`; swapping the
+   Weibo22 export (or PHEME raw dir) mid-pipeline raises `SourceIdentityError`.
+3. Formal S3/S4/S5/S6 raise `MissingPredictionError` instead of scoring an
+   unlabeled candidate as `0.0`.
+4. `predict_baseline` returns per-key `{utility, probs, predicted_sign,
+   class_scores}` rather than a bare float, so B0/B1 are like-for-like with B3.
+5. P0 exposes `weibo22_source_of_record` (`normalized_export` / `raw_release` /
+   `none`) and `ab_boundaries_ok`; **P0 remains FAIL** because the only
+   available Weibo22 source is the raw public KPG release, which has no
+   per-node timestamps.
+
+## 10. Verification (final round)
+
+* `python -m pytest project/cr_tser/tests -q` → **67 passed**.
+* `python scripts/cr_tser_verify_pilot.py --mode code` → **42 checks,
+  issues = 0** (including the executed semantic checks).
+* `python scripts/cr_tser_verify_pilot.py --mode pilot` → **issues = 0,
+  pending = 1** (pilot not executed).
+* `python scripts/cr_tser_p0_audit.py` → `P0_FAIL`,
+  `weibo22_source_of_record = raw_release`. The failure is the real state of
+  the public release and was **not** altered by code.
+* `compileall` clean over `project/cr_tser` and `scripts/cr_tser_*.py`.
+
+No formal utility-label generation, predictor training, unseen-reader
+evaluation or pilot run was performed.
+
+

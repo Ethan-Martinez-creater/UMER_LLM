@@ -28,7 +28,7 @@ if str(PROJECT) not in sys.path:
     sys.path.insert(0, str(PROJECT))
 
 from cr_tser.config.pilot_config import (READER_KEYS, READER_MODEL_IDS,
-                                         VERDICT_READY, paths_from_env)
+                                         paths_from_env)
 from cr_tser.data import weibo22_adapter
 from cr_tser.readers.base_reader import (ReaderSpec, build_reader,
                                          dump_reader_audit, reader_identity)
@@ -40,6 +40,68 @@ def _write_json(path, payload):
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=1, ensure_ascii=False)
     return path
+
+
+def weibo22_temporal_check(paths, raw_dir=None):
+    """Temporal validation of the frozen Weibo22 source of record.
+
+    The normalized export (``CRTSER_WEIBO22_NORMALIZED``) is validated field by
+    field when present; otherwise the raw KPG release is only audited for
+    structure and can never yield READY (plan §4.1, §30).
+    """
+    normalized = getattr(paths, "weibo22_normalized", "")
+    if normalized and os.path.exists(normalized):
+        report = weibo22_adapter.validate_normalized_export(normalized)
+        report["source_of_record"] = "normalized_export"
+        return report
+    raw = raw_dir or getattr(paths, "weibo22_raw", "")
+    if raw and os.path.isdir(raw):
+        report = weibo22_adapter.audit_release(raw)
+        report["source_of_record"] = "raw_release"
+        return report
+    return {"dataset": "Weibo22", "verdict": weibo22_adapter.
+            VERDICT_UNAVAILABLE, "source_of_record": "none",
+            "verdict_reason": "no Weibo22 temporal source configured"}
+
+
+def evaluate_readiness(audit, readers, sanity, readers_checked,
+                       sanity_requested):
+    """P0 decision. Fail closed on every prerequisite (plan §25, §30).
+
+    A/B sanity passes only when each reader produced *identical predictions*
+    on the repeated scoring **and** its continuation tokenization/boundary
+    validation succeeded; a recorded-but-failing boundary is a P0 failure, not
+    a warning.
+    """
+    readers_ready = all(
+        r.get("model_path_exists") and (r.get("loaded") or not readers_checked)
+        for r in readers.values())
+    if sanity_requested:
+        sanity_ok = bool(sanity) and all(
+            r.get("identical_predictions") and r.get("boundaries_ok")
+            for r in sanity.values())
+    else:
+        sanity_ok = False
+    data_ready = audit.get("verdict") == weibo22_adapter.VERDICT_READY
+    p0_pass = bool(data_ready and readers_ready and sanity_ok)
+    return {
+        "P0": "P0_PASS" if p0_pass else "P0_FAIL",
+        "weibo22_temporal": audit.get("verdict"),
+        "weibo22_source_of_record": audit.get("source_of_record"),
+        "weibo22_reason": audit.get("verdict_reason") or (
+            "" if data_ready else f"field coverage: {audit.get('errors')}"),
+        "readers_ready": readers_ready,
+        "readers_checked": readers_checked,
+        "ab_sanity_ok": sanity_ok if sanity_requested else None,
+        "ab_boundaries_ok": bool(sanity) and all(
+            r.get("boundaries_ok") for r in sanity.values())
+        if sanity_requested else None,
+        "next_step": ("COMMIT PUSH STOP — research approval required before "
+                      "expensive labels (plan §30)"
+                      if p0_pass else
+                      "STOP: a P0 prerequisite is unmet (plan §25); do not "
+                      "generate interventions"),
+    }
 
 
 def weibo22_smoke(raw_dir: str):  # pragma: no cover - needs real data
@@ -149,15 +211,15 @@ def main(argv=None):
                                              "p0")
     os.makedirs(out_root, exist_ok=True)
 
-    if raw and os.path.isdir(raw):
-        audit = weibo22_adapter.write_audit(raw, out_root)
+    audit = weibo22_temporal_check(paths, raw)
+    _write_json(os.path.join(out_root, "weibo22_audit.json"), audit)
+    if audit.get("source_of_record") == "raw_release":
         smoke = weibo22_smoke(raw)
     else:
-        audit = {"dataset": "Weibo22", "verdict": weibo22_adapter.
-                 VERDICT_UNAVAILABLE,
-                 "verdict_reason": f"raw dir not found: {raw!r}"}
-        _write_json(os.path.join(out_root, "weibo22_audit.json"), audit)
-        smoke = {"status": "UNAVAILABLE", "reason": "raw dir not found"}
+        smoke = {"status": "OK" if audit.get("valid") else "UNAVAILABLE",
+                 "source_of_record": audit.get("source_of_record"),
+                 "n_events": audit.get("n_events"),
+                 "coverage": audit.get("coverage")}
     _write_json(os.path.join(out_root, "weibo22_smoke.json"), smoke)
 
     readers = reader_audit(paths, out_root, dtype=args.dtype,
@@ -168,32 +230,16 @@ def main(argv=None):
                                       device=args.device)
     _write_json(os.path.join(out_root, "label_scoring_sanity.json"), sanity)
 
-    readers_ready = all(r.get("model_path_exists") and
-                        (r.get("loaded") or not args.readers)
-                        for r in readers.values())
-    sanity_ok = bool(sanity) and all(r.get("identical_predictions")
-                                     for r in sanity.values())
-    data_ready = audit.get("verdict") == VERDICT_READY
-    p0_pass = bool(data_ready and readers_ready and sanity_ok)
-    readiness = {
-        "P0": "P0_PASS" if p0_pass else "P0_FAIL",
-        "weibo22_temporal": audit.get("verdict"),
-        "weibo22_reason": audit.get("verdict_reason"),
-        "readers_ready": readers_ready,
-        "readers_checked": args.readers,
-        "ab_sanity_ok": sanity_ok if args.sanity else None,
-        "next_step": ("COMMIT PUSH STOP — research approval required before "
-                      "expensive labels (plan §30)"
-                      if p0_pass else
-                      "STOP: a P0 prerequisite is unmet (plan §25); do not "
-                      "generate interventions"),
-    }
+    readiness = evaluate_readiness(audit, readers, sanity, args.readers,
+                                   args.sanity)
+    p0_pass = readiness["P0"] == "P0_PASS"
     _write_json(os.path.join(out_root, "p0_readiness.json"), readiness)
     lines = ["# CR-TSER P0 readiness", "",
              f"- **verdict**: {readiness['P0']}",
              f"- Weibo22 temporal: `{readiness['weibo22_temporal']}`",
-             f"- readers ready: `{readers_ready}` (loaded={args.readers})",
-             f"- A/B sanity: `{sanity_ok if args.sanity else 'not run'}`",
+             f"- readers ready: `{readiness['readers_ready']}` "
+             f"(loaded={args.readers})",
+             f"- A/B sanity: `{readiness['ab_sanity_ok']}`",
              f"- next: {readiness['next_step']}"]
     if audit.get("verdict_reason"):
         lines += ["", f"> {audit['verdict_reason']}"]

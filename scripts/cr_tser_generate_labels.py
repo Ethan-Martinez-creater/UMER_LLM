@@ -6,14 +6,16 @@ base context ``C_ref`` and the intervened context ``C_ref \\ A`` with
 teacher-forced A/B sequence scoring and stores one immutable cache row with
 every §32 field.
 
-Identity rules enforced by the review round:
+Identity rules enforced by the review rounds:
 
-* ``prompt_hash`` is the hash of the **complete chat-formatted prompt** the
-  reader actually saw (system + user + template special tokens), not just the
-  evidence text;
-* a cache hit is only reused when *every* fingerprint matches
-  (base context, intervened context, reader weights, prompt). Any mismatch
-  fails closed instead of silently reusing a stale label.
+* ``prompt_hash`` covers the complete chat-formatted prompt and
+  ``prompt_ids_hash`` covers the **actual tokenized prompt ids**, so a
+  tokenizer or chat-template substitution that leaves the text unchanged still
+  invalidates the cache;
+* ``reader_identity_hash`` folds weight, tokenizer, chat template, dtype and
+  model id into one digest;
+* a cache hit is reused only when *every* fingerprint matches, otherwise
+  :class:`CacheIdentityMismatch` is raised — never a silent reuse.
 """
 from __future__ import annotations
 
@@ -34,10 +36,12 @@ from cr_tser.models.utility_heads import utility_record  # noqa: E402
 from cr_tser.readers.base_reader import (build_messages,  # noqa: E402
                                          build_reader_prompt, ReaderSpec,
                                          build_reader)
-from cr_tser.readers.sequence_scorer import ab_scores, apply_chat  # noqa: E402
+from cr_tser.readers.sequence_scorer import (ab_scores, apply_chat,  # noqa: E402
+                                             tokenize_prompt)
 
 FINGERPRINT_FIELDS = ("base_context_hash", "intervened_context_hash",
-                      "reader_hash", "prompt_hash")
+                      "reader_hash", "reader_identity_hash", "tokenizer_hash",
+                      "chat_template_hash", "prompt_hash", "prompt_ids_hash")
 
 
 class CacheIdentityMismatch(RuntimeError):
@@ -48,9 +52,15 @@ def _sha(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def _chat_hash(tokenizer, user_prompt: str) -> str:
-    """Hash of the exact chat-formatted input handed to the reader."""
-    return _sha(apply_chat(tokenizer, build_messages(user_prompt)))
+def _prompt_identity(tokenizer, user_prompt: str) -> dict:
+    """Identity of the exact input the reader saw (chat text + token ids)."""
+    chat = apply_chat(tokenizer, build_messages(user_prompt))
+    ids = tokenize_prompt(tokenizer, chat)
+    return {
+        "prompt_hash": _sha(chat),
+        "prompt_ids_hash": _sha(",".join(str(i) for i in ids)),
+        "prompt_tokens": len(ids),
+    }
 
 
 def _cache_key(dataset, event_id, cutoff, reader, intervention_id):
@@ -88,7 +98,7 @@ def _context_units(units, src, remove_ids):
 
 
 def _row(dataset, event, cutoff, reader, intervention_id, intervention_type,
-         affected, base_text, ctx_text, base_prompt_hash, prompt_hash,
+         affected, base_text, ctx_text, base_prompt_identity, prompt_identity,
          reader_ident, base_out, gold, out):
     rec = utility_record(gold, base_out, out)
     return {
@@ -97,10 +107,16 @@ def _row(dataset, event, cutoff, reader, intervention_id, intervention_type,
         "base_context_hash": _sha(base_text),
         "intervened_context_hash": _sha(ctx_text),
         "reader_hash": reader_ident.get("weight_hash", ""),
+        "reader_identity_hash": reader_ident.get("reader_identity_hash", ""),
         "tokenizer_hash": reader_ident.get("tokenizer_hash", ""),
         "chat_template_hash": reader_ident.get("chat_template_hash", ""),
-        "base_prompt_hash": base_prompt_hash,
-        "prompt_hash": prompt_hash,
+        "model_id": reader_ident.get("model_id", ""),
+        "dtype": reader_ident.get("dtype", ""),
+        "base_prompt_hash": base_prompt_identity["prompt_hash"],
+        "base_prompt_ids_hash": base_prompt_identity["prompt_ids_hash"],
+        "prompt_hash": prompt_identity["prompt_hash"],
+        "prompt_ids_hash": prompt_identity["prompt_ids_hash"],
+        "prompt_tokens": prompt_identity["prompt_tokens"],
         "score_A": out["score_A"], "score_B": out["score_B"],
         "p_rumor": out["p_rumor"], "p_nonrumor": out["p_nonrumor"],
         "gold": gold, "utility": rec["utility"],
@@ -129,10 +145,24 @@ def _source_text(event):
                 if n["node_id"] == event["source_id"])
 
 
+def _expected_identity(reader_ident, base_ctx_hash, ctx_hash, prompt_identity):
+    return {
+        "base_context_hash": base_ctx_hash,
+        "intervened_context_hash": ctx_hash,
+        "reader_hash": reader_ident.get("weight_hash", ""),
+        "reader_identity_hash": reader_ident.get("reader_identity_hash", ""),
+        "tokenizer_hash": reader_ident.get("tokenizer_hash", ""),
+        "chat_template_hash": reader_ident.get("chat_template_hash", ""),
+        "prompt_hash": prompt_identity["prompt_hash"],
+        "prompt_ids_hash": prompt_identity["prompt_ids_hash"],
+    }
+
+
 def generate(dataset, paths, out_root, split_segments=("utility_train",
                                                        "utility_dev",
                                                        "utility_eval"),
              mock=False, only_reader=None, limit_snapshots=None):
+    common.assert_frozen_source(dataset, paths, out_root, "generate_labels")
     split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
     wanted = set()
@@ -170,16 +200,13 @@ def generate(dataset, paths, out_root, split_segments=("utility_train",
             for key, reader in readers.items():
                 reader_ident = reader.identity()
                 base_ctx_hash = _sha(base_text)
-                # base prompt hash is reader-specific (chat template + tokenizer)
-                base_prompt_hash = _chat_hash(reader.tokenizer, base_prompt)
+                base_prompt_identity = _prompt_identity(reader.tokenizer,
+                                                        base_prompt)
                 base_key = _cache_key(dataset, event["event_id"], cutoff, key,
                                       "I0")
-                expected_base = {
-                    "base_context_hash": base_ctx_hash,
-                    "intervened_context_hash": base_ctx_hash,
-                    "reader_hash": reader_ident.get("weight_hash", ""),
-                    "prompt_hash": base_prompt_hash,
-                }
+                expected_base = _expected_identity(
+                    reader_ident, base_ctx_hash, base_ctx_hash,
+                    base_prompt_identity)
                 if base_key in existing:
                     _verify_cached(existing[base_key], expected_base, base_key)
                     base_out = _out_from_row(existing[base_key])
@@ -187,9 +214,9 @@ def generate(dataset, paths, out_root, split_segments=("utility_train",
                 else:
                     base_out = ab_scores(reader.candidate_logprobs(base_prompt))
                     row = _row(dataset, event, cutoff, key, "I0", "I0_base", [],
-                               base_text, base_text, base_prompt_hash,
-                               base_prompt_hash, reader_ident, base_out, gold,
-                               base_out)
+                               base_text, base_text, base_prompt_identity,
+                               base_prompt_identity, reader_ident, base_out,
+                               gold, base_out)
                     existing[base_key] = row
                     _append(label_path, row)
                     n_done += 1
@@ -206,12 +233,10 @@ def generate(dataset, paths, out_root, split_segments=("utility_train",
                         units, [u["node_id"] for u in ctx_units])
                     prompt = build_reader_prompt(_source_text(event), cutoff,
                                                  ctx_units, ctx_text)
-                    expected = {
-                        "base_context_hash": base_ctx_hash,
-                        "intervened_context_hash": _sha(ctx_text),
-                        "reader_hash": reader_ident.get("weight_hash", ""),
-                        "prompt_hash": _chat_hash(reader.tokenizer, prompt),
-                    }
+                    prompt_identity = _prompt_identity(reader.tokenizer, prompt)
+                    expected = _expected_identity(
+                        reader_ident, base_ctx_hash, _sha(ctx_text),
+                        prompt_identity)
                     if row_key in existing:
                         _verify_cached(existing[row_key], expected, row_key)
                         n_skip += 1
@@ -220,7 +245,7 @@ def generate(dataset, paths, out_root, split_segments=("utility_train",
                     row = _row(dataset, event, cutoff, key,
                                iv["intervention_id"], iv["type"],
                                iv["remove_node_ids"], base_text, ctx_text,
-                               base_prompt_hash, expected["prompt_hash"],
+                               base_prompt_identity, prompt_identity,
                                reader_ident, base_out, gold, out)
                     existing[row_key] = row
                     _append(label_path, row)
@@ -245,7 +270,7 @@ def build_parser():
     ap.add_argument("--out-root", default=None)
     ap.add_argument("--reader", choices=READER_KEYS, default=None)
     ap.add_argument("--smoke", action="store_true",
-                    help="use mock readers (never for formal results)")
+                    help="use mock readers and the smoke namespace only")
     ap.add_argument("--limit-snapshots", type=int, default=None)
     return ap
 
@@ -256,6 +281,8 @@ def main(argv=None):
     out_root = args.out_root or os.path.join(paths.out_root or
                                              str(common.REPO / "results" /
                                                  "cr_tser"))
+    if args.smoke:
+        out_root = common.smoke_root(out_root)
     result = generate(args.dataset, paths, out_root, mock=args.smoke,
                       only_reader=args.reader,
                       limit_snapshots=args.limit_snapshots)

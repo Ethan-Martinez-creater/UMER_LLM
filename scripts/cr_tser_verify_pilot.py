@@ -238,6 +238,165 @@ def verify_code(report: Report):
                or "never" in wsrc.lower() or "no timestamp" in wsrc.lower(),
                "adapter documents that original_order is never time")
     _verify_review_fixes(report)
+    _verify_semantics(report)
+
+
+class _FakeTokenizer:
+    def __call__(self, text, add_special_tokens=True):
+        return {"input_ids": list(range(len(str(text).split())))}
+
+
+def _semantic_fixture():
+    units = [{"node_id": f"n{i}", "reply_text": f"reply {i} body",
+              "parent_text": "parent body", "parent_id": None,
+              "timestamp": i, "elapsed_seconds": i, "snapshot_order": i,
+              "depth": 1} for i in range(1, 7)]
+    ids = [u["node_id"] for u in units]
+    src = {"selected_node_ids": ids, "ranked_node_ids": ids,
+           "unit_token_costs": {n: 60 for n in ids}, "total_tokens": 360,
+           "budget_ref": 1024, "n_selected": len(ids), "utilization": 0.2,
+           "rank_percentile": {n: i / len(ids) for i, n in enumerate(ids)},
+           "relevance": {n: 1.0 - i / 10 for i, n in enumerate(ids)}}
+    return units, src
+
+
+def _verify_semantics(report):
+    """Execute the review-round contracts instead of grepping for them."""
+    scripts_dir = str(REPO / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+
+    # --- normalized Weibo22 path is wired through every stage ---
+    try:
+        from cr_tser.config.pilot_config import PilotPaths
+        has_field = "weibo22_normalized" in PilotPaths().__dict__
+        import cr_tser_common as common
+        uses = "weibo22_normalized" in _read(REPO / "scripts" /
+                                             "cr_tser_common.py")
+        stages = {name: "weibo22_normalized" in _script(name) or
+                  "load_dataset_events" in _script(name)
+                  for name in ("cr_tser_p0_audit.py", "cr_tser_build_manifests.py",
+                               "cr_tser_generate_labels.py",
+                               "cr_tser_train_predictors.py",
+                               "cr_tser_run_selection.py")}
+        report.add("weibo22_normalized_path_wired",
+                   has_field and uses and all(stages.values()),
+                   f"field={has_field} common={uses} stages={stages}")
+    except Exception as exc:  # pragma: no cover - defensive
+        report.add("weibo22_normalized_path_wired", False, f"error: {exc}")
+
+    # --- P0 boundary failure must block PASS ---
+    try:
+        import cr_tser_p0_audit as p0
+        audit = {"verdict": "WEIBO22_TEMPORAL_READY"}
+        readers = {"qwen": {"model_path_exists": True, "loaded": True}}
+        bad = {"qwen": {"identical_predictions": True, "boundaries_ok": False}}
+        good = {"qwen": {"identical_predictions": True, "boundaries_ok": True}}
+        blocked = p0.evaluate_readiness(audit, readers, bad, True, True)
+        allowed = p0.evaluate_readiness(audit, readers, good, True, True)
+        report.add("p0_boundary_failure_blocks_pass",
+                   blocked["P0"] == "P0_FAIL"
+                   and allowed["P0"] == "P0_PASS",
+                   f"bad={blocked['P0']} good={allowed['P0']}")
+    except Exception as exc:
+        report.add("p0_boundary_failure_blocks_pass", False, f"error: {exc}")
+
+    # --- selector fail-closed coverage + S6 consumes legacy scores ---
+    try:
+        from cr_tser.models.robust_selector import (MissingPredictionError,
+                                                    build_arm)
+        units, src = _semantic_fixture()
+        tokenizer = _FakeTokenizer()
+        ids = src["selected_node_ids"]
+        full = {n: 0.2 for n in ids}
+        arm_a = build_arm("S6_legacy_utility_tm", units, src,
+                          {"legacy": {n: float(i) for i, n in enumerate(ids)}},
+                          tokenizer, ["qwen", "glm"], seed=7319)
+        arm_b = build_arm("S6_legacy_utility_tm", units, src,
+                          {"legacy": {n: float(len(ids) - i)
+                                      for i, n in enumerate(ids)}},
+                          tokenizer, ["qwen", "glm"], seed=7319)
+        report.add("s6_consumes_legacy_scores",
+                   arm_a["selected_node_ids"] != arm_b["selected_node_ids"],
+                   "different legacy scores must change the S6 subset")
+        partial = {n: 0.2 for n in ids[:-1]}
+        try:
+            build_arm("S5_cross_reader_robust", units, src,
+                      {"qwen": partial, "glm": full}, tokenizer,
+                      ["qwen", "glm"], seed=7319)
+            raised = False
+        except MissingPredictionError:
+            raised = True
+        report.add("selector_missing_prediction_fails_closed", raised,
+                   "S5 must refuse a candidate set without full coverage")
+    except Exception as exc:
+        report.add("s6_consumes_legacy_scores", False, f"error: {exc}")
+        report.add("selector_missing_prediction_fails_closed", False,
+                   f"error: {exc}")
+
+    # --- cache identity fail-closed on tokenizer/template substitution ---
+    try:
+        import cr_tser_generate_labels as labels
+        row = {f: "v" for f in labels.FINGERPRINT_FIELDS}
+        labels._verify_cached(row, dict(row), "k")
+        raised = 0
+        for field in ("tokenizer_hash", "chat_template_hash",
+                      "reader_identity_hash", "prompt_ids_hash"):
+            try:
+                labels._verify_cached(row, {**row, field: "other"}, "k")
+            except labels.CacheIdentityMismatch:
+                raised += 1
+        report.add("cache_identity_substitution_fails_closed", raised == 4,
+                   f"{raised}/4 substitutions detected")
+    except Exception as exc:
+        report.add("cache_identity_substitution_fails_closed", False,
+                   f"error: {exc}")
+
+    # --- P3 predictions come from the model's own sign head ---
+    try:
+        import cr_tser_run_pilot as pilot
+        rec = pilot._pred_record("HELPFUL", 0.5,
+                                 {"utility": 0.3, "probs": [0.1, 0.8, 0.1],
+                                  "predicted_sign": "NEUTRAL"}, active=True)
+        # predicted sign is the artifact's sign-head argmax, not a threshold on
+        # the ground-truth utility, and no correctness transition is read
+        src_text = _script("cr_tser_run_pilot.py")
+        report.add("p3_predicted_sign_from_sign_head",
+                   rec["pred_sign"] == "NEUTRAL"
+                   and rec["pred_cont"] == 0.3
+                   and "predicted_sign" in src_text
+                   and "_sign_of" not in src_text,
+                   "P3 must use the model sign head, never correctness")
+        # B0/B1/B3 each carry their own artifact predictions
+        report.add("p3_per_model_predictions",
+                   "per_model_metrics" in src_text
+                   and 'collected[name]' in src_text
+                   and "B1_scalar_structure" in src_text,
+                   "each model contributes independent predictions/metrics")
+    except Exception as exc:
+        report.add("p3_predicted_sign_from_sign_head", False, f"error: {exc}")
+        report.add("p3_per_model_predictions", False, f"error: {exc}")
+
+    # --- label cap does not limit inference candidates ---
+    try:
+        uds = _pkg_code("cr_tser/training/utility_dataset.py")
+        tp = _script_code("cr_tser_train_predictors.py")
+        report.add("inference_covers_all_candidates",
+                   "infer_rows" in uds and "infer_z" in tp
+                   and "infer_keys" in tp and "prediction_coverage" in tp,
+                   "label-capped rows must not limit inference candidates")
+    except Exception as exc:
+        report.add("inference_covers_all_candidates", False, f"error: {exc}")
+
+    # --- S3a/S3b are single-reader trained ---
+    report.add("s3_single_reader_trained",
+               "def train_single_reader" in _script(
+                   "cr_tser_train_predictors.py")
+               and "_load_single_predictions" in _script(
+                   "cr_tser_run_selection.py")
+               and "training_readers != [reader]" in _script(
+                   "cr_tser_run_selection.py"),
+               "S3a/S3b must come from single-reader-trained artifacts")
 
 
 def _pkg(rel):
@@ -319,7 +478,8 @@ def _verify_review_fixes(report):
     rp = _script_code("cr_tser_run_pilot.py")
     report.add("p3_all_rotations",
                "for rotation in LORO_ROTATIONS" in rp
-               and "rotations_used" in rp and "merged_b3" in rp,
+               and "rotations_used" in rp
+               and "_counts_by_event(collected" in rp,
                "P3 pools every LORO rotation, not just the first")
     report.add("primary_secondary_separated",
                'PRIMARY_DATASET = "weibo22"' in rp
@@ -349,8 +509,9 @@ def _verify_review_fixes(report):
                and "FINGERPRINT_FIELDS" in gl,
                "cache hits are fingerprint-validated or refused")
     report.add("prompt_hash_full_chat",
-               "_chat_hash" in gl and "apply_chat" in gl,
-               "prompt_hash covers the full chat-formatted prompt")
+               "_prompt_identity" in gl and "tokenize_prompt" in gl
+               and "prompt_ids_hash" in gl,
+               "prompt identity covers chat text and tokenized prompt ids")
 
     for name in ("cr_tser_build_manifests.py", "cr_tser_run_selection.py",
                  "cr_tser_train_predictors.py", "cr_tser_run_pilot.py",

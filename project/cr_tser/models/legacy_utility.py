@@ -80,6 +80,58 @@ class LegacyPHEMEUtility:
                 return self.proxy.classify(h_source, z_sel)
             return classify_selected(self.proxy, h_source, sel_repr)
 
+    def per_unit_scores(self, node_repr, source_pos, candidate_indices):
+        """Legacy static-utility score for **every** S6 candidate (plan §22).
+
+        Each candidate is classified on its own through the real frozen path
+        ``encoder -> [h_source ; h_i] -> proxy.head`` and scored by the
+        RUMOR-vs-NON_RUMOR logit difference, which gives a reader-independent,
+        gold-independent legacy utility for the S6 packing.
+        """
+        import torch
+        from tcdscr.models.selector_proxy import classify_selected
+        h_source = node_repr[source_pos]
+        out = {}
+        with torch.no_grad():
+            for i in candidate_indices:
+                if int(i) == int(source_pos):
+                    continue
+                logits = classify_selected(self.proxy, h_source,
+                                           node_repr[i:i + 1])
+                out[int(i)] = float(logits[0, 0] - logits[0, 1])
+        return out
+
+    def score_items(self, items, device=None):
+        """Run the frozen encoder+proxy over light items (real feature path).
+
+        Returns ``[{node_id: legacy_score}]`` — one dict per item, covering all
+        non-source nodes of the snapshot. Requires the TC-DSCR scripts on the
+        path; never touches gold labels and never trains.
+        """
+        device = device or self.device
+        from tcdscr_run_e2 import encoder_forward_batch
+        outs = encoder_forward_batch(self.encoder, list(items), device)
+        results = []
+        for item, (node_repr, _event_repr, _logits) in zip(items, outs):
+            candidates = [i for i in range(len(item["node_ids"]))
+                          if i != item["source_pos"]]
+            by_index = self.per_unit_scores(node_repr, item["source_pos"],
+                                            candidates)
+            results.append({item["node_ids"][i]: value
+                            for i, value in by_index.items()})
+        return results
+
+    def b2_surface(self, h_source, sel_repr):
+        """B2 continuity diagnostic: the frozen static classification surface."""
+        logits = self.score(h_source, sel_repr)
+        import torch
+        probs = torch.softmax(logits.float(), dim=-1).tolist()
+        return {"static_logits": logits.tolist()[0] if logits.dim() == 2
+                else logits.tolist(),
+                "p_rumor": probs[0][0] if isinstance(probs[0], list) else probs[0],
+                "diagnostic_only": True,
+                "participates_in_primary_gate": False}
+
     def fingerprint(self) -> dict:
         """Identity of the frozen components, for the verifier."""
         checksums = getattr(self, "checksums", {}) or {}
@@ -95,3 +147,29 @@ class LegacyPHEMEUtility:
 def legacy_arm_enabled(dataset: str) -> bool:
     """S6 / B2 are enabled only for PHEME (plan §22 S6, §25)."""
     return dataset == LEGACY_DATASET
+
+
+class LegacyUnavailable(RuntimeError):
+    """Raised when the frozen PHEME legacy checkpoint cannot be located."""
+
+
+def build_legacy_scorer(dataset: str, device: str = "cpu"):
+    """Load the frozen PHEME static utility from TC-DSCR artifacts.
+
+    Configuration comes from ``CRTSER_LEGACY_E2_ROOT`` /
+    ``CRTSER_LEGACY_E1_ROOT`` (plus optional ``CRTSER_LEGACY_FOLD`` /
+    ``CRTSER_LEGACY_SEED``). Missing configuration raises rather than silently
+    running S6 with an empty score set.
+    """
+    import os
+    assert_legacy_dataset(dataset)
+    e2_root = os.environ.get("CRTSER_LEGACY_E2_ROOT", "")
+    if not e2_root:
+        raise LegacyUnavailable(
+            "CRTSER_LEGACY_E2_ROOT is not set; the PHEME legacy Static Utility "
+            "cannot be loaded, so S6/B2 must not run (plan §22)")
+    e1_root = os.environ.get("CRTSER_LEGACY_E1_ROOT", "") or None
+    fold = int(os.environ.get("CRTSER_LEGACY_FOLD", "0"))
+    seed = int(os.environ.get("CRTSER_LEGACY_SEED", "2000"))
+    return LegacyPHEMEUtility.from_tcdscr(dataset, e2_root, fold, seed,
+                                          device, e1_root)

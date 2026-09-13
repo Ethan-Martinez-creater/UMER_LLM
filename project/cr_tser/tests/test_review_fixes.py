@@ -230,17 +230,38 @@ def test_manifest_freeze_refuses_after_labels(tmp_path):
 # --------------------------------------------------------------------------
 # 5. cache identity
 # --------------------------------------------------------------------------
+def _fingerprint_row(**overrides):
+    row = {"prompt_hash": "p", "prompt_ids_hash": "pi", "base_context_hash": "b",
+           "intervened_context_hash": "i", "reader_hash": "r",
+           "reader_identity_hash": "ri", "tokenizer_hash": "t",
+           "chat_template_hash": "ct"}
+    row.update(overrides)
+    return row
+
+
 def test_cache_fingerprint_mismatch_fails_closed():
     import cr_tser_generate_labels as labels
-    row = {"prompt_hash": "p", "base_context_hash": "b",
-           "intervened_context_hash": "i", "reader_hash": "r"}
-    matching = {"prompt_hash": "p", "base_context_hash": "b",
-                "intervened_context_hash": "i", "reader_hash": "r"}
-    labels._verify_cached(row, matching, "k")  # no raise
+    matching = _fingerprint_row()
+    labels._verify_cached(_fingerprint_row(), matching, "k")  # no raise
+    for field in ("reader_hash", "reader_identity_hash", "prompt_hash",
+                  "prompt_ids_hash", "tokenizer_hash", "chat_template_hash",
+                  "base_context_hash", "intervened_context_hash"):
+        with pytest.raises(labels.CacheIdentityMismatch):
+            labels._verify_cached(_fingerprint_row(),
+                                  {**matching, field: "changed"}, "k")
+
+
+def test_cache_fails_closed_on_tokenizer_and_template_substitution():
+    """A re-tokenized or re-templated reader must invalidate cached labels."""
+    import cr_tser_generate_labels as labels
+    matching = _fingerprint_row()
     with pytest.raises(labels.CacheIdentityMismatch):
-        labels._verify_cached(row, {**matching, "reader_hash": "other"}, "k")
+        labels._verify_cached(_fingerprint_row(), {**matching,
+                                                   "tokenizer_hash": "v2"}, "k")
     with pytest.raises(labels.CacheIdentityMismatch):
-        labels._verify_cached(row, {**matching, "prompt_hash": "other"}, "k")
+        labels._verify_cached(_fingerprint_row(), {**matching,
+                                                   "chat_template_hash": "v2"},
+                              "k")
 
 
 # --------------------------------------------------------------------------

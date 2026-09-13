@@ -26,15 +26,17 @@ from ..models.utility_heads import SIGN_TO_INDEX
 
 
 def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices,
-               dataset: str = ""):
+               dataset: str = "", infer_keys=None):
     """One snapshot's model input plus its labeled atomic unit rows.
 
     ``sem`` (N,384), ``structural`` (N,10), ``q`` (N,6). ``unit_rows`` entries
     carry ``unit_index`` (snapshot position), ``reader``, ``target`` (utility),
-    ``sign`` (HELPFUL/NEUTRAL/HARMFUL) and correctness transitions.
+    ``sign`` (HELPFUL/NEUTRAL/HARMFUL) and correctness transitions — they are
+    the *supervision* rows, capped by plan §11.
 
-    Every row receives the canonical ``unit_key`` (dataset/event/cutoff/node)
-    so predictors, selectors and the verifier share one identity contract.
+    ``infer_keys`` lists **every** ``C_ref`` candidate that must receive an
+    inference prediction, which is a strictly larger set than the labeled rows
+    whenever the §11 label cap bites. Predictors must cover it completely.
     """
     node_ids = snapshot["node_ids"]
     pos = {nid: i for i, nid in enumerate(node_ids)}
@@ -49,6 +51,16 @@ def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices,
         rows.append({**row,
                      "unit_key": evidence_key(dataset, snapshot["event_id"],
                                               cutoff, node_ids[index])})
+    if infer_keys is None:
+        infer_keys = [(int(r["unit_index"]), None) for r in rows]
+    infer_rows = []
+    for index, key in infer_keys:
+        index = int(index)
+        infer_rows.append({
+            "unit_index": index,
+            "unit_key": key or evidence_key(dataset, snapshot["event_id"],
+                                             cutoff, node_ids[index]),
+        })
     return {
         "dataset": dataset,
         "event_id": snapshot["event_id"],
@@ -61,6 +73,7 @@ def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices,
         "source_idx": pos[snapshot["source_id"]],
         "ctx_indices": sorted(set(ctx_indices)),
         "unit_rows": rows,
+        "infer_rows": infer_rows,
     }
 
 

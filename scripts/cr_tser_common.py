@@ -50,7 +50,12 @@ class CrSemanticEncoder:
 
 
 def load_dataset_events(dataset: str, paths, normalized_paths=None):
-    """Load the pilot event pool for a dataset; Weibo22 fails closed."""
+    """Load the pilot event pool for a dataset; Weibo22 fails closed.
+
+    For Weibo22 the normalized export (``CRTSER_WEIBO22_NORMALIZED``) is the
+    single source of record shared by P0, manifest, label, training and
+    selection. The raw KPG release is never used to build a snapshot.
+    """
     if dataset == "pheme":
         from tcdscr.data import pheme_adapter
         return [pheme_adapter.load_event(topic, label, folder)
@@ -58,17 +63,26 @@ def load_dataset_events(dataset: str, paths, normalized_paths=None):
                 in pheme_adapter.event_ids(paths.pheme_raw)]
     if dataset == "weibo22":
         from cr_tser.data import weibo22_adapter
-        return weibo22_adapter.load_events(paths.weibo22_raw, normalized_paths)
+        normalized = normalized_paths or paths.weibo22_normalized or None
+        return weibo22_adapter.load_events(paths.weibo22_raw, normalized)
     raise ValueError(f"unknown dataset {dataset!r}")
 
 
 def dataset_registry(dataset: str, paths):
-    """``{event_id: label}`` without parsing every event body."""
+    """``{event_id: label}`` for the pool the split will actually sample from.
+
+    Weibo22 uses the normalized export when supplied; the raw KPG label
+    registry is only a structure-only fallback and can never reach a split
+    (``load_dataset_events`` would fail closed first).
+    """
     if dataset == "pheme":
         from tcdscr.data import pheme_adapter
         return {eid: label for eid, _topic, label, _folder
                 in pheme_adapter.event_ids(paths.pheme_raw)}
     if dataset == "weibo22":
+        if paths.weibo22_normalized:
+            return {e["event_id"]: int(e["label"])
+                    for e in load_dataset_events("weibo22", paths)}
         from cr_tser.data import weibo22_adapter
         return dict(weibo22_adapter.dataset_event_ids(paths.weibo22_raw))
     raise ValueError(dataset)
@@ -127,3 +141,33 @@ def append_jsonl(path, row):
 
 def paths_or_exit():
     return paths_from_env()
+
+
+def assert_frozen_source(dataset: str, paths, out_root: str,
+                         context: str) -> dict:
+    """Verify this stage is reading the data source the manifest froze.
+
+    Any stage after manifest creation calls this before touching data, so a
+    swapped or re-generated dataset cannot silently produce labels or
+    predictions against a different source (plan §31).
+    """
+    from cr_tser.data.source_manifest import (assert_same_source,
+                                              load_frozen_source,
+                                              source_fingerprint)
+    manifest_dir = os.path.join(out_root, "manifests", dataset)
+    frozen = load_frozen_source(manifest_dir)
+    if not frozen:
+        return {}
+    current = source_fingerprint(dataset, paths)
+    assert_same_source(frozen, current, context=context)
+    return frozen
+
+
+def smoke_root(out_root: str) -> str:
+    """Smoke/test namespace, never the formal artifact namespace.
+
+    A ``--smoke`` run must not be able to freeze the formal cache or be
+    mistaken for a formal result, so all smoke writes are redirected under
+    ``<out_root>/smoke``.
+    """
+    return os.path.join(out_root, "smoke")

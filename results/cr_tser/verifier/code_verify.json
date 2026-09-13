@@ -141,7 +141,7 @@
   {
    "check": "prompt_hash_full_chat",
    "status": "pass",
-   "detail": "prompt_hash covers the full chat-formatted prompt"
+   "detail": "prompt identity covers chat text and tokenized prompt ids"
   },
   {
    "check": "dataset_namespace:cr_tser_build_manifests.py",
@@ -167,6 +167,51 @@
    "check": "dataset_namespace:cr_tser_generate_labels.py",
    "status": "pass",
    "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "weibo22_normalized_path_wired",
+   "status": "pass",
+   "detail": "field=True common=True stages={'cr_tser_p0_audit.py': True, 'cr_tser_build_manifests.py': True, 'cr_tser_generate_labels.py': True, 'cr_tser_train_predictors.py': True, 'cr_tser_run_selection.py': True}"
+  },
+  {
+   "check": "p0_boundary_failure_blocks_pass",
+   "status": "pass",
+   "detail": "bad=P0_FAIL good=P0_PASS"
+  },
+  {
+   "check": "s6_consumes_legacy_scores",
+   "status": "pass",
+   "detail": "different legacy scores must change the S6 subset"
+  },
+  {
+   "check": "selector_missing_prediction_fails_closed",
+   "status": "pass",
+   "detail": "S5 must refuse a candidate set without full coverage"
+  },
+  {
+   "check": "cache_identity_substitution_fails_closed",
+   "status": "pass",
+   "detail": "4/4 substitutions detected"
+  },
+  {
+   "check": "p3_predicted_sign_from_sign_head",
+   "status": "pass",
+   "detail": "P3 must use the model sign head, never correctness"
+  },
+  {
+   "check": "p3_per_model_predictions",
+   "status": "pass",
+   "detail": "each model contributes independent predictions/metrics"
+  },
+  {
+   "check": "inference_covers_all_candidates",
+   "status": "pass",
+   "detail": "label-capped rows must not limit inference candidates"
+  },
+  {
+   "check": "s3_single_reader_trained",
+   "status": "pass",
+   "detail": "S3a/S3b must come from single-reader-trained artifacts"
   }
  ]
 }

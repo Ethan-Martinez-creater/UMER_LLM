@@ -11,6 +11,7 @@
   "chat_template_hash": "",
   "transformers_version": "",
   "device_config": "cuda",
+  "reader_identity_hash": "14658d9f341e2aee71d065e6ed9a6c2e12c062cfac1f8fd9c6a287b366931158",
   "model_path_exists": false,
   "expected_model_id": "Qwen/Qwen3-8B",
   "loaded": false
@@ -27,6 +28,7 @@
   "chat_template_hash": "",
   "transformers_version": "",
   "device_config": "cuda",
+  "reader_identity_hash": "fa80c640ac802235ac073ab2837f2593608afb06b3ac76e1a4fafc4e680e392e",
   "model_path_exists": false,
   "expected_model_id": "zai-org/glm-4-9b-chat-hf",
   "loaded": false
@@ -43,6 +45,7 @@
   "chat_template_hash": "",
   "transformers_version": "",
   "device_config": "cuda",
+  "reader_identity_hash": "6be66eeebfb3ff8062034c0308428dec1d613355a8763908f080d232f371061e",
   "model_path_exists": false,
   "expected_model_id": "internlm/internlm3-8b-instruct",
   "loaded": false

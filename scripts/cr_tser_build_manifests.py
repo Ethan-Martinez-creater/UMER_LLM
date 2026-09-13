@@ -31,6 +31,10 @@ from cr_tser.config.pilot_config import (CUTOFFS_MIN, LORO_ROTATIONS,  # noqa: E
                                          SPLIT_SIZES)
 from cr_tser.data.pilot_split import (assert_event_disjoint,  # noqa: E402
                                       build_pilot_split, viable_event_ids)
+from cr_tser.data.source_manifest import (assert_same_source,  # noqa: E402
+                                          load_frozen_source,
+                                          source_fingerprint,
+                                          write_frozen_source)
 from cr_tser.readers.base_reader import (model_weight_hash,  # noqa: E402
                                          tokenizer_hash)
 
@@ -83,12 +87,20 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
     assert_event_disjoint(split)
 
     manifests = os.path.join(out_root, "manifests", dataset)
+    source = source_fingerprint(dataset, paths)
+    previous = load_frozen_source(manifests)
+    if previous:
+        assert_same_source(previous, source,
+                           context=f"build_manifests/{dataset}")
+    write_frozen_source(manifests, source)
     common.write_json(os.path.join(manifests, "event_split.json"), {
         **{k: split[k] for k in ("foundation_train", "utility_train",
                                  "utility_dev", "utility_eval", "unused")},
         "label_counts": split["label_counts"],
         "sizes": dict(SPLIT_SIZES),
         "dataset": dataset,
+        "source": {k: source[k] for k in ("kind", "path", "sha256",
+                                          "n_files", "exists")},
         "viable_event_count": len(viable),
         "total_events": len(events),
         "viability_filtered": len(events) - len(viable),
@@ -156,6 +168,7 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
         }
     hashes = {
         "dataset": dataset,
+        "source": source,
         "event_split_sha256": _sha_text(json.dumps(
             {k: split[k] for k in SPLIT_SIZES}, sort_keys=True)),
         "cutoffs": list(CUTOFFS_MIN),
@@ -181,6 +194,8 @@ def build_parser():
                     help="Weibo22 normalized JSONL export (timestamps)")
     ap.add_argument("--force", action="store_true",
                     help="pre-freeze rebuild only; refused once labels exist")
+    ap.add_argument("--smoke", action="store_true",
+                    help="write into the smoke namespace, never formal")
     return ap
 
 
@@ -190,6 +205,8 @@ def main(argv=None):
     out_root = args.out_root or os.path.join(paths.out_root or
                                              str(common.REPO / "results" /
                                                  "cr_tser"))
+    if args.smoke:
+        out_root = common.smoke_root(out_root)
     result = build_manifests(args.dataset, paths, out_root,
                              normalized_paths=args.normalized_events,
                              force=args.force)

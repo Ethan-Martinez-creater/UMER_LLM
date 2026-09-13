@@ -172,9 +172,29 @@ def transformers_version() -> str:
         return ""
 
 
+def reader_identity_hash(identity: dict) -> str:
+    """One hash over everything that defines a frozen reader (plan §8, §32).
+
+    Weight identity, tokenizer, chat template, dtype, model id and the
+    transformers version all enter the digest, so substituting any of them —
+    including a re-tokenized or re-templated model with identical weights —
+    changes the reader identity and invalidates cached labels.
+    """
+    payload = json.dumps({
+        "model_id": identity.get("model_id"),
+        "model_path": identity.get("model_path"),
+        "weight_hash": identity.get("weight_hash"),
+        "tokenizer_hash": identity.get("tokenizer_hash"),
+        "chat_template_hash": identity.get("chat_template_hash"),
+        "dtype": identity.get("dtype"),
+        "transformers_version": identity.get("transformers_version"),
+    }, sort_keys=True)
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
 def reader_identity(spec: ReaderSpec, tokenizer=None) -> dict:
     """Full §8 identity record, written before any experiment."""
-    return {
+    record = {
         **spec.to_dict(),
         "weight_hash": model_weight_hash(spec.model_path),
         "tokenizer_hash": tokenizer_hash(spec.model_path),
@@ -183,6 +203,8 @@ def reader_identity(spec: ReaderSpec, tokenizer=None) -> dict:
         "transformers_version": transformers_version(),
         "device_config": spec.device,
     }
+    record["reader_identity_hash"] = reader_identity_hash(record)
+    return record
 
 
 class BaseReader:

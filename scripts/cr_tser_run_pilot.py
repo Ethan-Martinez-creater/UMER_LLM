@@ -32,8 +32,6 @@ import cr_tser_common as common  # noqa: E402
 
 from cr_tser.config.pilot_config import (LORO_ROTATIONS, READER_KEYS,  # noqa: E402
                                          SIGN_CLASSES)
-from cr_tser.evaluation.bootstrap import (class_f1_from_counts,  # noqa: E402
-                                          macro_f1_from_counts, spearman_rank)
 from cr_tser.evaluation.heterogeneity import (gate_p1,  # noqa: E402
                                               heterogeneity_report)
 from cr_tser.evaluation.structural_interaction import (  # noqa: E402
@@ -41,8 +39,7 @@ from cr_tser.evaluation.structural_interaction import (  # noqa: E402
 from cr_tser.evaluation.unseen_reader import (final_decision, gate_p4,  # noqa: E402
                                               pheme_secondary)
 from cr_tser.evaluation.utility_prediction import (  # noqa: E402
-    evaluate_utility, gate_p3, macro_f1_delta_bootstrap, merge_event_counts,
-    per_event_counts)
+    evaluate_utility, gate_p3, macro_f1_delta_bootstrap)
 from cr_tser.intervention.evidence_units import evidence_key  # noqa: E402
 from cr_tser.models.legacy_utility import legacy_arm_enabled  # noqa: E402
 
@@ -122,28 +119,46 @@ def load_interaction_records(out_root, dataset):
     return records
 
 
-def _sign_of(value, row):
-    if row["correctness_before"] and not row["correctness_after"]:
-        return "HELPFUL"
-    if not row["correctness_before"] and row["correctness_after"]:
-        return "HARMFUL"
-    if value >= 0.05:
-        return "HELPFUL"
-    if value <= -0.05:
-        return "HARMFUL"
-    return "NEUTRAL"
+def _pred_record(gold_sign, gold_cont, entry, active):
+    """One evaluation row built from a model's **own** prediction artifact.
 
-
-def _metrics_from_counts(counts):
+    ``pred_sign`` is the model's auxiliary sign-head argmax and ``pred_cont``
+    its continuous utility head; the ground-truth correctness transition is
+    used only to build ``gold_sign`` and the ``active`` flag, never to derive a
+    prediction (plan §17 review fix).
+    """
+    probs = entry.get("probs") or [0.0, 0.0, 0.0]
+    predicted = entry.get("predicted_sign")
+    if predicted is None:
+        best = max(range(len(probs)), key=lambda i: probs[i])
+        predicted = SIGN_CLASSES[best]
     return {
-        "macro_f1": macro_f1_from_counts(counts, labels=SIGN_CLASSES),
-        "per_class_f1": {c: class_f1_from_counts(counts, c)
-                         for c in SIGN_CLASSES},
+        "gold_sign": gold_sign, "gold_cont": gold_cont,
+        "pred_sign": predicted, "pred_cont": float(entry["utility"]),
+        "helpful_score": probs[SIGN_CLASSES.index("HELPFUL")],
+        "harmful_score": probs[SIGN_CLASSES.index("HARMFUL")],
+        "probs": list(probs),
+        "active": bool(active),
     }
 
 
+def _counts_by_event(rows, keys):
+    out = defaultdict(dict)
+    for key in keys:
+        row = rows[key]
+        bucket = out[key[0]]
+        pair = (row["gold_sign"], row["pred_sign"])
+        bucket[pair] = bucket.get(pair, 0) + 1
+    return dict(out)
+
+
 def utility_prediction_gate(out_root, dataset, split):
-    """P3 over **all** LORO rotations with an event-level paired bootstrap."""
+    """P3 over **all** LORO rotations with an event-level paired bootstrap.
+
+    Every model (B3, B0, B1) contributes its own sign-head prediction, its own
+    three-class probabilities and its own continuous utility; the bootstrap
+    pairs identical ``(event, key, reader)`` rows and resamples events.
+    """
     labels = _read_jsonl(labels_path(out_root, dataset))
     eval_ids = set(split["utility_eval"])
     targets = {}
@@ -154,10 +169,9 @@ def utility_prediction_gate(out_root, dataset, split):
         node = row["affected_reply_ids"][0]
         key = evidence_key(dataset, row["event_id"], row["cutoff"], node)
         targets[(key, row["reader"])] = row
-    b3_counts, base_counts = [], defaultdict(list)
-    b3_true_cont, b3_pred_cont = [], []
-    b3_true_sign, b3_pred_sign = [], []
-    helpful, harmful, active = [], [], []
+
+    models = ("B3_text_graph", "B0_text", "B1_scalar_structure")
+    collected = {m: {} for m in models}
     rotations_used = []
     for rotation in LORO_ROTATIONS:
         train_readers = list(rotation[:2])
@@ -168,55 +182,62 @@ def utility_prediction_gate(out_root, dataset, split):
         if payload is None:
             continue
         rotations_used.append(f"{train_readers[0]}+{train_readers[1]}")
+        b3_by_reader = payload.get("predictions", {})
+        baselines = payload.get("baselines", {})
         for reader_key in train_readers:
-            pred = payload["predictions"].get(reader_key, {})
-            pairs = [(k, pred[k[0]]) for k in targets
-                     if k[1] == reader_key and k[0] in pred]
-            if not pairs:
-                continue
-            events = [targets[k]["event_id"] for k, _ in pairs]
-            y_true_sign = [targets[k]["sign"] for k, _ in pairs]
-            y_pred_sign = [_sign_of(v["utility"], targets[k]) for k, v in pairs]
-            b3_counts.append(per_event_counts(events, y_true_sign, y_pred_sign))
-            b3_true_cont.extend(targets[k]["utility"] for k, _ in pairs)
-            b3_pred_cont.extend(v["utility"] for _k, v in pairs)
-            b3_true_sign.extend(y_true_sign)
-            b3_pred_sign.extend(y_pred_sign)
-            helpful.extend(v.get("helpful_score", 0.0) for _k, v in pairs)
-            harmful.extend(v.get("harmful_score", 0.0) for _k, v in pairs)
-            active.extend(abs(targets[k]["utility"]) >= 0.05 for k, _ in pairs)
-            for name in ("B0_text", "B1_scalar_structure"):
-                base_pred = payload.get("baselines", {}).get(name, {}) \
-                    .get("predictions", {})
-                bpairs = [(k, base_pred[k[0]]["utility"]) for k in targets
-                          if k[1] == reader_key and k[0] in base_pred]
-                if len(bpairs) != len(pairs):
+            b3_pred = b3_by_reader.get(reader_key, {})
+            for (key, rk), target in targets.items():
+                if rk != reader_key:
                     continue
-                bevents = [targets[k]["event_id"] for k, _ in bpairs]
-                bsign = ["HELPFUL" if v >= 0.05 else
-                         ("HARMFUL" if v <= -0.05 else "NEUTRAL")
-                         for _k, v in bpairs]
-                base_counts[name].append(
-                    per_event_counts(bevents, y_true_sign, bsign))
-    if not b3_counts:
+                event = target["event_id"]
+                gold_cont = float(target["utility"])
+                active = (abs(gold_cont) >= 0.05
+                          or bool(target["correctness_before"])
+                          != bool(target["correctness_after"]))
+                if key in b3_pred:
+                    collected["B3_text_graph"][(event, key, reader_key)] = \
+                        _pred_record(target["sign"], gold_cont,
+                                     b3_pred[key], active)
+                for name in ("B0_text", "B1_scalar_structure"):
+                    base_pred = baselines.get(name, {}).get("predictions", {})
+                    if key in base_pred:
+                        collected[name][(event, key, reader_key)] = \
+                            _pred_record(target["sign"], gold_cont,
+                                         base_pred[key], active)
+    if not collected["B3_text_graph"]:
         return None
-    merged_b3 = merge_event_counts(b3_counts)
-    b3_full = evaluate_utility(
-        b3_true_sign, b3_pred_sign, b3_true_cont, b3_pred_cont, helpful,
-        harmful, active)
-    b3_full.update(_metrics_from_counts(merged_b3))
-    baselines = {}
-    for name, counts_list in base_counts.items():
-        merged = merge_event_counts(counts_list)
-        base_metrics = _metrics_from_counts(merged)
-        base_metrics["spearman"] = spearman_rank(b3_true_cont, b3_pred_cont)
-        baselines[name] = base_metrics
-    best_name = max(baselines, key=lambda n: baselines[n]["macro_f1"])
-    delta_ci = macro_f1_delta_bootstrap(merged_b3,
-                                        merge_event_counts(base_counts[best_name]))
-    gate = gate_p3(b3_full, baselines, delta_ci=delta_ci)
+
+    metrics = {}
+    for name, rows in collected.items():
+        if not rows:
+            continue
+        values = list(rows.values())
+        metrics[name] = evaluate_utility(
+            [r["gold_sign"] for r in values],
+            [r["pred_sign"] for r in values],
+            [r["gold_cont"] for r in values],
+            [r["pred_cont"] for r in values],
+            [r["helpful_score"] for r in values],
+            [r["harmful_score"] for r in values],
+            [r["active"] for r in values])
+    baselines_metrics = {k: v for k, v in metrics.items()
+                         if k != "B3_text_graph"}
+    if not baselines_metrics:
+        return None
+
+    best_name = max(baselines_metrics,
+                    key=lambda n: baselines_metrics[n]["macro_f1"])
+    shared = sorted(set(collected["B3_text_graph"]) & set(collected[best_name]))
+    delta_ci = macro_f1_delta_bootstrap(
+        _counts_by_event(collected["B3_text_graph"], shared),
+        _counts_by_event(collected[best_name], shared))
+    gate = gate_p3(metrics["B3_text_graph"], baselines_metrics,
+                   delta_ci=delta_ci)
     gate["rotations_used"] = rotations_used
     gate["primary_dataset"] = dataset
+    gate["paired_keys"] = len(shared)
+    gate["per_model_metrics"] = metrics
+    gate["prediction_source"] = "auxiliary sign head (argmax) + utility head"
     return gate
 
 

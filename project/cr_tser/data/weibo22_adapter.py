@@ -311,10 +311,10 @@ def load_normalized_event_files(paths, limit=None) -> list:
 def load_events(base_dir: str, normalized_paths=None) -> list:
     """Load Weibo22 events for the pilot, or fail closed.
 
-    ``normalized_paths`` is the timestamp-bearing export. When it is absent or
-    empty this raises :class:`Weibo22TemporalUnavailable` carrying the §30
-    audit, because the raw KPG release cannot satisfy the plan's temporal
-    requirement.
+    ``normalized_paths`` is the timestamp-bearing export and is the source of
+    record when present. When it is absent or empty this raises
+    :class:`Weibo22TemporalUnavailable` carrying the §30 audit, because the raw
+    KPG release cannot satisfy the plan's temporal requirement.
     """
     if normalized_paths:
         return load_normalized_event_files(normalized_paths)
@@ -325,6 +325,90 @@ def load_events(base_dir: str, normalized_paths=None) -> list:
     raise Weibo22TemporalUnavailable(
         f"Weibo22 temporal fields unavailable ({audit.get('verdict')}): "
         f"{audit.get('verdict_reason', '')}", audit=audit)
+
+
+REQUIRED_NORMALIZED_FIELDS = ("source_text", "reply_text", "source_timestamp",
+                              "node_timestamp", "parent_id", "label")
+
+
+def validate_normalized_export(path, limit=None) -> dict:
+    """Schema/field/temporal validation of a normalized Weibo22 export.
+
+    ``WEIBO22_TEMPORAL_READY`` requires **all** of: source text, reply text,
+    a source timestamp, a per-node timestamp on every node, resolvable parent
+    ids and labels. Anything less stays ``WEIBO22_TEMPORAL_UNAVAILABLE`` — no
+    pseudo-time is ever derived from row or node order (plan §4.1).
+    """
+    try:
+        events = load_normalized_event_files(path, limit=limit)
+    except Exception as exc:  # schema violation -> explicit, not silent
+        return {
+            "dataset": "Weibo22", "kind": "normalized_export",
+            "path": path, "verdict": VERDICT_UNAVAILABLE,
+            "valid": False, "errors": [f"{type(exc).__name__}: {exc}"],
+            "coverage": {f: 0.0 for f in REQUIRED_NORMALIZED_FIELDS},
+        }
+    n_events = len(events)
+    if n_events == 0:
+        return {
+            "dataset": "Weibo22", "kind": "normalized_export",
+            "path": path, "verdict": VERDICT_UNAVAILABLE, "valid": False,
+            "errors": ["export contains no events"],
+            "coverage": {f: 0.0 for f in REQUIRED_NORMALIZED_FIELDS},
+        }
+
+    n_nodes = 0
+    hits = {f: 0 for f in REQUIRED_NORMALIZED_FIELDS}
+    n_replies = 0
+    replies_with_parent = 0
+    for event in events:
+        source = next(n for n in event["nodes"]
+                      if n["node_id"] == event["source_id"])
+        if str(source["text"]).strip():
+            hits["source_text"] += 1
+        if isinstance(event.get("source_timestamp"), int):
+            hits["source_timestamp"] += 1
+        if event.get("label") in (0, 1):
+            hits["label"] += 1
+        replies = [n for n in event["nodes"]
+                   if n["node_id"] != event["source_id"]]
+        if replies:
+            n_replies += 1
+            if any(str(r["text"]).strip() for r in replies):
+                hits["reply_text"] += 1
+        for node in event["nodes"]:
+            n_nodes += 1
+            if isinstance(node.get("timestamp"), int):
+                hits["node_timestamp"] += 1
+            if node["node_id"] != event["source_id"]:
+                if node.get("parent_id"):
+                    replies_with_parent += 1
+                    if node["parent_id"] in {x["node_id"]
+                                             for x in event["nodes"]}:
+                        hits["parent_id"] += 1
+
+    coverage = {
+        "source_text": hits["source_text"] / n_events,
+        "reply_text": hits["reply_text"] / max(n_replies, 1),
+        "source_timestamp": hits["source_timestamp"] / n_events,
+        "node_timestamp": hits["node_timestamp"] / max(n_nodes, 1),
+        "parent_id": hits["parent_id"] / max(replies_with_parent, 1),
+        "label": hits["label"] / n_events,
+    }
+    valid = all(coverage[f] >= 1.0 for f in ("source_text", "reply_text",
+                                             "source_timestamp",
+                                             "node_timestamp", "parent_id",
+                                             "label"))
+    return {
+        "dataset": "Weibo22", "kind": "normalized_export", "path": path,
+        "n_events": n_events, "n_nodes": n_nodes, "n_events_with_replies": n_replies,
+        "coverage": coverage,
+        "verdict": VERDICT_READY if valid else VERDICT_UNAVAILABLE,
+        "valid": bool(valid),
+        "errors": [] if valid else [
+            f"{f}: coverage {coverage[f]:.4f}" for f in REQUIRED_NORMALIZED_FIELDS
+            if coverage[f] < 1.0],
+    }
 
 
 def dataset_event_ids(base_dir: str) -> list:

@@ -29,7 +29,8 @@ from cr_tser.config.pilot_config import (CUTOFFS_MIN, LORO_ROTATIONS,  # noqa: E
                                          PARTITION_SEED, SELECTION_ARMS)
 from cr_tser.intervention.evidence_units import (  # noqa: E402
     evidence_key_parts, render_units_for_budget)
-from cr_tser.models.legacy_utility import legacy_arm_enabled  # noqa: E402
+from cr_tser.models.legacy_utility import (build_legacy_scorer,  # noqa: E402
+                                           legacy_arm_enabled)
 from cr_tser.models.robust_selector import all_arms  # noqa: E402
 from cr_tser.readers.base_reader import (build_messages,  # noqa: E402
                                          build_reader_prompt, ReaderSpec,
@@ -66,8 +67,36 @@ def predictions_for_snapshot(payload_predictions, dataset, event_id, cutoff,
     return out
 
 
+def _load_single_predictions(out_root, dataset, reader):
+    """S3a/S3b source: the single-reader-trained selector artifact (plan §22)."""
+    path = os.path.join(out_root, "predictor", dataset, f"single_{reader}",
+                        "predictions.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        payload = json.load(fh)
+    training_readers = payload.get("training_readers", [])
+    if training_readers != [reader]:
+        raise ValueError(
+            f"single-reader artifact for {reader!r} was trained on "
+            f"{training_readers!r}; S3a/S3b must be single-reader trained")
+    return payload.get("predictions", {})
+
+
+def _legacy_scores(legacy_scorer, event, snapshot, sem_rows, units, src):
+    """Legacy per-unit scores for every S6 candidate (PHEME only)."""
+    if legacy_scorer is None:
+        return {}
+    if not hasattr(legacy_scorer, "score_items"):
+        return dict(legacy_scorer(event, snapshot, units, src))
+    from tcdscr_run_e2 import build_light_item
+    item = build_light_item(event, snapshot, sem_rows)
+    return legacy_scorer.score_items([item], device=legacy_scorer.device)[0]
+
+
 def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
-        legacy=False):
+        legacy=False, legacy_scorer=None, single_predictions=None):
+    common.assert_frozen_source(dataset, paths, out_root, "run_selection")
     split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
     eval_ids = set(split["utility_eval"])
@@ -81,6 +110,8 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
     if legacy and not legacy_arm_enabled(dataset):
         raise ValueError(
             f"S6 legacy Utility-TM is PHEME-only; refusing dataset {dataset!r}")
+    if legacy and legacy_scorer is None:
+        legacy_scorer = build_legacy_scorer(dataset, device)
 
     arms_used = [a for a in SELECTION_ARMS if a != "S6_legacy_utility_tm"] + \
         (["S6_legacy_utility_tm"] if legacy else [])
@@ -89,6 +120,11 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
         train_readers, held = list(rotation[:2]), rotation[2]
         payload = _load_predictor(out_root, dataset, train_readers)
         predictions_artifact = payload["predictions"]
+        if single_predictions is not None:
+            singles = single_predictions
+        else:
+            singles = {r: _load_single_predictions(out_root, dataset, r)
+                       for r in train_readers}
         reader = build_reader(held, ReaderSpec(held, paths.reader_path(held)),
                               mock=mock)
         collected = {arm: {"golds": [], "preds": [], "tokens": [],
@@ -107,8 +143,19 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
                     key: predictions_for_snapshot(predictions_artifact, dataset,
                                                   event_id, cutoff, key)
                     for key in list(train_readers) + ["shared"]}
+                # S3a/S3b come from the single-reader-trained artifacts, not
+                # from the two-reader model's reader-conditioned outputs
+                for index, reader_key in enumerate(train_readers):
+                    slot = "S3a_source" if index == 0 else "S3b_source"
+                    snapshot_predictions[slot] = predictions_for_snapshot(
+                        {"single": singles.get(reader_key, {})}, dataset,
+                        event_id, cutoff, "single")
                 if legacy:
-                    snapshot_predictions["legacy"] = {}
+                    sem_rows = {nid: art["semantic"][i] for i, nid in
+                                enumerate(art["snapshot"]["node_ids"])}
+                    snapshot_predictions["legacy"] = _legacy_scores(
+                        legacy_scorer, events[event_id], art["snapshot"],
+                        sem_rows, units, src)
                 arms = all_arms(units, src, snapshot_predictions, tokenizer,
                                 train_readers, PARTITION_SEED,
                                 include_legacy=legacy)
@@ -191,6 +238,8 @@ def main(argv=None):
     out_root = args.out_root or os.path.join(paths.out_root or
                                              str(common.REPO / "results" /
                                                  "cr_tser"))
+    if args.smoke:
+        out_root = common.smoke_root(out_root)
     rotations = run(args.dataset, paths, out_root, args.device,
                     mock=args.smoke, max_snapshots=args.max_snapshots,
                     legacy=args.legacy)

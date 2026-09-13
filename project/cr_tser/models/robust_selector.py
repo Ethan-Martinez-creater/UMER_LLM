@@ -23,15 +23,31 @@ from ..intervention.evidence_units import render_units_for_budget
 SEPARATOR = "\n\n"
 
 
+class MissingPredictionError(RuntimeError):
+    """Raised when a formal arm lacks a prediction for a C_ref candidate."""
+
+
+def assert_full_coverage(node_ids, scores, context: str = "arm") -> None:
+    """Formal S3/S4/S5 require a prediction for **every** ``C_ref`` candidate.
+
+    The §11 label cap only limits expensive supervision labels; inference must
+    cover the whole candidate set, so a missing score is a hard failure rather
+    than a unit silently scored as zero (plan §22 review fix).
+    """
+    missing = [n for n in node_ids if n not in scores]
+    if missing:
+        raise MissingPredictionError(
+            f"{context}: {len(missing)} C_ref candidates have no prediction "
+            f"(e.g. {missing[:5]}); refusing to score them as 0.0")
+
+
 def robust_score(pred_a: dict, pred_b: dict, node_id: str) -> float:
     """``s_i^robust = min(u_hat_a, u_hat_b)`` (plan §21).
 
-    A unit without a prediction for a training reader scores 0.0 for that
-    reader (neutral), which keeps it eligible for packing rather than dropping
-    it — the atomic label cap (§11) can leave SRC units unlabeled.
+    Strict by design: both training readers must have a prediction for the
+    unit, which ``assert_full_coverage`` guarantees for formal arms.
     """
-    return min(float(pred_a.get(node_id, 0.0)),
-               float(pred_b.get(node_id, 0.0)))
+    return min(float(pred_a[node_id]), float(pred_b[node_id]))
 
 
 def density(score: float, token_cost: int) -> float:
@@ -56,8 +72,7 @@ def rank_by_density(node_ids, scores: dict, token_costs: dict, seed=None,
         rng = random.Random(seed)
         rng.shuffle(ids)
         return ids
-    return sorted(ids, key=lambda n: (-density(scores.get(n, 0.0),
-                                               token_costs[n]), n))
+    return sorted(ids, key=lambda n: (-density(scores[n], token_costs[n]), n))
 
 
 def pack_within_budget(units, ranked_ids, token_costs, target_tokens,
@@ -100,12 +115,22 @@ def _arm_scores(arm: str, src: dict, predictions: dict, reader_keys):
         # both are ranked below: random via S1, semantic via SRC relevance
         return None, selected
     if arm == "S3a_single_a":
-        return predictions[reader_keys[0]], selected
+        # S3a/S3b are single-reader-trained selectors when the runner supplies
+        # them ("S3a_source"/"S3b_source"); otherwise fall back to the
+        # rotation's reader-conditioned output (unit-test convenience).
+        source = predictions.get("S3a_source") or predictions[reader_keys[0]]
+        assert_full_coverage(selected, source, arm)
+        return source, selected
     if arm == "S3b_single_b":
-        return predictions[reader_keys[1]], selected
+        source = predictions.get("S3b_source") or predictions[reader_keys[1]]
+        assert_full_coverage(selected, source, arm)
+        return source, selected
     if arm == "S4_shared":
+        assert_full_coverage(selected, predictions["shared"], arm)
         return predictions["shared"], selected
     if arm == PRIMARY_ARM:
+        assert_full_coverage(selected, predictions[reader_keys[0]], arm)
+        assert_full_coverage(selected, predictions[reader_keys[1]], arm)
         scores = {nid: robust_score(predictions[reader_keys[0]],
                                     predictions[reader_keys[1]], nid)
                   for nid in selected}
@@ -113,6 +138,7 @@ def _arm_scores(arm: str, src: dict, predictions: dict, reader_keys):
     if arm == "S6_legacy_utility_tm":
         if "legacy" not in predictions:
             raise KeyError("S6 requires legacy utility scores (PHEME only)")
+        assert_full_coverage(selected, predictions["legacy"], arm)
         return predictions["legacy"], selected
     raise ValueError(f"unknown selection arm {arm!r}")
 

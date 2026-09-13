@@ -23,7 +23,8 @@ import torch
 from ..config.pilot_config import (ADAMW_LR, ADAMW_WEIGHT_DECAY, BATCH_SIZE,
                                    GRAD_CLIP, MAX_EPOCHS, PATIENCE)
 from ..evaluation.bootstrap import spearman_rank as spearman
-from ..models.utility_heads import (SIGN_TO_INDEX, SharedResidualUtility,
+from ..models.utility_heads import (SIGN_CLASSES, SIGN_TO_INDEX,
+                                    SharedResidualUtility,
                                     build_atomic_z, utility_loss)
 from .utility_dataset import group_as_graph, row_sign_index
 
@@ -35,6 +36,25 @@ def group_z(bitte, group, device):
     h, h_src = bitte(**batch)
     h, h_src = h[0], h_src[0]
     idx = [r["unit_index"] for r in group["unit_rows"]]
+    if group["ctx_indices"]:
+        h_ctx = h[group["ctx_indices"]].mean(dim=0)
+    else:
+        h_ctx = torch.zeros_like(h_src)
+    return build_atomic_z(h[idx], h_src, h_ctx, group["q"][idx])
+
+
+def infer_z(bitte, group, device):
+    """``z`` for **every** inference candidate of a snapshot (plan §22 review fix).
+
+    Uses ``group["infer_rows"]`` (all ``C_ref`` candidates), not
+    ``unit_rows`` (the §11 label-capped supervision set), so a trained
+    predictor can score units that never received an atomic label.
+    """
+    from ..models.bitte import pack_graph_batch
+    batch = pack_graph_batch([group_as_graph(group)], device=device)
+    h, h_src = bitte(**batch)
+    h, h_src = h[0], h_src[0]
+    idx = [r["unit_index"] for r in group["infer_rows"]]
     if group["ctx_indices"]:
         h_ctx = h[group["ctx_indices"]].mean(dim=0)
     else:
@@ -212,9 +232,18 @@ def shared_predictions(runs, groups, reader_index_map, device):
 # --------------------------------------------------------------------------
 # B0 / B1 row-level baselines (plan §17) — same protocol, no graph encoder
 # --------------------------------------------------------------------------
+def feature_matrix(rows, device):
+    """Stack per-row feature vectors, whether they are lists or tensors."""
+    first = rows[0]["x"]
+    if torch.is_tensor(first):
+        return torch.stack([torch.as_tensor(r["x"], dtype=torch.float32)
+                            for r in rows]).to(device)
+    return torch.tensor([r["x"] for r in rows], dtype=torch.float32,
+                        device=device)
+
+
 def _rows_tensor(rows, device):
-    x = torch.tensor([r["x"] for r in rows], dtype=torch.float32,
-                     device=device)
+    x = feature_matrix(rows, device)
     y = torch.tensor([float(r["target"]) for r in rows], dtype=torch.float32,
                      device=device)
     signs = torch.tensor([row_sign_index(r["sign"]) for r in rows],
@@ -292,16 +321,35 @@ def train_baseline(train_rows, dev_rows, model_factory, seeds, device="cpu",
 
 
 def predict_baseline(runs, rows, device="cpu"):
-    """Mean over seeds of the baseline's continuous utility prediction."""
+    """Per-unit B0/B1 predictions with the model's **own** sign head output.
+
+    Returns ``{key: {utility, probs, predicted_sign}}`` where ``probs`` is the
+    seed-averaged three-class probability vector from the baseline's sign head
+    and ``predicted_sign`` its argmax. P3 must consume these, never a
+    ground-truth correctness transition.
+    """
     if not rows:
         return {}
     accum = {}
-    x = torch.tensor([r["x"] for r in rows], dtype=torch.float32,
-                     device=device)
+    x = feature_matrix(rows, device)
     for run in runs:
         run["model"].eval()
         with torch.no_grad():
-            pred, _ = run["model"](x)
-        for row, value in zip(rows, pred.tolist()):
-            accum.setdefault(row["key"], []).append(float(value))
-    return {k: sum(v) / len(v) for k, v in accum.items()}
+            pred, logits = run["model"](x)
+            probs = torch.softmax(logits.float(), dim=-1).tolist()
+        for row, value, prob in zip(rows, pred.tolist(), probs):
+            accum.setdefault(row["key"], []).append((float(value), prob))
+    out = {}
+    for key, values in accum.items():
+        n = len(values)
+        mean_probs = [sum(v[1][i] for v in values) / n
+                      for i in range(len(SIGN_CLASSES))]
+        best = max(range(len(mean_probs)), key=lambda i: mean_probs[i])
+        out[key] = {
+            "utility": sum(v[0] for v in values) / n,
+            "probs": mean_probs,
+            "predicted_sign": SIGN_CLASSES[best],
+            "class_scores": {c: mean_probs[i]
+                             for i, c in enumerate(SIGN_CLASSES)},
+        }
+    return out

@@ -31,5 +31,6 @@
   "has_node_index": true
  },
  "verdict": "WEIBO22_TEMPORAL_UNAVAILABLE",
- "verdict_reason": "the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built"
+ "verdict_reason": "the released KPG/TD-RvNN files contain no source/reply text and no absolute source or node timestamp; the plan forbids pseudo-time from row or node order (plan §4.1), so no snapshot can be built",
+ "source_of_record": "raw_release"
 }
