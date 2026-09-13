@@ -10,6 +10,11 @@ single fingerprint of a dataset source so that:
 For Weibo22 the plan's temporal requirement means the source of record is the
 **normalized export** (``CRTSER_WEIBO22_NORMALIZED``), never the raw KPG
 release, which has no timestamps.
+
+Amendment V2 makes **Ma-Weibo** the primary dataset. Its source of record is a
+*composite*: the raw event JSON directory **plus** the label file. Both halves
+are fingerprinted and bound by ``combined_source_sha256``, so a change to
+either half fails closed (amendment §25).
 """
 from __future__ import annotations
 
@@ -17,17 +22,24 @@ import hashlib
 import json
 import os
 
-SOURCE_KINDS = ("pheme_raw", "weibo22_normalized", "weibo22_raw")
+SOURCE_KINDS = ("pheme_raw", "weibo22_normalized", "weibo22_raw",
+                "maweibo_composite")
 
 
 class SourceIdentityError(RuntimeError):
     """Raised when a stage is not reading the frozen data source."""
 
 
-def dataset_source_path(dataset: str, paths) -> tuple:
-    """``(kind, path)`` of the source of record for one dataset."""
+def dataset_source_path(dataset: str, paths):
+    """``(kind, spec)`` of the source of record for one dataset.
+
+    ``spec`` is a path for single-source datasets, and ``(raw_json_dir,
+    label_file)`` for the Ma-Weibo composite (amendment §25).
+    """
     if dataset == "pheme":
         return "pheme_raw", paths.pheme_raw
+    if dataset == "maweibo":
+        return "maweibo_composite", (paths.maweibo_raw, paths.maweibo_labels)
     if dataset == "weibo22":
         if paths.weibo22_normalized:
             return "weibo22_normalized", paths.weibo22_normalized
@@ -69,11 +81,44 @@ def fingerprint_path(path: str) -> dict:
             "bytes": total, "n_files": count}
 
 
+def combined_source_sha256(dataset: str, raw: dict, labels: dict) -> str:
+    """Bind a composite source (raw directory + label file) into one hash.
+
+    Any change to either half — or to the set of files in the raw directory —
+    changes this value, which is what downstream stages compare against.
+    """
+    payload = "|".join([
+        str(dataset), str(raw.get("sha256", "")), str(raw.get("n_files", "")),
+        str(raw.get("bytes", "")), str(labels.get("sha256", "")),
+        str(labels.get("bytes", "")),
+    ])
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
 def source_fingerprint(dataset: str, paths) -> dict:
     """Frozen source identity recorded in every dataset manifest."""
-    kind, path = dataset_source_path(dataset, paths)
+    kind, spec = dataset_source_path(dataset, paths)
+    if kind == "maweibo_composite":
+        raw_dir, label_file = spec
+        raw = fingerprint_path(raw_dir)
+        labels = fingerprint_path(label_file)
+        combined = combined_source_sha256(dataset, raw, labels)
+        record = {
+            "dataset": dataset,
+            "kind": kind,
+            "raw_json": raw,
+            "label_file": labels,
+            "combined_source_sha256": combined,
+            # top-level aliases so the generic identity guard below also
+            # covers the composite source
+            "path": raw_dir,
+            "sha256": combined,
+            "bytes": raw.get("bytes", 0) + labels.get("bytes", 0),
+            "n_files": raw.get("n_files", 0) + labels.get("n_files", 0),
+        }
+        return record
     record = {"dataset": dataset, "kind": kind}
-    record.update(fingerprint_path(path))
+    record.update(fingerprint_path(spec))
     return record
 
 

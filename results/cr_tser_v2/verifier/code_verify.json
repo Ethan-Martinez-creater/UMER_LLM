@@ -302,6 +302,91 @@
    "check": "b2_excluded_from_p4_comparison",
    "status": "pass",
    "detail": "best simple baseline selected 'S2_semantic_tm'"
+  },
+  {
+   "check": "v2_primary_dataset_is_maweibo",
+   "status": "pass",
+   "detail": "primary=maweibo secondary=pheme"
+  },
+  {
+   "check": "weibo22_absent_from_v2_loops",
+   "status": "pass",
+   "detail": "offenders=[]"
+  },
+  {
+   "check": "maweibo_bridge_reuses_audited_adapter",
+   "status": "pass",
+   "detail": "forbidden learned-artifact refs: []"
+  },
+  {
+   "check": "maweibo_timestamp_from_raw_t",
+   "status": "pass",
+   "detail": "node timestamps must equal the raw t field"
+  },
+  {
+   "check": "maweibo_fingerprint_is_composite",
+   "status": "pass",
+   "detail": "kind=maweibo_composite"
+  },
+  {
+   "check": "maweibo_source_replacement_fails_closed",
+   "status": "pass",
+   "detail": "a changed label file must be refused"
+  },
+  {
+   "check": "maweibo_p0a_fields_complete",
+   "status": "pass",
+   "detail": "missing=[]"
+  },
+  {
+   "check": "maweibo_fixture_all_events_viable",
+   "status": "pass",
+   "detail": "viable=2 of 2"
+  },
+  {
+   "check": "empty_text_not_an_evidence_unit",
+   "status": "pass",
+   "detail": "statuses={'7_s': 'VALID', '7_a': 'VALID', '7_b': 'EMPTY_TEXT', '7_c': 'VALID'} units=['7_a', '7_c']"
+  },
+  {
+   "check": "maweibo_viability_filter_runs",
+   "status": "pass",
+   "detail": "every fixture event has a valid Reply\u2013Parent unit"
+  },
+  {
+   "check": "viable_lt_170_blocks_p0",
+   "status": "pass",
+   "detail": "169->P0_FAIL 170->P0_PASS"
+  },
+  {
+   "check": "maweibo_b2_s6_forbidden",
+   "status": "pass",
+   "detail": "B2/S6 are PHEME-only; Ma-Weibo has neither"
+  },
+  {
+   "check": "v2_namespace_separate_from_v1",
+   "status": "pass",
+   "detail": "v1=results/cr_tser v2=results/cr_tser_v2"
+  },
+  {
+   "check": "default_out_root_is_v2",
+   "status": "pass",
+   "detail": "out_root=results/cr_tser_v2"
+  },
+  {
+   "check": "v2_p0_audit_runs_synthetic",
+   "status": "pass",
+   "detail": "rc=2 files=['P0_READINESS.md', 'label_scoring_sanity.json', 'maweibo_audit.json', 'p0_readiness.json', 'pheme_smoke.json', 'reader_audit.json']"
+  },
+  {
+   "check": "maweibo_primary_path_has_no_legacy_artifacts",
+   "status": "pass",
+   "detail": "the legacy TC-DSCR scorer stays behind the PHEME-only legacy gate"
+  },
+  {
+   "check": "v2_scientific_constants_unchanged",
+   "status": "pass",
+   "detail": "amendment V2 changes dataset roles only"
   }
  ]
 }

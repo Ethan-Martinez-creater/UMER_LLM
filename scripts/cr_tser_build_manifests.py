@@ -193,7 +193,7 @@ def build_manifests(dataset, paths, out_root, force=False):
 
 def build_parser():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", choices=("pheme", "weibo22"), required=True)
+    ap.add_argument("--dataset", choices=("maweibo", "pheme"), required=True)
     ap.add_argument("--out-root", default=None)
     ap.add_argument("--force", action="store_true",
                     help="pre-freeze rebuild only; refused once labels exist")
@@ -205,9 +205,7 @@ def build_parser():
 def main(argv=None):
     args = build_parser().parse_args(argv)
     paths = common.paths_or_exit()
-    out_root = args.out_root or os.path.join(paths.out_root or
-                                             str(common.REPO / "results" /
-                                                 "cr_tser"))
+    out_root = common.default_out_root(paths, args.out_root)
     if args.smoke:
         out_root = common.smoke_root(out_root)
     result = build_manifests(args.dataset, paths, out_root, force=args.force)

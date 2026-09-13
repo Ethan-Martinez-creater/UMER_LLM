@@ -171,6 +171,30 @@ GATE_RECOMMENDATIONS = (
 VERDICT_READY = "WEIBO22_TEMPORAL_READY"
 VERDICT_UNAVAILABLE = "WEIBO22_TEMPORAL_UNAVAILABLE"
 
+# --------------------------------------------------------------------------
+# Amendment V2 — dataset protocol (CR_TSER_DATASET_PROTOCOL_AMENDMENT_V2.md)
+# --------------------------------------------------------------------------
+# The dataset *roles* changed; every scientific constant above is unchanged.
+PROTOCOL_VERSION = "v2"
+PRIMARY_DATASET = "maweibo"
+SECONDARY_DATASET = "pheme"
+V2_DATASETS = (PRIMARY_DATASET, SECONDARY_DATASET)
+#: Weibo22 is retained only as the rejected V1 primary candidate: its P0
+#: feasibility evidence stays under the V1 namespace and it never enters a
+#: V2 P1–P4 execution loop.
+REJECTED_PRIMARY_CANDIDATE = "weibo22"
+WEIBO22_STATUS = "REJECTED_PRIMARY_CANDIDATE"
+#: A viability-filtered pool must be able to fill the frozen 170-event split
+#: (amendment §8, §10).
+V2_MIN_VIABLE_EVENTS = SPLIT_TOTAL
+
+#: Artifact namespaces. V1 is historical and read-only; formal V2 runs write
+#: into their own root so a V1 artifact can never be overwritten (amendment
+#: §22).
+V1_RESULTS_ROOT = "results/cr_tser"
+V2_RESULTS_ROOT = "results/cr_tser_v2"
+
+
 
 @dataclass
 class PilotPaths:
@@ -184,13 +208,16 @@ class PilotPaths:
     weibo22_raw: str = ""
     weibo22_labels: str = ""
     weibo22_normalized: str = ""
+    # Amendment V2 composite source of record: raw JSON directory + label file.
+    maweibo_raw: str = ""
+    maweibo_labels: str = ""
     pheme_raw: str = ""
     semantic_model: str = ""
     qwen_model: str = ""
     glm_model: str = ""
     internlm_model: str = ""
     canonical_tokenizer: str = ""
-    out_root: str = "results/cr_tser"
+    out_root: str = V2_RESULTS_ROOT
     extra: dict = field(default_factory=dict)
 
     def reader_path(self, key: str) -> str:
@@ -214,7 +241,8 @@ def paths_from_env(env=None) -> PilotPaths:
     env = os.environ if env is None else env
     kw = {}
     for name in ("weibo22_raw", "weibo22_labels", "weibo22_normalized",
-                 "pheme_raw", "semantic_model", "qwen_model", "glm_model",
+                 "maweibo_raw", "maweibo_labels", "pheme_raw",
+                 "semantic_model", "qwen_model", "glm_model",
                  "internlm_model", "canonical_tokenizer", "out_root"):
         val = env.get(_ENV_PREFIX + name.upper())
         if val:
@@ -222,7 +250,7 @@ def paths_from_env(env=None) -> PilotPaths:
     # CRTSER_SMOKE only redirects the output root into the smoke namespace; it
     # is not a PilotPaths field.
     if env.get(_ENV_PREFIX + "SMOKE"):
-        kw["out_root"] = os.path.join(kw.get("out_root", "results/cr_tser"),
+        kw["out_root"] = os.path.join(kw.get("out_root", V2_RESULTS_ROOT),
                                       "smoke")
     return PilotPaths(**kw)
 

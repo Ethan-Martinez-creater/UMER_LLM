@@ -1,3 +1,20 @@
+> **SUPERSEDED FOR DATASET PROTOCOL BY**
+> **`CR_TSER_DATASET_PROTOCOL_AMENDMENT_V2.md`**
+>
+> The candidate primary dataset (Weibo22) failed the V1 P0 feasibility audit:
+> the public KPG release carries no raw text and no per-node timestamps, so no
+> strict 15m/1h/6h causal snapshot can be built (see
+> `results/cr_tser/p0/P0_REPORT.md`). Amendment V2 therefore sets
+> **primary = Ma-Weibo, secondary = PHEME**, with Weibo22 retained only as a
+> rejected primary candidate.
+>
+> Everything else in this document — research question, intervention utility
+> definition, intervention family, SRC, BiTTE, B0/B1/B3, shared/residual
+> decomposition, the three frozen readers, LORO, S1–S5, the statistical
+> protocol, the P1–P4 thresholds, the cutoffs, the split seed and the split
+> sizes — remains in force unchanged. All V1 content below is retained as the
+> historical record.
+
 # CR-TSER Feasibility Pilot Plan
 
 ## 1. Research decision

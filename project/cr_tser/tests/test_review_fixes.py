@@ -183,8 +183,9 @@ def test_predictor_selector_key_contract_end_to_end(fake_tokenizer):
 # 4. dataset artifact namespace
 # --------------------------------------------------------------------------
 def test_dataset_artifacts_do_not_overwrite(tmp_path):
+    """Amendment V2: Ma-Weibo is the primary namespace, PHEME the secondary."""
     root = tmp_path
-    for dataset in ("pheme", "weibo22"):
+    for dataset in ("maweibo", "pheme"):
         target = root / "manifests" / dataset
         target.mkdir(parents=True, exist_ok=True)
         (target / "event_split.json").write_text(
@@ -193,24 +194,24 @@ def test_dataset_artifacts_do_not_overwrite(tmp_path):
                         "foundation_train": [], "utility_train": [],
                         "utility_dev": [], "utility_eval": [],
                         "unused": []}), encoding="utf-8")
+    assert (root / "manifests" / "maweibo" / "event_split.json").exists()
     assert (root / "manifests" / "pheme" / "event_split.json").exists()
-    assert (root / "manifests" / "weibo22" / "event_split.json").exists()
+    maweibo = json.loads((root / "manifests" / "maweibo" /
+                          "event_split.json").read_text(encoding="utf-8"))
     pheme = json.loads((root / "manifests" / "pheme" /
                         "event_split.json").read_text(encoding="utf-8"))
-    weibo = json.loads((root / "manifests" / "weibo22" /
-                        "event_split.json").read_text(encoding="utf-8"))
-    assert pheme["dataset"] == "pheme" and weibo["dataset"] == "weibo22"
+    assert pheme["dataset"] == "pheme" and maweibo["dataset"] == "maweibo"
 
     import cr_tser_run_pilot as pilot
     gates, reports, decision = pilot.compute_gates(str(root),
-                                                   ("pheme", "weibo22"))
+                                                   ("maweibo", "pheme"))
     # no P1/P2 gate is invented from empty artifacts; P3 fails closed because
     # the three LORO predictor artifacts are absent
     assert not reports
     assert "P1" not in gates and "P2" not in gates
     assert gates["P3"]["pass"] is False
     assert gates["P3"]["reason"] == "incomplete LORO predictor artifacts"
-    assert decision["primary_dataset"] == "weibo22"
+    assert decision["primary_dataset"] == "maweibo"
     assert decision["legacy_diagnostics"]["b2_s6_enabled_datasets"] == ["pheme"]
 
 

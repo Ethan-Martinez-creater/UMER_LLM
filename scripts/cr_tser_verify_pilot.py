@@ -152,7 +152,7 @@ def _collect_test_names():
 # --------------------------------------------------------------------------
 # code mode
 # --------------------------------------------------------------------------
-def verify_code(report: Report):
+def verify_code(report: Report, protocol: str = "v2"):
     from cr_tser.config import pilot_config as C
 
     missing = [f for f in PACKAGE_FILES if not (PROJECT / f).exists()]
@@ -242,6 +242,8 @@ def verify_code(report: Report):
                "adapter never derives time from original_order")
     _verify_review_fixes(report)
     _verify_semantics(report)
+    if protocol == "v2":
+        _verify_v2_migration(report)
 
 
 class _FakeTokenizer:
@@ -670,7 +672,7 @@ def _verify_aggregator_rotation_identity(report):
     try:
         import cr_tser_run_pilot as pilot
         with tempfile.TemporaryDirectory() as tmp:
-            _agg_tree(tmp, "weibo22", held)
+            _agg_tree(tmp, "maweibo", held)
             _agg_tree(tmp, "pheme", held)
             gates, _reports, decision = pilot.compute_gates(tmp)
             p4 = gates.get("P4", {})
@@ -689,7 +691,7 @@ def _verify_aggregator_rotation_identity(report):
                 and decision.get("pheme_secondary") is True,
                 f"pheme_complete={decision.get('pheme_evidence_complete')}")
         with tempfile.TemporaryDirectory() as tmp:
-            _agg_tree(tmp, "weibo22", held[:2])
+            _agg_tree(tmp, "maweibo", held[:2])
             gates, _reports, _decision = pilot.compute_gates(tmp)
             p4 = gates.get("P4", {})
             report.add(
@@ -851,7 +853,7 @@ def _verify_b2_artifact_contract(report):
                 f"metrics={payload['metrics']}")
 
         with tempfile.TemporaryDirectory() as tmp:
-            _agg_tree(tmp, "weibo22", held)
+            _agg_tree(tmp, "maweibo", held)
             _agg_tree(tmp, "pheme", held)
             before, _r, _d = pilot.compute_gates(tmp)
             with open(os.path.join(tmp, "unseen_reader", "pheme",
@@ -912,6 +914,287 @@ def _verify_code_freeze_hotfix(report):
     _verify_aggregator_rotation_identity(report)
     _verify_freeze_write_once(report)
     _verify_b2_artifact_contract(report)
+
+
+def _write_maweibo_fixture(root, n_events=2, replies=2, t0=1000):
+    """Synthetic Ma-Weibo composite source (raw JSON dir + label file).
+
+    Only used by the verifier's own tmp namespace; it never touches a formal
+    artifact root.
+    """
+    raw_dir = os.path.join(root, "raw")
+    os.makedirs(raw_dir, exist_ok=True)
+    label_lines = []
+    for i in range(n_events):
+        eid = str(1000 + i)
+        base_t = t0 + i * 100000
+        posts = [{"mid": f"{eid}_s", "parent": None, "t": base_t,
+                  "original_text": f"source body {i}"}]
+        parent = f"{eid}_s"
+        for j in range(replies):
+            nid = f"{eid}_{j}"
+            posts.append({"mid": nid, "parent": parent,
+                          "t": base_t + 60 * (j + 1),
+                          "original_text": f"reply {i}-{j}"})
+            parent = nid
+        with open(os.path.join(raw_dir, eid + ".json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(posts, fh)
+        label_lines.append(f"eid:{eid} label:{i % 2}")
+    label_file = os.path.join(root, "Weibo.txt")
+    with open(label_file, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(label_lines) + "\n")
+    return raw_dir, label_file
+
+
+def _v2_paths(raw_dir, label_file):
+    import types
+    return types.SimpleNamespace(maweibo_raw=raw_dir, maweibo_labels=label_file,
+                                 pheme_raw="", weibo22_normalized="",
+                                 weibo22_raw="")
+
+
+def _verify_v2_migration(report):
+    """Execute the amendment-V2 dataset/orchestration contracts."""
+    import tempfile
+    from cr_tser.config import pilot_config as C
+
+    # 1. dataset roles
+    report.add("v2_primary_dataset_is_maweibo",
+               C.PRIMARY_DATASET == "maweibo"
+               and C.SECONDARY_DATASET == "pheme"
+               and C.V2_DATASETS == ("maweibo", "pheme"),
+               f"primary={C.PRIMARY_DATASET} secondary={C.SECONDARY_DATASET}")
+
+    # 2. Weibo22 must not appear in a V2 execution loop
+    offenders = []
+    for name in ("cr_tser_build_manifests.py", "cr_tser_generate_labels.py",
+                 "cr_tser_train_predictors.py", "cr_tser_run_selection.py"):
+        if 'choices=("maweibo", "pheme")' not in _script(name):
+            offenders.append(name)
+    pilot_src = _script("cr_tser_run_pilot.py")
+    report.add("weibo22_absent_from_v2_loops",
+               not offenders
+               and "PRIMARY_DATASET" in pilot_src
+               and 'PRIMARY_DATASET = "weibo22"' not in pilot_src,
+               f"offenders={offenders}")
+
+    # 3.-10. bridge + composite source + viability + firewall (executed)
+    try:
+        import cr_tser_p0_audit as p0
+        from cr_tser.config.pilot_config import (V1_RESULTS_ROOT,
+                                                 V2_RESULTS_ROOT,
+                                                 paths_from_env)
+        from cr_tser.data import maweibo_bridge as bridge
+        from cr_tser.data.snapshot_bridge import (build_causal_snapshot,
+                                                  count_parent_cycles)
+        from cr_tser.data.source_manifest import (SourceIdentityError,
+                                                  assert_same_source,
+                                                  source_fingerprint)
+        from cr_tser.intervention.evidence_units import build_evidence_units
+        from cr_tser.models.legacy_utility import legacy_arm_enabled
+
+        bridge_src = _pkg_code("cr_tser/data/maweibo_bridge.py")
+        forbidden = [t for t in ("selector", "proxy", "checkpoint",
+                                 "static_utility", "best_selector")
+                     if t in bridge_src.lower()]
+        report.add("maweibo_bridge_reuses_audited_adapter",
+                   "tcdscr.data import maweibo_adapter" in bridge_src
+                   and "audited.load_event" in bridge_src
+                   and not forbidden,
+                   f"forbidden learned-artifact refs: {forbidden}")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            raw_dir, label_file = _write_maweibo_fixture(tmp, n_events=2,
+                                                         replies=2)
+            events = bridge.load_events(raw_dir, label_file)
+            posts = json.load(open(os.path.join(raw_dir, "1000.json"),
+                                   encoding="utf-8"))
+            by_mid = {p["mid"]: p for p in posts}
+            timestamp_ok = all(
+                node["timestamp"] == by_mid[node["node_id"]]["t"]
+                for node in events[0]["nodes"])
+            report.add("maweibo_timestamp_from_raw_t", timestamp_ok,
+                       "node timestamps must equal the raw t field")
+
+            paths = _v2_paths(raw_dir, label_file)
+            fp = source_fingerprint("maweibo", paths)
+            report.add("maweibo_fingerprint_is_composite",
+                       "raw_json" in fp and "label_file" in fp
+                       and bool(fp.get("combined_source_sha256"))
+                       and fp["kind"] == "maweibo_composite",
+                       f"kind={fp.get('kind')}")
+            with open(label_file, "a", encoding="utf-8") as fh:
+                fh.write("eid:9999 label:1\n")
+            current = source_fingerprint("maweibo", paths)
+            try:
+                assert_same_source(fp, current, "v2")
+                refused = False
+            except SourceIdentityError:
+                refused = True
+            report.add("maweibo_source_replacement_fails_closed", refused,
+                       "a changed label file must be refused")
+
+            audit = bridge.audit_maweibo(raw_dir, label_file)
+            required = ("raw_event_count", "label_distribution",
+                        "source_text_coverage", "reply_text_coverage",
+                        "timestamp_coverage", "parent_resolution_coverage",
+                        "duplicate_ids", "cycle_count", "multi_root_event_count",
+                        "missing_parent_count", "missing_parent_rate",
+                        "external_parent_count", "external_parent_rate",
+                        "temporal_invalid_node_count",
+                        "events_with_ge1_valid_reply_parent_unit",
+                        "events_viable_15m", "events_viable_1h",
+                        "events_viable_6h", "total_viable_events")
+            missing = [f for f in required if f not in audit]
+            report.add("maweibo_p0a_fields_complete", not missing,
+                       f"missing={missing}")
+            report.add("maweibo_fixture_all_events_viable",
+                       audit["total_viable_events"] == len(events)
+                       and audit["cycle_count"] == 0
+                       and audit["duplicate_ids"] == 0,
+                       f"viable={audit['total_viable_events']} "
+                       f"of {len(events)}")
+
+        # EMPTY_TEXT must not become an evidence unit (amendment §7)
+        with tempfile.TemporaryDirectory() as tmp:
+            raw_dir = os.path.join(tmp, "raw")
+            os.makedirs(raw_dir, exist_ok=True)
+            posts = [
+                {"mid": "7_s", "parent": None, "t": 1000,
+                 "original_text": "source body"},
+                {"mid": "7_a", "parent": "7_s", "t": 1060,
+                 "original_text": "reply a"},
+                {"mid": "7_b", "parent": "7_a", "t": 1120,
+                 "original_text": ""},
+                {"mid": "7_c", "parent": "7_a", "t": 1180,
+                 "text": "fallback text reply"},
+            ]
+            with open(os.path.join(raw_dir, "7.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump(posts, fh)
+            label_file = os.path.join(tmp, "Weibo.txt")
+            with open(label_file, "w", encoding="utf-8") as fh:
+                fh.write("eid:7 label:1\n")
+            event = bridge.load_events(raw_dir, label_file)[0]
+            statuses = {n["node_id"]: n["status"] for n in event["nodes"]}
+            snapshot = build_causal_snapshot(event, 360)
+            unit_ids = {u["node_id"] for u in build_evidence_units(snapshot)}
+            report.add("empty_text_not_an_evidence_unit",
+                       statuses["7_b"] == "EMPTY_TEXT"
+                       and "7_b" not in unit_ids
+                       and "7_c" in unit_ids,
+                       f"statuses={statuses} units={sorted(unit_ids)}")
+
+        # viability filter runs before the split and < 170 blocks P0
+        from cr_tser.data.pilot_split import viable_event_ids
+        with tempfile.TemporaryDirectory() as tmp:
+            raw_dir, label_file = _write_maweibo_fixture(tmp, n_events=3,
+                                                         replies=1)
+            events = bridge.load_events(raw_dir, label_file)
+            report.add("maweibo_viability_filter_runs",
+                       len(viable_event_ids(events)) == len(events),
+                       "every fixture event has a valid Reply–Parent unit")
+
+        good_readers = {k: {"model_path_exists": True, "loaded": True}
+                        for k in C.READER_KEYS}
+        good_sanity = {k: {"identical_predictions": True, "boundaries_ok": True}
+                       for k in C.READER_KEYS}
+        base = {"raw_event_count": 400, "duplicate_ids": 0, "cycle_count": 0,
+                "multi_root_event_count": 0, "source_text_coverage": 1.0,
+                "source_timestamp_coverage": 1.0, "timestamp_coverage": 1.0,
+                "verdict": "MAWEIBO_READY"}
+        short = dict(base, total_viable_events=169)
+        enough = dict(base, total_viable_events=170)
+        r_short = p0.evaluate_readiness_v2(short, {"status": "OK"}, good_readers,
+                                           good_sanity, True, True)
+        r_enough = p0.evaluate_readiness_v2(enough, {"status": "OK"},
+                                            good_readers, good_sanity, True,
+                                            True)
+        report.add("viable_lt_170_blocks_p0",
+                   r_short["P0"] == "P0_FAIL"
+                   and r_short["maweibo_viable_ok"] is False
+                   and r_enough["P0"] == "P0_PASS",
+                   f"169->{r_short['P0']} 170->{r_enough['P0']}")
+
+        report.add("maweibo_b2_s6_forbidden",
+                   legacy_arm_enabled("maweibo") is False
+                   and legacy_arm_enabled("pheme") is True,
+                   "B2/S6 are PHEME-only; Ma-Weibo has neither")
+
+        # 11./12. namespace separation
+        report.add("v2_namespace_separate_from_v1",
+                   V2_RESULTS_ROOT == "results/cr_tser_v2"
+                   and V1_RESULTS_ROOT == "results/cr_tser"
+                   and V2_RESULTS_ROOT != V1_RESULTS_ROOT,
+                   f"v1={V1_RESULTS_ROOT} v2={V2_RESULTS_ROOT}")
+        report.add("default_out_root_is_v2",
+                   paths_from_env({}).out_root == V2_RESULTS_ROOT,
+                   f"out_root={paths_from_env({}).out_root}")
+
+        # 13. the V2 P0 audit runs end-to-end on synthetic data only
+        with tempfile.TemporaryDirectory() as tmp:
+            raw_dir, label_file = _write_maweibo_fixture(tmp, n_events=2,
+                                                         replies=2)
+            out_dir = os.path.join(tmp, "v2p0")
+            argv = ["--protocol", "v2", "--maweibo-raw", raw_dir,
+                    "--maweibo-labels", label_file, "--out-root", out_dir]
+            import contextlib
+            import io as _io
+            with contextlib.redirect_stdout(_io.StringIO()):
+                rc = p0.main_v2(p0.build_parser().parse_args(argv),
+                                paths_from_env({}))
+            written = sorted(os.listdir(out_dir)) if os.path.isdir(out_dir) \
+                else []
+            report.add("v2_p0_audit_runs_synthetic",
+                       rc == 2
+                       and "maweibo_audit.json" in written
+                       and "p0_readiness.json" in written
+                       and "pheme_smoke.json" in written,
+                       f"rc={rc} files={written}")
+
+        # 14. no Ma-Weibo learned artifact is referenced by the primary path
+        selection_src = _script("cr_tser_run_selection.py")
+        report.add("maweibo_primary_path_has_no_legacy_artifacts",
+                   "build_legacy_scorer" in selection_src
+                   and "legacy_arm_enabled" in selection_src,
+                   "the legacy TC-DSCR scorer stays behind the PHEME-only "
+                   "legacy gate")
+    except Exception as exc:
+        for name in ("maweibo_bridge_reuses_audited_adapter",
+                     "maweibo_timestamp_from_raw_t",
+                     "maweibo_fingerprint_is_composite",
+                     "maweibo_source_replacement_fails_closed",
+                     "maweibo_p0a_fields_complete",
+                     "maweibo_fixture_all_events_viable",
+                     "empty_text_not_an_evidence_unit",
+                     "maweibo_viability_filter_runs",
+                     "viable_lt_170_blocks_p0",
+                     "maweibo_b2_s6_forbidden",
+                     "v2_namespace_separate_from_v1",
+                     "default_out_root_is_v2",
+                     "v2_p0_audit_runs_synthetic",
+                     "maweibo_primary_path_has_no_legacy_artifacts"):
+            report.add(name, False, f"error: {exc}")
+
+    # 15. the scientific constants are untouched by the dataset amendment
+    report.add("v2_scientific_constants_unchanged",
+               C.CUTOFFS_MIN == (15, 60, 360)
+               and C.PARTITION_SEED == 7319
+               and C.TRAIN_SEEDS == (7319, 7320, 7321)
+               and C.SPLIT_SIZES == {"foundation_train": 80,
+                                     "utility_train": 50,
+                                     "utility_dev": 15, "utility_eval": 25}
+               and C.READER_MODEL_IDS == {
+                   "qwen": "Qwen/Qwen3-8B",
+                   "glm": "zai-org/glm-4-9b-chat-hf",
+                   "internlm": "internlm/internlm3-8b-instruct"}
+               and (C.UTILITY_THRESHOLD, C.P1_MEAN_DISAGREEMENT_MIN,
+                    C.P2_EDGE_DELTA_MIN, C.P3_MACRO_F1_DELTA_MIN,
+                    C.P4_MEAN_DELTA_MIN, C.P4_WORST_ROTATION_MIN,
+                    C.PHEME_MEAN_DELTA_MIN)
+               == (0.05, 0.10, 0.02, 0.02, 0.01, -0.005, -0.005),
+               "amendment V2 changes dataset roles only")
 
 
 def _pkg(rel):
@@ -997,11 +1280,12 @@ def _verify_review_fixes(report):
                and "_counts_by_event(collected" in rp,
                "P3 pools every LORO rotation, not just the first")
     report.add("primary_secondary_separated",
-               'PRIMARY_DATASET = "weibo22"' in rp
-               and 'SECONDARY_DATASET = "pheme"' in rp
+               "PRIMARY_DATASET" in rp
+               and "SECONDARY_DATASET" in rp
                and "if dataset == PRIMARY_DATASET" in rp
-               and "pheme_secondary" in rp,
-               "Weibo22 drives P1-P4; PHEME is secondary only")
+               and "pheme_secondary" in rp
+               and 'PRIMARY_DATASET = "weibo22"' not in rp,
+               "the primary dataset drives P1-P4; PHEME is secondary only")
 
     lu = _pkg_code("cr_tser/models/legacy_utility.py")
     report.add("b2_s6_pheme_only",
@@ -1131,8 +1415,9 @@ def verify_pilot(report: Report, results_root: str):
     summary_file = root / "CR_TSER_PILOT_SUMMARY.json"
     if summary_file.exists():
         summary = json.loads(_read(summary_file))
-        report.add("pilot_summary_primary_is_weibo22",
-                   summary.get("primary_dataset") == "weibo22",
+        from cr_tser.config.pilot_config import PRIMARY_DATASET
+        report.add("pilot_summary_primary_is_primary_dataset",
+                   summary.get("primary_dataset") == PRIMARY_DATASET,
                    f"primary_dataset={summary.get('primary_dataset')}")
     else:
         report.pending("pilot_summary", "CR_TSER_PILOT_SUMMARY.json missing")
@@ -1144,7 +1429,7 @@ def _verify_pilot_review(report, root):
     from cr_tser.config.pilot_config import LORO_ROTATIONS
 
     namespaces = {}
-    for dataset in ("pheme", "weibo22"):
+    for dataset in ("maweibo", "pheme", "weibo22"):
         split_file = root / "manifests" / dataset / "event_split.json"
         if split_file.exists():
             namespaces[dataset] = json.loads(_read(split_file))
@@ -1158,13 +1443,13 @@ def _verify_pilot_review(report, root):
                        and data.get("viable_event_count") is not None
                        for data in namespaces.values()),
                    "split manifest must record the viability filter")
-    if len(namespaces) == 2:
-        report.add("pheme_weibo22_artifacts_separate",
-                   namespaces["pheme"].get("dataset") == "pheme"
-                   and namespaces["weibo22"].get("dataset") == "weibo22",
-                   "both datasets coexist without overwriting")
+    if "maweibo" in namespaces and "pheme" in namespaces:
+        report.add("primary_secondary_artifacts_separate",
+                   namespaces["maweibo"].get("dataset") == "maweibo"
+                   and namespaces["pheme"].get("dataset") == "pheme",
+                   "Ma-Weibo primary and PHEME secondary coexist")
 
-    for dataset in ("pheme", "weibo22"):
+    for dataset in ("maweibo", "pheme", "weibo22"):
         snapshot_file = root / "manifests" / dataset / "snapshot_manifest.jsonl"
         if snapshot_file.exists():
             rows = [json.loads(line) for line in _read(snapshot_file).splitlines()
@@ -1203,6 +1488,9 @@ def _verify_pilot_review(report, root):
 def build_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=("code", "pilot"), default="code")
+    ap.add_argument("--protocol", choices=("v1", "v2"), default="v2",
+                    help="v2 (default) adds the Ma-Weibo dataset-protocol "
+                         "checks; v1 keeps the historical checks only")
     ap.add_argument("--results-root", default=None)
     ap.add_argument("--out", default=None)
     return ap
@@ -1210,20 +1498,25 @@ def build_parser():
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
+    from cr_tser.config.pilot_config import V1_RESULTS_ROOT, V2_RESULTS_ROOT
+
+    default_root = V2_RESULTS_ROOT if args.protocol == "v2" else V1_RESULTS_ROOT
     report = Report()
     if args.mode == "code":
-        verify_code(report)
+        verify_code(report, args.protocol)
     else:
         root = args.results_root or os.environ.get(
-            "CRTSER_OUT_ROOT", str(REPO / "results" / "cr_tser"))
+            "CRTSER_OUT_ROOT", str(REPO / default_root))
         verify_pilot(report, root)
     payload = report.to_dict(args.mode)
-    out = args.out or str(REPO / "results" / "cr_tser" / "verifier" /
+    out = args.out or str(REPO / default_root / "verifier" /
                           f"{args.mode}_verify.json")
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=1)
-    print(json.dumps({"mode": payload["mode"], "issues": payload["issues"],
+    print(json.dumps({"mode": payload["mode"],
+                      "protocol": args.protocol,
+                      "issues": payload["issues"],
                       "pending": payload["pending"], "out": out}, indent=1))
     for check in payload["checks"]:
         if check["status"] != "pass":

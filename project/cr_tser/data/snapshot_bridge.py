@@ -23,7 +23,8 @@ from .structural_stats import assert_frozen_cutoffs, assert_valid_cutoff
 
 __all__ = ["build_causal_snapshot", "assert_causal", "reply_node_ids",
            "snapshot_has_replies", "audit_snapshot", "cutoffs",
-           "MAX_NODES_CAP", "snapshot_node_count"]
+           "MAX_NODES_CAP", "snapshot_node_count", "count_parent_cycles",
+           "valid_reply_parent_units"]
 
 #: CR-TSER never caps a snapshot. Kept as an explicit, testable value.
 MAX_NODES_CAP = None
@@ -164,6 +165,61 @@ def reply_node_ids(snapshot: dict) -> list:
 
 def snapshot_has_replies(snapshot: dict) -> bool:
     return len(reply_node_ids(snapshot)) > 0
+
+
+def valid_reply_parent_units(event: dict) -> list:
+    """``[(reply_ts, parent_ts), ...]`` for every real Reply–Parent unit.
+
+    Amendment V2 §7: a unit requires a ``VALID`` reply with a resolved,
+    in-event parent whose timestamp does not follow the reply's. Nodes with
+    ``EMPTY_TEXT`` / ``MISSING_PARENT`` / ``EXTERNAL_PARENT`` /
+    ``TEMPORAL_INVALID_NODE`` never produce one.
+    """
+    source_id = event["source_id"]
+    by_id = {node["node_id"]: node for node in event["nodes"]}
+    units = []
+    for node in event["nodes"]:
+        if node["node_id"] == source_id or node["status"] != "VALID":
+            continue
+        parent_id = node["parent_id"]
+        if parent_id is None or parent_id not in by_id:
+            continue
+        parent = by_id[parent_id]
+        if parent["timestamp"] <= node["timestamp"]:
+            units.append((node["timestamp"], parent["timestamp"]))
+    return units
+
+
+def count_parent_cycles(event: dict) -> int:
+    """Number of parent-pointer cycles among the valid nodes (V2 §8, §9).
+
+    Only real, in-event parent links of ``VALID`` nodes are followed; an event
+    with any cycle is not viable.
+    """
+    ids = {node["node_id"] for node in event["nodes"]}
+    parent = {}
+    for node in event["nodes"]:
+        if node["status"] != "VALID" or node["node_id"] == event["source_id"]:
+            continue
+        pid = node["parent_id"]
+        if pid is not None and pid in ids:
+            parent[node["node_id"]] = pid
+    colored = set()
+    cycles = 0
+    for start in sorted(parent):
+        if start in colored:
+            continue
+        path, seen = [], set()
+        current = start
+        while current is not None and current not in colored \
+                and current not in seen:
+            seen.add(current)
+            path.append(current)
+            current = parent.get(current)
+        if current in seen:
+            cycles += 1
+        colored.update(path)
+    return cycles
 
 
 def audit_snapshot(event: dict, snapshot: dict) -> dict:

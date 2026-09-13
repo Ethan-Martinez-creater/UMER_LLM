@@ -50,12 +50,19 @@ class CrSemanticEncoder:
 
 
 def load_dataset_events(dataset: str, paths, normalized_paths=None):
-    """Load the pilot event pool for a dataset; Weibo22 fails closed.
+    """Load the pilot event pool for a dataset.
 
-    For Weibo22 the normalized export (``CRTSER_WEIBO22_NORMALIZED``) is the
-    single source of record shared by P0, manifest, label, training and
-    selection. The raw KPG release is never used to build a snapshot.
+    * ``maweibo`` (amendment V2 primary) — the audited TC-DSCR adapter through
+      :mod:`cr_tser.data.maweibo_bridge`, so timestamps keep coming only from
+      the raw ``t`` field and the V2 eligibility statuses apply;
+    * ``pheme`` (secondary) — the raw thread directory;
+    * ``weibo22`` — historical V1 candidate; only the normalized export can
+      reach a snapshot, and it fails closed otherwise.
     """
+    if dataset == "maweibo":
+        from cr_tser.data import maweibo_bridge
+        return maweibo_bridge.load_events(paths.maweibo_raw,
+                                          paths.maweibo_labels)
     if dataset == "pheme":
         from tcdscr.data import pheme_adapter
         return [pheme_adapter.load_event(topic, label, folder)
@@ -65,16 +72,24 @@ def load_dataset_events(dataset: str, paths, normalized_paths=None):
         from cr_tser.data import weibo22_adapter
         normalized = normalized_paths or paths.weibo22_normalized or None
         return weibo22_adapter.load_events(paths.weibo22_raw, normalized)
-    raise ValueError(f"unknown dataset {dataset!r}")
+    raise ValueError(f"unknown dataset {dataset!r}; the V2 protocol accepts "
+                     "only 'maweibo' (primary) and 'pheme' (secondary)")
 
 
 def dataset_registry(dataset: str, paths):
     """``{event_id: label}`` for the pool the split will actually sample from.
 
-    Weibo22 uses the normalized export when supplied; the raw KPG label
-    registry is only a structure-only fallback and can never reach a split
-    (``load_dataset_events`` would fail closed first).
+    The Ma-Weibo registry comes from the composite source of record (raw JSON
+    directory + label file); Weibo22 is retained only for the historical V1
+    path and can never reach a V2 split.
     """
+    if dataset == "maweibo":
+        if not (paths.maweibo_raw and paths.maweibo_labels):
+            return {}
+        from tcdscr.data import maweibo_adapter
+        return {eid: int(label) for eid, label
+                in maweibo_adapter.event_ids(paths.maweibo_raw,
+                                             paths.maweibo_labels)}
     if dataset == "pheme":
         from tcdscr.data import pheme_adapter
         return {eid: label for eid, _topic, label, _folder
@@ -141,6 +156,23 @@ def append_jsonl(path, row):
 
 def paths_or_exit():
     return paths_from_env()
+
+
+def default_out_root(paths, explicit=None):
+    """Formal V2 artifact root (amendment §22).
+
+    V1 ``results/cr_tser`` stays historical and read-only; a formal V2 run
+    writes into ``results/cr_tser_v2`` (``CRTSER_OUT_ROOT`` still overrides).
+    A relative root is anchored to the repository so a stage cannot silently
+    write next to whatever the current working directory happens to be.
+    """
+    from cr_tser.config.pilot_config import V2_RESULTS_ROOT
+    if explicit:
+        return explicit
+    root = getattr(paths, "out_root", "") or ""
+    if not root:
+        return str(REPO / V2_RESULTS_ROOT)
+    return root if os.path.isabs(root) else str(REPO / root)
 
 
 def assert_frozen_source(dataset: str, paths, out_root: str,

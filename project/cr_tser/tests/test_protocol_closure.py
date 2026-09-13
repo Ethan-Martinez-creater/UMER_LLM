@@ -370,7 +370,7 @@ def _write_aggregator_tree(root, dataset, held_readers, delta=0.05,
 def test_aggregator_preserves_three_rotation_identity(tmp_path):
     import cr_tser_run_pilot as pilot
     from ..evaluation.unseen_reader import EXPECTED_HELDOUT_READERS
-    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    root = _write_aggregator_tree(str(tmp_path), "maweibo", THREE_HELD_OUT)
     gates, _reports, decision = pilot.compute_gates(root)
     p4 = gates["P4"]
     assert p4["rotation_completeness"]["complete"] is True
@@ -385,7 +385,7 @@ def test_aggregator_preserves_three_rotation_identity(tmp_path):
 
 def test_aggregator_two_rotations_fail_closed(tmp_path):
     import cr_tser_run_pilot as pilot
-    root = _write_aggregator_tree(str(tmp_path), "weibo22",
+    root = _write_aggregator_tree(str(tmp_path), "maweibo",
                                   THREE_HELD_OUT[:2])
     gates, _reports, _decision = pilot.compute_gates(root)
     assert gates["P4"]["rotation_completeness"]["complete"] is False
@@ -394,7 +394,7 @@ def test_aggregator_two_rotations_fail_closed(tmp_path):
 
 def test_aggregator_recognizes_complete_pheme_secondary(tmp_path):
     import cr_tser_run_pilot as pilot
-    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    root = _write_aggregator_tree(str(tmp_path), "maweibo", THREE_HELD_OUT)
     _write_aggregator_tree(root, "pheme", THREE_HELD_OUT)
     gates, _reports, decision = pilot.compute_gates(root)
     assert gates["P4"]["rotation_completeness"]["complete"] is True
@@ -405,7 +405,7 @@ def test_aggregator_recognizes_complete_pheme_secondary(tmp_path):
 
 def test_aggregator_incomplete_pheme_never_full_go(tmp_path):
     import cr_tser_run_pilot as pilot
-    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    root = _write_aggregator_tree(str(tmp_path), "maweibo", THREE_HELD_OUT)
     _write_aggregator_tree(root, "pheme", THREE_HELD_OUT[:2])
     gates, _reports, decision = pilot.compute_gates(root)
     assert gates["P4"]["pass"] is True          # primary evidence complete
@@ -628,7 +628,7 @@ def test_pheme_legacy_freeze_writes_b2_artifact(tmp_path, monkeypatch):
 def test_b2_artifact_does_not_change_weibo22_gates(tmp_path):
     import os as _os
     import cr_tser_run_pilot as pilot
-    root = _write_aggregator_tree(str(tmp_path), "weibo22", THREE_HELD_OUT)
+    root = _write_aggregator_tree(str(tmp_path), "maweibo", THREE_HELD_OUT)
     _write_aggregator_tree(root, "pheme", THREE_HELD_OUT)
     gates_before, _r, decision_before = pilot.compute_gates(root)
     assert decision_before["legacy_diagnostics"]["b2_legacy_tcdscr"] is None

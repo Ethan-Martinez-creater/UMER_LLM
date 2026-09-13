@@ -353,6 +353,135 @@ writes the package under `results/cr_tser/p0/`: `P0_REPORT.md`,
 * No manifest, utility label, predictor training, Stage-A freeze, held-out
   evaluation or P1–P4 run was performed in this round.
 
+---
+
+# 16. V2-M0 — dataset / orchestration protocol migration (experiments NOT RUN)
+
+The V1 candidate primary dataset was rejected on evidence and the dataset
+protocol was amended. Only dataset/orchestration code, tests and the verifier
+changed; no experiment ran.
+
+## 16.1 Decision recorded
+
+```text
+PRIMARY_DATASET   = Ma-Weibo
+SECONDARY_DATASET = PHEME
+WEIBO22           = REJECTED_PRIMARY_CANDIDATE (V1 evidence retained)
+```
+
+The amendment text lives in `docs/CR_TSER_DATASET_PROTOCOL_AMENDMENT_V2.md`;
+`docs/CR_TSER_FEASIBILITY_PILOT_PLAN.md` keeps all of its original content and
+only gained a non-destructive superseded notice at the top. The V1 P0 evidence
+under `results/cr_tser/p0/weibo22_*` is untouched and now reads as
+*candidate-dataset feasibility rejection*, not as a CR-TSER method failure.
+
+## 16.2 Files changed
+
+* `project/cr_tser/config/pilot_config.py` — `PRIMARY_DATASET`,
+  `SECONDARY_DATASET`, `V2_DATASETS`, `REJECTED_PRIMARY_CANDIDATE`,
+  `V2_MIN_VIABLE_EVENTS` (= 170), `V1_RESULTS_ROOT` / `V2_RESULTS_ROOT`;
+  `PilotPaths` gained `maweibo_raw` / `maweibo_labels` and now defaults
+  `out_root` to `results/cr_tser_v2`.
+* `project/cr_tser/data/maweibo_bridge.py` — **new**. Reuses the audited
+  `tcdscr.data.maweibo_adapter` (timestamp only from raw `t`, `original_text`
+  with `text` fallback, raises on missing/multi root) and adds only the V2
+  eligibility contract (`EMPTY_TEXT`, duplicate-id fail-closed), viability,
+  cycle counting and the §9 P0-A audit.
+* `project/cr_tser/data/source_manifest.py` — composite Ma-Weibo fingerprint
+  (`raw_json` + `label_file` + `combined_source_sha256`) with the top-level
+  aliases so the existing generic identity guard still fails closed.
+* `project/cr_tser/data/snapshot_bridge.py` — added `valid_reply_parent_units`
+  and `count_parent_cycles` (shared graph helpers); no existing behaviour
+  changed.
+* `project/cr_tser/intervention/evidence_units.py` — `build_evidence_units`
+  skips nodes whose `status != "VALID"` (amendment §7). Unit structure, token
+  accounting and rendering are unchanged.
+* `project/cr_tser/data/pilot_split.py` — `viable_event_ids` now requires a
+  `VALID` reply with a resolved, causally ordered parent inside one cutoff and
+  rejects cyclic events (amendment §8).
+* `scripts/cr_tser_common.py` — `load_dataset_events` / `dataset_registry` gained
+  the `maweibo` branch through the bridge; new `default_out_root()` anchors the
+  formal root to `results/cr_tser_v2`.
+* `scripts/cr_tser_build_manifests.py`, `cr_tser_generate_labels.py`,
+  `cr_tser_train_predictors.py`, `cr_tser_run_selection.py` — dataset choices
+  are now `("maweibo", "pheme")` and the formal root is the V2 namespace.
+* `scripts/cr_tser_run_pilot.py` — imports `PRIMARY_DATASET` /
+  `SECONDARY_DATASET` from the config instead of hardcoding Weibo22.
+* `scripts/cr_tser_p0_audit.py` — `--protocol v2` (default) implements P0-A
+  Ma-Weibo integrity + viable ≥ 170, P0-B PHEME smoke, P0-C readers/A-B;
+  `--protocol v1` keeps the historical Weibo22 preflight and always writes to
+  the V1 namespace.
+* `scripts/cr_tser_verify_pilot.py` — `--protocol v1|v2` (default v2) adds 17
+  executed V2 checks without removing any V1 check.
+* `docs/CR_TSER_FEASIBILITY_PILOT_PLAN.md` — superseded notice only.
+
+## 16.3 Tests added
+
+`project/cr_tser/tests/test_v2_dataset_protocol.py` (19 tests): dataset roles,
+bridge→audited-adapter reuse, timestamp==raw `t`, `original_text` fallback,
+`EXTERNAL_PARENT` / `EMPTY_TEXT` / `TEMPORAL_INVALID_NODE` handling, duplicate-id
+and multi-root fail-closed, viability per cutoff, cycle rejection, viability
+before split, composite fingerprint + replacement fail-closed, P0 blocked below
+170 viable events / by PHEME smoke / by missing readers, Ma-Weibo B2-S6
+forbidden, `common.load_dataset_events("maweibo")`, and the full §9 audit field
+set. Existing aggregator/review tests were migrated from Weibo22 to Ma-Weibo as
+the primary namespace.
+
+## 16.4 Verifier checks added
+
+`v2_primary_dataset_is_maweibo`, `weibo22_absent_from_v2_loops`,
+`maweibo_bridge_reuses_audited_adapter`, `maweibo_timestamp_from_raw_t`,
+`maweibo_fingerprint_is_composite`, `maweibo_source_replacement_fails_closed`,
+`maweibo_p0a_fields_complete`, `maweibo_fixture_all_events_viable`,
+`empty_text_not_an_evidence_unit`, `maweibo_viability_filter_runs`,
+`viable_lt_170_blocks_p0`, `maweibo_b2_s6_forbidden`,
+`v2_namespace_separate_from_v1`, `default_out_root_is_v2`,
+`v2_p0_audit_runs_synthetic`, `maweibo_primary_path_has_no_legacy_artifacts`,
+`v2_scientific_constants_unchanged`. They execute the contracts (synthetic
+fixtures, real code paths) rather than grepping for strings.
+
+## 16.5 Core research code untouched
+
+No change was made to `models/bitte.py`, the utility head definitions, the
+intervention utility equation, the structured-intervention definitions
+(I2–I5), the reader scoring contract, the B0/B1/B3 architectures, the training
+loss weights, the optimizer protocol, LORO, the robust-selector equation, the
+bootstrap protocol, or any P1–P4 threshold. The amendment's frozen numbers are
+re-asserted by `v2_scientific_constants_unchanged`
+(seed 7319; 80/50/15/25; cutoffs 15/60/360; the three frozen readers;
+0.05/0.10/0.02/0.02/0.01/−0.005/−0.005).
+
+## 16.6 Historical Ma-Weibo firewall
+
+Ma-Weibo gets no B2 and no S6: `legacy_arm_enabled()` is PHEME-only, and the
+legacy TC-DSCR scorer stays behind the PHEME-only legacy gate in the selection
+runner. The bridge never references a checkpoint, selector, proxy or historical
+utility file. B2/S6 remain PHEME-only, diagnostic-only, and never enter a
+Weibo22 or Ma-Weibo primary gate.
+
+## 16.7 Verification (V2-M0)
+
+* `python -m pytest project/cr_tser/tests -q` → **113 passed**.
+* `python scripts/cr_tser_verify_pilot.py --mode code --protocol v2` →
+  **77 checks, issues = 0**.
+* `python scripts/cr_tser_verify_pilot.py --mode code --protocol v1` →
+  **issues = 0** (historical V1 capability preserved).
+* `python scripts/cr_tser_verify_pilot.py --mode pilot --protocol v2` →
+  **issues = 0, pending = 1** (no manifests; V2 P0 has not run).
+* `python -m compileall project/cr_tser scripts` → clean.
+* Formal P0, reader loading, A/B real-reader sanity, manifests, utility labels,
+  predictor training, Stage-A freeze, held-out evaluation and P1–P4 were **not**
+  run.
+
+## 16.8 Resulting state
+
+```text
+CR_TSER_V2_PROTOCOL_MIGRATION = CODE_READY
+V2_P0 = NOT RUN
+P1-P4 = NOT RUN
+FORMAL PILOT = NOT RUN
+```
+
 
 
 

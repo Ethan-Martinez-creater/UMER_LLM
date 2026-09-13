@@ -30,8 +30,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cr_tser_common as common  # noqa: E402
 
-from cr_tser.config.pilot_config import (LORO_ROTATIONS, READER_KEYS,  # noqa: E402
-                                         SIGN_CLASSES)
+from cr_tser.config.pilot_config import (LORO_ROTATIONS,  # noqa: E402
+                                         PRIMARY_DATASET, READER_KEYS,
+                                         SECONDARY_DATASET, SIGN_CLASSES)
 from cr_tser.evaluation.heterogeneity import (gate_p1,  # noqa: E402
                                               heterogeneity_report)
 from cr_tser.evaluation.structural_interaction import (  # noqa: E402
@@ -43,8 +44,6 @@ from cr_tser.evaluation.utility_prediction import (  # noqa: E402
 from cr_tser.intervention.evidence_units import evidence_key  # noqa: E402
 from cr_tser.models.legacy_utility import legacy_arm_enabled  # noqa: E402
 
-PRIMARY_DATASET = "weibo22"
-SECONDARY_DATASET = "pheme"
 LEGACY_TYPES = ("I2_parent_child", "I3_matched_nonadjacent", "I4_subtree",
                 "I5_matched_disconnected")
 
@@ -405,9 +404,7 @@ def build_parser():
 def main(argv=None):
     args = build_parser().parse_args(argv)
     paths = common.paths_or_exit()
-    out_root = args.out_root or os.path.join(paths.out_root or
-                                             str(common.REPO / "results" /
-                                                 "cr_tser"))
+    out_root = common.default_out_root(paths, args.out_root)
     datasets = tuple(d.strip() for d in args.datasets.split(",") if d.strip())
     gates, reports, decision = compute_gates(out_root, datasets)
     write_report(out_root, gates, reports, decision, datasets)

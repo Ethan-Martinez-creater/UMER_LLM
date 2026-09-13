@@ -59,9 +59,15 @@ def build_evidence_units(snapshot: dict) -> list:
     elapsed = snapshot["elapsed_seconds"]
     source_id = snapshot["source_id"]
     pos = {nid: i for i, nid in enumerate(node_ids)}
+    statuses = snapshot.get("statuses")
     units = []
     for i, nid in enumerate(node_ids):
         if nid == source_id:
+            continue
+        # Amendment V2 §7: only VALID nodes may form a textual evidence unit.
+        # EMPTY_TEXT / MISSING_PARENT / EXTERNAL_PARENT / TEMPORAL_INVALID_NODE
+        # nodes are audited but never become an evidence unit.
+        if statuses is not None and statuses[i] != "VALID":
             continue
         parent_id = parent_ids[i]
         parent_text = None
