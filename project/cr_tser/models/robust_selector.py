@@ -24,8 +24,14 @@ SEPARATOR = "\n\n"
 
 
 def robust_score(pred_a: dict, pred_b: dict, node_id: str) -> float:
-    """``s_i^robust = min(u_hat_a, u_hat_b)`` (plan §21)."""
-    return min(float(pred_a[node_id]), float(pred_b[node_id]))
+    """``s_i^robust = min(u_hat_a, u_hat_b)`` (plan §21).
+
+    A unit without a prediction for a training reader scores 0.0 for that
+    reader (neutral), which keeps it eligible for packing rather than dropping
+    it — the atomic label cap (§11) can leave SRC units unlabeled.
+    """
+    return min(float(pred_a.get(node_id, 0.0)),
+               float(pred_b.get(node_id, 0.0)))
 
 
 def density(score: float, token_cost: int) -> float:
@@ -50,7 +56,8 @@ def rank_by_density(node_ids, scores: dict, token_costs: dict, seed=None,
         rng = random.Random(seed)
         rng.shuffle(ids)
         return ids
-    return sorted(ids, key=lambda n: (-density(scores[n], token_costs[n]), n))
+    return sorted(ids, key=lambda n: (-density(scores.get(n, 0.0),
+                                               token_costs[n]), n))
 
 
 def pack_within_budget(units, ranked_ids, token_costs, target_tokens,

@@ -67,6 +67,106 @@
    "check": "no_timestamp_synthesis",
    "status": "pass",
    "detail": "adapter documents that original_order is never time"
+  },
+  {
+   "check": "cr_tser_snapshot_uncapped",
+   "status": "pass",
+   "detail": "CR-TSER snapshot must not inherit the TC-DSCR 1021 cap"
+  },
+  {
+   "check": "loro_isolation_entrance",
+   "status": "pass",
+   "detail": "dataset fails closed when a held-out reader is present"
+  },
+  {
+   "check": "loro_isolation_wired",
+   "status": "pass",
+   "detail": "training entry filters the cache to the two training readers"
+  },
+  {
+   "check": "evidence_key_defined",
+   "status": "pass",
+   "detail": "canonical evidence key defined exactly once"
+  },
+  {
+   "check": "evidence_key_contract_consistent",
+   "status": "pass",
+   "detail": "modules not using the canonical key: []"
+  },
+  {
+   "check": "manifest_immutable_after_labels",
+   "status": "pass",
+   "detail": "manifests refuse rewriting once any label cache exists"
+  },
+  {
+   "check": "viability_before_split",
+   "status": "pass",
+   "detail": "viability filtering must precede the 7319 split"
+  },
+  {
+   "check": "p2_reader_snapshot_pairing",
+   "status": "pass",
+   "detail": "P2 pairs inside one reader and snapshot before the event bootstrap"
+  },
+  {
+   "check": "p3_bootstrap_gate",
+   "status": "pass",
+   "detail": "P3 requires the event-level paired bootstrap CI to pass"
+  },
+  {
+   "check": "p3_all_rotations",
+   "status": "pass",
+   "detail": "P3 pools every LORO rotation, not just the first"
+  },
+  {
+   "check": "primary_secondary_separated",
+   "status": "pass",
+   "detail": "Weibo22 drives P1-P4; PHEME is secondary only"
+  },
+  {
+   "check": "b2_s6_pheme_only",
+   "status": "pass",
+   "detail": "legacy TC-DSCR diagnostic is PHEME-only and inference-only"
+  },
+  {
+   "check": "teacher_forced_tokenization",
+   "status": "pass",
+   "detail": "prompt/continuation tokenized without duplicate special tokens"
+  },
+  {
+   "check": "cache_fingerprint_fail_closed",
+   "status": "pass",
+   "detail": "cache hits are fingerprint-validated or refused"
+  },
+  {
+   "check": "prompt_hash_full_chat",
+   "status": "pass",
+   "detail": "prompt_hash covers the full chat-formatted prompt"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_build_manifests.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_run_selection.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_train_predictors.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_run_pilot.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_generate_labels.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
   }
  ]
 }

@@ -122,13 +122,54 @@ documented so the plan's owner can veto it cheaply.
 
 ## 5. Local verification performed
 
-* `python -m pytest project/cr_tser/tests -q` → **39 passed** (includes all 23
-  plan §35 test names).
-* `python scripts/cr_tser_verify_pilot.py --mode code` → **issues = 0**.
+* `python -m pytest project/cr_tser/tests -q` → **53 passed** (the plan §35
+  inventory plus the review-round integration tests).
+* `python scripts/cr_tser_verify_pilot.py --mode code` → **33 checks,
+  issues = 0**.
 * `python scripts/cr_tser_verify_pilot.py --mode pilot` → **issues = 0,
   pending = 1** (pilot not executed, as instructed).
 * `python scripts/cr_tser_p0_audit.py` → `P0_FAIL` (Weibo22 temporal
   unavailable; reader paths unset locally), written to `results/cr_tser/p0/`.
+  **The P0 FAIL is the real state of the official public release and was not
+  altered by these fixes.**
 * `compileall` clean over `project/cr_tser` and `scripts/cr_tser_*.py`.
 
-No formal pilot experiment was run.
+No formal pilot experiment was run: no formal utility label, no predictor
+training and no unseen-reader evaluation.
+
+---
+
+# 6. Review fix round (code only — formal pilot NOT RUN)
+
+Every finding from the review is listed with its fix location, the test that
+pins it and the verifier check that now guards it. No scientific choice in
+`CR_TSER_FEASIBILITY_PILOT_PLAN.md` was changed.
+
+| # | Finding | Fix (location) | Test | Verifier check |
+|---|---|---|---|---|
+| 1 | Snapshot inherited the TC-DSCR `MAX_NODES=1021` cap | CR-TSER now owns `_assemble`/`build_causal_snapshot` with `MAX_NODES_CAP=None`; `assert_causal` rejects `cap_hit` (`project/cr_tser/data/snapshot_bridge.py`) | `test_snapshot_retains_more_than_1021_nodes`, `test_bitte_receives_all_snapshot_nodes` | `cr_tser_snapshot_uncapped`, `snapshot_uncapped:<dataset>` |
+| 2 | Held-out reader labels could reach training | Entrances filter: `filter_rows_for_readers` + `UtilityDataset.__init__` calls `assert_groups_only_readers`; `run_rotation` filters the cache to the two training readers and records `held_out_rows_filtered` (`training/utility_dataset.py`, `scripts/cr_tser_train_predictors.py`) | `test_heldout_reader_not_in_training_batch`, `test_heldout_reader_not_in_early_stopping`, `test_batch_forward_never_touches_heldout_reader`, `test_rotation_builder_filters_three_reader_cache_at_the_entrance` | `loro_isolation_entrance`, `loro_isolation_wired`, `heldout_absent_from_predictions:<dataset>:<reader>` |
+| 3 | Predictor/selector evidence identity not unified | Canonical `evidence_key = dataset\|event\|cutoff\|node` (`evidence_key`, `evidence_key_parts`) used by `utility_dataset`, `train_predictors`, `run_pilot`, `run_selection`; `predictions_for_snapshot` maps artifacts back to per-snapshot `{node_id: score}` | `test_predictor_selector_key_contract_end_to_end`, `test_p1_atomic_identity_includes_cutoff` | `evidence_key_defined`, `evidence_key_contract_consistent` |
+| 4 | PHEME/Weibo22 artifacts could overwrite | All stages namespace by dataset: `manifests/<dataset>/`, `utility_labels/<dataset>/`, `predictor/<dataset>/`, `unseen_reader/<dataset>/`; the aggregator reads every dataset | `test_dataset_artifacts_do_not_overwrite` | `dataset_namespace:<script>` (5), `artifact_namespace_dataset_tagged`, `pheme_weibo22_artifacts_separate` |
+| 5 | A/B scoring could double-add special tokens | `tokenize_prompt`/`tokenize_continuation` use `add_special_tokens=False`; `continuation_boundary` asserts the concatenation identity; P0 sanity records prompt token ids and each candidate's ids (`readers/sequence_scorer.py`, `scripts/cr_tser_p0_audit.py`) | `test_teacher_forced_tokenization_disables_special_tokens` | `teacher_forced_tokenization` |
+| 6 | `prompt_hash` covered only evidence text | `prompt_hash`/`base_prompt_hash` hash the full chat-formatted prompt (`_chat_hash`); a cache hit is reused only when all of base context, intervened context, reader hash and prompt hash match, otherwise `CacheIdentityMismatch`; `model_weight_hash` now hashes shard head **and** tail plus config/index | `test_cache_fingerprint_mismatch_fails_closed` | `cache_fingerprint_fail_closed`, `prompt_hash_full_chat`, `cache_hashes_nonempty:<dataset>`, `reader_hashes_frozen:<dataset>` |
+| 7 | `--force` could bypass manifest freezing | `assert_manifests_mutable` refuses unconditionally once any label cache exists; `--force` only permits a pre-freeze rebuild | `test_manifest_freeze_refuses_after_labels` | `manifest_immutable_after_labels` |
+| 8 | Split could be drawn before viability filtering | `viable_event_ids` runs before `build_pilot_split`; the split manifest records `viable_event_count`/`viability_filtered` (`cr_tser_build_manifests.py`, `data/pilot_split.py`) | `test_viability_filter_precedes_split` | `viability_before_split`, `viability_before_split_recorded` |
+| 9 | P1/P2/P3/P4 aggregation and gates | Unit-table keys include cutoff (no cross-cutoff collisions); P2 pairs within reader×snapshot then bootstraps over events; P3 requires the event-level paired bootstrap CI and pools **all** rotations; Weibo22 is primary, PHEME secondary only (`evaluation/structural_interaction.py`, `evaluation/utility_prediction.py`, `scripts/cr_tser_run_pilot.py`) | `test_p2_pairs_within_reader_and_snapshot`, `test_p3_gate_requires_bootstrap_ci`, `test_gate_p3_exact_thresholds`, `test_gate_logic_exact` | `p2_reader_snapshot_pairing`, `p3_bootstrap_gate`, `p3_all_rotations`, `primary_secondary_separated`, `pilot_summary_primary_is_weibo22` |
+| 10 | PHEME-only B2/S6 legacy diagnostic missing | New `models/legacy_utility.py`: PHEME-only guard, inference-only (no grad, no training), reuses the frozen TC-DSCR Static Utility; S6 in the selection runner requires `--legacy` and refuses non-PHEME | `test_b2_s6_legacy_is_pheme_only_and_inference_only` | `b2_s6_pheme_only` |
+| 11 | Code verifier too weak | 15 review checks added on top of the original inventory (33 checks total) | — | see the table above |
+
+## 7. Review-round behaviour changes worth knowing
+
+1. `UtilityDataset(groups, ...)` now **raises** if any row belongs to a reader
+   outside `reader_keys`. Rotation builders must filter first; that is the
+   point of the fix.
+2. `gate_p3` **fails closed** when the event-level paired bootstrap is absent —
+   a point estimate alone no longer satisfies P3.
+3. `robust_score` / `rank_by_density` treat a missing prediction as `0.0`
+   (neutral) instead of raising, because the §11 atomic cap can leave SRC units
+   unlabeled; such units stay eligible for packing.
+4. Manifest and utility-label paths are dataset-scoped. The old flat
+   `utility_labels/<dataset>.jsonl` path is still read as a fallback so
+   pre-existing local artifacts remain readable.
+

@@ -1,11 +1,18 @@
 #!/usr/bin/env python
-"""Freeze the CR-TSER pilot manifests (plan §31).
+"""Freeze the CR-TSER pilot manifests (plan §5, §31).
 
-Writes ``results/cr_tser/manifests/``: ``event_split.json``,
-``snapshot_manifest.jsonl``, ``intervention_manifest.jsonl`` and
-``hashes.json``. Manifests become immutable after the first reader utility
-call; the ``--force`` flag exists only for a pre-freeze re-run and refuses
-once a utility-label file is present.
+Writes ``results/cr_tser/manifests/<dataset>/`` so PHEME and Weibo22 can
+coexist: ``event_split.json``, ``snapshot_manifest.jsonl``,
+``intervention_manifest.jsonl`` and ``hashes.json``.
+
+Two rules from the review are enforced here:
+
+* **viability before split** — the 80/50/15/25 seed-7319 split is drawn from
+  the events that can actually produce a non-empty snapshot, never from a
+  label registry that may reference unusable events (plan §5);
+* **immutable after labels** — once any formal utility-label cache exists for
+  the dataset, the manifests cannot be rewritten at all. ``--force`` only
+  permits a *pre-freeze* rebuild while no labels exist.
 """
 from __future__ import annotations
 
@@ -22,40 +29,75 @@ import cr_tser_common as common  # noqa: E402
 from cr_tser.config.pilot_config import (CUTOFFS_MIN, LORO_ROTATIONS,  # noqa: E402
                                          READER_KEYS, READER_MODEL_IDS,
                                          SPLIT_SIZES)
-from cr_tser.data.pilot_split import assert_event_disjoint, build_pilot_split  # noqa: E402
-from cr_tser.readers.base_reader import (ReaderSpec, model_weight_hash,  # noqa: E402
+from cr_tser.data.pilot_split import (assert_event_disjoint,  # noqa: E402
+                                      build_pilot_split, viable_event_ids)
+from cr_tser.readers.base_reader import (model_weight_hash,  # noqa: E402
                                          tokenizer_hash)
 
 
-def _hash_text(text: str) -> str:
+def _sha_text(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
+
+
+def labels_path(out_root, dataset):
+    namespaced = os.path.join(out_root, "utility_labels", dataset,
+                              "labels.jsonl")
+    legacy = os.path.join(out_root, "utility_labels", f"{dataset}.jsonl")
+    for path in (namespaced, legacy):
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def assert_manifests_mutable(out_root, dataset, force):
+    """Refuse to touch frozen manifests once any label cache exists (plan §31)."""
+    existing = labels_path(out_root, dataset)
+    if existing:
+        raise RuntimeError(
+            f"utility labels already exist at {existing}; manifests are "
+            "immutable after the first reader utility call (plan §31). "
+            "--force cannot bypass this.")
+    if not force:
+        target = os.path.join(out_root, "manifests", dataset,
+                              "event_split.json")
+        if os.path.exists(target):
+            raise RuntimeError(
+                f"{target} already exists; pass --force for a pre-freeze "
+                "rebuild (allowed only while no utility labels exist).")
 
 
 def build_manifests(dataset, paths, out_root, normalized_paths=None,
                     force=False):
-    label_file = os.path.join(out_root, "utility_labels", f"{dataset}.jsonl")
-    if os.path.exists(label_file) and not force:
-        raise RuntimeError(
-            "utility labels already exist; manifests are immutable after the "
-            "first reader call (plan §31). Pass --force only before any call.")
+    assert_manifests_mutable(out_root, dataset, force)
 
-    registry = common.dataset_registry(dataset, paths)
+    events = common.load_dataset_events(dataset, paths, normalized_paths)
+    # ---- viability filtering happens BEFORE any split (plan §5) ----
+    viable = set(viable_event_ids(events, CUTOFFS_MIN))
+    registry = {e["event_id"]: int(e["label"]) for e in events
+                if e["event_id"] in viable}
+    if not viable:
+        raise RuntimeError(
+            f"{dataset}: no viable events (a viability gate must precede the "
+            "split; plan §5)")
     split = build_pilot_split(registry)
     assert_event_disjoint(split)
-    manifests = os.path.join(out_root, "manifests")
+
+    manifests = os.path.join(out_root, "manifests", dataset)
     common.write_json(os.path.join(manifests, "event_split.json"), {
         **{k: split[k] for k in ("foundation_train", "utility_train",
                                  "utility_dev", "utility_eval", "unused")},
         "label_counts": split["label_counts"],
         "sizes": dict(SPLIT_SIZES),
+        "dataset": dataset,
+        "viable_event_count": len(viable),
+        "total_events": len(events),
+        "viability_filtered": len(events) - len(viable),
+        "split_seed": 7319,
     })
 
-    # Only the three LLM-labeled segments produce snapshot/intervention rows.
     labeled_ids = set(split["utility_train"]) | set(split["utility_dev"]) | \
         set(split["utility_eval"])
-    events = [e for e in common.load_dataset_events(dataset, paths,
-                                                    normalized_paths)
-              if e["event_id"] in labeled_ids]
+    labeled = [e for e in events if e["event_id"] in labeled_ids]
     encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
     tokenizer = common.canonical_tokenizer(paths.canonical_tokenizer)
 
@@ -65,13 +107,16 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
         if os.path.exists(path):
             os.remove(path)
     n_snap = n_iv = n_zero = 0
-    for event, cutoff in common.iter_events_cutoffs(events, CUTOFFS_MIN):
+    max_nodes_seen = 0
+    for event, cutoff in common.iter_events_cutoffs(labeled, CUTOFFS_MIN):
         art = common.snapshot_artifacts(event, cutoff, encoder, tokenizer)
         snap = art["snapshot"]
         t0 = event["source_timestamp"]
         limit = t0 + cutoff * 60
         future_leak = any(ts > limit for ts in snap["timestamps"])
+        max_nodes_seen = max(max_nodes_seen, len(snap["node_ids"]))
         common.append_jsonl(snap_path, {
+            "dataset": dataset,
             "event_id": event["event_id"], "cutoff": cutoff,
             "num_nodes": len(snap["node_ids"]),
             "num_replies": len(art["units"]),
@@ -81,6 +126,7 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
             "max_timestamp": max(snap["timestamps"]) if snap["timestamps"] else None,
             "future_node_leak": bool(future_leak),
             "used_original_order_as_time": False,
+            "cap_hit": bool(snap.get("cap_hit")),
             "src_selected": len(art["src"]["selected_node_ids"]) if art["src"] else 0,
             "src_tokens": art["src"]["total_tokens"] if art["src"] else 0,
         })
@@ -90,6 +136,7 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
             continue
         for iv in art["interventions"]:
             common.append_jsonl(iv_path, {
+                "dataset": dataset,
                 "event_id": event["event_id"], "cutoff": cutoff,
                 "intervention_id": iv["intervention_id"],
                 "type": iv["type"], "status": iv["status"],
@@ -109,17 +156,21 @@ def build_manifests(dataset, paths, out_root, normalized_paths=None,
         }
     hashes = {
         "dataset": dataset,
-        "event_split_sha256": _hash_text(json.dumps(
+        "event_split_sha256": _sha_text(json.dumps(
             {k: split[k] for k in SPLIT_SIZES}, sort_keys=True)),
         "cutoffs": list(CUTOFFS_MIN),
         "loro_rotations": [list(r) for r in LORO_ROTATIONS],
         "readers": readers,
+        "viable_events": len(viable),
         "n_snapshots": n_snap, "n_interventions": n_iv,
         "n_zero_reply_snapshots": n_zero,
+        "max_snapshot_nodes": max_nodes_seen,
+        "snapshot_cap": None,
     }
     common.write_json(os.path.join(manifests, "hashes.json"), hashes)
-    return {"manifests": manifests, "n_snapshots": n_snap,
-            "n_interventions": n_iv, "n_zero_reply": n_zero}
+    return {"dataset": dataset, "manifests": manifests, "n_snapshots": n_snap,
+            "n_interventions": n_iv, "n_zero_reply": n_zero,
+            "viable_events": len(viable), "max_snapshot_nodes": max_nodes_seen}
 
 
 def build_parser():
@@ -128,7 +179,8 @@ def build_parser():
     ap.add_argument("--out-root", default=None)
     ap.add_argument("--normalized-events", default=None,
                     help="Weibo22 normalized JSONL export (timestamps)")
-    ap.add_argument("--force", action="store_true")
+    ap.add_argument("--force", action="store_true",
+                    help="pre-freeze rebuild only; refused once labels exist")
     return ap
 
 

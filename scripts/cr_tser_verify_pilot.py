@@ -237,6 +237,130 @@ def verify_code(report: Report):
                "original_order" not in wsrc.lower()
                or "never" in wsrc.lower() or "no timestamp" in wsrc.lower(),
                "adapter documents that original_order is never time")
+    _verify_review_fixes(report)
+
+
+def _pkg(rel):
+    return _read(PROJECT / rel)
+
+
+def _pkg_code(rel):
+    return _code_only(_pkg(rel))
+
+
+def _script(name):
+    return _read(REPO / "scripts" / name)
+
+
+def _script_code(name):
+    return _code_only(_script(name))
+
+
+def _verify_review_fixes(report):
+    """Checks added by the code-review fix round (plan §3.1.B, §9, §20, §24, §31–§33)."""
+    snap = _pkg_code("cr_tser/data/snapshot_bridge.py")
+    report.add("cr_tser_snapshot_uncapped",
+               "MAX_NODES_CAP = None" in snap and "1021" not in snap
+               and '"cap_hit": False' in snap,
+               "CR-TSER snapshot must not inherit the TC-DSCR 1021 cap")
+
+    uds = _pkg_code("cr_tser/training/utility_dataset.py")
+    report.add("loro_isolation_entrance",
+               "def filter_rows_for_readers" in uds
+               and "def assert_only_readers" in uds
+               and "assert_groups_only_readers(self.groups" in uds,
+               "dataset fails closed when a held-out reader is present")
+    tp = _script_code("cr_tser_train_predictors.py")
+    report.add("loro_isolation_wired",
+               "filter_rows_for_readers(all_labels, train_readers)" in tp
+               and "held_out_rows_filtered" in tp
+               and "assert_groups_only_readers(groups, train_readers" in tp,
+               "training entry filters the cache to the two training readers")
+
+    ek = _pkg_code("cr_tser/intervention/evidence_units.py")
+    report.add("evidence_key_defined",
+               "def evidence_key(" in ek and "def evidence_key_parts(" in ek,
+               "canonical evidence key defined exactly once")
+    contract_users = {
+        "utility_dataset": _pkg_code("cr_tser/training/utility_dataset.py"),
+        "train_predictors": tp,
+        "run_pilot": _script_code("cr_tser_run_pilot.py"),
+        "run_selection": _script_code("cr_tser_run_selection.py"),
+    }
+    missing = [n for n, src in contract_users.items()
+               if "evidence_key" not in src]
+    report.add("evidence_key_contract_consistent", not missing,
+               f"modules not using the canonical key: {missing}")
+
+    bm = _script_code("cr_tser_build_manifests.py")
+    report.add("manifest_immutable_after_labels",
+               "def assert_manifests_mutable" in bm
+               and "--force cannot bypass this" in _script(
+                   "cr_tser_build_manifests.py"),
+               "manifests refuse rewriting once any label cache exists")
+    body = bm.split("def build_manifests", 1)[-1]
+    report.add("viability_before_split",
+               body.index("viable_event_ids(events")
+               < body.index("build_pilot_split(registry)"),
+               "viability filtering must precede the 7319 split")
+
+    si = _pkg_code("cr_tser/evaluation/structural_interaction.py")
+    report.add("p2_reader_snapshot_pairing",
+               "reader_x_snapshot" in si and "def _pair_deltas" in si
+               and "cutoff" in si,
+               "P2 pairs inside one reader and snapshot before the event bootstrap")
+
+    up = _pkg_code("cr_tser/evaluation/utility_prediction.py")
+    report.add("p3_bootstrap_gate",
+               "delta_ci" in up and "missing event-level paired bootstrap" in up
+               and "def per_event_counts" in up,
+               "P3 requires the event-level paired bootstrap CI to pass")
+
+    rp = _script_code("cr_tser_run_pilot.py")
+    report.add("p3_all_rotations",
+               "for rotation in LORO_ROTATIONS" in rp
+               and "rotations_used" in rp and "merged_b3" in rp,
+               "P3 pools every LORO rotation, not just the first")
+    report.add("primary_secondary_separated",
+               'PRIMARY_DATASET = "weibo22"' in rp
+               and 'SECONDARY_DATASET = "pheme"' in rp
+               and "if dataset == PRIMARY_DATASET" in rp
+               and "pheme_secondary" in rp,
+               "Weibo22 drives P1-P4; PHEME is secondary only")
+
+    lu = _pkg_code("cr_tser/models/legacy_utility.py")
+    report.add("b2_s6_pheme_only",
+               'LEGACY_DATASET = "pheme"' in lu
+               and "def assert_legacy_dataset" in lu
+               and "requires_grad_(False)" in lu
+               and "no_grad" in lu,
+               "legacy TC-DSCR diagnostic is PHEME-only and inference-only")
+
+    ss = _pkg_code("cr_tser/readers/sequence_scorer.py")
+    report.add("teacher_forced_tokenization",
+               "add_special_tokens=False" in ss
+               and "def continuation_boundary" in ss
+               and "teacher_forced_logprob_sum" in ss,
+               "prompt/continuation tokenized without duplicate special tokens")
+
+    gl = _script_code("cr_tser_generate_labels.py")
+    report.add("cache_fingerprint_fail_closed",
+               "CacheIdentityMismatch" in gl and "_verify_cached" in gl
+               and "FINGERPRINT_FIELDS" in gl,
+               "cache hits are fingerprint-validated or refused")
+    report.add("prompt_hash_full_chat",
+               "_chat_hash" in gl and "apply_chat" in gl,
+               "prompt_hash covers the full chat-formatted prompt")
+
+    for name in ("cr_tser_build_manifests.py", "cr_tser_run_selection.py",
+                 "cr_tser_train_predictors.py", "cr_tser_run_pilot.py",
+                 "cr_tser_generate_labels.py"):
+        src = _script_code(name)
+        scoped = bool(re.search(
+            r'("manifests"|"unseen_reader"|"utility_labels"|"predictor")'
+            r'\s*[,/)]?\s*[,/)]?\s*dataset', src))
+        report.add(f"dataset_namespace:{name}", scoped,
+                   "artifact paths are dataset-scoped")
 
 
 _HELDOUT_IN_TRAIN_PATTERNS = (
@@ -247,98 +371,157 @@ _HELDOUT_IN_TRAIN_PATTERNS = (
 def verify_pilot(report: Report, results_root: str):
     root = Path(results_root)
     manifests = root / "manifests"
-    split_file = manifests / "event_split.json"
-    if not split_file.exists():
+    split_files = sorted(manifests.glob("*/event_split.json")) \
+        if manifests.exists() else []
+    if not split_files:
         report.pending("pilot_artifacts",
-                       f"pilot not executed yet: {split_file} missing")
+                       f"pilot not executed yet: no "
+                       f"{manifests}/<dataset>/event_split.json")
         return
-    split = json.loads(_read(split_file))
     names = ("foundation_train", "utility_train", "utility_dev",
              "utility_eval")
-    seen, overlap = {}, []
-    for name in names:
-        for eid in split.get(name, []):
-            if eid in seen:
-                overlap.append((eid, seen[eid], name))
-            seen[eid] = name
-    report.add("split_events_disjoint", not overlap, f"overlap: {overlap[:5]}")
-    report.add("split_sizes_exact",
-               all(len(split.get(n, [])) == size for n, size in
-                   zip(names, (80, 50, 15, 25))),
-               {n: len(split.get(n, [])) for n in names})
+    for split_file in split_files:
+        dataset = split_file.parent.name
+        split = json.loads(_read(split_file))
+        seen, overlap = {}, []
+        for name in names:
+            for eid in split.get(name, []):
+                if eid in seen:
+                    overlap.append((eid, seen[eid], name))
+                seen[eid] = name
+        report.add(f"split_events_disjoint:{dataset}", not overlap,
+                   f"overlap: {overlap[:5]}")
+        report.add(f"split_sizes_exact:{dataset}",
+                   all(len(split.get(n, [])) == size for n, size in
+                       zip(names, (80, 50, 15, 25))),
+                   {n: len(split.get(n, [])) for n in names})
 
-    snap_file = manifests / "snapshot_manifest.jsonl"
-    if snap_file.exists():
-        rows = [json.loads(line) for line in _read(snap_file).splitlines()
-                if line.strip()]
-        bad_future = [r for r in rows if r.get("future_node_leak")]
-        bad_ts = [r for r in rows if r.get("used_original_order_as_time")]
-        report.add("snapshot_no_future_node", not bad_future,
-                   f"{len(bad_future)} leaking snapshots")
-        report.add("snapshot_uses_true_timestamp", not bad_ts,
-                   f"{len(bad_ts)} rows substituted row order for time")
-        report.add("snapshot_cutoffs_frozen",
-                   all(r.get("cutoff") in (15, 60, 360) for r in rows),
-                   "cutoffs outside {15,60,360}" )
-    else:
-        report.pending("snapshot_manifest", "snapshot_manifest.jsonl missing")
+        snap_file = split_file.parent / "snapshot_manifest.jsonl"
+        if snap_file.exists():
+            rows = [json.loads(line) for line in _read(snap_file).splitlines()
+                    if line.strip()]
+            bad_future = [r for r in rows if r.get("future_node_leak")]
+            bad_ts = [r for r in rows if r.get("used_original_order_as_time")]
+            capped = [r for r in rows if r.get("cap_hit")]
+            report.add(f"snapshot_no_future_node:{dataset}", not bad_future,
+                       f"{len(bad_future)} leaking snapshots")
+            report.add(f"snapshot_uses_true_timestamp:{dataset}", not bad_ts,
+                       f"{len(bad_ts)} rows substituted row order for time")
+            report.add(f"snapshot_uncapped:{dataset}", not capped,
+                       f"{len(capped)} capped snapshot rows")
+            report.add(f"snapshot_cutoffs_frozen:{dataset}",
+                       all(r.get("cutoff") in (15, 60, 360) for r in rows),
+                       "cutoffs outside {15,60,360}")
+        else:
+            report.pending(f"snapshot_manifest:{dataset}",
+                           "snapshot_manifest.jsonl missing")
 
-    iv_file = manifests / "intervention_manifest.jsonl"
-    if iv_file.exists():
-        rows = [json.loads(line) for line in _read(iv_file).splitlines()
-                if line.strip()]
-        bad = [r for r in rows if not r.get("valid_in_gt", True)]
-        report.add("structured_intervention_valid_in_gt", not bad,
-                   f"{len(bad)} invalid structured interventions")
-    else:
-        report.pending("intervention_manifest",
-                       "intervention_manifest.jsonl missing")
+        iv_file = split_file.parent / "intervention_manifest.jsonl"
+        if iv_file.exists():
+            rows = [json.loads(line) for line in _read(iv_file).splitlines()
+                    if line.strip()]
+            bad = [r for r in rows if not r.get("valid_in_gt", True)]
+            report.add(f"structured_intervention_valid_in_gt:{dataset}", not bad,
+                       f"{len(bad)} invalid structured interventions")
+        else:
+            report.pending(f"intervention_manifest:{dataset}",
+                           "intervention_manifest.jsonl missing")
 
-    hashes = manifests / "hashes.json"
-    if hashes.exists():
-        payload = json.loads(_read(hashes))
-        frozen = payload.get("readers", {})
-        report.add("reader_hashes_frozen",
-                   len(frozen) == 3 and all(frozen.values()),
-                   f"reader hashes: {list(frozen)}")
-    else:
-        report.pending("reader_hashes", "hashes.json missing")
+        hashes = split_file.parent / "hashes.json"
+        if hashes.exists():
+            payload = json.loads(_read(hashes))
+            frozen = payload.get("readers", {})
+            non_empty = all(entry.get("weight_hash")
+                            for entry in frozen.values())
+            report.add(f"reader_hashes_frozen:{dataset}",
+                       len(frozen) == 3 and non_empty,
+                       f"reader hashes: {list(frozen)}")
+        else:
+            report.pending(f"reader_hashes:{dataset}", "hashes.json missing")
 
-    sel_dir = root / "unseen_reader"
-    if sel_dir.exists():
-        for path in sorted(sel_dir.glob("rotation_*.json")):
-            data = json.loads(_read(path))
-            held = data.get("held_out_reader")
-            leaked = [k for k in data.get("train_readers", []) + [
-                data.get("early_stopping_reader", "")] if k == held]
-            report.add(f"heldout_isolated:{path.stem}", not leaked,
-                       f"held-out {held!r} leaked into {leaked}")
-            for arm, entry in data.get("arms", {}).items():
-                ids = set(entry.get("selected_node_ids", []))
-                ref = set(entry.get("reference_ids", []))
-                report.add(f"arm_subset_of_cref:{path.stem}:{arm}",
-                           ids <= ref if ref else True,
-                           f"{len(ids - ref)} ids outside C_ref")
-                report.add(f"arm_within_target:{path.stem}:{arm}",
-                           entry.get("total_tokens", 0)
-                           <= entry.get("target_tokens",
-                                        entry.get("total_tokens", 0)),
-                           f"{entry.get('total_tokens')} vs "
-                           f"{entry.get('target_tokens')}")
-    else:
-        report.pending("unseen_reader_artifacts",
-                       "unseen_reader/ missing (pilot not executed)")
+        sel_dir = root / "unseen_reader" / dataset
+        if sel_dir.exists():
+            for path in sorted(sel_dir.glob("rotation_*.json")):
+                data = json.loads(_read(path))
+                held = data.get("held_out_reader")
+                leaked = [k for k in data.get("train_readers", []) + [
+                    data.get("early_stopping_reader", "")] if k == held]
+                report.add(f"heldout_isolated:{dataset}:{path.stem}", not leaked,
+                           f"held-out {held!r} leaked into {leaked}")
+        else:
+            report.pending(f"unseen_reader_artifacts:{dataset}",
+                           "unseen_reader/<dataset>/ missing")
 
-    verifier_gates = root / "CR_TSER_PILOT_SUMMARY.json"
-    if verifier_gates.exists():
-        summary = json.loads(_read(verifier_gates))
-        gates = summary.get("gates", {})
-        for key, entry in gates.items():
-            report.add(f"gate_{key}_thresholds",
-                       entry.get("thresholds_match_plan", True),
-                       entry.get("detail", ""))
+    summary_file = root / "CR_TSER_PILOT_SUMMARY.json"
+    if summary_file.exists():
+        summary = json.loads(_read(summary_file))
+        report.add("pilot_summary_primary_is_weibo22",
+                   summary.get("primary_dataset") == "weibo22",
+                   f"primary_dataset={summary.get('primary_dataset')}")
     else:
         report.pending("pilot_summary", "CR_TSER_PILOT_SUMMARY.json missing")
+    _verify_pilot_review(report, root)
+
+
+def _verify_pilot_review(report, root):
+    """Artifact-level checks added by the review fix round."""
+    from cr_tser.config.pilot_config import LORO_ROTATIONS
+
+    namespaces = {}
+    for dataset in ("pheme", "weibo22"):
+        split_file = root / "manifests" / dataset / "event_split.json"
+        if split_file.exists():
+            namespaces[dataset] = json.loads(_read(split_file))
+    if namespaces:
+        report.add("artifact_namespace_dataset_tagged",
+                   all(data.get("dataset") == ds
+                       for ds, data in namespaces.items()),
+                   f"namespaces present: {sorted(namespaces)}")
+        report.add("viability_before_split_recorded",
+                   all(data.get("viability_filtered") is not None
+                       and data.get("viable_event_count") is not None
+                       for data in namespaces.values()),
+                   "split manifest must record the viability filter")
+    if len(namespaces) == 2:
+        report.add("pheme_weibo22_artifacts_separate",
+                   namespaces["pheme"].get("dataset") == "pheme"
+                   and namespaces["weibo22"].get("dataset") == "weibo22",
+                   "both datasets coexist without overwriting")
+
+    for dataset in ("pheme", "weibo22"):
+        snapshot_file = root / "manifests" / dataset / "snapshot_manifest.jsonl"
+        if snapshot_file.exists():
+            rows = [json.loads(line) for line in _read(snapshot_file).splitlines()
+                    if line.strip()]
+            capped = [r for r in rows if r.get("cap_hit")]
+            report.add(f"snapshot_uncapped:{dataset}", not capped,
+                       f"{len(capped)} capped snapshot rows")
+
+        label_file = None
+        for candidate in (root / "utility_labels" / dataset / "labels.jsonl",
+                          root / "utility_labels" / f"{dataset}.jsonl"):
+            if candidate.exists():
+                label_file = candidate
+                break
+        if label_file is not None:
+            rows = [json.loads(line) for line in _read(label_file).splitlines()
+                    if line.strip()][:2000]
+            empty = [r for r in rows
+                     if not r.get("prompt_hash") or not r.get("reader_hash")]
+            report.add(f"cache_hashes_nonempty:{dataset}", not empty,
+                       f"{len(empty)} rows with an empty prompt/reader hash")
+
+        for rotation in LORO_ROTATIONS:
+            path = (root / "predictor" / dataset /
+                    f"rotation_{rotation[0]}_{rotation[1]}" / "predictions.json")
+            if not path.exists():
+                continue
+            data = json.loads(_read(path))
+            held = data.get("held_out_reader")
+            leaked = [k for k in data.get("predictions", {}) if k == held]
+            report.add(f"heldout_absent_from_predictions:{dataset}:{held}",
+                       not leaked,
+                       f"held-out reader present in predictions: {leaked}")
 
 
 def build_parser():

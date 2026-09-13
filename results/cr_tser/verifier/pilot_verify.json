@@ -6,7 +6,7 @@
   {
    "check": "pilot_artifacts",
    "status": "pending",
-   "detail": "pilot not executed yet: E:\\Graduate_work_folder\\Graduate_Project_Worksapace\\UMER\\results\\cr_tser\\manifests\\event_split.json missing"
+   "detail": "pilot not executed yet: no E:\\Graduate_work_folder\\Graduate_Project_Worksapace\\UMER\\results\\cr_tser\\manifests/<dataset>/event_split.json"
   }
  ]
 }

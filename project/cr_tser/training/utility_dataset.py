@@ -1,4 +1,4 @@
-"""Utility training rows and grouped batching (plan §11, §14, §16).
+"""Utility training rows and grouped batching (plan §11, §14, §16, §20).
 
 Only **atomic (I1) removals** train the utility model (plan §11). Structured
 interventions exist to measure interaction and are handled by the evaluation
@@ -9,6 +9,11 @@ every labeled unit in it becomes a training row. A batch therefore groups
 complete snapshots until at least ``batch_size`` reader-intervention rows are
 collected, which keeps ``batch = 128 reader-intervention rows`` (plan §16) true
 while never re-encoding a snapshot twice inside one step.
+
+Leave-one-reader-out isolation is enforced **here**, at the entrance: a
+rotation builder filters the label rows down to the two training readers, and
+:func:`assert_only_readers` fails closed if a held-out reader ever survives
+into a dataset object.
 """
 from __future__ import annotations
 
@@ -16,17 +21,21 @@ import random
 
 import torch
 
+from ..intervention.evidence_units import evidence_key
 from ..models.utility_heads import SIGN_TO_INDEX
 
 
-def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices):
+def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices,
+               dataset: str = ""):
     """One snapshot's model input plus its labeled atomic unit rows.
 
     ``sem`` (N,384), ``structural`` (N,10), ``q`` (N,6). ``unit_rows`` entries
     carry ``unit_index`` (snapshot position), ``reader``, ``target`` (utility),
     ``sign`` (HELPFUL/NEUTRAL/HARMFUL) and correctness transitions.
+
+    Every row receives the canonical ``unit_key`` (dataset/event/cutoff/node)
+    so predictors, selectors and the verifier share one identity contract.
     """
-    n = len(snapshot["node_ids"])
     node_ids = snapshot["node_ids"]
     pos = {nid: i for i, nid in enumerate(node_ids)}
     parent_idx = []
@@ -38,9 +47,10 @@ def make_group(snapshot, sem, structural, q, unit_rows, cutoff, ctx_indices):
     for row in unit_rows:
         index = int(row["unit_index"])
         rows.append({**row,
-                     "unit_key": f"{snapshot['event_id']}:{cutoff}:"
-                                 f"{node_ids[index]}"})
+                     "unit_key": evidence_key(dataset, snapshot["event_id"],
+                                              cutoff, node_ids[index])})
     return {
+        "dataset": dataset,
         "event_id": snapshot["event_id"],
         "cutoff": snapshot["cutoff_minutes"],
         "sem": sem,
@@ -65,6 +75,40 @@ def row_sign_index(sign: str) -> int:
     return SIGN_TO_INDEX[sign]
 
 
+# --------------------------------------------------------------------------
+# Leave-one-reader-out isolation (plan §20, §33)
+# --------------------------------------------------------------------------
+def filter_rows_for_readers(rows, reader_keys, context: str = "rotation"):
+    """Split rows into ``(kept, dropped)`` by reader membership.
+
+    Rotation construction uses this to *explicitly* read only the two training
+    readers out of a three-reader cache; the returned ``dropped`` count is
+    reported so a silent, unintended drop would be visible.
+    """
+    allowed = set(reader_keys)
+    kept, dropped = [], []
+    for row in rows:
+        (kept if row.get("reader") in allowed else dropped).append(row)
+    return kept, dropped
+
+
+def assert_only_readers(rows, reader_keys, context: str = "dataset"):
+    """Fail closed if any row belongs to a reader outside ``reader_keys``."""
+    allowed = set(reader_keys)
+    offenders = sorted({row.get("reader") for row in rows
+                        if row.get("reader") not in allowed})
+    if offenders:
+        raise ValueError(
+            f"{context}: held-out reader labels present: {offenders}; "
+            "training data must contain only the rotation's training readers")
+
+
+def assert_groups_only_readers(groups, reader_keys, context="dataset"):
+    """Same check one level up, over every group's unit rows."""
+    rows = [row for g in groups for row in g["unit_rows"]]
+    assert_only_readers(rows, reader_keys, context=context)
+
+
 class UtilityDataset:
     """Snapshot-grouped utility rows for one reader-holdout rotation."""
 
@@ -73,6 +117,8 @@ class UtilityDataset:
         self.reader_keys = list(reader_keys)
         self.reader_index_map = dict(reader_index_map)
         self.n_rows = sum(len(g["unit_rows"]) for g in self.groups)
+        assert_groups_only_readers(self.groups, self.reader_keys,
+                                   context="UtilityDataset")
 
     def __len__(self):
         return len(self.groups)
@@ -93,7 +139,7 @@ class UtilityDataset:
             yield batch
 
     def reader_rows(self, groups):
-        """Flatten groups into model-ready rows for the two training readers."""
+        """Flatten groups into model-ready rows for the training readers."""
         out = []
         for g in groups:
             for row in g["unit_rows"]:

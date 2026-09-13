@@ -13,11 +13,34 @@ from __future__ import annotations
 import random
 from collections import defaultdict
 
-from ..config.pilot_config import PARTITION_SEED, SPLIT_SIZES, SPLIT_TOTAL
+from ..config.pilot_config import (CUTOFFS_MIN, PARTITION_SEED, SPLIT_SIZES,
+                                   SPLIT_TOTAL)
 
 
 class SplitError(ValueError):
     """Raised when the event pool cannot satisfy the frozen split sizes."""
+
+
+def viable_event_ids(events, cutoffs=CUTOFFS_MIN):
+    """Event ids that can produce at least one non-empty snapshot (plan §5).
+
+    This filter must run **before** the split: a label registry can reference
+    events whose released data yields nothing, and sampling from it first
+    would put unusable events into the pilot. Uses only true timestamps and the
+    causal rule; never row/node order.
+    """
+    viable = []
+    for event in events:
+        t0 = event["source_timestamp"]
+        for cutoff in cutoffs:
+            limit = t0 + int(cutoff) * 60
+            if any(node["node_id"] != event["source_id"]
+                   and node["status"] != "TEMPORAL_INVALID_NODE"
+                   and node["timestamp"] <= limit
+                   for node in event["nodes"]):
+                viable.append(event["event_id"])
+                break
+    return viable
 
 
 def _interleave_by_label(event_labels: dict, seed: int):

@@ -61,8 +61,34 @@ def evaluate_utility(y_true_sign, y_pred_sign, y_true_cont, y_pred_cont,
     }
 
 
-def gate_p3(b3: dict, baselines: dict) -> dict:
-    """P3: B3 Macro-F1 ≥ strongest B0/B1 + 0.02 and Spearman not worse (§25)."""
+def per_event_counts(events, y_true, y_pred) -> dict:
+    """``{event: {(gold, pred): n}}`` for the paired event bootstrap."""
+    out = {}
+    for event, gold, pred in zip(events, y_true, y_pred):
+        bucket = out.setdefault(event, {})
+        key = (gold, pred)
+        bucket[key] = bucket.get(key, 0) + 1
+    return out
+
+
+def merge_event_counts(counts_list) -> dict:
+    """Sum several per-event count maps onto a shared event index."""
+    merged = {}
+    for counts in counts_list:
+        for event, bucket in counts.items():
+            target = merged.setdefault(event, {})
+            for key, n in bucket.items():
+                target[key] = target.get(key, 0) + n
+    return merged
+
+
+def gate_p3(b3: dict, baselines: dict, delta_ci=None) -> dict:
+    """P3: B3 Macro-F1 ≥ strongest B0/B1 + 0.02 with bootstrap CI > 0 (§25).
+
+    ``delta_ci`` is the plan §24 event-level paired bootstrap of the Macro-F1
+    difference. The gate fails closed when it is missing: a point estimate
+    alone does not satisfy the pre-registered criterion.
+    """
     candidates = {name: m for name, m in baselines.items() if m is not None}
     if not candidates:
         return {"gate": "P3_structural_utility_increment", "pass": False,
@@ -72,17 +98,32 @@ def gate_p3(b3: dict, baselines: dict) -> dict:
     spearman_ok = not (b3["spearman"] == b3["spearman"]
                        and best["spearman"] == best["spearman"]) or \
         b3["spearman"] >= best["spearman"]
-    passed = delta >= P3_MACRO_F1_DELTA_MIN and spearman_ok
+    if delta_ci is None:
+        return {
+            "gate": "P3_structural_utility_increment", "pass": False,
+            "reason": "missing event-level paired bootstrap (plan §24)",
+            "strongest_baseline": best_name, "macro_f1_delta": delta,
+            "b3_macro_f1": b3["macro_f1"],
+            "baseline_macro_f1": best["macro_f1"],
+            "b3_spearman": b3["spearman"],
+            "baseline_spearman": best["spearman"],
+            "spearman_not_worse": bool(spearman_ok)}
+    ci_low = delta_ci.get("ci_low")
+    ci_ok = ci_low is not None and ci_low == ci_low and ci_low > 0.0
+    passed = delta >= P3_MACRO_F1_DELTA_MIN and spearman_ok and ci_ok
     return {
         "gate": "P3_structural_utility_increment",
         "strongest_baseline": best_name,
         "b3_macro_f1": b3["macro_f1"],
         "baseline_macro_f1": best["macro_f1"],
         "macro_f1_delta": delta,
+        "delta_ci_low": ci_low, "delta_ci_high": delta_ci.get("ci_high"),
+        "bootstrap_events": delta_ci.get("n_events"),
         "threshold": P3_MACRO_F1_DELTA_MIN,
         "b3_spearman": b3["spearman"],
         "baseline_spearman": best["spearman"],
         "spearman_not_worse": bool(spearman_ok),
+        "ci_lower_bound_positive": bool(ci_ok),
         "pass": bool(passed),
     }
 

@@ -63,19 +63,85 @@ def is_correct(out: dict, gold_label: int) -> bool:
 # --------------------------------------------------------------------------
 # Teacher-forced scoring against a real causal LM
 # --------------------------------------------------------------------------
+def tokenize_prompt(tokenizer, chat_text: str):
+    """Token ids of an already chat-formatted prompt.
+
+    ``apply_chat_template(..., tokenize=False)`` returns text that already
+    contains the template's special tokens; encoding it with the default
+    ``add_special_tokens=True`` would prepend a second BOS/EOS. The single
+    prompt tokenizer here always disables that so the ids match exactly what
+    the model receives.
+    """
+    return tokenizer(chat_text, add_special_tokens=False)["input_ids"]
+
+
+def tokenize_continuation(tokenizer, candidate: str):
+    """Token ids of the bare continuation (never special-token wrapped)."""
+    return tokenizer(candidate, add_special_tokens=False)["input_ids"]
+
+
+def continuation_boundary(tokenizer, chat_text: str, candidate: str):
+    """Verify the concatenation identity used by teacher forcing.
+
+    Returns ``{"prompt_tokens", "candidate_ids", "joined_ids",
+    "boundary_ok"}``. ``boundary_ok`` is True when
+    ``tokenize(prompt + candidate)`` equals ``tokenize(prompt) +
+    tokenize(candidate)``, i.e. the continuation starts exactly at the
+    prompt boundary with no re-tokenization or extra special tokens.
+    """
+    prompt_ids = tokenize_prompt(tokenizer, chat_text)
+    cand_ids = tokenize_continuation(tokenizer, candidate)
+    joined = tokenizer(chat_text + candidate, add_special_tokens=False)[
+        "input_ids"]
+    return {
+        "prompt_tokens": len(prompt_ids),
+        "candidate_ids": list(cand_ids),
+        "joined_tail": list(joined[len(prompt_ids):]),
+        "joined_len": len(joined),
+        "boundary_ok": list(joined) == list(prompt_ids) + list(cand_ids),
+    }
+
+
+def ab_token_report(tokenizer, user_prompt: str, candidates=CANDIDATES) -> dict:
+    """Explicit A/B tokenization record for the P0 sanity artifact (§30).
+
+    Records the prompt token count, each candidate's token ids and the
+    boundary check, so the plan's requirement that scoring is teacher-forced
+    (not generated text, not confidence) is auditable from the artifact.
+    """
+    from .base_reader import build_messages
+    chat = apply_chat(tokenizer, build_messages(user_prompt))
+    prompt_ids = tokenize_prompt(tokenizer, chat)
+    report = {
+        "prompt_tokens": len(prompt_ids),
+        "prompt_token_ids_head": list(prompt_ids[:16]),
+        "prompt_token_ids_tail": list(prompt_ids[-8:]),
+        "candidates": {},
+    }
+    for candidate in candidates:
+        info = continuation_boundary(tokenizer, chat, candidate)
+        info["score_mode"] = "teacher_forced_logprob_sum"
+        report["candidates"][candidate] = info
+    report["all_boundaries_ok"] = all(
+        c["boundary_ok"] for c in report["candidates"].values())
+    return report
+
+
 def sequence_logprob(model, tokenizer, chat_text: str, candidate: str,
                      device=None) -> float:
     """Sum of log p(candidate_k | prompt, candidate_<k) for one candidate.
 
     Only the candidate tokens are scored; the prompt is teacher-forced context.
-    A candidate is encoded without special tokens so the continuation is
-    exactly the model's next tokens.
+    Both the prompt and the continuation are encoded with
+    ``add_special_tokens=False`` because the chat template already carries the
+    special tokens — this is what prevents a duplicated BOS/EOS.
     """
     import torch
 
     device = device or next(model.parameters()).device
-    prompt_ids = tokenizer(chat_text, return_tensors="pt")["input_ids"].to(device)
-    cont = tokenizer(candidate, add_special_tokens=False)["input_ids"]
+    prompt_ids = torch.tensor([tokenize_prompt(tokenizer, chat_text)],
+                              dtype=torch.long, device=device)
+    cont = tokenize_continuation(tokenizer, candidate)
     if not cont:
         raise ValueError(f"candidate {candidate!r} tokenises to nothing")
     cont_ids = torch.tensor([cont], dtype=torch.long, device=device)

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 """Train the utility predictors under leave-one-reader-out (plan §16, §17, §20, §33).
 
-Steps 1–6 of the plan's training order: build snapshot groups and row-level
-baseline features from the cached utility labels, train B0 / B1 / B3 for each
-rotation with seeds 7319/7320/7321, early-stop on dev Spearman of the two
-**training** readers, freeze checkpoints and predict the evaluation segment.
+Steps 1–6 of the plan's training order. The leave-one-reader-out isolation is
+enforced at the **entrance**: every rotation filters the utility-label cache
+down to its two training readers before any dataset object exists, and
+``UtilityDataset`` itself fails closed if a held-out reader survives.
 
-The held-out reader's labels are never loaded here; the rotation's held-out key
-only appears in the output manifest.
+Evidence identity is the canonical ``dataset|event|cutoff|node`` key shared
+with the selector, the selection runner and the verifier.
 """
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ import cr_tser_common as common  # noqa: E402
 
 from cr_tser.config.pilot_config import (LORO_ROTATIONS, SIGN_CLASSES,  # noqa: E402
                                          TRAIN_SEEDS)
+from cr_tser.intervention.evidence_units import evidence_key  # noqa: E402
 from cr_tser.models.scalar_structure_baseline import (  # noqa: E402
     ScalarStructurePredictor, scalar_structure_features)
 from cr_tser.models.text_baseline import TextOnlyPredictor, text_features  # noqa: E402
@@ -33,13 +34,20 @@ from cr_tser.training.checkpointing import (  # noqa: E402
     save_baseline_checkpoint, save_checkpoint)
 from cr_tser.training.train_utility import (group_z, predict_baseline,  # noqa: E402
                                             train_baseline, train_rotation)
-from cr_tser.training.utility_dataset import UtilityDataset, make_group  # noqa: E402
+from cr_tser.training.utility_dataset import (UtilityDataset,  # noqa: E402
+                                              assert_groups_only_readers,
+                                              filter_rows_for_readers,
+                                              make_group)
+
+TRAIN_SEGMENTS = ("utility_train", "utility_dev", "utility_eval")
 
 
 def load_labels(out_root, dataset):
-    path = os.path.join(out_root, "utility_labels", f"{dataset}.jsonl")
+    path = os.path.join(out_root, "utility_labels", dataset, "labels.jsonl")
     if not os.path.exists(path):
-        raise FileNotFoundError(f"utility labels missing: {path}")
+        path = os.path.join(out_root, "utility_labels", f"{dataset}.jsonl")
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"utility labels missing for {dataset}")
     rows = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -48,31 +56,42 @@ def load_labels(out_root, dataset):
     return rows
 
 
-def build_groups(dataset, paths, out_root, segments):
-    """Snapshot groups for BiTTE plus row-level features for B0/B1."""
-    labels = load_labels(out_root, dataset)
-    by_snap = defaultdict(list)
-    for row in labels:
-        if row["intervention_type"] == "I1_atomic":
-            by_snap[(row["event_id"], row["cutoff"])].append(row)
-    split = json.loads((Path(out_root) / "manifests" /
+def build_snapshot_cache(dataset, paths, out_root, segments=TRAIN_SEGMENTS):
+    """One artifact pass over every labeled (event, cutoff)."""
+    split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
     wanted = set()
     for seg in segments:
         wanted |= set(split[seg])
-    needed = {eid for (eid, _c) in by_snap if eid in wanted}
     events = {e["event_id"]: e for e in common.load_dataset_events(dataset,
                                                                    paths)
-              if e["event_id"] in needed}
+              if e["event_id"] in wanted}
     encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
     tokenizer = common.canonical_tokenizer(paths.canonical_tokenizer)
+    cache = {}
+    for eid in sorted(events):
+        for cutoff in common.CUTOFFS_MIN:
+            art = common.snapshot_artifacts(events[eid], cutoff, encoder,
+                                            tokenizer)
+            if art["zero_reply"]:
+                continue
+            cache[(eid, cutoff)] = art
+    return cache
 
+
+def build_groups_from_cache(cache, labels, dataset):
+    """Snapshot groups for BiTTE plus row-level features for B0/B1.
+
+    ``labels`` must already be filtered to the rotation's training readers.
+    """
+    by_snap = defaultdict(list)
+    for row in labels:
+        if row["intervention_type"] == "I1_atomic":
+            by_snap[(row["event_id"], row["cutoff"])].append(row)
     groups, features = [], {}
     for (eid, cutoff) in sorted(by_snap):
-        if eid not in events:
-            continue
-        art = common.snapshot_artifacts(events[eid], cutoff, encoder, tokenizer)
-        if art["zero_reply"]:
+        art = cache.get((eid, cutoff))
+        if art is None:
             continue
         snap, units, src = art["snapshot"], art["units"], art["src"]
         pos = {nid: i for i, nid in enumerate(snap["node_ids"])}
@@ -91,7 +110,7 @@ def build_groups(dataset, paths, out_root, segments):
                 src["n_selected"], src["utilization"]))
             x0 = text_features(sem[i], source_emb, cosine, cost,
                                src["n_selected"], cutoff)
-            features[f"{eid}:{cutoff}:{nid}"] = {
+            features[evidence_key(dataset, eid, cutoff, nid)] = {
                 "x0": x0,
                 "x1": scalar_structure_features(x0, art["scalars"][i]),
             }
@@ -109,11 +128,11 @@ def build_groups(dataset, paths, out_root, segments):
             })
         if unit_rows:
             groups.append(make_group(snap, sem, struct, q, unit_rows, cutoff,
-                                     ctx_indices))
+                                     ctx_indices, dataset=dataset))
     return groups, features
 
 
-def _baseline_rows(labels, features, reader_keys, segments, split):
+def _baseline_rows(labels, features, reader_keys, split, segments):
     wanted = set()
     for seg in segments:
         wanted |= set(split[seg])
@@ -124,7 +143,8 @@ def _baseline_rows(labels, features, reader_keys, segments, split):
         if row["reader"] not in reader_keys or row["event_id"] not in wanted:
             continue
         nid = row["affected_reply_ids"][0]
-        key = f"{row['event_id']}:{row['cutoff']}:{nid}"
+        key = evidence_key(row.get("dataset", ""), row["event_id"],
+                           row["cutoff"], nid)
         if key not in features:
             continue
         rows.append({"key": key, "reader": row["reader"],
@@ -159,14 +179,14 @@ def _b3_predictions(runs, groups, reader_key, reader_index_map, device):
 
 def _shared_predictions(runs, groups, device):
     accum = {}
+    hi = SIGN_CLASSES.index("HELPFUL")
+    ha = SIGN_CLASSES.index("HARMFUL")
     for run in runs:
         with torch.no_grad():
             for g in groups:
                 z = group_z(run["bitte"], g, device)
                 mu, logits = run["model"].shared_only(z, 0)
                 probs = torch.softmax(logits, dim=-1)
-                hi = SIGN_CLASSES.index("HELPFUL")
-                ha = SIGN_CLASSES.index("HARMFUL")
                 for row, value, ph, pa in zip(
                         g["unit_rows"], mu.tolist(), probs[:, hi].tolist(),
                         probs[:, ha].tolist()):
@@ -178,23 +198,26 @@ def _shared_predictions(runs, groups, device):
             for k, vals in accum.items()}
 
 
-def run_rotation(dataset, paths, out_root, groups, features, labels, rotation,
-                 device):
+def run_rotation(dataset, out_root, cache, all_labels, rotation, device):
+    """One LORO rotation; held-out labels are filtered out at this entrance."""
     train_readers, held = list(rotation[:2]), rotation[2]
     reader_index_map = {k: i for i, k in enumerate(train_readers)}
-    split = json.loads((Path(out_root) / "manifests" /
+    train_labels, dropped = filter_rows_for_readers(all_labels, train_readers)
+    split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
+
+    groups, features = build_groups_from_cache(cache, train_labels, dataset)
+    assert_groups_only_readers(groups, train_readers, context="rotation groups")
+    assert all(row["reader"] != held for g in groups for row in g["unit_rows"])
 
     def subset(ids):
         return [g for g in groups if g["event_id"] in ids]
 
-    train_ids = set(split["utility_train"])
-    dev_ids = set(split["utility_dev"])
-    eval_ids = set(split["utility_eval"])
-    train_ds = UtilityDataset(subset(train_ids), train_readers,
-                              reader_index_map)
-    dev_ds = UtilityDataset(subset(dev_ids), train_readers, reader_index_map)
-    eval_groups = subset(eval_ids)
+    train_ds = UtilityDataset(subset(set(split["utility_train"])),
+                              train_readers, reader_index_map)
+    dev_ds = UtilityDataset(subset(set(split["utility_dev"])),
+                            train_readers, reader_index_map)
+    eval_groups = subset(set(split["utility_eval"]))
     trained = train_rotation(train_ds, dev_ds, train_readers, TRAIN_SEEDS,
                              device=device)
 
@@ -206,7 +229,8 @@ def run_rotation(dataset, paths, out_root, groups, features, labels, rotation,
         meta = {"seed": run["seed"], "best_epoch": run["best"]["epoch"],
                 "dev_metric": run["best"]["metric"],
                 "dev_score": run["best"]["score"],
-                "train_readers": train_readers, "held_out": held}
+                "train_readers": train_readers, "held_out": held,
+                "evidence_key_contract": "dataset|event|cutoff|node"}
         checkpoints.append(save_checkpoint(
             os.path.join(out_dir, f"b3_seed{run['seed']}.pt"), run["bitte"],
             run["model"], meta))
@@ -221,23 +245,22 @@ def run_rotation(dataset, paths, out_root, groups, features, labels, rotation,
     predictions["shared"] = _shared_predictions(trained["runs"], eval_groups,
                                                 device)
 
-    # ---- B0 / B1 baselines (plan §17) ----
-    train_rows = _baseline_rows(labels, features, train_readers,
-                                ("utility_train",), split)
-    dev_rows = _baseline_rows(labels, features, train_readers,
-                              ("utility_dev",), split)
-    eval_rows = _baseline_rows(labels, features, train_readers,
-                               ("utility_eval",), split)
+    train_rows = _baseline_rows(train_labels, features, train_readers, split,
+                                ("utility_train",))
+    dev_rows = _baseline_rows(train_labels, features, train_readers, split,
+                              ("utility_dev",))
+    eval_rows = _baseline_rows(train_labels, features, train_readers, split,
+                               ("utility_eval",))
     baseline_out = {}
     for name, factory, idx in (
             ("B0_text", lambda: TextOnlyPredictor(), "x0"),
             ("B1_scalar_structure", lambda: ScalarStructurePredictor(), "x1")):
-        rows_train = [{**r, "x": r[idx]} for r in train_rows]
-        rows_dev = [{**r, "x": r[idx]} for r in dev_rows]
-        rows_eval = [{**r, "x": r[idx]} for r in eval_rows]
-        runs = train_baseline(rows_train, rows_dev, factory, TRAIN_SEEDS,
-                              device=device, reader_keys=train_readers)
-        preds = predict_baseline(runs, rows_eval, device=device)
+        runs = train_baseline([{**r, "x": r[idx]} for r in train_rows],
+                              [{**r, "x": r[idx]} for r in dev_rows],
+                              factory, TRAIN_SEEDS, device=device,
+                              reader_keys=train_readers)
+        preds = predict_baseline(runs, [{**r, "x": r[idx]} for r in eval_rows],
+                                 device=device)
         baseline_out[name] = {
             "predictions": {k: {"utility": v} for k, v in preds.items()},
             "seeds": [r["seed"] for r in runs],
@@ -251,7 +274,9 @@ def run_rotation(dataset, paths, out_root, groups, features, labels, rotation,
     payload = {"dataset": dataset, "train_readers": train_readers,
                "held_out_reader": held, "checkpoints": checkpoints,
                "predictions": predictions, "baselines": baseline_out,
-               "n_eval_groups": len(eval_groups)}
+               "n_eval_groups": len(eval_groups),
+               "held_out_rows_filtered": len(dropped),
+               "evidence_key_contract": "dataset|event|cutoff|node"}
     common.write_json(os.path.join(out_dir, "predictions.json"), payload)
     return payload
 
@@ -270,16 +295,15 @@ def main(argv=None):
     out_root = args.out_root or os.path.join(paths.out_root or
                                              str(common.REPO / "results" /
                                                  "cr_tser"))
-    groups, features = build_groups(args.dataset, paths, out_root,
-                                    ("utility_train", "utility_dev",
-                                     "utility_eval"))
+    cache = build_snapshot_cache(args.dataset, paths, out_root)
     labels = load_labels(out_root, args.dataset)
-    print(f"groups: {len(groups)} | unit features: {len(features)}")
-    results = [run_rotation(args.dataset, paths, out_root, groups, features,
-                            labels, rotation, args.device)
+    print(f"snapshot cache: {len(cache)} | label rows: {len(labels)}")
+    results = [run_rotation(args.dataset, out_root, cache, labels, rotation,
+                            args.device)
                for rotation in LORO_ROTATIONS]
     print(json.dumps([{"train": r["train_readers"],
                        "held_out": r["held_out_reader"],
+                       "held_out_rows_filtered": r["held_out_rows_filtered"],
                        "checkpoints": len(r["checkpoints"])}
                       for r in results], indent=1))
     return 0

@@ -4,8 +4,13 @@
     Delta_edge        = E|I(parent-child)| - E|I(matched-nonadjacent)|
     Delta_subtree     = E|I(subtree)|      - E|I(matched-disconnected)|
 
-Interactions are magnitudes; the bootstrap is event-level and includes only
-events that carry a valid structured **and** matched control group (plan §24).
+The review fixes are structural, not cosmetic:
+
+* matching stays **reader-specific and snapshot-specific** — an I2 for reader
+  ``r`` at ``(event, cutoff)`` is paired only with the I3 for the same reader
+  and the same snapshot;
+* the event-level bootstrap (plan §24) resamples events, and every paired
+  snapshot of a sampled event moves with it, preserving multiplicity.
 """
 from __future__ import annotations
 
@@ -19,6 +24,9 @@ TYPE_EDGE_CONTROL = "I3"
 TYPE_SUBTREE = "I4"
 TYPE_SUBTREE_CONTROL = "I5"
 
+SLOTS = {TYPE_EDGE: "pc", TYPE_EDGE_CONTROL: "na",
+         TYPE_SUBTREE: "sub", TYPE_SUBTREE_CONTROL: "disc"}
+
 
 def interaction(utility_group: float, member_utilities) -> float:
     """``u_r(A) - sum u_r({e_i})`` (plan §12)."""
@@ -26,49 +34,59 @@ def interaction(utility_group: float, member_utilities) -> float:
 
 
 def build_event_payloads(records) -> dict:
-    """``{event: {pc, na, sub, disc}}`` of interaction magnitudes (plan §12)."""
+    """``{event: {slot: [(reader, snapshot_key, magnitude)]}}`` (plan §12).
+
+    Each record must expose ``event``, ``cutoff``, ``reader``, ``type``,
+    ``utility`` and ``members`` so the pairing can be reader- and
+    snapshot-specific.
+    """
     by = defaultdict(lambda: {"pc": [], "na": [], "sub": [], "disc": []})
     for r in records:
-        value = abs(interaction(r["utility"], r.get("members") or []))
-        slot = {TYPE_EDGE: "pc", TYPE_EDGE_CONTROL: "na",
-                TYPE_SUBTREE: "sub", TYPE_SUBTREE_CONTROL: "disc"}.get(r["type"])
-        if slot:
-            by[r["event"]][slot].append(value)
+        slot = SLOTS.get(r["type"])
+        if slot is None:
+            continue
+        magnitude = abs(interaction(r["utility"], r.get("members") or []))
+        snapshot = f"{r['event']}|{int(r['cutoff'])}"
+        by[r["event"]][slot].append((r["reader"], snapshot, magnitude))
     return dict(by)
 
 
-def _flatten(payloads, key):
-    out = []
-    for p in payloads:
-        out.extend(p[key])
-    return out
+def _pair_deltas(payloads, key_a, key_b):
+    """Per-(reader, snapshot) ``|I_a| - |I_b|`` for jointly present pairs."""
+    a_index = {(reader, snap): value for reader, snap, value in payloads[key_a]}
+    b_index = {(reader, snap): value for reader, snap, value in payloads[key_b]}
+    shared = sorted(set(a_index) & set(b_index))
+    return [a_index[k] - b_index[k] for k in shared]
 
 
-def delta_statistic(key_a, key_b):
+def _delta_statistic(key_a, key_b):
     def statistic(payloads):
-        a, b = _flatten(payloads, key_a), _flatten(payloads, key_b)
-        if not a or not b:
-            return float("nan")
-        return mean(a) - mean(b)
+        deltas = []
+        for payload in payloads:
+            deltas.extend(_pair_deltas(payload, key_a, key_b))
+        return mean(deltas)
     return statistic
 
 
 def structural_interaction_report(records, iterations=None, seed=None) -> dict:
-    """Edge and subtree interaction gaps with event bootstrap (plan §12)."""
+    """Edge and subtree interaction gaps with event-level bootstrap (plan §12)."""
     payloads = build_event_payloads(records)
     edge_events = {e: p for e, p in payloads.items()
                    if p["pc"] and p["na"]}
     subtree_events = {e: p for e, p in payloads.items()
                       if p["sub"] and p["disc"]}
-    out = {}
+    out = {"matching_unit": "reader_x_snapshot",
+           "bootstrap_unit": "event"}
     if edge_events:
         boot = paired_event_bootstrap(edge_events,
-                                      delta_statistic("pc", "na"),
+                                      _delta_statistic("pc", "na"),
                                       iterations=iterations, seed=seed)
-        out["edge"] = {"mean_parent_child": mean(_flatten(
-            list(edge_events.values()), "pc")),
-            "mean_matched_nonadjacent": mean(_flatten(
-                list(edge_events.values()), "na")),
+        deltas = []
+        for payload in edge_events.values():
+            deltas.extend(_pair_deltas(payload, "pc", "na"))
+        out["edge"] = {
+            "n_matched_pairs": len(deltas),
+            "mean_delta": mean(deltas),
             "delta": boot["observed"], "ci_low": boot["ci_low"],
             "ci_high": boot["ci_high"], "n_events": boot["n_events"]}
     else:
@@ -76,12 +94,13 @@ def structural_interaction_report(records, iterations=None, seed=None) -> dict:
                        "reason": "no event has both I2 and I3"}
     if subtree_events:
         boot = paired_event_bootstrap(subtree_events,
-                                      delta_statistic("sub", "disc"),
+                                      _delta_statistic("sub", "disc"),
                                       iterations=iterations, seed=seed)
-        out["subtree"] = {"mean_subtree": mean(_flatten(
-            list(subtree_events.values()), "sub")),
-            "mean_matched_disconnected": mean(_flatten(
-                list(subtree_events.values()), "disc")),
+        deltas = []
+        for payload in subtree_events.values():
+            deltas.extend(_pair_deltas(payload, "sub", "disc"))
+        out["subtree"] = {
+            "n_matched_pairs": len(deltas), "mean_delta": mean(deltas),
             "delta": boot["observed"], "ci_low": boot["ci_low"],
             "ci_high": boot["ci_high"], "n_events": boot["n_events"]}
     else:
@@ -101,6 +120,9 @@ def gate_p2(report) -> dict:
         "gate": "P2_structured_interaction",
         "edge_delta": delta, "edge_ci_low": low,
         "edge_threshold": P2_EDGE_DELTA_MIN,
+        "n_matched_pairs": edge.get("n_matched_pairs", 0),
+        "matching_unit": report.get("matching_unit"),
+        "bootstrap_unit": report.get("bootstrap_unit"),
         "pass": bool(passed),
         "subtree_confirmatory": report.get("subtree", {}),
     }

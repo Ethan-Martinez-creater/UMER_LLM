@@ -60,14 +60,19 @@ def test_gate_p2_exact_thresholds():
 
 
 def test_gate_p3_exact_thresholds():
+    ci = {"ci_low": 0.005, "ci_high": 0.03, "n_events": 10}
     b3 = {"macro_f1": 0.52, "spearman": 0.60}
     base = {"B0": {"macro_f1": 0.50, "spearman": 0.60}}
-    assert gate_p3(b3, base)["pass"] is True
+    assert gate_p3(b3, base, delta_ci=ci)["pass"] is True
+    # a point estimate without the event-level bootstrap fails closed
+    assert gate_p3(b3, base)["pass"] is False
+    # CI lower bound must be strictly positive
+    assert gate_p3(b3, base, delta_ci={"ci_low": 0.0, "ci_high": 0.1})["pass"]         is False
     lower = {"B0": {"macro_f1": 0.50, "spearman": 0.60},
              "B1": {"macro_f1": 0.55, "spearman": 0.60}}
-    assert gate_p3(b3, lower)["pass"] is False
+    assert gate_p3(b3, lower, delta_ci=ci)["pass"] is False
     worse_spearman = {"B0": {"macro_f1": 0.50, "spearman": 0.70}}
-    assert gate_p3(b3, worse_spearman)["pass"] is False
+    assert gate_p3(b3, worse_spearman, delta_ci=ci)["pass"] is False
 
 
 def test_gate_p4_exact_thresholds():
@@ -126,7 +131,8 @@ def test_gate_logic_exact():
                             {"disagreement": 0.0}]})
     p2 = gate_p2({"edge": {"delta": 0.02, "ci_low": 1e-12}})
     p3 = gate_p3({"macro_f1": 0.52, "spearman": 0.5},
-                 {"B0": {"macro_f1": 0.50, "spearman": 0.5}})
+                 {"B0": {"macro_f1": 0.50, "spearman": 0.5}},
+                 delta_ci={"ci_low": 0.004, "ci_high": 0.03, "n_events": 12})
     p4 = gate_p4([{"delta": 0.02, "token_target_ok": True},
                   {"delta": 0.015, "token_target_ok": True},
                   {"delta": -0.004, "token_target_ok": True}])

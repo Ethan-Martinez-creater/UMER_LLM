@@ -78,15 +78,22 @@ def reader_audit(paths, out_dir, dtype="bfloat16", device="cuda",
 
 
 def label_scoring_sanity(paths, n_examples: int = 20, device="cuda"):
-    """Score fixed prompts twice per reader; prediction identity must be 100%."""
-    from cr_tser.readers.base_reader import build_messages
-    from cr_tser.readers.sequence_scorer import apply_chat
+    """Score fixed prompts twice per reader; prediction identity must be 100%.
+
+    The artifact records the **explicit A/B tokenization** (prompt token count,
+    each candidate's token ids, and the continuation boundary check) so it is
+    auditable that scoring is teacher-forced candidate scoring and not
+    generated text or generated confidence (plan §9, §30).
+    """
     prompts = [f"Sanity example {i}: source post number {i}." for i in range(n_examples)]
     report = {}
     for key in READER_KEYS:
         spec = ReaderSpec(key, paths.reader_path(key), device=device)
         entry = {"model_id": READER_MODEL_IDS[key], "n_examples": n_examples,
-                 "identical_predictions": False, "loaded": False}
+                 "identical_predictions": False, "loaded": False,
+                 "scoring_mode": "teacher_forced_logprob_sum",
+                 "generated_text_used": False,
+                 "generated_confidence_used": False}
         if not spec.model_path or not os.path.isdir(spec.model_path):
             entry["status"] = "MODEL_PATH_MISSING"
             report[key] = entry
@@ -94,10 +101,19 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda"):
         try:
             reader = build_reader(key, spec)
             entry["loaded"] = True
+            entry["identity"] = reader.identity()
             first, second = [], []
-            for prompt in prompts:
-                first.append(reader.score_ab(prompt)["prediction"])
-                second.append(reader.score_ab(prompt)["prediction"])
+            tokenization = None
+            for i, prompt in enumerate(prompts):
+                out1 = reader.score_ab(prompt)
+                out2 = reader.score_ab(prompt)
+                first.append(out1["prediction"])
+                second.append(out2["prediction"])
+                if i == 0:
+                    tokenization = reader.ab_token_report(prompt)
+            entry["tokenization_example"] = tokenization
+            entry["boundaries_ok"] = bool(
+                tokenization and tokenization.get("all_boundaries_ok"))
             entry["identical_predictions"] = first == second
             entry["identity_rate"] = (sum(1 for a, b in zip(first, second)
                                           if a == b) / len(prompts))

@@ -100,21 +100,48 @@ def _file_sha256(path: str, head_bytes: int | None = None) -> str:
     return h.hexdigest()
 
 
-def model_weight_hash(model_path: str, head_bytes: int = 1 << 20) -> str:
-    """Hash of the weight files' identity (name, size, first MiB each).
+def _file_tail_sha256(path: str, tail_bytes: int) -> str:
+    h = hashlib.sha256()
+    size = os.path.getsize(path)
+    with open(path, "rb") as fh:
+        fh.seek(max(size - tail_bytes, 0))
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
-    Reading whole multi-GB checkpoints is unnecessary for detecting
-    substitution; the name/size/prefix triple is stable and cheap.
+
+_WEIGHT_SUFFIXES = (".safetensors", ".bin", ".pt")
+_IDENTITY_FILES = ("config.json", "model.safetensors.index.json",
+                   "pytorch_model.bin.index.json")
+
+
+def model_weight_hash(model_path: str, head_bytes: int = 1 << 20,
+                      tail_bytes: int = 1 << 20) -> str:
+    """Content identity of a frozen reader's weights.
+
+    Hashes every shard's name, size, first MiB and last MiB, plus the config
+    and shard-index files. A replaced or re-sharded checkpoint changes at
+    least one of those, so the verifier can detect substitution without
+    reading multi-GB files in full. Returns ``""`` when the path holds no
+    weight files, which the verifier treats as a failure.
     """
     if not os.path.isdir(model_path):
         return ""
+    names = [n for n in sorted(os.listdir(model_path))
+             if n.endswith(_WEIGHT_SUFFIXES) or n in _IDENTITY_FILES]
+    present = [n for n in names
+               if os.path.isfile(os.path.join(model_path, n))]
+    if not any(n.endswith(_WEIGHT_SUFFIXES) for n in present):
+        return ""
     h = hashlib.sha256()
-    for name in sorted(os.listdir(model_path)):
-        if not (name.endswith(".safetensors") or name.endswith(".bin")):
-            continue
+    for name in present:
         p = os.path.join(model_path, name)
-        h.update(f"{name}:{os.path.getsize(p)}:".encode())
+        size = os.path.getsize(p)
+        h.update(f"{name}:{size}:".encode())
         h.update(_file_sha256(p, head_bytes=head_bytes).encode())
+        if size > 2 * tail_bytes:
+            h.update(_file_tail_sha256(p, tail_bytes).encode())
+        h.update(b"\x00")
     return h.hexdigest()
 
 
@@ -189,6 +216,14 @@ class BaseReader:
     def score_ab(self, user_prompt: str) -> dict:
         from .sequence_scorer import ab_scores
         return ab_scores(self.candidate_logprobs(user_prompt))
+
+    def ab_token_report(self, user_prompt: str, candidates=CANDIDATES) -> dict:
+        """Explicit A/B tokenization/boundary record (plan §9, §30)."""
+        from .sequence_scorer import ab_token_report
+        if self.tokenizer is None:
+            raise RuntimeError(
+                "reader tokenizer is not loaded; call load() first")
+        return ab_token_report(self.tokenizer, user_prompt, candidates)
 
 
 def reader_specs(paths, dtype="bfloat16", device="cuda") -> dict:

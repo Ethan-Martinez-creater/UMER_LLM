@@ -15,7 +15,39 @@ from __future__ import annotations
 from tcdscr.llm import reader_prompt
 
 __all__ = ["build_evidence_units", "unit_token_cost", "canonical_token_costs",
-           "render_units_for_budget", "unit_index_map"]
+           "render_units_for_budget", "unit_index_map", "evidence_key",
+           "evidence_key_parts", "EVIDENCE_KEY_SEP", "AFFECTED_REPLY_JOIN"]
+
+#: Canonical, dataset-scoped evidence identity (plan §32 review fix).
+#: One atomic intervention is identified by
+#: ``dataset|event_id|cutoff|reply_node_id`` so different cutoffs (or datasets)
+#: of the same reply can never overwrite each other.
+EVIDENCE_KEY_SEP = "|"
+#: Multi-node structured groups keep a sorted, joined member list.
+AFFECTED_REPLY_JOIN = ","
+
+
+def evidence_key(dataset: str, event_id: str, cutoff, node_id: str) -> str:
+    """The single canonical evidence identity used by every stage."""
+    return EVIDENCE_KEY_SEP.join([
+        str(dataset), str(event_id), str(int(cutoff)), str(node_id)])
+
+
+def evidence_key_parts(key: str) -> dict:
+    """Inverse of :func:`evidence_key` (raises on a malformed key)."""
+    parts = str(key).split(EVIDENCE_KEY_SEP)
+    if len(parts) != 4:
+        raise ValueError(f"malformed evidence key {key!r}")
+    dataset, event_id, cutoff, node_id = parts
+    return {"dataset": dataset, "event_id": event_id,
+            "cutoff": int(cutoff), "node_id": node_id}
+
+
+def structured_group_key(dataset: str, event_id: str, cutoff,
+                         intervention_id: str) -> str:
+    """Identity of a structured intervention (I2–I5) for label caching."""
+    return EVIDENCE_KEY_SEP.join([str(dataset), str(event_id), str(int(cutoff)),
+                                  str(intervention_id)])
 
 
 def build_evidence_units(snapshot: dict) -> list:

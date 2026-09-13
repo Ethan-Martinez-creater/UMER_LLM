@@ -1,23 +1,34 @@
-"""Causal snapshot bridge (plan §3.1.B, §6).
+"""CR-TSER causal snapshots (plan §3.1.B, §6).
 
-Reuses the frozen TC-DSCR snapshot builder unchanged so CR-TSER inherits the
-verified causal rule
+CR-TSER keeps the TC-DSCR causal rule
 
     V_t = {v_i | timestamp_i <= t}
 
-with the dataset's **true** timestamps. The bridge adds the pilot-specific
-checks the plan requires: the three frozen cutoffs, a hard causal assertion
-that no future node ever enters a snapshot, and the §6 audit rule that
-zero-reply snapshots are retained for the audit but never generate
-intervention rows.
+but owns its own assembly so the retired ``MAX_NODES=1021`` cap can never
+truncate a snapshot. The cap existed for the 1021D positional adjacency
+signature (plan §3.2), which CR-TSER does not use; a Weibo22 snapshot may
+legitimately hold tens of thousands of nodes and every one of them must reach
+BiTTE.
+
+Only the *causal filtering* logic is shared with TC-DSCR (the
+``TEMPORAL_INVALID_NODE`` exclusion and the parent-before-child edge rule);
+the assembly itself is explicit and cap-free here.
 """
 from __future__ import annotations
+
+from collections import deque
 
 from ..config.pilot_config import CUTOFFS_MIN
 from .structural_stats import assert_frozen_cutoffs, assert_valid_cutoff
 
-__all__ = ["build_causal_snapshot", "assert_causal", "snapshot_has_replies",
-           "audit_snapshot", "cutoffs"]
+__all__ = ["build_causal_snapshot", "assert_causal", "reply_node_ids",
+           "snapshot_has_replies", "audit_snapshot", "cutoffs",
+           "MAX_NODES_CAP", "snapshot_node_count"]
+
+#: CR-TSER never caps a snapshot. Kept as an explicit, testable value.
+MAX_NODES_CAP = None
+
+_DEPTH_OVERFLOW_CONST = 19  # mirrors TC-DSCR's depth-norm denominator (9.2)
 
 
 def cutoffs():
@@ -26,13 +37,108 @@ def cutoffs():
     return tuple(CUTOFFS_MIN)
 
 
+def _deterministic_order(event: dict):
+    """Non-temporally-invalid nodes sorted by (timestamp, original_order).
+
+    ``original_order`` is a **tie-break only** — never a substitute for time
+    (plan §4.1).
+    """
+    nodes = [n for n in event["nodes"]
+             if n["status"] != "TEMPORAL_INVALID_NODE"]
+    nodes.sort(key=lambda n: (n["timestamp"], n["original_order"]))
+    return nodes
+
+
+def _bfs_depth(num_nodes, edges, source_pos):
+    depth = [-1] * num_nodes
+    depth[source_pos] = 0
+    children = [[] for _ in range(num_nodes)]
+    for child, parent in edges:
+        children[parent].append(child)
+    queue = deque([source_pos])
+    while queue:
+        node = queue.popleft()
+        for child in children[node]:
+            if depth[child] == -1:
+                depth[child] = depth[node] + 1
+                queue.append(child)
+    return depth
+
+
+def _assemble(event, cutoff_label, nodes, t0):
+    """Assemble one snapshot from an already-filtered, ordered node list.
+
+    There is **no** node cap: ``num_nodes_before_cap == num_nodes_after_cap``
+    and ``cap_hit`` is always ``False``.
+    """
+    num_nodes = len(nodes)
+    pos = {n["node_id"]: i for i, n in enumerate(nodes)}
+    source_id = event["source_id"]
+    if source_id not in pos:
+        raise ValueError(
+            f"event {event['event_id']}: source missing from snapshot; "
+            "causal snapshots always contain the source")
+
+    edges = []
+    parent_ids = []
+    for i, node in enumerate(nodes):
+        parent = None
+        if node["node_id"] != source_id and node["status"] == "VALID" \
+                and node["parent_id"] is not None \
+                and node["parent_id"] in pos:
+            parent_node = nodes[pos[node["parent_id"]]]
+            # §14.2: an edge may not exist before its parent does in causal time
+            if parent_node["timestamp"] <= node["timestamp"]:
+                edges.append([i, pos[node["parent_id"]]])
+                parent = node["parent_id"]
+        parent_ids.append(parent)
+
+    source_pos = pos[source_id]
+    depths = _bfs_depth(num_nodes, edges, source_pos)
+    return {
+        "event_id": event["event_id"],
+        "label": event["label"],
+        "cutoff_minutes": cutoff_label,
+        "source_id": source_id,
+        "node_ids": [n["node_id"] for n in nodes],
+        "texts": [n["text"] for n in nodes],
+        "timestamps": [n["timestamp"] for n in nodes],
+        "elapsed_seconds": [n["timestamp"] - t0 for n in nodes],
+        "parent_ids": parent_ids,
+        "edge_index": edges,
+        "depths": depths,
+        "statuses": [n["status"] for n in nodes],
+        "num_nodes_before_cap": num_nodes,
+        "num_nodes_after_cap": num_nodes,
+        "cap_hit": False,
+        "max_nodes_cap": MAX_NODES_CAP,
+        "max_depth": max(depths) if depths else 0,
+        "unreachable_count": sum(1 for i, d in enumerate(depths)
+                                 if d == -1 and i != source_pos),
+        "depth_overflow_count": sum(1 for d in depths
+                                    if d > _DEPTH_OVERFLOW_CONST),
+    }
+
+
 def build_causal_snapshot(event: dict, cutoff_minutes: int) -> dict:
-    """Causally visible nodes at ``source_timestamp + cutoff`` (plan §3.1.B)."""
+    """All causally visible nodes at ``source_timestamp + cutoff`` (no cap)."""
     assert_valid_cutoff(cutoff_minutes)
-    from tcdscr.data.snapshot_builder import build_snapshot
-    snap = build_snapshot(event, int(cutoff_minutes))
+    t0 = event["source_timestamp"]
+    cutoff_seconds = int(cutoff_minutes) * 60
+    nodes = [n for n in _deterministic_order(event)
+             if n["timestamp"] <= t0 + cutoff_seconds]
+    snap = _assemble(event, int(cutoff_minutes), nodes, t0)
     assert_causal(event, snap, cutoff_minutes)
     return snap
+
+
+def snapshot_node_count(event: dict, cutoff_minutes: int) -> int:
+    """Number of nodes a snapshot would contain — cheap, cap-free counter."""
+    t0 = event["source_timestamp"]
+    limit = t0 + int(cutoff_minutes) * 60
+    return sum(1 for n in event["nodes"]
+               if n["status"] != "TEMPORAL_INVALID_NODE"
+               and n["timestamp"] <= limit)
 
 
 def assert_causal(event: dict, snapshot: dict, cutoff_minutes: int) -> None:
@@ -46,6 +152,8 @@ def assert_causal(event: dict, snapshot: dict, cutoff_minutes: int) -> None:
                 f"{node_id!r} has timestamp {ts} > {limit} (future leak)")
     if event["source_id"] not in snapshot["node_ids"]:
         raise AssertionError("snapshot lost the source node")
+    if snapshot.get("cap_hit"):
+        raise AssertionError("CR-TSER snapshots must never be capped")
 
 
 def reply_node_ids(snapshot: dict) -> list:
@@ -67,8 +175,8 @@ def audit_snapshot(event: dict, snapshot: dict) -> dict:
         "num_nodes": len(snapshot["node_ids"]),
         "num_replies": len(replies),
         "zero_reply": len(replies) == 0,
-        "cap_hit": bool(snapshot.get("cap_hit")),
-        "num_nodes_before_cap": snapshot.get("num_nodes_before_cap"),
+        "cap_hit": False,
+        "max_nodes_cap": MAX_NODES_CAP,
         "max_depth": snapshot.get("max_depth"),
         "unreachable_count": snapshot.get("unreachable_count"),
         "edge_count": len(snapshot["edge_index"]),
