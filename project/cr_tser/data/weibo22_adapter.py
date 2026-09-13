@@ -327,87 +327,150 @@ def load_events(base_dir: str, normalized_paths=None) -> list:
         f"{audit.get('verdict_reason', '')}", audit=audit)
 
 
-REQUIRED_NORMALIZED_FIELDS = ("source_text", "reply_text", "source_timestamp",
-                              "node_timestamp", "parent_id", "label")
+REQUIRED_NORMALIZED_FIELDS = ("source_text", "reply_text",
+                              "source_timestamp", "node_timestamp",
+                              "parent_id", "label")
 
 
 def validate_normalized_export(path, limit=None) -> dict:
-    """Schema/field/temporal validation of a normalized Weibo22 export.
+    """Node/reply-level validation of a normalized Weibo22 export (plan §4.1, §30).
 
-    ``WEIBO22_TEMPORAL_READY`` requires **all** of: source text, reply text,
-    a source timestamp, a per-node timestamp on every node, resolvable parent
-    ids and labels. Anything less stays ``WEIBO22_TEMPORAL_UNAVAILABLE`` — no
-    pseudo-time is ever derived from row or node order (plan §4.1).
+    ``WEIBO22_TEMPORAL_READY`` requires, per event and per node rather than by
+    aggregate ratio:
+
+    * a non-empty source text and a real source timestamp;
+    * every node has a real timestamp (never ``original_order``), none negative;
+    * every reply/repost has a non-empty text and a parent id, and that parent
+      resolves to a node of the same event;
+    * unique non-empty node ids and a valid label;
+    * no child timestamp earlier than its parent.
+
+    ``original_order`` is never consulted, so it can never become pseudo-time.
     """
     try:
         events = load_normalized_event_files(path, limit=limit)
     except Exception as exc:  # schema violation -> explicit, not silent
         return {
-            "dataset": "Weibo22", "kind": "normalized_export",
-            "path": path, "verdict": VERDICT_UNAVAILABLE,
-            "valid": False, "errors": [f"{type(exc).__name__}: {exc}"],
+            "dataset": "Weibo22", "kind": "normalized_export", "path": path,
+            "verdict": VERDICT_UNAVAILABLE, "valid": False,
+            "errors": [f"{type(exc).__name__}: {exc}"],
             "coverage": {f: 0.0 for f in REQUIRED_NORMALIZED_FIELDS},
+            "original_order_used_as_time": False,
         }
     n_events = len(events)
     if n_events == 0:
         return {
-            "dataset": "Weibo22", "kind": "normalized_export",
-            "path": path, "verdict": VERDICT_UNAVAILABLE, "valid": False,
+            "dataset": "Weibo22", "kind": "normalized_export", "path": path,
+            "verdict": VERDICT_UNAVAILABLE, "valid": False,
             "errors": ["export contains no events"],
             "coverage": {f: 0.0 for f in REQUIRED_NORMALIZED_FIELDS},
+            "original_order_used_as_time": False,
         }
 
-    n_nodes = 0
+    label_counts = Counter()
+    n_nodes = n_replies = 0
     hits = {f: 0 for f in REQUIRED_NORMALIZED_FIELDS}
-    n_replies = 0
-    replies_with_parent = 0
+    duplicate_ids = 0
+    negative_timestamps = 0
+    child_before_parent = 0
+    unresolvable_parent = 0
+    missing_parent = 0
+    events_with_valid_reply = 0
+    viable = {"15": 0, "60": 0, "360": 0}
     for event in events:
-        source = next(n for n in event["nodes"]
-                      if n["node_id"] == event["source_id"])
+        label_counts[int(event["label"])] += 1
+        ids = [n["node_id"] for n in event["nodes"]]
+        if len(ids) != len(set(ids)):
+            duplicate_ids += len(ids) - len(set(ids))
+        by_id = {n["node_id"]: n for n in event["nodes"]}
+        source = by_id[event["source_id"]]
+        t0 = event["source_timestamp"]
         if str(source["text"]).strip():
             hits["source_text"] += 1
-        if isinstance(event.get("source_timestamp"), int):
+        if isinstance(t0, int) and t0 >= 0:
             hits["source_timestamp"] += 1
         if event.get("label") in (0, 1):
             hits["label"] += 1
-        replies = [n for n in event["nodes"]
-                   if n["node_id"] != event["source_id"]]
-        if replies:
-            n_replies += 1
-            if any(str(r["text"]).strip() for r in replies):
-                hits["reply_text"] += 1
+        valid_replies = []
         for node in event["nodes"]:
             n_nodes += 1
-            if isinstance(node.get("timestamp"), int):
+            ts = node.get("timestamp")
+            if isinstance(ts, int):
                 hits["node_timestamp"] += 1
-            if node["node_id"] != event["source_id"]:
-                if node.get("parent_id"):
-                    replies_with_parent += 1
-                    if node["parent_id"] in {x["node_id"]
-                                             for x in event["nodes"]}:
-                        hits["parent_id"] += 1
+                if ts < 0:
+                    negative_timestamps += 1
+            if node["node_id"] == event["source_id"]:
+                continue
+            n_replies += 1
+            parent = node.get("parent_id")
+            if not parent:
+                missing_parent += 1
+                continue
+            parent_node = by_id.get(parent)
+            if parent_node is None:
+                unresolvable_parent += 1
+                continue
+            hits["parent_id"] += 1
+            if parent_node["timestamp"] > node["timestamp"]:
+                child_before_parent += 1
+            if str(node["text"]).strip():
+                hits["reply_text"] += 1
+                valid_replies.append(node)
+        if valid_replies:
+            events_with_valid_reply += 1
+            for cutoff in (15, 60, 360):
+                limit_ts = t0 + cutoff * 60
+                if any(r["timestamp"] <= limit_ts and
+                       r["timestamp"] >= t0 for r in valid_replies):
+                    viable[str(cutoff)] += 1
 
     coverage = {
         "source_text": hits["source_text"] / n_events,
         "reply_text": hits["reply_text"] / max(n_replies, 1),
         "source_timestamp": hits["source_timestamp"] / n_events,
         "node_timestamp": hits["node_timestamp"] / max(n_nodes, 1),
-        "parent_id": hits["parent_id"] / max(replies_with_parent, 1),
+        # denominator is EVERY reply, so a missing parent lowers coverage
+        "parent_id": hits["parent_id"] / max(n_replies, 1),
         "label": hits["label"] / n_events,
     }
-    valid = all(coverage[f] >= 1.0 for f in ("source_text", "reply_text",
-                                             "source_timestamp",
-                                             "node_timestamp", "parent_id",
-                                             "label"))
+    valid = (all(coverage[f] >= 1.0 for f in REQUIRED_NORMALIZED_FIELDS)
+             and duplicate_ids == 0
+             and negative_timestamps == 0
+             and child_before_parent == 0)
     return {
         "dataset": "Weibo22", "kind": "normalized_export", "path": path,
-        "n_events": n_events, "n_nodes": n_nodes, "n_events_with_replies": n_replies,
+        "event_count": n_events,
+        "label_distribution": {str(k): v for k, v in sorted(label_counts.items())},
+        "source_text_coverage": coverage["source_text"],
+        "reply_text_coverage": coverage["reply_text"],
+        "timestamp_coverage": coverage["node_timestamp"],
+        "source_timestamp_coverage": coverage["source_timestamp"],
+        "parent_coverage": coverage["parent_id"],
+        "label_coverage": coverage["label"],
+        "duplicate_ids": duplicate_ids,
+        "negative_timestamps": negative_timestamps,
+        "child_earlier_than_parent_count": child_before_parent,
+        "unresolvable_parent_rate": unresolvable_parent / max(n_replies, 1),
+        "missing_parent_count": missing_parent,
+        "unresolvable_parent_count": unresolvable_parent,
+        "n_nodes": n_nodes,
+        "n_replies": n_replies,
+        "events_with_ge1_valid_reply": events_with_valid_reply,
+        "events_viable_15m": viable["15"],
+        "events_viable_1h": viable["60"],
+        "events_viable_6h": viable["360"],
+        "original_order_used_as_time": False,
         "coverage": coverage,
-        "verdict": VERDICT_READY if valid else VERDICT_UNAVAILABLE,
         "valid": bool(valid),
+        "verdict": VERDICT_READY if valid else VERDICT_UNAVAILABLE,
         "errors": [] if valid else [
-            f"{f}: coverage {coverage[f]:.4f}" for f in REQUIRED_NORMALIZED_FIELDS
-            if coverage[f] < 1.0],
+            f"{f}: coverage {coverage[f]:.6f}"
+            for f in REQUIRED_NORMALIZED_FIELDS if coverage[f] < 1.0]
+        + ([f"duplicate_ids={duplicate_ids}"] if duplicate_ids else [])
+        + ([f"negative_timestamps={negative_timestamps}"]
+           if negative_timestamps else [])
+        + ([f"child_earlier_than_parent={child_before_parent}"]
+           if child_before_parent else []),
     }
 
 

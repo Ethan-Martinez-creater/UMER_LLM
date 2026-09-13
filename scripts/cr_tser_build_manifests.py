@@ -70,11 +70,16 @@ def assert_manifests_mutable(out_root, dataset, force):
                 "rebuild (allowed only while no utility labels exist).")
 
 
-def build_manifests(dataset, paths, out_root, normalized_paths=None,
-                    force=False):
+def build_manifests(dataset, paths, out_root, force=False):
+    """Manifest build; the source of record is the effective paths only.
+
+    There is deliberately no ``--normalized-events`` override: the same
+    ``CRTSER_WEIBO22_NORMALIZED`` path drives event loading, validation, the
+    fingerprint and ``source.json`` (plan §31 review fix).
+    """
     assert_manifests_mutable(out_root, dataset, force)
 
-    events = common.load_dataset_events(dataset, paths, normalized_paths)
+    events = common.load_dataset_events(dataset, paths)
     # ---- viability filtering happens BEFORE any split (plan §5) ----
     viable = set(viable_event_ids(events, CUTOFFS_MIN))
     registry = {e["event_id"]: int(e["label"]) for e in events
@@ -190,8 +195,6 @@ def build_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", choices=("pheme", "weibo22"), required=True)
     ap.add_argument("--out-root", default=None)
-    ap.add_argument("--normalized-events", default=None,
-                    help="Weibo22 normalized JSONL export (timestamps)")
     ap.add_argument("--force", action="store_true",
                     help="pre-freeze rebuild only; refused once labels exist")
     ap.add_argument("--smoke", action="store_true",
@@ -207,9 +210,7 @@ def main(argv=None):
                                                  "cr_tser"))
     if args.smoke:
         out_root = common.smoke_root(out_root)
-    result = build_manifests(args.dataset, paths, out_root,
-                             normalized_paths=args.normalized_events,
-                             force=args.force)
+    result = build_manifests(args.dataset, paths, out_root, force=args.force)
     print(json.dumps(result, indent=1))
     return 0
 

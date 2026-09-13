@@ -54,7 +54,8 @@ def fingerprint_path(path: str) -> dict:
     h = hashlib.sha256()
     total = 0
     count = 0
-    for root, _dirs, files in os.walk(path):
+    for root, dirs, files in os.walk(path):
+        dirs.sort()  # deterministic traversal: subdirectories in sorted order
         for name in sorted(files):
             full = os.path.join(root, name)
             rel = os.path.relpath(full, path)

@@ -11,8 +11,13 @@ enforces every boundary the plan states:
 * never a primary gate input — B2/S6 are excluded from the Weibo22 gates by
   the pilot aggregator, not by this module.
 
-The heavy lifting (checkpoint loading, feature construction) stays in the
-TC-DSCR scripts; this module only owns the interface and the guards.
+S6 uses the **frozen StaticUtilitySelector** exactly as the TC-DSCR E2/E3
+pipeline does::
+
+    u_i = selector(h_i, event_repr, semantic_i, semantic_source, struct3_i)
+
+The Proxy classifier is the separate legacy *classification* diagnostic used
+by B2; it must never substitute for the selector's utility ranking.
 """
 from __future__ import annotations
 
@@ -21,6 +26,10 @@ LEGACY_DATASET = "pheme"
 
 class LegacyNotPermitted(RuntimeError):
     """Raised when the legacy TC-DSCR utility would be used off-label."""
+
+
+class LegacyUnavailable(RuntimeError):
+    """Raised when the frozen PHEME legacy checkpoint cannot be located."""
 
 
 def assert_legacy_dataset(dataset: str) -> None:
@@ -36,18 +45,24 @@ class LegacyPHEMEUtility:
     """Read-only wrapper around the frozen TC-DSCR Static Utility.
 
     ``encoder`` / ``selector`` / ``proxy`` are the frozen TC-DSCR modules
-    (e.g. loaded with ``tcdscr_run_e3.load_frozen_components``). Nothing here
-    trains them; :meth:`score` runs under ``torch.no_grad`` and the modules
-    are put in eval mode at construction.
+    (loaded with ``tcdscr_run_e3.load_frozen_components``). Nothing here
+    trains them: every entry point runs under ``torch.no_grad`` and the
+    modules are put in eval mode at construction.
     """
 
-    def __init__(self, dataset: str, encoder, proxy, device: str = "cpu"):
+    def __init__(self, dataset: str, encoder, selector, proxy=None,
+                 device: str = "cpu"):
         assert_legacy_dataset(dataset)
+        if selector is None:
+            raise LegacyUnavailable(
+                "the frozen TC-DSCR StaticUtilitySelector is required for S6; "
+                "it cannot be replaced by the Proxy classifier (plan §22)")
         self.dataset = dataset
         self.encoder = encoder
+        self.selector = selector
         self.proxy = proxy
         self.device = device
-        for module in (self.encoder, self.proxy):
+        for module in (self.encoder, self.selector, self.proxy):
             if module is not None and hasattr(module, "eval"):
                 module.eval()
                 for param in module.parameters():
@@ -56,81 +71,84 @@ class LegacyPHEMEUtility:
     @classmethod
     def from_tcdscr(cls, dataset, e2_root, fold, seed, device="cpu",
                     e1_root=None):
-        """Load the frozen PHEME static components from TC-DSCR artifacts.
-
-        Import is local so this module stays importable without the TC-DSCR
-        scripts on the path (tests use the guard, not the loader).
-        """
+        """Load the frozen PHEME static components from TC-DSCR artifacts."""
         assert_legacy_dataset(dataset)
         from tcdscr_run_e3 import load_frozen_components  # noqa: PLC0415
         e1_root = e1_root or "/data/jyz/next/llm/results/tcdscr/formal_e1"
-        encoder, _selector, proxy, checksums = load_frozen_components(
+        encoder, selector, proxy, checksums = load_frozen_components(
             dataset, fold, seed, e1_root, e2_root, device)
-        instance = cls(dataset, encoder, proxy, device=device)
+        instance = cls(dataset, encoder, selector, proxy, device=device)
         instance.checksums = checksums
         return instance
 
-    def score(self, h_source, sel_repr):
-        """Static utility score for one snapshot feature pair (no training)."""
+    # -- S6: frozen Static Utility -----------------------------------------
+    def per_unit_scores(self, node_repr, event_repr, sem, struct3, source_pos,
+                        candidate_indices):
+        """Frozen ``u_i`` for every candidate, via the real selector path.
+
+        Mirrors TC-DSCR's E2/E3 call
+        ``selector(h_cand, event_repr, sem[cand], sem[src], struct3[cand])``.
+        """
+        import torch
+        indices = [int(i) for i in candidate_indices
+                   if int(i) != int(source_pos)]
+        if not indices:
+            return {}
+        idx = torch.tensor(indices, dtype=torch.long,
+                           device=getattr(node_repr, "device", self.device))
+        with torch.no_grad():
+            utility = self.selector(node_repr[idx], event_repr, sem[idx],
+                                    sem[int(source_pos)], struct3[idx])
+        values = utility.tolist() if hasattr(utility, "tolist") else list(utility)
+        return {index: float(value) for index, value in zip(indices, values)}
+
+    def score_items(self, items, device=None):
+        """Run the frozen encoder + selector over light items (S6 scores).
+
+        Returns ``[{node_id: u_i}]`` covering every non-source node.
+        """
+        device = device or self.device
+        from tcdscr_run_e2 import encoder_forward_batch
+        outs = encoder_forward_batch(self.encoder, list(items), device)
+        results = []
+        for item, (node_repr, event_repr, _logits) in zip(items, outs):
+            candidates = [i for i in range(len(item["node_ids"]))
+                          if i != item["source_pos"]]
+            by_index = self.per_unit_scores(
+                node_repr, event_repr, item["sem"].to(node_repr.device),
+                item["summary"].to(node_repr.device), item["source_pos"],
+                candidates)
+            results.append({item["node_ids"][i]: value
+                            for i, value in by_index.items()})
+        return results
+
+    # -- B2: legacy classification diagnostic (Proxy, never used for S6) ----
+    def static_classification(self, h_source, sel_repr):
+        """Frozen Proxy classification — B2 continuity diagnostic only."""
         import torch
         from tcdscr.models.selector_proxy import classify_selected
+        if self.proxy is None:
+            raise LegacyUnavailable("Proxy classifier not loaded (B2 only)")
         with torch.no_grad():
             if sel_repr is None:
                 z_sel = torch.zeros(768, device=self.device)
                 return self.proxy.classify(h_source, z_sel)
             return classify_selected(self.proxy, h_source, sel_repr)
 
-    def per_unit_scores(self, node_repr, source_pos, candidate_indices):
-        """Legacy static-utility score for **every** S6 candidate (plan §22).
-
-        Each candidate is classified on its own through the real frozen path
-        ``encoder -> [h_source ; h_i] -> proxy.head`` and scored by the
-        RUMOR-vs-NON_RUMOR logit difference, which gives a reader-independent,
-        gold-independent legacy utility for the S6 packing.
-        """
-        import torch
-        from tcdscr.models.selector_proxy import classify_selected
-        h_source = node_repr[source_pos]
-        out = {}
-        with torch.no_grad():
-            for i in candidate_indices:
-                if int(i) == int(source_pos):
-                    continue
-                logits = classify_selected(self.proxy, h_source,
-                                           node_repr[i:i + 1])
-                out[int(i)] = float(logits[0, 0] - logits[0, 1])
-        return out
-
-    def score_items(self, items, device=None):
-        """Run the frozen encoder+proxy over light items (real feature path).
-
-        Returns ``[{node_id: legacy_score}]`` — one dict per item, covering all
-        non-source nodes of the snapshot. Requires the TC-DSCR scripts on the
-        path; never touches gold labels and never trains.
-        """
-        device = device or self.device
-        from tcdscr_run_e2 import encoder_forward_batch
-        outs = encoder_forward_batch(self.encoder, list(items), device)
-        results = []
-        for item, (node_repr, _event_repr, _logits) in zip(items, outs):
-            candidates = [i for i in range(len(item["node_ids"]))
-                          if i != item["source_pos"]]
-            by_index = self.per_unit_scores(node_repr, item["source_pos"],
-                                            candidates)
-            results.append({item["node_ids"][i]: value
-                            for i, value in by_index.items()})
-        return results
-
     def b2_surface(self, h_source, sel_repr):
-        """B2 continuity diagnostic: the frozen static classification surface."""
-        logits = self.score(h_source, sel_repr)
+        """B2 artifact surface: static classification, explicitly diagnostic."""
         import torch
-        probs = torch.softmax(logits.float(), dim=-1).tolist()
-        return {"static_logits": logits.tolist()[0] if logits.dim() == 2
-                else logits.tolist(),
-                "p_rumor": probs[0][0] if isinstance(probs[0], list) else probs[0],
-                "diagnostic_only": True,
-                "participates_in_primary_gate": False}
+        logits = self.static_classification(h_source, sel_repr)
+        probs = torch.softmax(logits.float(), dim=-1)
+        return {
+            "static_logits": logits.tolist(),
+            "p_rumor": float(probs.reshape(-1)[0]),
+            "p_nonrumor": float(probs.reshape(-1)[1]),
+            "diagnostic_only": True,
+            "participates_in_primary_gate": False,
+            "utility_definition": "StaticUtilitySelector(h, event_repr, sem, "
+                                  "sem_src, struct3)",
+        }
 
     def fingerprint(self) -> dict:
         """Identity of the frozen components, for the verifier."""
@@ -139,6 +157,9 @@ class LegacyPHEMEUtility:
             "dataset": self.dataset,
             "mode": "inference_only",
             "trainable_parameters": 0,
+            "selector_loaded": self.selector is not None,
+            "proxy_loaded": self.proxy is not None,
+            "s6_score_source": "StaticUtilitySelector",
             "selector_checkpoint_sha": checksums.get("selector_checkpoint_sha"),
             "encoder_checkpoint_sha": checksums.get("e2_manifest_encoder_sha"),
         }
@@ -147,10 +168,6 @@ class LegacyPHEMEUtility:
 def legacy_arm_enabled(dataset: str) -> bool:
     """S6 / B2 are enabled only for PHEME (plan §22 S6, §25)."""
     return dataset == LEGACY_DATASET
-
-
-class LegacyUnavailable(RuntimeError):
-    """Raised when the frozen PHEME legacy checkpoint cannot be located."""
 
 
 def build_legacy_scorer(dataset: str, device: str = "cpu"):

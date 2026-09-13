@@ -153,11 +153,13 @@ def _counts_by_event(rows, keys):
 
 
 def utility_prediction_gate(out_root, dataset, split):
-    """P3 over **all** LORO rotations with an event-level paired bootstrap.
+    """P3 over **exactly three** LORO rotations (plan §20, §24, §25).
 
-    Every model (B3, B0, B1) contributes its own sign-head prediction, its own
-    three-class probabilities and its own continuous utility; the bootstrap
-    pairs identical ``(event, key, reader)`` rows and resamples events.
+    Rotation identity is part of the observation key, so the same reader
+    appearing in two rotations contributes two independent predictions rather
+    than overwriting the first. A missing rotation fails closed. The bootstrap
+    resamples events; every rotation, reader, cutoff and intervention row of a
+    sampled event moves together and multiplicity is preserved.
     """
     labels = _read_jsonl(labels_path(out_root, dataset))
     eval_ids = set(split["utility_eval"])
@@ -170,18 +172,32 @@ def utility_prediction_gate(out_root, dataset, split):
         key = evidence_key(dataset, row["event_id"], row["cutoff"], node)
         targets[(key, row["reader"])] = row
 
-    models = ("B3_text_graph", "B0_text", "B1_scalar_structure")
-    collected = {m: {} for m in models}
-    rotations_used = []
+    rotation_payloads, missing = [], []
     for rotation in LORO_ROTATIONS:
         train_readers = list(rotation[:2])
+        rid = f"{train_readers[0]}+{train_readers[1]}"
         payload = _read_json(os.path.join(
             out_root, "predictor", dataset,
             f"rotation_{train_readers[0]}_{train_readers[1]}",
             "predictions.json"))
         if payload is None:
-            continue
-        rotations_used.append(f"{train_readers[0]}+{train_readers[1]}")
+            missing.append(rid)
+        else:
+            rotation_payloads.append((rid, payload))
+    if missing or len(rotation_payloads) != len(LORO_ROTATIONS):
+        return {
+            "gate": "P3_structural_utility_increment", "pass": False,
+            "reason": "incomplete LORO predictor artifacts",
+            "rotations_present": [r[0] for r in rotation_payloads],
+            "rotations_missing": missing,
+            "rotations_required": len(LORO_ROTATIONS),
+            "primary_dataset": dataset,
+        }
+
+    models = ("B3_text_graph", "B0_text", "B1_scalar_structure")
+    collected = {m: {} for m in models}
+    for rotation_id, payload in rotation_payloads:
+        train_readers = rotation_id.split("+")
         b3_by_reader = payload.get("predictions", {})
         baselines = payload.get("baselines", {})
         for reader_key in train_readers:
@@ -194,19 +210,20 @@ def utility_prediction_gate(out_root, dataset, split):
                 active = (abs(gold_cont) >= 0.05
                           or bool(target["correctness_before"])
                           != bool(target["correctness_after"]))
+                # observation identity keeps the rotation, so a reader that
+                # appears in two rotations never overwrites itself
+                observation = (event, rotation_id, key, reader_key)
                 if key in b3_pred:
-                    collected["B3_text_graph"][(event, key, reader_key)] = \
-                        _pred_record(target["sign"], gold_cont,
-                                     b3_pred[key], active)
+                    collected["B3_text_graph"][observation] = _pred_record(
+                        target["sign"], gold_cont, b3_pred[key], active)
                 for name in ("B0_text", "B1_scalar_structure"):
                     base_pred = baselines.get(name, {}).get("predictions", {})
                     if key in base_pred:
-                        collected[name][(event, key, reader_key)] = \
-                            _pred_record(target["sign"], gold_cont,
-                                         base_pred[key], active)
+                        collected[name][observation] = _pred_record(
+                            target["sign"], gold_cont, base_pred[key], active)
+
     if not collected["B3_text_graph"]:
         return None
-
     metrics = {}
     for name, rows in collected.items():
         if not rows:
@@ -233,10 +250,13 @@ def utility_prediction_gate(out_root, dataset, split):
         _counts_by_event(collected[best_name], shared))
     gate = gate_p3(metrics["B3_text_graph"], baselines_metrics,
                    delta_ci=delta_ci)
-    gate["rotations_used"] = rotations_used
+    gate["rotations_used"] = [r[0] for r in rotation_payloads]
+    gate["rotations_complete"] = len(rotation_payloads) == len(LORO_ROTATIONS)
+    gate["n_observations"] = len(collected["B3_text_graph"])
     gate["primary_dataset"] = dataset
-    gate["paired_keys"] = len(shared)
+    gate["paired_observations"] = len(shared)
     gate["per_model_metrics"] = metrics
+    gate["observation_key"] = "event|rotation|evidence|reader"
     gate["prediction_source"] = "auxiliary sign head (argmax) + utility head"
     return gate
 

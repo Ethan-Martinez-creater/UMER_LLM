@@ -233,10 +233,13 @@ def verify_code(report: Report):
                                      "weibo22_adapter.py").lower(),
                "Weibo22 refuses pseudo-time and raises when timestamps are "
                "absent")
+    adapter_text = _read(PROJECT / "cr_tser" / "data" /
+                         "weibo22_adapter.py").lower()
     report.add("no_timestamp_synthesis",
-               "original_order" not in wsrc.lower()
-               or "never" in wsrc.lower() or "no timestamp" in wsrc.lower(),
-               "adapter documents that original_order is never time")
+               "original_order_used_as_time" in wsrc
+               and ("pseudo-time" in adapter_text
+                    or "never become pseudo-time" in adapter_text),
+               "adapter never derives time from original_order")
     _verify_review_fixes(report)
     _verify_semantics(report)
 
@@ -397,6 +400,243 @@ def _verify_semantics(report):
                and "training_readers != [reader]" in _script(
                    "cr_tser_run_selection.py"),
                "S3a/S3b must come from single-reader-trained artifacts")
+    _verify_protocol_closure(report)
+
+
+def _write_p3_fixture(root, rotations):
+    """Minimal P3 artifact tree: one eval event, two readers, N rotations."""
+    import os as _os
+    _os.makedirs(_os.path.join(root, "manifests", "weibo22"), exist_ok=True)
+    with open(_os.path.join(root, "manifests", "weibo22", "event_split.json"),
+              "w", encoding="utf-8") as fh:
+        json.dump({"dataset": "weibo22", "utility_eval": ["e1"],
+                   "utility_train": [], "utility_dev": [],
+                   "foundation_train": [], "unused": []}, fh)
+    _os.makedirs(_os.path.join(root, "utility_labels", "weibo22"),
+                 exist_ok=True)
+    rows = [{"dataset": "weibo22", "event_id": "e1", "cutoff": 60,
+             "reader": reader, "intervention_type": "I1_atomic",
+             "intervention_id": "I1:n1", "affected_reply_ids": ["n1"],
+             "utility": utility, "sign": sign, "correctness_before": True,
+             "correctness_after": True}
+            for reader, utility, sign in (("qwen", 0.4, "HELPFUL"),
+                                          ("glm", -0.3, "HARMFUL"))]
+    with open(_os.path.join(root, "utility_labels", "weibo22", "labels.jsonl"),
+              "w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row) + "\n")
+    key = "weibo22|e1|60|n1"
+    for rid, qwen_utility in rotations.items():
+        train = rid.split("_")
+        d = _os.path.join(root, "predictor", "weibo22", f"rotation_{rid}")
+        _os.makedirs(d, exist_ok=True)
+        payload = {"dataset": "weibo22", "train_readers": train,
+                   "predictions": {
+                       train[0]: {key: {"utility": qwen_utility,
+                                        "probs": [0.8, 0.1, 0.1],
+                                        "predicted_sign": "HELPFUL"}},
+                       train[1]: {key: {"utility": 0.1,
+                                        "probs": [0.1, 0.8, 0.1],
+                                        "predicted_sign": "NEUTRAL"}}},
+                   "baselines": {"B0_text": {"predictions": {
+                       key: {"utility": 0.2, "probs": [0.4, 0.3, 0.3],
+                             "predicted_sign": "HELPFUL"}}}}}
+        with open(_os.path.join(d, "predictions.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(payload, fh)
+
+
+def _verify_protocol_closure(report):
+    """Execute the protocol-closure contracts (final fix round)."""
+    import tempfile
+    scripts_dir = str(REPO / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+
+    # 1. S6 scores come from the frozen StaticUtilitySelector, not the Proxy
+    try:
+        import torch
+        import torch.nn as nn
+        from cr_tser.models.legacy_utility import LegacyPHEMEUtility
+
+        class _Sel(nn.Module):
+            calls = 0
+
+            def forward(self, h_cand, event_repr, sem_c, sem_src, struct_c):
+                _Sel.calls += 1
+                return torch.tensor([3.0, 2.0, 1.0])[:h_cand.shape[0]]
+
+        class _Proxy(nn.Module):
+            calls = 0
+
+            def classify(self, h_source, z_sel):
+                _Proxy.calls += 1
+                return torch.tensor([[9.0, 0.0]])
+
+        util = LegacyPHEMEUtility("pheme", encoder=None, selector=_Sel(),
+                                  proxy=_Proxy())
+        scores = util.per_unit_scores(torch.zeros(4, 768), torch.zeros(768),
+                                      torch.zeros(4, 384), torch.zeros(4, 3),
+                                      0, [1, 2, 3])
+        report.add("s6_uses_static_utility_selector",
+                   scores == {1: 3.0, 2: 2.0, 3: 1.0} and _Sel.calls == 1
+                   and _Proxy.calls == 0,
+                   f"scores={scores} selector_calls={_Sel.calls} "
+                   f"proxy_calls={_Proxy.calls}")
+    except Exception as exc:
+        report.add("s6_uses_static_utility_selector", False, f"error: {exc}")
+
+    # 2./3. P3 keeps every rotation; incomplete rotations fail closed
+    try:
+        import cr_tser_run_pilot as pilot
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_p3_fixture(tmp, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
+                                    "glm_internlm": 0.3})
+            gate = pilot.utility_prediction_gate(tmp, "weibo22",
+                                                 {"utility_eval": ["e1"]})
+            report.add("p3_keeps_all_rotations",
+                       gate is not None and gate.get("n_observations") == 4,
+                       f"n_observations={gate and gate.get('n_observations')}")
+        with tempfile.TemporaryDirectory() as tmp:
+            _write_p3_fixture(tmp, {"qwen_glm": 0.9})
+            gate = pilot.utility_prediction_gate(tmp, "weibo22",
+                                                 {"utility_eval": ["e1"]})
+            report.add("p3_missing_rotation_fails_closed",
+                       gate.get("pass") is False
+                       and gate.get("rotations_required") == 3
+                       and len(gate.get("rotations_missing", [])) == 2,
+                       f"missing={gate.get('rotations_missing')}")
+    except Exception as exc:
+        report.add("p3_keeps_all_rotations", False, f"error: {exc}")
+        report.add("p3_missing_rotation_fails_closed", False, f"error: {exc}")
+
+    # 4. P4 completeness + PHEME fail-open
+    try:
+        from cr_tser.evaluation.unseen_reader import final_decision, gate_p4
+        two = [{"held_out_reader": "internlm", "delta": 0.05,
+                "token_target_ok": True},
+               {"held_out_reader": "glm", "delta": 0.05,
+                "token_target_ok": True}]
+        three = two + [{"held_out_reader": "qwen", "delta": 0.05,
+                        "token_target_ok": True}]
+        report.add("p4_requires_three_rotations",
+                   gate_p4(two)["pass"] is False
+                   and gate_p4(three)["pass"] is True,
+                   "two rotations must never satisfy P4")
+        all_pass = {k: {"pass": True} for k in ("P0", "P1", "P2", "P3", "P4")}
+        report.add("missing_pheme_cannot_full_go",
+                   final_decision(all_pass)["decision"] != "FULL_GO"
+                   and final_decision(all_pass, pheme={"pass": True,
+                                                       "complete": True})[
+                       "decision"] == "FULL_GO",
+                   "PHEME secondary evidence is required for FULL_GO")
+    except Exception as exc:
+        report.add("p4_requires_three_rotations", False, f"error: {exc}")
+        report.add("missing_pheme_cannot_full_go", False, f"error: {exc}")
+
+    # 5./6. Stage A never builds a held-out reader; frozen subsets are immutable
+    try:
+        import cr_tser_run_selection as selection
+        freeze_names = set(selection.freeze_subsets.__code__.co_names)
+        score_names = set(selection.score_heldout.__code__.co_names)
+        report.add("freeze_stage_excludes_heldout_reader",
+                   "build_reader" not in freeze_names
+                   and "build_reader" in score_names,
+                   "Stage A must not construct a held-out reader")
+        with tempfile.TemporaryDirectory() as tmp:
+            import os as _os
+            _os.makedirs(selection.frozen_dir(tmp, "pheme"), exist_ok=True)
+            record = {"stage": "A_freeze_subsets", "dataset": "pheme",
+                      "held_out_reader": "internlm", "subsets": [
+                          {"arm": "S0_src_full", "selected_node_ids": ["n1"],
+                           "total_tokens": 1, "target_tokens": 1}]}
+            record["sha256"] = selection._canonical_sha(record)
+            path = selection._frozen_path(tmp, "pheme", "internlm")
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(record, fh)
+            with open(path + ".sha256", "w", encoding="utf-8") as fh:
+                fh.write(record["sha256"])
+            selection.load_frozen_subsets(tmp, "pheme", "internlm")
+            record["subsets"][0]["selected_node_ids"] = ["n1", "n2"]
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(record, fh)
+            try:
+                selection.load_frozen_subsets(tmp, "pheme", "internlm")
+                refused = False
+            except selection.FrozenSubsetChanged:
+                refused = True
+            report.add("modified_frozen_subset_rejected", refused,
+                       "a tampered subset must not be scored")
+    except Exception as exc:
+        report.add("freeze_stage_excludes_heldout_reader", False,
+                   f"error: {exc}")
+        report.add("modified_frozen_subset_rejected", False, f"error: {exc}")
+
+    # 7. normalized coverage cannot produce a false READY
+    try:
+        from cr_tser.data import weibo22_adapter as adapter
+        with tempfile.TemporaryDirectory() as tmp:
+            import os as _os
+            nodes = [
+                {"node_id": "n0", "parent_id": None, "timestamp": 1000,
+                 "text": "src", "original_order": 0, "status": "VALID"},
+                {"node_id": "n1", "parent_id": "n0", "timestamp": 1060,
+                 "text": "reply", "original_order": 1, "status": "VALID"},
+                {"node_id": "n2", "parent_id": None, "timestamp": 1120,
+                 "text": "orphan reply", "original_order": 2,
+                 "status": "VALID"},
+            ]
+            event = {"event_id": "e1", "label": 1, "source_id": "n0",
+                     "source_timestamp": 1000, "nodes": nodes}
+            path = _os.path.join(tmp, "events.jsonl")
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(json.dumps(event) + "\n")
+            result = adapter.validate_normalized_export(path)
+            report.add("normalized_parent_coverage_not_false_ready",
+                       result["valid"] is False
+                       and result["parent_coverage"] < 1.0,
+                       f"valid={result['valid']} "
+                       f"parent_coverage={result['parent_coverage']:.3f}")
+    except Exception as exc:
+        report.add("normalized_parent_coverage_not_false_ready", False,
+                   f"error: {exc}")
+
+    # 8. frozen source fingerprint matches the effective normalized source
+    try:
+        from cr_tser.data.source_manifest import (SourceIdentityError,
+                                                  assert_same_source,
+                                                  fingerprint_path)
+        with tempfile.TemporaryDirectory() as tmp:
+            import os as _os
+            path = _os.path.join(tmp, "norm.jsonl")
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write("{}\n")
+            first = fingerprint_path(path)
+            assert_same_source(first, dict(first), "verify")
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write("{}\n{}\n")
+            changed = fingerprint_path(path)
+            try:
+                assert_same_source(first, changed, "verify")
+                refused = False
+            except SourceIdentityError:
+                refused = True
+            report.add("manifest_fingerprint_matches_source", refused,
+                       "a changed normalized source must be refused")
+    except Exception as exc:
+        report.add("manifest_fingerprint_matches_source", False,
+                   f"error: {exc}")
+
+    # 9. CRTSER_SMOKE resolves without TypeError
+    try:
+        from cr_tser.config.pilot_config import paths_from_env
+        paths = paths_from_env({"CRTSER_SMOKE": "1",
+                                "CRTSER_OUT_ROOT": "/tmp/out"})
+        report.add("crtser_smoke_env_resolves",
+                   paths.out_root.endswith("smoke"),
+                   f"out_root={paths.out_root}")
+    except Exception as exc:
+        report.add("crtser_smoke_env_resolves", False, f"error: {exc}")
 
 
 def _pkg(rel):

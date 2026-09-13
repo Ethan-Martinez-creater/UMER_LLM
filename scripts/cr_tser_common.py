@@ -171,3 +171,9 @@ def smoke_root(out_root: str) -> str:
     ``<out_root>/smoke``.
     """
     return os.path.join(out_root, "smoke")
+
+
+def source_fingerprint_for(dataset: str, paths) -> dict:
+    """Frozen source identity of the dataset this stage is reading."""
+    from cr_tser.data.source_manifest import source_fingerprint
+    return source_fingerprint(dataset, paths)

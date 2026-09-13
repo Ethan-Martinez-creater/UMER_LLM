@@ -75,41 +75,84 @@ def test_gate_p3_exact_thresholds():
     assert gate_p3(b3, worse_spearman, delta_ci=ci)["pass"] is False
 
 
+def _rot(held, delta, ok=True):
+    return {"held_out_reader": held, "delta": delta, "token_target_ok": ok}
+
+
 def test_gate_p4_exact_thresholds():
-    ok = [{"delta": 0.02, "token_target_ok": True},
-          {"delta": 0.015, "token_target_ok": True},
-          {"delta": -0.004, "token_target_ok": True}]
+    ok = [_rot("internlm", 0.02), _rot("glm", 0.015), _rot("qwen", -0.004)]
     assert gate_p4(ok)["pass"] is True
     # worst rotation below -0.005 fails
-    bad_worst = [{"delta": 0.02, "token_target_ok": True},
-                 {"delta": -0.006, "token_target_ok": True},
-                 {"delta": 0.02, "token_target_ok": True}]
+    bad_worst = [_rot("internlm", 0.02), _rot("glm", -0.006),
+                 _rot("qwen", 0.02)]
     assert gate_p4(bad_worst)["pass"] is False
     # only one positive rotation fails the 2/3 rule
-    one_positive = [{"delta": 0.02, "token_target_ok": True},
-                    {"delta": -0.001, "token_target_ok": True},
-                    {"delta": -0.001, "token_target_ok": True}]
+    one_positive = [_rot("internlm", 0.02), _rot("glm", -0.001),
+                    _rot("qwen", -0.001)]
     assert gate_p4(one_positive)["pass"] is False
     # token target breach fails
-    tokens_bad = [{"delta": 0.02, "token_target_ok": False},
-                  {"delta": 0.02, "token_target_ok": True},
-                  {"delta": 0.02, "token_target_ok": True}]
+    tokens_bad = [_rot("internlm", 0.02, False), _rot("glm", 0.02),
+                  _rot("qwen", 0.02)]
     assert gate_p4(tokens_bad)["pass"] is False
+
+
+def test_gate_p4_requires_exactly_three_distinct_rotations():
+    # only two rotations -> fail closed even when both deltas are excellent
+    two = [_rot("internlm", 0.05), _rot("glm", 0.05)]
+    assert gate_p4(two)["pass"] is False
+    assert gate_p4(two)["rotations_complete"] is False
+    # duplicated held-out reader -> fail closed
+    dup = [_rot("internlm", 0.05), _rot("internlm", 0.05),
+           _rot("glm", 0.05)]
+    assert gate_p4(dup)["pass"] is False
+    # extra rotation -> fail closed
+    extra = [_rot("internlm", 0.05), _rot("glm", 0.05), _rot("qwen", 0.05),
+             _rot("qwen", 0.05)]
+    assert gate_p4(extra)["pass"] is False
 
 
 def test_final_decision_never_auto_upgrades():
     from ..evaluation.unseen_reader import final_decision
     gates = {"P0": {"pass": True}, "P1": {"pass": True}, "P2": {"pass": True},
              "P3": {"pass": True}, "P4": {"pass": False}}
-    decision = final_decision(gates)
+    decision = final_decision(gates, pheme={"pass": True, "complete": True})
     assert decision["recommendation"] in (
         "STOP_FOR_RESEARCH_REVIEW", "STOP_CR_TSER")
     all_pass = {"P0": {"pass": True}, "P1": {"pass": True},
                 "P2": {"pass": True}, "P3": {"pass": True}, "P4": {"pass": True}}
-    assert final_decision(all_pass)["recommendation"] == \
-        "START_FULL_CR_TSER_METHOD_DEVELOPMENT"
+    assert final_decision(all_pass,
+                          pheme={"pass": True, "complete": True})[
+        "recommendation"] == "START_FULL_CR_TSER_METHOD_DEVELOPMENT"
     # PHEME alone can never produce FULL_GO
-    assert final_decision(all_pass, pheme={"pass": False})["decision"] != "FULL_GO"
+    assert final_decision(all_pass, pheme={"pass": False,
+                                           "complete": True})["decision"] != \
+        "FULL_GO"
+
+
+def test_final_decision_requires_complete_pheme_evidence():
+    from ..evaluation.unseen_reader import final_decision
+    all_pass = {"P0": {"pass": True}, "P1": {"pass": True},
+                "P2": {"pass": True}, "P3": {"pass": True},
+                "P4": {"pass": True}}
+    # missing PHEME secondary evidence must never produce FULL_GO
+    assert final_decision(all_pass)["decision"] != "FULL_GO"
+    assert final_decision(all_pass)["pheme_evidence_complete"] is False
+    # incomplete PHEME rotations must never produce FULL_GO either
+    assert final_decision(all_pass, pheme={"pass": True,
+                                           "complete": False})["decision"] != \
+        "FULL_GO"
+    # complete PHEME evidence + non-catastrophic -> FULL_GO
+    assert final_decision(all_pass, pheme={"pass": True, "complete": True})[
+        "decision"] == "FULL_GO"
+
+
+def test_pheme_secondary_requires_complete_rotations():
+    from ..evaluation.unseen_reader import pheme_secondary
+    two = [_rot("internlm", 0.01), _rot("glm", 0.01)]
+    assert pheme_secondary(two)["pass"] is False
+    assert pheme_secondary(two)["complete"] is False
+    full = [_rot("internlm", 0.01), _rot("glm", 0.01), _rot("qwen", 0.01)]
+    assert pheme_secondary(full)["pass"] is True
 
 
 def test_gate_logic_exact():
@@ -133,13 +176,12 @@ def test_gate_logic_exact():
     p3 = gate_p3({"macro_f1": 0.52, "spearman": 0.5},
                  {"B0": {"macro_f1": 0.50, "spearman": 0.5}},
                  delta_ci={"ci_low": 0.004, "ci_high": 0.03, "n_events": 12})
-    p4 = gate_p4([{"delta": 0.02, "token_target_ok": True},
-                  {"delta": 0.015, "token_target_ok": True},
-                  {"delta": -0.004, "token_target_ok": True}])
+    p4 = gate_p4([_rot("internlm", 0.02), _rot("glm", 0.015),
+                  _rot("qwen", -0.004)])
     assert all(g["pass"] for g in (p1, p2, p3, p4))
 
     gates = {"P0": {"pass": True}, "P1": p1, "P2": p2, "P3": p3, "P4": p4}
-    decision = final_decision(gates, pheme={"pass": True})
+    decision = final_decision(gates, pheme={"pass": True, "complete": True})
     assert decision["decision"] == "FULL_GO"
     assert decision["recommendation"] == \
         "START_FULL_CR_TSER_METHOD_DEVELOPMENT"
@@ -147,11 +189,13 @@ def test_gate_logic_exact():
     # one core failure that is not P0 -> research review, never FULL_GO
     gates_fail = dict(gates)
     gates_fail["P3"] = {"pass": False}
-    assert final_decision(gates_fail)["decision"] == "PARTIAL_GO"
+    assert final_decision(gates_fail, pheme={"pass": True,
+                                             "complete": True})["decision"] ==         "PARTIAL_GO"
     # P0 failure is a hard stop
     gates_p0 = dict(gates)
     gates_p0["P0"] = {"pass": False}
-    assert final_decision(gates_p0)["decision"] == "NO_GO"
+    assert final_decision(gates_p0, pheme={"pass": True,
+                                           "complete": True})["decision"] ==         "NO_GO"
 
 
 def test_auroc_and_macro_f1_sane():

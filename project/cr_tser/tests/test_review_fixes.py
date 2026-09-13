@@ -204,10 +204,12 @@ def test_dataset_artifacts_do_not_overwrite(tmp_path):
     import cr_tser_run_pilot as pilot
     gates, reports, decision = pilot.compute_gates(str(root),
                                                    ("pheme", "weibo22"))
-    # no P1-P4 gate is invented from empty artifacts, and the datasets stay
-    # separate in the aggregation
+    # no P1/P2 gate is invented from empty artifacts; P3 fails closed because
+    # the three LORO predictor artifacts are absent
     assert not reports
-    assert "P1" not in gates and "P2" not in gates and "P3" not in gates
+    assert "P1" not in gates and "P2" not in gates
+    assert gates["P3"]["pass"] is False
+    assert gates["P3"]["reason"] == "incomplete LORO predictor artifacts"
     assert decision["primary_dataset"] == "weibo22"
     assert decision["legacy_diagnostics"]["b2_s6_enabled_datasets"] == ["pheme"]
 

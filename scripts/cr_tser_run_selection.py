@@ -1,10 +1,19 @@
 #!/usr/bin/env python
 """Unseen-reader evaluation of the frozen selection arms (plan §21–§23, §33).
 
-Order of operations is the plan's: predictors are already trained and frozen,
-arms are built from **training-reader** predictions only, the evidence subsets
-are frozen (ids + token counts + content hash), and only then is the held-out
-reader scores every arm's prompt.
+The §33 order is enforced as **two auditable stages**:
+
+``--mode freeze-subsets`` (Stage A)
+    Reads training-reader predictors only, builds S0–S5 (plus S6 for PHEME),
+    and writes dataset/rotation-scoped frozen subset artifacts with a content
+    hash. It **never** loads, constructs or calls a held-out reader.
+
+``--mode score-heldout`` (Stage B)
+    Verifies the frozen subset artifact and its hash first, fails closed if
+    anything changed, and only then loads the held-out reader to score the
+    frozen subsets. It never re-runs the selector or rebuilds a subset.
+
+``--mode both`` runs A then B (convenience; the code paths stay separate).
 
 Evidence identity: predictor artifacts are keyed by the canonical
 ``dataset|event|cutoff|node`` string. This runner parses that key back into its
@@ -17,6 +26,7 @@ S6 (legacy TC-DSCR Utility-TM) is PHEME-only and must be requested explicitly.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -40,6 +50,14 @@ from cr_tser.evaluation.unseen_reader import (rotation_delta,  # noqa: E402
                                               selection_metrics)
 
 
+class FrozenSubsetMissing(RuntimeError):
+    """Raised when Stage B cannot find or verify the frozen subsets."""
+
+
+class FrozenSubsetChanged(RuntimeError):
+    """Raised when a frozen subset artifact no longer matches its hash."""
+
+
 def _source_text(event):
     return next(n["text"] for n in event["nodes"]
                 if n["node_id"] == event["source_id"])
@@ -53,18 +71,6 @@ def _load_predictor(out_root, dataset, train_readers):
         raise FileNotFoundError(f"predictor missing: {path}")
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
-
-
-def predictions_for_snapshot(payload_predictions, dataset, event_id, cutoff,
-                             reader_key):
-    """``{node_id: utility}`` for one snapshot, from canonical-key artifacts."""
-    out = {}
-    for key, entry in payload_predictions.get(reader_key, {}).items():
-        parts = evidence_key_parts(key)
-        if parts["dataset"] == dataset and parts["event_id"] == event_id \
-                and parts["cutoff"] == int(cutoff):
-            out[parts["node_id"]] = entry["utility"]
-    return out
 
 
 def _load_single_predictions(out_root, dataset, reader):
@@ -83,8 +89,20 @@ def _load_single_predictions(out_root, dataset, reader):
     return payload.get("predictions", {})
 
 
+def predictions_for_snapshot(payload_predictions, dataset, event_id, cutoff,
+                             reader_key):
+    """``{node_id: utility}`` for one snapshot, from canonical-key artifacts."""
+    out = {}
+    for key, entry in payload_predictions.get(reader_key, {}).items():
+        parts = evidence_key_parts(key)
+        if parts["dataset"] == dataset and parts["event_id"] == event_id \
+                and parts["cutoff"] == int(cutoff):
+            out[parts["node_id"]] = entry["utility"]
+    return out
+
+
 def _legacy_scores(legacy_scorer, event, snapshot, sem_rows, units, src):
-    """Legacy per-unit scores for every S6 candidate (PHEME only)."""
+    """Frozen Static Utility ``u_i`` for every S6 candidate (PHEME only)."""
     if legacy_scorer is None:
         return {}
     if not hasattr(legacy_scorer, "score_items"):
@@ -94,9 +112,26 @@ def _legacy_scores(legacy_scorer, event, snapshot, sem_rows, units, src):
     return legacy_scorer.score_items([item], device=legacy_scorer.device)[0]
 
 
-def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
-        legacy=False, legacy_scorer=None, single_predictions=None):
-    common.assert_frozen_source(dataset, paths, out_root, "run_selection")
+def _canonical_sha(payload: dict) -> str:
+    body = {k: v for k, v in payload.items() if k != "sha256"}
+    return hashlib.sha256(
+        json.dumps(body, sort_keys=True).encode()).hexdigest()
+
+
+def frozen_dir(out_root, dataset):
+    return os.path.join(out_root, "unseen_reader", dataset, "frozen")
+
+
+def _frozen_path(out_root, dataset, held):
+    return os.path.join(frozen_dir(out_root, dataset), f"rotation_{held}.json")
+
+
+# --------------------------------------------------------------------------
+# Stage A — subset construction (no held-out reader anywhere in this path)
+# --------------------------------------------------------------------------
+def freeze_subsets(dataset, paths, out_root, max_snapshots=None, legacy=False,
+                   legacy_scorer=None, single_predictions=None):
+    common.assert_frozen_source(dataset, paths, out_root, "freeze_subsets")
     split = json.loads((Path(out_root) / "manifests" / dataset /
                         "event_split.json").read_text(encoding="utf-8"))
     eval_ids = set(split["utility_eval"])
@@ -105,31 +140,24 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
               if e["event_id"] in eval_ids}
     encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
     tokenizer = common.canonical_tokenizer(paths.canonical_tokenizer)
-    out_dir = os.path.join(out_root, "unseen_reader", dataset)
-    os.makedirs(out_dir, exist_ok=True)
     if legacy and not legacy_arm_enabled(dataset):
         raise ValueError(
             f"S6 legacy Utility-TM is PHEME-only; refusing dataset {dataset!r}")
     if legacy and legacy_scorer is None:
-        legacy_scorer = build_legacy_scorer(dataset, device)
+        legacy_scorer = build_legacy_scorer(dataset, "cpu")
 
     arms_used = [a for a in SELECTION_ARMS if a != "S6_legacy_utility_tm"] + \
         (["S6_legacy_utility_tm"] if legacy else [])
-    rotations = []
+    os.makedirs(frozen_dir(out_root, dataset), exist_ok=True)
+    out = []
     for rotation in LORO_ROTATIONS:
         train_readers, held = list(rotation[:2]), rotation[2]
         payload = _load_predictor(out_root, dataset, train_readers)
         predictions_artifact = payload["predictions"]
-        if single_predictions is not None:
-            singles = single_predictions
-        else:
-            singles = {r: _load_single_predictions(out_root, dataset, r)
-                       for r in train_readers}
-        reader = build_reader(held, ReaderSpec(held, paths.reader_path(held)),
-                              mock=mock)
-        collected = {arm: {"golds": [], "preds": [], "tokens": [],
-                           "reference_ids": set(), "subsets": []}
-                     for arm in arms_used}
+        singles = single_predictions if single_predictions is not None else {
+            r: _load_single_predictions(out_root, dataset, r)
+            for r in train_readers}
+        rows = []
         n_snap = 0
         for event_id in sorted(events):
             for cutoff in CUTOFFS_MIN:
@@ -138,13 +166,10 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
                 if art["zero_reply"]:
                     continue
                 units, src = art["units"], art["src"]
-                gold = int(events[event_id]["label"])
                 snapshot_predictions = {
                     key: predictions_for_snapshot(predictions_artifact, dataset,
                                                   event_id, cutoff, key)
                     for key in list(train_readers) + ["shared"]}
-                # S3a/S3b come from the single-reader-trained artifacts, not
-                # from the two-reader model's reader-conditioned outputs
                 for index, reader_key in enumerate(train_readers):
                     slot = "S3a_source" if index == 0 else "S3b_source"
                     snapshot_predictions[slot] = predictions_for_snapshot(
@@ -160,64 +185,168 @@ def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
                                 train_readers, PARTITION_SEED,
                                 include_legacy=legacy)
                 for arm_name, arm in arms.items():
-                    ctx = [u for u in units
-                           if u["node_id"] in set(arm["selected_node_ids"])]
-                    text = render_units_for_budget(
-                        units, arm["selected_node_ids"])
-                    prompt = build_reader_prompt(_source_text(events[event_id]),
-                                                 cutoff, ctx, text)
-                    out = ab_scores(reader.candidate_logprobs(prompt))
-                    bucket = collected[arm_name]
-                    bucket["golds"].append(gold)
-                    bucket["preds"].append(1 if out["prediction"] == "A" else 0)
-                    bucket["tokens"].append(arm["total_tokens"])
-                    bucket["reference_ids"] |= set(src["selected_node_ids"])
-                    bucket["subsets"].append({
+                    rows.append({
                         "event_id": event_id, "cutoff": cutoff,
-                        "selected_node_ids": arm["selected_node_ids"],
+                        "gold": int(events[event_id]["label"]),
+                        "arm": arm_name,
+                        "selected_node_ids": list(arm["selected_node_ids"]),
                         "total_tokens": arm["total_tokens"],
                         "target_tokens": arm["target_tokens"],
-                        "content_hash": arm["content_hash"]})
+                        "content_hash": arm["content_hash"],
+                    })
                 n_snap += 1
                 if max_snapshots and n_snap >= max_snapshots:
                     break
             if max_snapshots and n_snap >= max_snapshots:
                 break
+        record = {
+            "stage": "A_freeze_subsets",
+            "dataset": dataset,
+            "train_readers": train_readers,
+            "held_out_reader": held,
+            "arms": arms_used,
+            "n_snapshots": n_snap,
+            "legacy_s6_enabled": bool(legacy),
+            "evidence_key_contract": "dataset|event|cutoff|node",
+            "source": common.source_fingerprint_for(dataset, paths),
+            "predictor_fingerprint": payload.get("prediction_coverage", {}),
+            "subsets": rows,
+        }
+        record["sha256"] = _canonical_sha(record)
+        path = _frozen_path(out_root, dataset, held)
+        common.write_json(path, record)
+        with open(path + ".sha256", "w", encoding="utf-8") as fh:
+            fh.write(record["sha256"])
+        out.append(record)
+    return out
+
+
+def load_frozen_subsets(out_root, dataset, held):
+    """Stage B entry: read and hash-verify a frozen subset artifact."""
+    path = _frozen_path(out_root, dataset, held)
+    if not os.path.exists(path):
+        raise FrozenSubsetMissing(
+            f"frozen subset artifact missing for {dataset}/{held}: {path}; "
+            "run --mode freeze-subsets first (plan §33)")
+    with open(path, encoding="utf-8") as fh:
+        record = json.load(fh)
+    expected = record.get("sha256")
+    actual = _canonical_sha(record)
+    digest_file = path + ".sha256"
+    on_disk = open(digest_file, encoding="utf-8").read().strip() \
+        if os.path.exists(digest_file) else None
+    if expected != actual or (on_disk is not None and on_disk != expected):
+        raise FrozenSubsetChanged(
+            f"frozen subset artifact changed for {dataset}/{held}: "
+            f"recorded={expected} actual={actual} file={on_disk}; refusing to "
+            "score a modified subset (plan §33)")
+    return record
+
+
+# --------------------------------------------------------------------------
+# Stage B — held-out scoring of the already frozen subsets
+# --------------------------------------------------------------------------
+def score_heldout(dataset, paths, out_root, device, mock=False,
+                  max_snapshots=None, subset_hashes_override=None):
+    common.assert_frozen_source(dataset, paths, out_root, "score_heldout")
+    split = json.loads((Path(out_root) / "manifests" / dataset /
+                        "event_split.json").read_text(encoding="utf-8"))
+    eval_ids = set(split["utility_eval"])
+    events = {e["event_id"]: e for e in
+              common.load_dataset_events(dataset, paths)
+              if e["event_id"] in eval_ids}
+    encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
+    tokenizer = common.canonical_tokenizer(paths.canonical_tokenizer)
+    out_dir = os.path.join(out_root, "unseen_reader", dataset)
+    os.makedirs(out_dir, exist_ok=True)
+
+    # verify every frozen subset BEFORE any held-out reader exists
+    frozen = {}
+    for rotation in LORO_ROTATIONS:
+        held = rotation[2]
+        frozen[held] = load_frozen_subsets(out_root, dataset, held)
+
+    rotations = []
+    for rotation in LORO_ROTATIONS:
+        train_readers, held = list(rotation[:2]), rotation[2]
+        record = frozen[held]
+        expected_sha = record["sha256"]
+        if subset_hashes_override is not None and \
+                subset_hashes_override.get(held) != expected_sha:
+            raise FrozenSubsetChanged(
+                f"caller-provided hash for {held} does not match the frozen "
+                "artifact")
+        reader = build_reader(held, ReaderSpec(held, paths.reader_path(held)),
+                              mock=mock)
+        collected = {}
+        for row in record["subsets"]:
+            arm = row["arm"]
+            bucket = collected.setdefault(
+                arm, {"golds": [], "preds": [], "tokens": [],
+                      "reference_ids": set()})
+            art = common.snapshot_artifacts(events[row["event_id"]],
+                                            row["cutoff"], encoder, tokenizer)
+            units = art["units"]
+            selected = set(row["selected_node_ids"])
+            ctx = [u for u in units if u["node_id"] in selected]
+            text = render_units_for_budget(units, row["selected_node_ids"])
+            prompt = build_reader_prompt(_source_text(events[row["event_id"]]),
+                                         row["cutoff"], ctx, text)
+            out = ab_scores(reader.candidate_logprobs(prompt))
+            bucket["golds"].append(row["gold"])
+            bucket["preds"].append(1 if out["prediction"] == "A" else 0)
+            bucket["tokens"].append(row["total_tokens"])
+            bucket["reference_ids"] |= set(art["src"]["selected_node_ids"])
         reader.unload()
 
         metrics, subsets = {}, {}
-        for arm_name, bucket in collected.items():
+        for arm, bucket in collected.items():
             if not bucket["golds"]:
                 continue
-            metrics[arm_name] = selection_metrics(
-                bucket["golds"], bucket["preds"], bucket["tokens"])
-            subsets[arm_name] = {
+            metrics[arm] = selection_metrics(bucket["golds"], bucket["preds"],
+                                             bucket["tokens"])
+            subsets[arm] = {
                 "reference_ids": sorted(bucket["reference_ids"]),
-                "selected_node_ids": bucket["subsets"][0]["selected_node_ids"]
-                if bucket["subsets"] else [],
-                "total_tokens": max((s["total_tokens"]
-                                     for s in bucket["subsets"]), default=0),
-                "target_tokens": max((s["target_tokens"]
-                                      for s in bucket["subsets"]), default=0),
-                "frozen_subsets": bucket["subsets"],
+                "selected_node_ids": [r["selected_node_ids"] for r in
+                                      record["subsets"] if r["arm"] == arm][:1],
+                "total_tokens": max((r["total_tokens"] for r in
+                                     record["subsets"] if r["arm"] == arm),
+                                    default=0),
+                "target_tokens": max((r["target_tokens"] for r in
+                                      record["subsets"] if r["arm"] == arm),
+                                     default=0),
+                "frozen_subsets": [r for r in record["subsets"]
+                                   if r["arm"] == arm],
             }
         delta = rotation_delta(metrics) if metrics else {"delta": float("nan")}
-        token_ok = all(s["total_tokens"] <= s["target_tokens"]
-                       for bucket in collected.values()
-                       for s in bucket["subsets"])
+        token_ok = all(r["total_tokens"] <= r["target_tokens"]
+                       for r in record["subsets"])
         delta["token_target_ok"] = token_ok
-        record = {
+        result = {
+            "stage": "B_score_heldout",
             "dataset": dataset, "train_readers": train_readers,
-            "held_out_reader": held, "n_snapshots": n_snap,
-            "legacy_s6_enabled": bool(legacy),
-            "evidence_key_contract": "dataset|event|cutoff|node",
+            "held_out_reader": held,
+            "n_snapshots": record["n_snapshots"],
+            "legacy_s6_enabled": record["legacy_s6_enabled"],
+            "frozen_subset_sha256": expected_sha,
+            "evidence_key_contract": record["evidence_key_contract"],
             "arms": subsets, "metrics": metrics, "delta": delta,
             "reader_identity": reader.identity() if not mock else {"mock": True},
         }
-        rotations.append(record)
+        rotations.append(result)
         common.write_json(os.path.join(out_dir, f"rotation_{held}.json"),
-                          record)
+                          result)
     return rotations
+
+
+def run(dataset, paths, out_root, device, mock=False, max_snapshots=None,
+        legacy=False, legacy_scorer=None, single_predictions=None):
+    """Stage A then Stage B (the code paths stay distinct)."""
+    freeze_subsets(dataset, paths, out_root, max_snapshots=max_snapshots,
+                   legacy=legacy, legacy_scorer=legacy_scorer,
+                   single_predictions=single_predictions)
+    return score_heldout(dataset, paths, out_root, device, mock=mock,
+                         max_snapshots=max_snapshots)
 
 
 def build_parser():
@@ -229,6 +358,8 @@ def build_parser():
     ap.add_argument("--max-snapshots", type=int, default=None)
     ap.add_argument("--legacy", action="store_true",
                     help="enable the PHEME-only S6 legacy arm")
+    ap.add_argument("--mode", choices=("freeze-subsets", "score-heldout",
+                                       "both"), default="both")
     return ap
 
 
@@ -240,12 +371,22 @@ def main(argv=None):
                                                  "cr_tser"))
     if args.smoke:
         out_root = common.smoke_root(out_root)
-    rotations = run(args.dataset, paths, out_root, args.device,
-                    mock=args.smoke, max_snapshots=args.max_snapshots,
-                    legacy=args.legacy)
-    print(json.dumps([{"held_out": r["held_out_reader"],
-                       "delta": r["delta"].get("delta"),
-                       "arms": len(r["metrics"])} for r in rotations], indent=1))
+    if args.mode in ("freeze-subsets", "both"):
+        frozen = freeze_subsets(args.dataset, paths, out_root,
+                                max_snapshots=args.max_snapshots,
+                                legacy=args.legacy)
+        print(json.dumps([{"held_out": r["held_out_reader"],
+                           "sha256": r["sha256"],
+                           "subsets": len(r["subsets"])}
+                          for r in frozen], indent=1))
+    if args.mode in ("score-heldout", "both"):
+        rotations = score_heldout(args.dataset, paths, out_root, args.device,
+                                  mock=args.smoke,
+                                  max_snapshots=args.max_snapshots)
+        print(json.dumps([{"held_out": r["held_out_reader"],
+                           "delta": r["delta"].get("delta"),
+                           "arms": len(r["metrics"])}
+                          for r in rotations], indent=1))
     return 0
 
 

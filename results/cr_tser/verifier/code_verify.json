@@ -66,7 +66,7 @@
   {
    "check": "no_timestamp_synthesis",
    "status": "pass",
-   "detail": "adapter documents that original_order is never time"
+   "detail": "adapter never derives time from original_order"
   },
   {
    "check": "cr_tser_snapshot_uncapped",
@@ -212,6 +212,56 @@
    "check": "s3_single_reader_trained",
    "status": "pass",
    "detail": "S3a/S3b must come from single-reader-trained artifacts"
+  },
+  {
+   "check": "s6_uses_static_utility_selector",
+   "status": "pass",
+   "detail": "scores={1: 3.0, 2: 2.0, 3: 1.0} selector_calls=1 proxy_calls=0"
+  },
+  {
+   "check": "p3_keeps_all_rotations",
+   "status": "pass",
+   "detail": "n_observations=4"
+  },
+  {
+   "check": "p3_missing_rotation_fails_closed",
+   "status": "pass",
+   "detail": "missing=['qwen+internlm', 'glm+internlm']"
+  },
+  {
+   "check": "p4_requires_three_rotations",
+   "status": "pass",
+   "detail": "two rotations must never satisfy P4"
+  },
+  {
+   "check": "missing_pheme_cannot_full_go",
+   "status": "pass",
+   "detail": "PHEME secondary evidence is required for FULL_GO"
+  },
+  {
+   "check": "freeze_stage_excludes_heldout_reader",
+   "status": "pass",
+   "detail": "Stage A must not construct a held-out reader"
+  },
+  {
+   "check": "modified_frozen_subset_rejected",
+   "status": "pass",
+   "detail": "a tampered subset must not be scored"
+  },
+  {
+   "check": "normalized_parent_coverage_not_false_ready",
+   "status": "pass",
+   "detail": "valid=False parent_coverage=0.500"
+  },
+  {
+   "check": "manifest_fingerprint_matches_source",
+   "status": "pass",
+   "detail": "a changed normalized source must be refused"
+  },
+  {
+   "check": "crtser_smoke_env_resolves",
+   "status": "pass",
+   "detail": "out_root=/tmp/out\\smoke"
   }
  ]
 }

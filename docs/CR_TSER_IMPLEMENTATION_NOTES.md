@@ -219,4 +219,32 @@ pins it and the verifier check that now guards it. No scientific choice in
 No formal utility-label generation, predictor training, unseen-reader
 evaluation or pilot run was performed.
 
+---
+
+# 11. Protocol closure fix round (code only — formal pilot NOT RUN)
+
+| # | Finding | Fix (location) | Test | Verifier check |
+|---|---|---|---|---|
+| 1 | S6 used the Proxy logit difference instead of the frozen Static Utility | `LegacyPHEMEUtility` now keeps the frozen `StaticUtilitySelector` (required; `LegacyUnavailable` if absent) and computes `u_i = selector(h_i, event_repr, sem_i, sem_src, struct3_i)`; `score_items`/`per_unit_scores` drive S6; the Proxy is only the separate B2 classification diagnostic (`static_classification`/`b2_surface`, `diagnostic_only`, `participates_in_primary_gate=false`) | `test_legacy_s6_uses_static_utility_selector`, `test_legacy_selector_is_required`, `test_legacy_ranking_follows_selector_not_proxy` | `s6_uses_static_utility_selector` (executes a reversing Proxy and asserts it is never called) |
+| 2 | P3 identity `(event,key,reader)` let a reader's second rotation overwrite the first | Observation key is `(event, rotation_id, evidence_key, reader)`; all three rotations contribute; the bootstrap resamples events with multiplicity preserved; B3 vs baseline pairs on identical observations | `test_p3_keeps_predictions_from_every_rotation` | `p3_keeps_all_rotations` |
+| 3 | P3/P4 could pass with missing rotations | P3 returns `pass=false, reason="incomplete LORO predictor artifacts"` unless exactly three predictor artifacts exist; `gate_p4` checks completeness first (`rotation_completeness`) and `pheme_secondary` requires complete three-rotation evidence | `test_p3_missing_rotation_fails_closed`, `test_gate_p4_requires_exactly_three_distinct_rotations`, `test_pheme_secondary_requires_complete_rotations` | `p3_missing_rotation_fails_closed`, `p4_requires_three_rotations` |
+| 4 | PHEME missing was treated as pass (fail-open) | `final_decision` requires `pheme["complete"] and pheme["pass"]`; missing/incomplete PHEME evidence can never yield `FULL_GO` (and forces `NO_GO`, not `PARTIAL_GO`) | `test_final_decision_requires_complete_pheme_evidence` | `missing_pheme_cannot_full_go` |
+| 5 | §33 selection was a single un-auditable pass | `cr_tser_run_selection.py` splits into `freeze_subsets` (Stage A: training-reader predictors only, writes rotation-scoped frozen subset artifacts + `sha256`, never constructs a held-out reader) and `score_heldout` (Stage B: hash-verifies the frozen artifact first, fails closed on any change, then loads the held-out reader); `--mode freeze-subsets|score-heldout|both` | `test_freeze_stage_never_references_held_out_reader_builder`, `test_modified_frozen_subset_is_rejected`, `test_missing_frozen_subset_fails_closed` | `freeze_stage_excludes_heldout_reader`, `modified_frozen_subset_rejected` |
+| 6 | Normalized validation was aggregate-ratio based and its parent denominator excluded missing parents | `validate_normalized_export` is node/reply-level: non-empty source/reply text, real source and per-node timestamps, resolvable parent ids, unique ids, valid labels, child-earlier-than-parent count; `parent_id` coverage divides by **every** reply and `original_order` is never consulted; the audit emits the full §30 field set | `test_missing_parent_blocks_ready`, `test_reply_text_coverage_counts_every_reply`, `test_unresolvable_parent_and_child_earlier_are_reported`, `test_valid_export_is_ready_with_full_30_fields`, `test_duplicate_node_ids_block_ready` | `normalized_parent_coverage_not_false_ready` |
+| 7 | A CLI `--normalized-events` could fingerprint a different source than the one loaded | The override is removed: `CRTSER_WEIBO22_NORMALIZED` is the single effective source for loading, validation, `source_fingerprint`, `source.json` and the split; directory fingerprints traverse subdirectories in sorted order | `test_crtser_smoke_env_builds_smoke_root`, `test_source_fingerprint_detects_change` | `manifest_fingerprint_matches_source` |
+| 8 | `paths_from_env` passed an unknown `smoke` field; `train_predictors` had a shadowed `run_rotation` | `CRTSER_SMOKE` now only rewrites `out_root` into the smoke namespace; the duplicate `run_rotation` definition is deleted | `test_crtser_smoke_env_builds_smoke_root` | `crtser_smoke_env_resolves` |
+
+## 12. Final verification (protocol closure round)
+
+* `python -m pytest project/cr_tser/tests -q` → **84 passed**.
+* `python scripts/cr_tser_verify_pilot.py --mode code` → **52 checks,
+  issues = 0** (including the executed protocol-closure semantics).
+* `python scripts/cr_tser_verify_pilot.py --mode pilot` → **issues = 0,
+  pending = 1** (pilot not executed).
+* `python scripts/cr_tser_p0_audit.py` → `P0_FAIL`,
+  `weibo22_source_of_record = raw_release`. The public KPG release has no
+  per-node timestamps, so `P0_PASS` was **not** fabricated.
+* `compileall` clean over `project/cr_tser` and `scripts/cr_tser_*.py`.
+
+
 

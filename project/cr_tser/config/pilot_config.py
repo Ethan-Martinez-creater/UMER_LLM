@@ -215,11 +215,12 @@ def paths_from_env(env=None) -> PilotPaths:
     kw = {}
     for name in ("weibo22_raw", "weibo22_labels", "weibo22_normalized",
                  "pheme_raw", "semantic_model", "qwen_model", "glm_model",
-                 "internlm_model", "canonical_tokenizer", "out_root",
-                 "smoke"):
+                 "internlm_model", "canonical_tokenizer", "out_root"):
         val = env.get(_ENV_PREFIX + name.upper())
         if val:
             kw[name] = val
+    # CRTSER_SMOKE only redirects the output root into the smoke namespace; it
+    # is not a PilotPaths field.
     if env.get(_ENV_PREFIX + "SMOKE"):
         kw["out_root"] = os.path.join(kw.get("out_root", "results/cr_tser"),
                                       "smoke")
