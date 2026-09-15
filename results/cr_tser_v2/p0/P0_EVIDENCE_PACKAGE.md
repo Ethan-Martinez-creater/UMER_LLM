@@ -253,6 +253,7 @@ results/cr_tser_v2/p0/
   p0_readiness.json                  (frozen entrypoint product)
   P0_READINESS.md                    (frozen entrypoint product)
   P0_EVIDENCE_PACKAGE.md             (this report)
+  SERVER_COMPLETION_REPORT.md        (full round execution report)
   environment.json                   (SERVER/DGPA, resolved paths)
   maweibo_audit.json
   maweibo_source_fingerprint.json
