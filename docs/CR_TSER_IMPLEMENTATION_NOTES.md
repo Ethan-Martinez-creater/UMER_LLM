@@ -867,6 +867,46 @@ approved fix needs no `--force` (only `source.json` exists under
 `manifests/maweibo/`), though PHEME would need `--force` to rebuild. No
 utility label was generated, so nothing is frozen yet.
 
+# 22. V2-P1A manifest hotfix — unified composite fingerprint contract
+
+Baseline `c3c08dc`. Fix confined to `project/cr_tser/data/source_manifest.py`:
+the `maweibo_composite` branch of `source_fingerprint()` now carries the same
+top-level field set as every other source kind (`path`, `exists`, `sha256`,
+`bytes`, `n_files`), with
+
+```python
+"exists": bool(raw.get("exists")) and bool(labels.get("exists")),
+```
+
+i.e. a real conjunction of the raw directory and the label file — never a
+hard-coded `True`. The builder is untouched: no Ma-Weibo special case was
+added at the consumer. `raw_json`, `label_file` and `combined_source_sha256`
+are preserved, and the composite hash algorithm and the frozen Ma-Weibo
+identity (`b982076d…`) are unchanged.
+
+Note on the alias semantics: `fingerprint_path()` reports `exists` for *path
+presence*, so a raw directory that exists but holds no files still reports
+`True`; that is the pre-existing single-source semantics and was deliberately
+not tightened here. Source replacement stays fail-closed regardless, because
+`assert_same_source()` compares `kind` / `sha256` / `n_files`.
+
+New regression tests (`project/cr_tser/tests/test_v2_p1a_manifest_hotfix.py`):
+
+```text
+composite fingerprint exposes the unified top-level field set
+exists = true when raw + labels exist
+exists = false when either half is missing
+real Ma-Weibo manifest build writes source.json / event_split.json /
+  snapshot_manifest.jsonl / intervention_manifest.jsonl / hashes.json
+composite replacement still raises SourceIdentityError, including on a
+  --force rebuild against the swapped source
+```
+
+No split seed/sizes, cutoff, eligibility, fingerprint semantics, reader
+contract, utility definition or P1–P4 threshold was touched.
+
+LOCAL/pytorch: `143 passed`, code verifier `issues = 0`, `compileall` clean.
+
 
 
 

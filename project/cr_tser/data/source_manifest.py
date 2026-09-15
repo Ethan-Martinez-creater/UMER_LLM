@@ -110,8 +110,12 @@ def source_fingerprint(dataset: str, paths) -> dict:
             "label_file": labels,
             "combined_source_sha256": combined,
             # top-level aliases so the generic identity guard below also
-            # covers the composite source
+            # covers the composite source, and so every source kind exposes
+            # the same field set. ``exists`` is the conjunction of both
+            # halves — a composite source is present only when its raw
+            # directory *and* its label file are — never a constant.
             "path": raw_dir,
+            "exists": bool(raw.get("exists")) and bool(labels.get("exists")),
             "sha256": combined,
             "bytes": raw.get("bytes", 0) + labels.get("bytes", 0),
             "n_files": raw.get("n_files", 0) + labels.get("n_files", 0),

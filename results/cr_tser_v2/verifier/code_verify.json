@@ -261,7 +261,7 @@
   {
    "check": "crtser_smoke_env_resolves",
    "status": "pass",
-   "detail": "out_root=/tmp/out/smoke"
+   "detail": "out_root=/tmp/out\\smoke"
   },
   {
    "check": "p4_rotation_identity_preserved",
