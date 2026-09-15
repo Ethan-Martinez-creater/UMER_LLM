@@ -95,15 +95,21 @@ RETIRED_IN_CORE = ("1021", "proxy", "ms_tsr", "ms-tsr", "mf_tsr", "mf-tsr")
 #: The V1 namespace is read-only history (amendment V2 §22). A V2 run writes
 #: only under ``results/cr_tser_v2``; these pins prove the historical V1
 #: evidence was not silently rewritten by the dataset migration.
+#:
+#: Identity is the **canonical LF** digest, not the raw worktree bytes. A
+#: Windows checkout (``core.autocrlf=true``) and a Linux checkout carry the
+#: same git blob with different bytes, so raw-byte pins can never be satisfied
+#: on both hosts. Normalizing CRLF to LF keeps the pin content-based — any
+#: real edit still changes the digest — while making it platform-stable.
 V1_FROZEN_VERIFIER_DIR = "results/cr_tser/verifier"
 V1_FROZEN_ARTIFACTS = {
     "results/cr_tser/verifier/code_verify.json":
-        "edc76e509262d12602d2c1f422ab07883950c25bb0e3ea5d5fbcd15cf2e68a27",
+        "134b32e2f00765ab221ee710a8def67ede91b009b97da95beecfac4463e22f0e",
     "results/cr_tser/verifier/pilot_verify.json":
-        "a45dc514df41882a8999d02b31b786521c667774b9b1867586437491defdc408",
+        "c81000a97ed82c323c1953049d83fa864f9eba2b83640c6211af810076a061af",
 }
 V1_FROZEN_VERIFIER_DIR_SHA256 = \
-    "efae6c5a47d1a93af3052842b16967532b32bacd6276fba77b603a9cb57188f2"
+    "aba9f5169d63b39c7e423d886e01ec5e40547f43aa0f46a5c937bf73df4d90c2"
 
 
 class Report:
@@ -1264,32 +1270,56 @@ def _verify_v2_migration(report):
     _verify_v1_historical_immutable(report)
 
 
+def _canonical_bytes(data: bytes) -> bytes:
+    """CRLF -> LF, so identity does not depend on the checkout's line endings.
+
+    ``core.autocrlf=true`` on Windows and a plain Linux checkout store the
+    same git blob with different bytes; the canonical form is what both share.
+    """
+    return data.replace(b"\r\n", b"\n")
+
+
+def _canonical_sha256(path) -> str:
+    """Canonical (LF-normalized) content digest of one file."""
+    return hashlib.sha256(_canonical_bytes(path.read_bytes())).hexdigest()
+
+
 def _dir_sha256(path: str) -> str:
+    """Canonical digest of a directory tree.
+
+    Contents are LF-normalized and relative paths are POSIX-normalized, so the
+    digest is identical on a CRLF Windows checkout and an LF Linux checkout.
+    """
     h = hashlib.sha256()
     for root, dirs, files in os.walk(path):
         dirs.sort()
         for name in sorted(files):
             full = os.path.join(root, name)
-            rel = os.path.relpath(full, path)
+            rel = os.path.relpath(full, path).replace(os.sep, "/")
             h.update(rel.encode())
             h.update(b"\x00")
             with open(full, "rb") as fh:
-                h.update(fh.read())
+                h.update(_canonical_bytes(fh.read()))
             h.update(b"\x00")
     return h.hexdigest()
 
 
 def _verify_v1_historical_immutable(report):
-    """V1 historical artifacts must stay byte-identical (amendment §22)."""
+    """V1 historical artifacts must keep their content (amendment §22).
+
+    The comparison uses the canonical LF digest, so the same repository state
+    passes on a CRLF Windows checkout and on an LF Linux checkout, while any
+    real content change still fails.
+    """
     for rel, want in V1_FROZEN_ARTIFACTS.items():
         path = REPO / rel
         if not path.exists():
             report.add(f"v1_historical_immutable:{path.name}", False,
                        f"{rel} is missing")
             continue
-        got = hashlib.sha256(path.read_bytes()).hexdigest()
+        got = _canonical_sha256(path)
         report.add(f"v1_historical_immutable:{path.name}", got == want,
-                   f"sha256={got[:16]} expected={want[:16]}")
+                   f"canonical_sha256={got[:16]} expected={want[:16]}")
     directory = REPO / V1_FROZEN_VERIFIER_DIR
     if not directory.exists():
         report.add("v1_verifier_dir_immutable", False,
@@ -1298,7 +1328,7 @@ def _verify_v1_historical_immutable(report):
     got = _dir_sha256(str(directory))
     report.add("v1_verifier_dir_immutable",
                got == V1_FROZEN_VERIFIER_DIR_SHA256,
-               f"sha256={got[:16]} expected="
+               f"canonical_sha256={got[:16]} expected="
                f"{V1_FROZEN_VERIFIER_DIR_SHA256[:16]}")
 
 
