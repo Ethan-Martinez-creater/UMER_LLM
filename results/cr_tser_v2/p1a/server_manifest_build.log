@@ -1,0 +1,66 @@
+===== environment =====
+CONDA_DEFAULT_ENV=DGPA
+PYTHONPATH=/data/jyz/next/llm/.cr_tser_v2p0/tf453
+Python 3.11.13
+torch 2.7.1+cu128
+transformers 4.53.3
+tokenizers 0.21.4
+git HEAD=c4773a3ec605e40d6aa26cd2244a41ccb51b998a
+
+===== source fingerprint (Ma-Weibo) =====
+raw n_files 4664 bytes 3995877128
+raw sha256 c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27
+label sha256 032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4
+combined_source_sha256 b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d
+MATCH_EXPECTED True
+fingerprint_rc=0
+
+===== existing artifact check =====
+总用量 20
+drwxrwxr-x 4 jyz jyz 4096 9月  13 21:55 .
+drwxrwxr-x 7 jyz jyz 4096 9月  13 21:55 ..
+drwxrwxr-x 2 jyz jyz 4096 9月  15 21:44 p0
+-rw-rw-r-- 1 jyz jyz  797 9月  13 21:55 README.md
+drwxrwxr-x 2 jyz jyz 4096 9月  15 21:44 verifier
+no manifests dir (clean start)
+no utility_labels dir (clean start)
+
+===== BUILD MANIFESTS: maweibo =====
+    sys.exit(main())
+             ^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/cr_tser_build_manifests.py", line 212, in main
+    result = build_manifests(args.dataset, paths, out_root, force=args.force)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/cr_tser_build_manifests.py", line 108, in build_manifests
+    "source": {k: source[k] for k in ("kind", "path", "sha256",
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/cr_tser_build_manifests.py", line 108, in <dictcomp>
+    "source": {k: source[k] for k in ("kind", "path", "sha256",
+                  ~~~~~~^^^
+KeyError: 'exists'
+maweibo_rc=1
+
+===== BUILD MANIFESTS: pheme =====
+{
+ "dataset": "pheme",
+ "manifests": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/manifests/pheme",
+ "n_snapshots": 270,
+ "n_interventions": 3412,
+ "n_zero_reply": 9,
+ "viable_events": 5669,
+ "max_snapshot_nodes": 79
+}
+pheme_rc=0
+
+===== manifest tree =====
+results/cr_tser_v2/manifests/maweibo/source.json
+results/cr_tser_v2/manifests/pheme/event_split.json
+results/cr_tser_v2/manifests/pheme/hashes.json
+results/cr_tser_v2/manifests/pheme/intervention_manifest.jsonl
+results/cr_tser_v2/manifests/pheme/snapshot_manifest.jsonl
+results/cr_tser_v2/manifests/pheme/source.json
+
+===== sizes =====
+8.0K	results/cr_tser_v2/manifests/maweibo
+944K	results/cr_tser_v2/manifests/pheme
+MANIFESTS_DONE 2026年 09月 15日 星期二 21:51:44 CST

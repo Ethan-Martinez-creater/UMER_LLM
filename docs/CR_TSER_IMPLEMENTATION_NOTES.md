@@ -835,6 +835,38 @@ reader evaluation, P1–P4, formal pilot. `P0_PASS` depends on the 4.53.3
 `PYTHONPATH` override — every later stage that loads the readers must use it,
 or DGPA must be moved to 4.53.3 by the research owner.
 
+# 21. V2-P1A — blocked by a manifest-freeze defect (NO labels generated)
+
+Baseline `c4773a3`. Round stopped at the Ma-Weibo formal manifest build.
+
+Local checks passed (139 tests, code verifier `issues = 0`, `compileall`
+clean), the server workspace was synced to `c4773a3`, the 4.53.3 overlay was
+active, the Ma-Weibo composite fingerprint reproduced exactly
+(`b982076d…`, no drift) and **PHEME manifests built successfully** (270
+snapshots / 3412 interventions / 5669 viable events).
+
+`python scripts/cr_tser_build_manifests.py --dataset maweibo` then failed:
+
+```text
+scripts/cr_tser_build_manifests.py", line 108, in <dictcomp>
+    "source": {k: source[k] for k in ("kind", "path", "sha256",
+KeyError: 'exists'
+```
+
+`source_fingerprint()`'s `maweibo_composite` branch supplies the top-level
+aliases `path` / `sha256` / `bytes` / `n_files` but **not `exists`**, which
+`build_manifests` requires; the non-composite branch delegates to
+`fingerprint_path()` and therefore always has it. `source["exists"]` has
+exactly one consumer in the repository, so only the Ma-Weibo (composite) path
+is affected — P0 never consumed it, which is why the V2-M0/P0 rounds passed
+while this stage had never actually run for Ma-Weibo.
+
+Per plan §10 the round stopped, evidence was preserved
+(`results/cr_tser_v2/p1a/`), and no patch was applied. A re-run after an
+approved fix needs no `--force` (only `source.json` exists under
+`manifests/maweibo/`), though PHEME would need `--force` to rebuild. No
+utility label was generated, so nothing is frozen yet.
+
 
 
 
