@@ -1,0 +1,20 @@
+repo=Qwen/Qwen3-8B
+dir=/data/jyz/next/model/qwen3-8b
+method: non-LFS files -> git blob sha1 vs HF API blobId;
+        LFS files are covered by the x-linked-etag sha256 record
+MATCH    git_blob_sha1 .gitattributes               local=52373fe24473b1aa44333d318f578ae6bf04b49b official=52373fe24473b1aa44333d318f578ae6bf04b49b
+MATCH    git_blob_sha1 LICENSE                      local=6634c8cc3133b3848ec74b9f275acaaa1ea618ab official=6634c8cc3133b3848ec74b9f275acaaa1ea618ab
+MATCH    git_blob_sha1 README.md                    local=ecc3ebd0849aa08d9484bd911dddfd5261b10d30 official=ecc3ebd0849aa08d9484bd911dddfd5261b10d30
+MATCH    git_blob_sha1 config.json                  local=d46195ac87f837ad233d02b2f80f148bf7c005e0 official=d46195ac87f837ad233d02b2f80f148bf7c005e0
+MATCH    git_blob_sha1 generation_config.json       local=20a8a9156fc8c3f25295ca067f61fdf120d517c5 official=20a8a9156fc8c3f25295ca067f61fdf120d517c5
+MATCH    git_blob_sha1 merges.txt                   local=31349551d90c7606f325fe0f11bbb8bd5fa0d7c7 official=31349551d90c7606f325fe0f11bbb8bd5fa0d7c7
+LFS      model-00001-of-00005.safetensors   size=3996250744 (verified by x-linked-etag sha256)
+LFS      model-00002-of-00005.safetensors   size=3993160032 (verified by x-linked-etag sha256)
+LFS      model-00003-of-00005.safetensors   size=3959604768 (verified by x-linked-etag sha256)
+LFS      model-00004-of-00005.safetensors   size=3187841392 (verified by x-linked-etag sha256)
+LFS      model-00005-of-00005.safetensors   size=1244659840 (verified by x-linked-etag sha256)
+MATCH    git_blob_sha1 model.safetensors.index.json local=2b85c00f1b118961cd7a477e2bba0fe197a4ce1a official=2b85c00f1b118961cd7a477e2bba0fe197a4ce1a
+LFS      tokenizer.json                     size=11422654 (verified by x-linked-etag sha256)
+MATCH    git_blob_sha1 tokenizer_config.json        local=417d038a63fa3de29cfde265caedae14d1a58d92 official=417d038a63fa3de29cfde265caedae14d1a58d92
+MATCH    git_blob_sha1 vocab.json                   local=4783fe10ac3adce15ac8f358ef5462739852c569 official=4783fe10ac3adce15ac8f358ef5462739852c569
+ALL_NON_LFS_MATCH True

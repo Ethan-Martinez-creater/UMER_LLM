@@ -1,6 +1,6 @@
 {
  "dataset": "pheme",
- "raw_dir": "E:/Graduate_work_folder/rumor_detection/data/dataset/PHEME_extension/all-rnr-annotated-threads",
+ "raw_dir": "/data/jyz/next/llm/data/pheme_raw",
  "labels_generated": false,
  "cutoffs": [
   15,

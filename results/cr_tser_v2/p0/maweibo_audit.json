@@ -1,7 +1,7 @@
 {
  "dataset": "maweibo",
- "raw_dir": "E:\\Graduate_work_folder\\rumor_detection\\data\\dataset\\Ma-WeiBo\\Weibo",
- "label_file": "E:\\Graduate_work_folder\\rumor_detection\\data\\dataset\\Ma-WeiBo\\Weibo.txt",
+ "raw_dir": "/data/jyz/next/llm/data/maweibo_raw",
+ "label_file": "/data/jyz/next/llm/data/maweibo_labels.txt",
  "raw_event_count": 4664,
  "raw_json_files": 4664,
  "parsed_event_count": 4664,

@@ -1,7 +1,9 @@
-# CR-TSER V2-P0 — Preflight Evidence Package
+# CR-TSER V2-P0 — Preflight Evidence Package (server completion)
 
-Executed from frozen baseline `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f`
-("CR-TSER V2-M0 closure hotfix …"). No code change was made in this round.
+Repository commit: `b5f91e162ed0d6d2431add410760c155c3f23c39`
+Frozen scientific baseline: `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f`
+Round: **V2-P0 Server Completion** (`docs/CR_TSER_V2_P0_SERVER_COMPLETION_PLAN_v2.md`).
+No scientific code was changed in this round.
 
 ## 1. Verdict
 
@@ -9,294 +11,283 @@ Executed from frozen baseline `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f`
 P0_FAIL
 ```
 
-**Single blocker**: the three frozen readers could not be resolved on this
-machine. Every `CRTSER_*_MODEL` path was unset, so the frozen P0 entrypoint
-resolved `model_path` to the empty string for Qwen3-8B, GLM-4-9B-Chat and
-InternLM3-8B-Instruct, and no local copy of any of them exists.
-
-Failure reasons (execution plan §14):
+**Single blocker**: `internlm/internlm3-8b-instruct` cannot be loaded under the
+mandated DGPA environment. Its official remote implementation
+(`modeling_internlm3.py`) does `from transformers.utils import LossKwargs`,
+but transformers **4.57.6 removed `LossKwargs`** entirely (it is absent from
+both `transformers.utils` and `transformers.utils.generic`), and this
+transformers version ships no built-in `internlm3` model type:
 
 ```text
-QWEN_MODEL_MISSING
-GLM_MODEL_MISSING
-INTERNLM_MODEL_MISSING
+ImportError: cannot import name 'LossKwargs' from 'transformers.utils'
+  (/data/jyz/envs/DGPA/lib/python3.11/site-packages/transformers/utils/__init__.py)
 ```
 
-The data side of P0 **passed in full** — see §4–§7.
+The frozen `InternLMReader` loads with `trust_remote_code=True`, so the
+official `auto_map` (`configuration_internlm3` / `modeling_internlm3`) is
+executed and fails. This is an official-checkpoint ↔ mandated-environment
+incompatibility, not a data, protocol or method finding.
 
-Production of this verdict is frozen-code-only:
-`python scripts/cr_tser_p0_audit.py --protocol v2 --readers --sanity`
-wrote `p0_readiness.json`. No artifact was hand-edited.
+**Both other frozen readers passed completely** (load + identity + A/B
+sanity): `Qwen/Qwen3-8B` and `zai-org/glm-4-9b-chat-hf`.
 
-## 2. Execution context
+Per plan §14 the failure is recorded with the raw error preserved; no model
+was substituted, no protocol was changed, no local patch of the official
+remote code was applied.
 
-| Item | Value |
+## 2. Dual-environment execution contract
+
+| | LOCAL | SERVER |
+|---|---|---|
+| env | `pytorch` | `DGPA` |
+| interpreter | `E:\anaconda\envs\pytorch\python.exe` (3.9.18) | `/data/jyz/envs/DGPA/bin/python` (3.11.13) |
+| torch | 2.3.1+cu121 | 2.7.1+cu128 |
+| transformers | 4.44.0 | 4.57.6 |
+| CUDA | 12.1 | 12.8 |
+| GPU | GTX 1050 Ti, 4.00 GiB | RTX 4090, 23.52 GiB |
+| root | `E:\...\UMER` | `/data/jyz/next/llm/cr_tser_ws` |
+
+```text
+local_env  = pytorch
+server_env = DGPA
+server_root = /data/jyz/next/llm/
+```
+
+**LOCAL/pytorch tasks executed** (lightweight only):
+
+* git state check (`b5f91e1`), working tree clean for tracked files;
+* `python -m pytest project/cr_tser/tests -q` → **128 passed**;
+* `scripts/cr_tser_verify_pilot.py --mode code --protocol v2` → **issues = 0**;
+* `python -m compileall project/cr_tser scripts` → **clean**;
+* read-only evidence review and packaging.
+
+No reader was loaded and no A/B scoring was run locally.
+
+**SERVER/DGPA tasks executed**:
+
+* S0 environment/workspace freeze (`DGPA`, CUDA true, RTX 4090);
+* S1 repository synchronization to `b5f91e1` + frozen-code diff check;
+* S2 acquisition, official-hash verification and resolution of the three
+  frozen readers;
+* S3 data-input resolution + Ma-Weibo composite fingerprint check;
+* S4 frozen reader load audit (P0-F);
+* S5 teacher-forced A/B sanity (P0-G);
+* S6 authoritative `cr_tser_p0_audit.py --protocol v2 --readers --sanity`;
+* S7 `verify_pilot.py --mode code|pilot --protocol v2`.
+
+All actual reader loading, identity hashing and A/B scoring ran on
+**SERVER/DGPA** only.
+
+## 3. Repository synchronization (S1)
+
+```text
+server workspace : /data/jyz/next/llm/cr_tser_ws
+HEAD             : b5f91e162ed0d6d2431add410760c155c3f23c39
+```
+
+`git diff --name-only fa8ddbb..b5f91e1` returned documentation and
+`results/cr_tser_v2/p0/*` evidence files only — `project/cr_tser` and
+`scripts` are unchanged from the frozen scientific baseline.
+
+## 4. Reader acquisition and identity (S2)
+
+| reader | official model id | acquisition mode | absolute server path | official hash check |
+|---|---|---|---|---|
+| qwen | `Qwen/Qwen3-8B` | `server_existing` | `/data/jyz/next/llm/model/qwen3-8b` (symlink → `/data/jyz/next/model/qwen3-8b`) | **ALL_MATCH** |
+| glm | `zai-org/glm-4-9b-chat-hf` | `server_download` (hf-mirror) | `/data/jyz/next/llm/model/glm-4-9b-chat-hf` | **ALL_MATCH** |
+| internlm | `internlm/internlm3-8b-instruct` | `server_download` (hf-mirror) | `/data/jyz/next/llm/model/internlm3-8b-instruct` | **ALL_MATCH** |
+
+No local (non-C-drive) transfer was needed: `huggingface.co` is unreachable
+from the server, but `hf-mirror.com` returns HTTP 200, so all checkpoints were
+downloaded **directly on the server** into `/data/jyz/next/llm/`. No fallback
+download to the local machine was used, so there is no local temporary path.
+
+Official integrity verification (methods and full records in
+`official_verify_*.txt`): LFS files are compared as content sha256 against the
+mirror's `x-linked-etag`; non-LFS files as git blob sha1 against the API
+`blobId`. Lowercase `local=` vs `official=` values are the actual digests.
+
+| reader | weight shards (sha256, official = local) | tokenizer |
+|---|---|---|
+| Qwen3-8B | `31d6a825…`, `5991236c…`, `c5185c47…`, `b5ee7de7…`, `20c2d636…` | `tokenizer.json` `aeb13307…` (+ all git-blob files MATCH) |
+| GLM-4-9B-Chat-HF | `36b42739…`, `029329f3…`, `b5e6131e…`, `02e9f256…` | `tokenizer.json` `8a7269d6…` |
+| InternLM3-8B-Instruct | `9a18eb70…`, `e324110d…` | `tokenizer.model` `bcacff32…` |
+
+GLM initially landed with `model-00003-of-00004.safetensors` missing
+(hf-mirror dropped it during the first snapshot fetch); the exact shard was
+re-fetched from the official repo and verified, so the checkpoint set is
+complete: `{model-00001, 00002, 00003, 00004}-of-00004`.
+
+## 5. P0-F — frozen reader load audit
+
+From the authoritative `reader_audit.json`:
+
+| reader | weight_hash | tokenizer_hash | chat_template_hash (after load) | loaded |
+|---|---|---|---|---|
+| qwen | `345a676964219bec…` | `26a5805b76938647…` | `a55ee1b1660128b7…` | **true** |
+| glm | `50b8b4f31d1ce5d7…` | `263851b177e6d7a0…` | `27288f957f8364c9…` | **true** |
+| internlm | `3ac547bf153173e2…` | `c0ed5fe5c9f2d713…` | — | **false** |
+
+```text
+internlm load_error:
+ImportError: cannot import name 'LossKwargs' from 'transformers.utils'
+```
+
+## 6. P0-G — teacher-forced A/B sanity
+
+Frozen contract: `scoring_mode = teacher_forced_logprob_sum`,
+`generated_text_used = false`, `generated_confidence_used = false`,
+20 prompts per reader scored twice.
+
+| reader | boundaries_ok | identical_predictions | identity_rate | label distribution |
+|---|---|---|---|---|
+| qwen | **true** | **true** | **1.0** | A=20, B=0 |
+| glm | **true** | **true** | **1.0** | A=0, B=20 |
+| internlm | not evaluable | not evaluable | — | — |
+
+Explicit A/B tokenization was recorded per reader (prompt token count,
+candidate ids, continuation boundary check). Example (qwen): prompt 70 tokens,
+candidate A → `[32]`, candidate B → `[33]`, `joined_len` 71 for both,
+`all_boundaries_ok = true`.
+
+## 7. Data side — PASS (unchanged, re-verified on the server)
+
+Source of record (audited locations, referenced not relocated):
+
+```text
+CRTSER_MAWEIBO_RAW    = /data/jyz/next/llm/data/maweibo_raw
+CRTSER_MAWEIBO_LABELS = /data/jyz/next/llm/data/maweibo_labels.txt
+CRTSER_PHEME_RAW      = /data/jyz/next/llm/data/pheme_raw
+```
+
+Composite fingerprint **matches the reviewed P0 evidence exactly**:
+
+| field | value |
 |---|---|
-| git commit | `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f` |
-| protocol baseline | `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f` (match) |
-| working tree | clean for tracked files |
-| python | 3.11.15 (`E:\miniconda3\envs\bettafish\python.exe`) |
-| torch | 2.5.1+cu118 |
-| transformers | 5.14.1 |
-| CUDA | 11.8, available |
-| GPU | NVIDIA GeForce GTX 1050 Ti — **4.00 GiB total, 3.28 GiB free**, cc 6.1 |
-| deployment role | lightweight verification machine; heavyweight resources (reader weights, GPU) run on the synchronized server |
-
-Baseline health before P0 (execution plan §4):
-
-```text
-pytest project/cr_tser/tests -q      -> 128 passed
-verify_pilot.py --mode code --protocol v2 -> issues = 0
-compileall project/cr_tser scripts   -> clean
-```
-
-## 3. Ma-Weibo source of record (P0-A)
-
-```text
-CRTSER_MAWEIBO_RAW    = E:\Graduate_work_folder\rumor_detection\data\dataset\Ma-WeiBo\Weibo
-CRTSER_MAWEIBO_LABELS = E:\Graduate_work_folder\rumor_detection\data\dataset\Ma-WeiBo\Weibo.txt
-```
-
-This is the original Ma-Weibo release layout (raw per-event JSON directory +
-`Weibo.txt` label file), matching the authoritative source recorded in
-`resources/resource_manifest.md`. No tensors, processed graph cache, UMER
-cache, TC-DSCR predictions or synthetic time were used.
-
-Composite fingerprint (`maweibo_source_fingerprint.json`):
-
-| Field | Value |
-|---|---|
-| raw JSON files | 4664 |
-| raw bytes | 3,995,877,128 |
+| raw JSON files / bytes | 4664 / 3,995,877,128 |
 | raw sha256 | `c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27` |
-| label file bytes | 64,463,295 |
-| label sha256 | `032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4` |
+| label bytes / sha256 | 64,463,295 / `032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4` |
 | **combined_source_sha256** | `b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d` |
 
-Timestamps come only from raw `post["t"]`; `original_order` is a
-deterministic tie-break and never enters the temporal inclusion rule
-(verified per-event in `snapshot_integrity.json`).
+No source drift.
 
-## 4. Ma-Weibo integrity audit (P0-B)
+Integrity: `MAWEIBO_READY`; 4664 parsed / 0 invalid; labels 2351×0, 2313×1;
+source-text 1.0, timestamp 1.0, parent-resolution 0.9999918; 0 duplicate ids,
+0 cycles, 0 multi-root.
 
-From `maweibo_audit.json` (frozen `audit_maweibo`, amendment §9 fields):
+Viability (V2 strict Reply–Parent rule): 15m **4296** / 1h **4486** /
+6h **4591** → `total_viable_events = 4591 >= 170`.
 
-```text
-raw_event_count                     4664
-raw_json_files                      4664
-parsed_event_count                  4664
-invalid_event_count                 0
-label_distribution                  {"0": 2351, "1": 2313}
-source_text_coverage                1.0
-reply_text_coverage                 0.9999955274833517
-source_timestamp_coverage           1.0
-timestamp_coverage                  1.0
-parent_resolution_coverage          0.9999918442343473
-reply_node_count                    3800992
-duplicate_ids                       0
-cycle_count                         0
-multi_root_event_count              0
-missing_parent_count                0
-missing_parent_rate                 0.0
-external_parent_count               30
-external_parent_rate                7.892676438150883e-06
-temporal_invalid_node_count         1
-empty_text_count                    17
-node_status_counts                  {VALID: 3805608, EXTERNAL_PARENT: 30,
-                                     EMPTY_TEXT: 17, TEMPORAL_INVALID_NODE: 1}
-events_with_ge1_valid_reply_parent_unit  4663
-verdict                             MAWEIBO_READY
-```
+Snapshot integrity (re-sampled on the server, 8 viable events × 3 cutoffs):
+source present, 0 future leakage, `cap_hit=false` (`MAX_NODES_CAP=None`),
+parent visible only when present, `parent.ts <= child.ts`, ordering exactly
+`(timestamp, original_order)`. Sample `10031994215` (941 nodes at 6h) exceeds
+the retired 1021 cap without truncation.
 
-The historical TC-DSCR reference numbers were **not** assumed; they were
-recomputed from the current source of record and independently reproduced
-(text coverage ≈ 0.9999955, parent resolution ≈ 0.9999918, 0 cycles,
-0 duplicate IDs, 0 multi-root events).
+PHEME smoke: `OK`.
 
-Reply–parent ratios use the non-source reply count (3,800,992) as the
-denominator; the source node never dilutes them.
+## 8. P0 criteria
 
-## 5. Ma-Weibo viability (P0-C)
-
-V2 viability rule (amendment §8): valid binary label, exactly one
-source/root, valid source timestamp, non-empty source text, unique node IDs,
-no valid-node cycle, and ≥1 legal Reply–Parent Evidence Unit in at least one
-of 15m / 1h / 6h. A legal unit requires
-`reply.status == VALID ∧ reply text non-empty ∧ parent exists ∧
-parent.status == VALID ∧ parent text non-empty ∧
-parent.timestamp <= reply.timestamp`.
-
-```text
-events_viable_15m        4296
-events_viable_1h         4486
-events_viable_6h         4591
-total_viable_events      4591   (required >= 170)
-```
-
-**4591 >= 170 — satisfied.** The frozen 80/50/15/25 split was not touched,
-and no formal event split was created.
-
-## 6. Causal snapshot integrity (P0-D)
-
-`snapshot_integrity.json` samples the first 8 streaming events satisfying the
-V2 viability rule and probes all three cutoffs (24 snapshots). Every probe:
-
-```text
-source_present                    true
-future_leak_count                 0
-cap_hit                           false        (MAX_NODES_CAP = None)
-num_nodes_before_cap == after     true
-parent_visibility_ok              true
-parent_time_ok                    true   (parent.ts <= child.ts)
-order == timestamp, original_order true
-unreachable_count                 0
-```
-
-Largest sampled event: `10031994215` (1062 nodes total, 941 nodes at 6h) —
-above the retired 1021 cap, confirming the cap can no longer truncate a
-snapshot. Zero-reply cutoffs are recorded, not event-deleting; no sample
-cutoff was zero-reply.
-
-## 7. PHEME smoke (P0-E)
-
-`pheme_smoke.json` — `status = OK`, raw dir
-`E:/Graduate_work_folder/rumor_detection/data/dataset/PHEME_extension/all-rnr-annotated-threads`:
-
-```text
-n_events                  6425
-sample_event_id           552783238415265792
-source_text_available     true
-reply_text_available      true
-timestamps_available      true
-parent_relation_available true
-snapshots_built           15m:1 node, 1h:5 nodes, 6h:10 nodes
-future_leakage            []
-failures                  []
-```
-
-The smoke is fail-closed: it demands a loadable event with recoverable
-source/reply text, timestamps, at least one resolved parent relation, all
-three snapshots and zero leakage — not a parent for every reply.
-
-## 8. Frozen readers (P0-F) — the blocker
-
-`reader_audit.json`: all three readers resolved to `model_path = ""`.
-
-| reader key | expected model id | model_path_exists | loaded | weight/tokenizer/template hash |
-|---|---|---|---|---|
-| qwen | `Qwen/Qwen3-8B` | false | false | empty |
-| glm | `zai-org/glm-4-9b-chat-hf` | false | false | empty |
-| internlm | `internlm/internlm3-8b-instruct` | false | false | empty |
-
-Reader model environment at run time:
-
-```text
-CRTSER_QWEN_MODEL       (unset)
-CRTSER_GLM_MODEL        (unset)
-CRTSER_INTERLM_MODEL    (unset)
-```
-
-Corroborating local search: a filesystem scan of `C:\`, `D:\` and `E:\` to
-depth 4 matched no directory name containing `qwen3-8b`, `glm-4-9b` or
-`internlm3-8b`; the HuggingFace hub cache
-(`C:\Users\PC\.cache\huggingface\hub`) contains only bert-base-chinese,
-all-MiniLM-L6-v2, sentiment-roberta-large-english and difraud — no
-instruction-tuned 8B/9B reader.
-
-Hardware corroboration: the only GPU is a 4.00 GiB GTX 1050 Ti
-(3.28 GiB free). An 8B/9B reader in bf16 needs roughly 16–18 GiB of weights
-alone, before activations and KV cache — so this machine cannot host a frozen
-reader even if the weights were materialized locally. The three readers are
-documented server-side resources (`resources/resource_manifest.md`).
-
-The protocol forbids substituting a smaller, quantized, API or otherwise
-different checkpoint, so the frozen reader set cannot be satisfied here.
-
-Deployment note: this machine is the **lightweight verification node**, by
-design. Data-side checkpoints (P0-A … P0-E) and all code-level checks are
-reproducible locally and passed here; the heavyweight reader checkpoints
-(P0-F / P0-G) belong on the synchronized server, where
-`resources/resource_manifest.md` places the reader weights and where a
-GPU with enough VRAM exists. The local `P0_FAIL` is therefore a
-deployment-location result, not a data or protocol finding.
-
-## 9. Teacher-forced A/B sanity (P0-G)
-
-Not executable: `label_scoring_sanity.json` records
-`status = "MODEL_PATH_MISSING"` for all three readers, with
-`loaded=false`, `boundaries_ok` absent, `identical_predictions=false`.
-
-No `generate()`, free-form generation, generated confidence, self-reported
-probability or answer parsing was used anywhere; the frozen scoring contract
-remains `teacher_forced_logprob_sum`.
-
-Resulting criteria:
-
-```text
-boundaries_ok        false   (not evaluable)
-identical_predictions false  (not evaluable)
-identity_rate        n/a
-```
-
-## 10. P0 PASS criteria vs actual
-
-| Criterion (amendment §10 / plan §13) | Actual |
+| criterion (amendment §10 / plan §14) | result |
 |---|---|
 | Ma-Weibo source integrity PASS | ✅ `MAWEIBO_READY` |
 | Ma-Weibo viable events >= 170 | ✅ 4591 |
-| PHEME smoke = OK | ✅ OK |
-| Qwen loaded | ❌ model path missing |
-| GLM loaded | ❌ model path missing |
-| InternLM loaded | ❌ model path missing |
-| all boundaries_ok | ❌ not evaluable |
-| all repeated scoring deterministic | ❌ not evaluable |
+| PHEME smoke = OK | ✅ |
+| Qwen loaded | ✅ |
+| GLM loaded | ✅ |
+| InternLM loaded | ❌ `LossKwargs` ImportError (transformers 4.57.6) |
+| all A/B boundaries OK | ⚠️ qwen/glm true; internlm not evaluable |
+| all repeated scoring deterministic | ⚠️ qwen/glm `identical_predictions=true`, `identity_rate=1.0`; internlm not evaluable |
 
-→ `P0_FAIL` (a reader prerequisite is unmet).
+→ `P0_FAIL`, emitted by the frozen entrypoint
+(`python scripts/cr_tser_p0_audit.py --protocol v2 --readers --sanity`).
+No artifact was hand-edited.
 
-## 11. What was deliberately NOT done
+## 9. Verification (S7) and the V1 line-ending note
 
 ```text
-formal manifest freeze          NOT RUN
-formal intervention generation  NOT RUN
-formal utility labels           NOT RUN
-predictor / single-reader /
-shared-residual training        NOT RUN
-Stage-A subset freeze           NOT RUN
-held-out reader evaluation      NOT RUN
-P1 / P2 / P3 / P4               NOT RUN
-formal pilot report             NOT RUN
+verify_pilot.py --mode code  --protocol v2 → issues = 3, pending = 0
+verify_pilot.py --mode pilot --protocol v2 → issues = 0, pending = 1
 ```
+
+The pilot `pending = 1` is the expected `pilot_artifacts` entry (no manifests;
+P1–P4 not run). No downstream artifact was fabricated.
+
+The three code-verifier failures are **line-ending artifacts of the local
+Windows checkout, not content changes**:
+
+```text
+[fail] v1_historical_immutable:code_verify.json  sha256=134b32e2… expected=edc76e50…
+[fail] v1_historical_immutable:pilot_verify.json  sha256=c81000a9… expected=a45dc514…
+[fail] v1_verifier_dir_immutable                 sha256=aba9f516… expected=efae6c5a…
+```
+
+Evidence that the V1 content is untouched:
+
+| file | local worktree sha256 / bytes | server worktree sha256 / bytes | **stored git blob** |
+|---|---|---|---|
+| `results/cr_tser/verifier/code_verify.json` | `edc76e50…` / 8604 | `134b32e2…` / 8298 | `0d0e601e292481020b979ff8f5531c1920b59812` (identical) |
+| `results/cr_tser/verifier/pilot_verify.json` | `a45dc514…` / 298 | `c81000a9…` / 287 | `587d163f5c973d60c4875c7388130308fa57cb5f` (identical) |
+
+The local checkout has `core.autocrlf=true` (8604 vs 8298 bytes = one `\r`
+per line), while the Linux checkout keeps LF. The frozen verifier expectations
+were computed on the CRLF worktree, so they cannot match LF bytes. On both
+hosts the V1 directory is byte-stable across the whole round:
+
+```text
+SERVER v1_pre  = b1b348b83c181aefd7ec411844b00badc22f14c8aafcdffcc989c64442fbca21
+SERVER v1_post = b1b348b83c181aefd7ec411844b00badc22f14c8aafcdffcc989c64442fbca21
+unchanged = true
+```
+
+## 10. Historical namespace protection
+
+`results/cr_tser/` (V1) is read-only and byte-identical before/after the whole
+server run (hash above). All V2 output lives under `results/cr_tser_v2/`,
+inside the server root `/data/jyz/next/llm/`.
+
+## 11. Evidence files
+
+```text
+results/cr_tser_v2/p0/
+  p0_readiness.json                  (frozen entrypoint product)
+  P0_READINESS.md                    (frozen entrypoint product)
+  P0_EVIDENCE_PACKAGE.md             (this report)
+  environment.json                   (SERVER/DGPA, resolved paths)
+  maweibo_audit.json
+  maweibo_source_fingerprint.json
+  snapshot_integrity.json
+  pheme_smoke.json
+  reader_audit.json
+  label_scoring_sanity.json
+  official_verify_qwen3-8b.txt
+  official_verify_qwen3-8b_nonLFS.txt
+  official_verify_glm-4-9b-chat-hf.txt
+  official_verify_internlm3-8b-instruct.txt
+  v1_namespace_baseline.json
+results/cr_tser_v2/verifier/
+  code_verify.json, pilot_verify.json, v1_code_verify.json
+```
+
+## 12. Not run
+
+formal manifest freeze, formal intervention generation, formal utility labels,
+predictor / single-reader / shared-residual training, Stage-A freeze,
+held-out reader evaluation, P1, P2, P3, P4, formal pilot report.
 
 No threshold, reader, cutoff, split size, eligibility rule or method was
-changed. No historical TC-DSCR artifact was used and B2/S6 were not brought
-into Ma-Weibo. No fallback was designed in response to this failure.
+changed; no fallback method was designed in response to this failure.
 
-## 12. Historical namespace protection
+## 13. Allowed next step (requires research/environment decision)
 
-```text
-results/cr_tser/   (V1)  read-only throughout
-results/cr_tser_v2/ (V2) all P0 outputs
-```
+The only admissible remedy is an environment decision — **not** a code,
+model or protocol change:
 
-V1 `results/cr_tser` directory SHA-256 before the V2 verifier run:
-`c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558`
-(re-checked after the verifier run — see `v1_namespace_baseline.json` and the
-verifier's `v1_historical_*` checks).
+1. obtain an InternLM3-Series-Chat-compatible runtime for
+   `internlm/internlm3-8b-instruct` (a transformers release that still
+   exposes `LossKwargs`, i.e. ≤ the 4.5x line, in an environment that still
+   satisfies the DGPA contract), or
+2. obtain an explicit research waiver to substitute the R3 reader.
 
-## 13. Allowed next step
-
-Per the execution plan §14/§20 this round stops at a documented
-`P0_FAIL`. The only admissible remedy is a **research/environment decision**,
-not a code or protocol change:
-
-1. provision the three frozen readers on a host with sufficient VRAM
-   (server workspace `/data/jyz/next/llm/model/` already holds at least the
-   Qwen3-8B copy), and
-2. re-run the same frozen entrypoint
-   (`cr_tser_p0_audit.py --protocol v2 --readers --sanity`) there.
-3. carry this package's data-side evidence (P0-A … P0-E, identical source
-   fingerprint `b982076d…`) across so the server run re-verifies the same
-   Ma-Weibo source of record rather than a fresh one.
-
-Until that happens, no V2 manifest, label, training or evaluation stage may
-start.
+Neither may be decided inside the P0 round. Until one of them is approved, no
+V2 manifest, utility label, training or evaluation stage may start.

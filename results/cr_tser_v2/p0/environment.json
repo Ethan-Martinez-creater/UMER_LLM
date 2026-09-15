@@ -1,27 +1,31 @@
 {
- "git_commit": "fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f",
- "git_head_subject": "CR-TSER V2-M0 closure hotfix — dataset-aware eligibility, Ma-Weibo unit contract, V2 report, experiments NOT RUN",
- "protocol_baseline": "fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f",
- "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
- "executable": "E:\\miniconda3\\envs\\bettafish\\python.exe",
- "platform": "Windows-10-10.0.19045-SP0",
- "torch": "2.5.1+cu118",
- "cuda_version": "11.8",
+ "host_role": "SERVER",
+ "env": "DGPA",
+ "conda_prefix": "/data/jyz/envs/DGPA",
+ "server_root": "/data/jyz/next/llm",
+ "repo_workspace": "/data/jyz/next/llm/cr_tser_ws",
+ "python": "3.11.13 (main, Jun  5 2025, 13:12:00) [GCC 11.2.0]",
+ "executable": "/data/jyz/envs/DGPA/bin/python",
+ "platform": "Linux-5.15.0-139-generic-x86_64-with-glibc2.31",
+ "torch": "2.7.1+cu128",
+ "transformers": "4.57.6",
+ "cuda_version": "12.8",
  "cuda_available": true,
+ "git_commit": "b5f91e162ed0d6d2431add410760c155c3f23c39",
+ "git_head": "b5f91e1 CR-TSER V2-P0 preflight complete — prerequisites FAIL, formal pilot NOT RUN",
  "gpu": {
-  "name": "NVIDIA GeForce GTX 1050 Ti",
-  "total_memory_bytes": 4294836224,
-  "total_memory_gib": 4.0,
-  "free_memory_gib": 3.28,
-  "compute_capability": "6.1"
+  "name": "NVIDIA GeForce RTX 4090",
+  "total_memory_bytes": 25252724736,
+  "total_memory_gib": 23.52
  },
- "transformers": "5.14.1",
- "reader_model_env": {
-  "CRTSER_QWEN_MODEL": "",
-  "CRTSER_GLM_MODEL": "",
-  "CRTSER_INTERLM_MODEL": "",
-  "CRTSER_CANONICAL_TOKENIZER": "",
-  "CRTSER_SEMANTIC_MODEL": ""
+ "reader_paths": {
+  "CRTSER_QWEN_MODEL": "/data/jyz/next/llm/model/qwen3-8b",
+  "CRTSER_GLM_MODEL": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
+  "CRTSER_INTERNLM_MODEL": "/data/jyz/next/llm/model/internlm3-8b-instruct"
  },
- "reader_model_env_note": "all reader model env vars unset: the frozen P0 entry resolved every model_path to the empty string"
+ "dataset_paths": {
+  "CRTSER_MAWEIBO_RAW": "/data/jyz/next/llm/data/maweibo_raw",
+  "CRTSER_MAWEIBO_LABELS": "/data/jyz/next/llm/data/maweibo_labels.txt",
+  "CRTSER_PHEME_RAW": "/data/jyz/next/llm/data/pheme_raw"
+ }
 }

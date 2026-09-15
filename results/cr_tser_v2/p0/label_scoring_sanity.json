@@ -2,22 +2,176 @@
  "qwen": {
   "model_id": "Qwen/Qwen3-8B",
   "n_examples": 20,
-  "identical_predictions": false,
-  "loaded": false,
+  "identical_predictions": true,
+  "loaded": true,
   "scoring_mode": "teacher_forced_logprob_sum",
   "generated_text_used": false,
   "generated_confidence_used": false,
-  "status": "MODEL_PATH_MISSING"
+  "identity": {
+   "key": "qwen",
+   "model_id": "Qwen/Qwen3-8B",
+   "model_path": "/data/jyz/next/llm/model/qwen3-8b",
+   "dtype": "bfloat16",
+   "device": "cuda",
+   "thinking": false,
+   "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
+   "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457",
+   "chat_template_hash": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+   "transformers_version": "4.57.6",
+   "device_config": "cuda",
+   "reader_identity_hash": "f07f77a5619c253c2964308b39d50f38d1c1a4340353fa29896f2008b60cc6c1"
+  },
+  "tokenization_example": {
+   "prompt_tokens": 70,
+   "prompt_token_ids_head": [
+    151644,
+    8948,
+    198,
+    2610,
+    525,
+    37563,
+    3425,
+    264,
+    3590,
+    41262,
+    2530,
+    1736,
+    374,
+    264,
+    57901,
+    624
+   ],
+   "prompt_token_ids_tail": [
+    198,
+    151644,
+    77091,
+    198,
+    151667,
+    271,
+    151668,
+    271
+   ],
+   "candidates": {
+    "A": {
+     "prompt_tokens": 70,
+     "candidate_ids": [
+      32
+     ],
+     "joined_tail": [
+      32
+     ],
+     "joined_len": 71,
+     "boundary_ok": true,
+     "score_mode": "teacher_forced_logprob_sum"
+    },
+    "B": {
+     "prompt_tokens": 70,
+     "candidate_ids": [
+      33
+     ],
+     "joined_tail": [
+      33
+     ],
+     "joined_len": 71,
+     "boundary_ok": true,
+     "score_mode": "teacher_forced_logprob_sum"
+    }
+   },
+   "all_boundaries_ok": true
+  },
+  "boundaries_ok": true,
+  "identity_rate": 1.0,
+  "label_distribution": {
+   "A": 20,
+   "B": 0
+  }
  },
  "glm": {
   "model_id": "zai-org/glm-4-9b-chat-hf",
   "n_examples": 20,
-  "identical_predictions": false,
-  "loaded": false,
+  "identical_predictions": true,
+  "loaded": true,
   "scoring_mode": "teacher_forced_logprob_sum",
   "generated_text_used": false,
   "generated_confidence_used": false,
-  "status": "MODEL_PATH_MISSING"
+  "identity": {
+   "key": "glm",
+   "model_id": "zai-org/glm-4-9b-chat-hf",
+   "model_path": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
+   "dtype": "bfloat16",
+   "device": "cuda",
+   "thinking": false,
+   "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
+   "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650",
+   "chat_template_hash": "27288f957f8364c990a2ce13bf5f8bf86921c4bce467ce698c76dcc69466d821",
+   "transformers_version": "4.57.6",
+   "device_config": "cuda",
+   "reader_identity_hash": "48d516783fd9299b6eca495f3723fb94ae8a2122626761adeb77a4bd7f403c3e"
+  },
+  "tokenization_example": {
+   "prompt_tokens": 60,
+   "prompt_token_ids_head": [
+    151331,
+    151333,
+    151335,
+    198,
+    2610,
+    525,
+    37368,
+    3425,
+    264,
+    3590,
+    41031,
+    2530,
+    1736,
+    374,
+    264,
+    57505
+   ],
+   "prompt_token_ids_tail": [
+    25,
+    2530,
+    1736,
+    1372,
+    220,
+    15,
+    13,
+    151337
+   ],
+   "candidates": {
+    "A": {
+     "prompt_tokens": 60,
+     "candidate_ids": [
+      32
+     ],
+     "joined_tail": [
+      32
+     ],
+     "joined_len": 61,
+     "boundary_ok": true,
+     "score_mode": "teacher_forced_logprob_sum"
+    },
+    "B": {
+     "prompt_tokens": 60,
+     "candidate_ids": [
+      33
+     ],
+     "joined_tail": [
+      33
+     ],
+     "joined_len": 61,
+     "boundary_ok": true,
+     "score_mode": "teacher_forced_logprob_sum"
+    }
+   },
+   "all_boundaries_ok": true
+  },
+  "boundaries_ok": true,
+  "identity_rate": 1.0,
+  "label_distribution": {
+   "A": 0,
+   "B": 20
+  }
  },
  "internlm": {
   "model_id": "internlm/internlm3-8b-instruct",
@@ -27,6 +181,6 @@
   "scoring_mode": "teacher_forced_logprob_sum",
   "generated_text_used": false,
   "generated_confidence_used": false,
-  "status": "MODEL_PATH_MISSING"
+  "status": "ERROR: ImportError: cannot import name 'LossKwargs' from 'transformers.utils' (/data/jyz/envs/DGPA/lib/python3.11/site-packages/transformers/utils/__init__.py)"
  }
 }

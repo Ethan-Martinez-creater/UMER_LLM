@@ -664,6 +664,93 @@ single-reader / shared-residual training, Stage-A freeze, held-out reader
 evaluation, P1–P4, formal pilot report. No threshold, reader, cutoff, split,
 eligibility rule or method was changed; no fallback was designed.
 
+# 19. V2-P0 server completion (real run, formal pilot NOT RUN)
+
+## 19.1 Dual-environment contract
+
+```text
+LOCAL  env = pytorch   (Windows, E:\anaconda\envs\pytorch, GTX 1050 Ti 4.00 GiB)
+SERVER env = DGPA      (Linux, /data/jyz/envs/DGPA/bin/python, RTX 4090 23.52 GiB)
+server root = /data/jyz/next/llm/ ; workspace = /data/jyz/next/llm/cr_tser_ws
+```
+
+Local (`pytorch`) ran only lightweight checks: git state at `b5f91e1`,
+`pytest project/cr_tser/tests -q` → 128 passed,
+`verify_pilot.py --mode code --protocol v2` → issues = 0, `compileall` clean.
+No reader was loaded locally. Every reader load, identity hash and A/B score
+ran on the server.
+
+## 19.2 Server checkpoints
+
+* **S1** — repository cloned to `/data/jyz/next/llm/cr_tser_ws`, HEAD
+  `b5f91e1`; `git diff fa8ddbb..b5f91e1` = docs + `results/cr_tser_v2/p0/*`
+  only, so `project/cr_tser` and `scripts` are unchanged from the frozen
+  baseline.
+* **S2** — reader acquisition. `huggingface.co` is unreachable from the
+  server, but `hf-mirror.com` answers HTTP 200, so all three checkpoints were
+  obtained **on the server**, under `/data/jyz/next/llm/model/`:
+  `qwen3-8b` (`server_existing`, exposed at the llm root by a symlink to
+  `/data/jyz/next/model/qwen3-8b`), `glm-4-9b-chat-hf` and
+  `internlm3-8b-instruct` (`server_download`). No local non-C-drive transfer
+  was used, so no local temporary weight path exists.
+  Official integrity: weights verified as content sha256 against the mirror's
+  `x-linked-etag`; non-LFS files as git blob sha1 against the HF API
+  `blobId`. All three readers `ALL_MATCH`. GLM landed initially without
+  `model-00003-of-00004.safetensors`; the exact shard was re-fetched and
+  verified (`b5e6131e…`), completing the 4-shard set.
+* **S3** — Ma-Weibo composite fingerprint `b982076d…` reproduced exactly on
+  the server (raw 4664 files / 3,995,877,128 bytes, `c6afd1c5…`; labels
+  `032f10e2…`). No source drift.
+* **S4/S5** — see 19.3.
+* **S6** — `python scripts/cr_tser_p0_audit.py --protocol v2 --readers
+  --sanity` produced the verdict; nothing was hand-edited.
+* **S7** — `--mode code` issues = 3, `--mode pilot` issues = 0 pending = 1.
+
+## 19.3 Verdict and single blocker
+
+```text
+P0_FAIL
+```
+
+```text
+qwen      loaded=true   boundaries_ok=true  identical_predictions=true  identity_rate=1.0
+glm       loaded=true   boundaries_ok=true  identical_predictions=true  identity_rate=1.0
+internlm  loaded=false  ImportError: cannot import name 'LossKwargs' from 'transformers.utils'
+```
+
+`internlm/internlm3-8b-instruct` cannot load under DGPA: its official
+`modeling_internlm3.py` imports `LossKwargs`, which transformers **4.57.6
+removed** (absent from both `transformers.utils` and
+`transformers.utils.generic`), and this version also ships no built-in
+`internlm3` model type — so the frozen reader's `trust_remote_code=True` path
+fails. An official-checkpoint ↔ mandated-environment incompatibility, not a
+data or protocol finding. No model was substituted, no threshold changed, no
+patch of the official remote code applied.
+
+Data side re-passed on the server: `MAWEIBO_READY`, labels 2351×0 / 2313×1,
+viable events 15m 4296 / 1h 4486 / 6h **4591 >= 170**, snapshot integrity
+(8 viable events × 3 cutoffs) source-present, 0 leakage, no cap,
+`parent.ts <= child.ts`, exact `(timestamp, original_order)` ordering; PHEME
+smoke `OK`.
+
+## 19.4 V1 line-ending note (code verifier issues = 3)
+
+On the server the three `v1_historical_immutable` /
+`v1_verifier_dir_immutable` checks fail, but the V1 **content** is untouched:
+the stored git blobs are identical on both hosts
+(`code_verify.json` → `0d0e601e292481020b979ff8f5531c1920b59812`,
+`pilot_verify.json` → `587d163f5c973d60c4875c7388130308fa57cb5f`). The local
+checkout has `core.autocrlf=true` (8604 vs 8298 bytes = one `\r` per line) and
+the frozen expectations were computed on that CRLF worktree. V1 is byte-stable
+on the server across the whole round (`b1b348b8…` pre == post).
+
+## 19.5 Not run
+
+formal manifests, formal intervention generation, utility labels, predictor /
+single-reader / shared-residual training, Stage-A freeze, held-out reader
+evaluation, P1–P4, formal pilot report. No fallback was designed. The only
+admissible remedy is an environment/research decision about the R3 runtime.
+
 
 
 

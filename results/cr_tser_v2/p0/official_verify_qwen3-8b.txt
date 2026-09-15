@@ -1,0 +1,18 @@
+repo=Qwen/Qwen3-8B
+dir=/data/jyz/next/llm/model/qwen3-8b
+method: LFS -> sha256 vs x-linked-etag ; other -> git blob sha1 vs etag
+SKIP     config.json (no official hash) size=728
+SKIP     generation_config.json (no official hash) size=239
+SKIP     LICENSE (no official hash) size=11343
+SKIP     merges.txt (no official hash) size=1671853
+MATCH    sha256 model-00001-of-00005.safetensors local=31d6a825ae35f11fb85b195b4c42c146c051e446433125a215336abdf95cbf5f official=31d6a825ae35f11fb85b195b4c42c146c051e446433125a215336abdf95cbf5f size=3996250744
+MATCH    sha256 model-00002-of-00005.safetensors local=5991236cea6fe21f3d43cab0f0e84448734fbbe0789816202989f2ddc9d18282 official=5991236cea6fe21f3d43cab0f0e84448734fbbe0789816202989f2ddc9d18282 size=3993160032
+MATCH    sha256 model-00003-of-00005.safetensors local=c5185c4794be2d8a9784d5753c9922db38df478ce11f9ed0b415b7304d896836 official=c5185c4794be2d8a9784d5753c9922db38df478ce11f9ed0b415b7304d896836 size=3959604768
+MATCH    sha256 model-00004-of-00005.safetensors local=b5ee7de71fbf17db3d5704e0c8f2bc7d005ca9e1d7ca2aeb19827b0cfcaa917a official=b5ee7de71fbf17db3d5704e0c8f2bc7d005ca9e1d7ca2aeb19827b0cfcaa917a size=3187841392
+MATCH    sha256 model-00005-of-00005.safetensors local=20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff official=20c2d6366ab85c90786ccdd829cd2b9e7d30ef3b2ebbb998280e7e4014b542ff size=1244659840
+SKIP     model.safetensors.index.json (no official hash) size=32878
+SKIP     README.md (no official hash) size=16660
+SKIP     tokenizer_config.json (no official hash) size=9732
+MATCH    sha256 tokenizer.json local=aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4 official=aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4 size=11422654
+SKIP     vocab.json (no official hash) size=2776833
+ALL_MATCH True

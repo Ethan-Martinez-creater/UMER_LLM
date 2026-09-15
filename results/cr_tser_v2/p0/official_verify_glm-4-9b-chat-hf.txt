@@ -1,0 +1,17 @@
+repo=zai-org/glm-4-9b-chat-hf
+dir=/data/jyz/next/llm/model/glm-4-9b-chat-hf
+method: LFS -> sha256 vs x-linked-etag ; other -> git blob sha1 vs etag
+SKIP     config.json (no official hash) size=661
+SKIP     configuration.json (no official hash) size=36
+SKIP     generation_config.json (no official hash) size=160
+SKIP     LICENSE (no official hash) size=6511
+MATCH    sha256 model-00001-of-00004.safetensors local=36b42739ee927f68ec00fbb329b78938784654b4269b6ef68e6c0f86244fe8fe official=36b42739ee927f68ec00fbb329b78938784654b4269b6ef68e6c0f86244fe8fe size=4984133600
+MATCH    sha256 model-00002-of-00004.safetensors local=029329f34bb73bd71b7e5f6391c62383d6bf888b88d4168fb7c416ea283da3f7 official=029329f34bb73bd71b7e5f6391c62383d6bf888b88d4168fb7c416ea283da3f7 size=4895075168
+MATCH    sha256 model-00003-of-00004.safetensors local=b5e6131e4059dcd8f29b006c8d951684fdf2a89cc79132d74e1b071a42fb9cae official=b5e6131e4059dcd8f29b006c8d951684fdf2a89cc79132d74e1b071a42fb9cae size=4895075184
+MATCH    sha256 model-00004-of-00004.safetensors local=02e9f256892a30b5e1c1176b0fff19d143f7944432529f16f2c7e8bb0d8106a0 official=02e9f256892a30b5e1c1176b0fff19d143f7944432529f16f2c7e8bb0d8106a0 size=4025669744
+SKIP     model.safetensors.index.json (no official hash) size=36594
+SKIP     README.md (no official hash) size=9378
+SKIP     README_zh.md (no official hash) size=8242
+SKIP     tokenizer_config.json (no official hash) size=6116
+MATCH    sha256 tokenizer.json local=8a7269d6daa6328de533def0082ff9d3a825bb89036cbcc665c324f941f67fbf official=8a7269d6daa6328de533def0082ff9d3a825bb89036cbcc665c324f941f67fbf size=19967863
+ALL_MATCH True

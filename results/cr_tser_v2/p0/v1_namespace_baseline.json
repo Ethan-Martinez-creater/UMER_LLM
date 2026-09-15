@@ -1,6 +1,8 @@
 {
- "v1_results_dir_sha256_pre": "c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558",
- "v1_results_dir_sha256_post": "c55d4c9429483b314982b77816166258c197ef62a45d5e7aebe02ba976b79558",
+ "host_role": "SERVER",
+ "v1_results_dir_sha256_pre": "b1b348b83c181aefd7ec411844b00badc22f14c8aafcdffcc989c64442fbca21",
+ "v1_results_dir_sha256_post": "b1b348b83c181aefd7ec411844b00badc22f14c8aafcdffcc989c64442fbca21",
  "unchanged": true,
- "note": "results/cr_tser stayed byte-identical across the whole V2-P0 round, including the V2 verifier runs"
+ "note": "results/cr_tser (V1) is byte-identical before and after the whole server V2-P0 run; V1 stays read-only",
+ "local_vs_server_note": "The local Windows checkout has core.autocrlf=true, so its V1 working-tree bytes differ from the server LF checkout even though the stored git blobs are identical (verified via git hash-object). The frozen V1 verifier expectations were computed on the local CRLF worktree, so on the LF checkout the three v1_historical_immutable / v1_verifier_dir_immutable checks fail on line endings only, not on content."
 }

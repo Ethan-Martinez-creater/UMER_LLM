@@ -1,7 +1,8 @@
 {
  "dataset": "maweibo",
  "eligibility": "v2_strict",
- "sampling": "first 8 events (streaming, raw order) that satisfy the V2 viability rule",
+ "host_role": "SERVER",
+ "sampling": "first 8 streaming events satisfying V2 viability",
  "events_scanned_before_sample_complete": 8,
  "cutoffs_minutes": [
   15,
@@ -27,12 +28,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 27,
-     "num_nodes_after_cap": 27,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -43,12 +42,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 51,
-     "num_nodes_after_cap": 51,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -59,12 +56,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 73,
-     "num_nodes_after_cap": 73,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -87,12 +82,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 144,
-     "num_nodes_after_cap": 144,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -103,12 +96,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 494,
-     "num_nodes_after_cap": 494,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -119,12 +110,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 941,
-     "num_nodes_after_cap": 941,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -147,12 +136,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 70,
-     "num_nodes_after_cap": 70,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -163,12 +150,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 125,
-     "num_nodes_after_cap": 125,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -179,12 +164,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 180,
-     "num_nodes_after_cap": 180,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -207,12 +190,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 8,
-     "num_nodes_after_cap": 8,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -223,12 +204,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 13,
-     "num_nodes_after_cap": 13,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -239,12 +218,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 23,
-     "num_nodes_after_cap": 23,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -267,12 +244,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 43,
-     "num_nodes_after_cap": 43,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -283,12 +258,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 82,
-     "num_nodes_after_cap": 82,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -299,12 +272,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 139,
-     "num_nodes_after_cap": 139,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -327,12 +298,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 142,
-     "num_nodes_after_cap": 142,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -343,12 +312,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 301,
-     "num_nodes_after_cap": 301,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -359,12 +326,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 400,
-     "num_nodes_after_cap": 400,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -387,12 +352,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 113,
-     "num_nodes_after_cap": 113,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -403,12 +366,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 151,
-     "num_nodes_after_cap": 151,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -419,12 +380,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 151,
-     "num_nodes_after_cap": 151,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]
@@ -447,12 +406,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 2,
-     "num_nodes_after_cap": 2,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -463,12 +420,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 4,
-     "num_nodes_after_cap": 4,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     },
     {
@@ -479,12 +434,10 @@
      "future_leak_count": 0,
      "cap_hit": false,
      "max_nodes_cap": null,
-     "num_nodes_before_cap": 8,
-     "num_nodes_after_cap": 8,
-     "unreachable_count": 0,
      "parent_visibility_ok": true,
      "parent_time_ok": true,
      "order_is_timestamp_then_original_order": true,
+     "unreachable_count": 0,
      "zero_reply": false
     }
    ]

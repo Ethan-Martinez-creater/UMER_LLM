@@ -1,0 +1,17 @@
+repo=internlm/internlm3-8b-instruct
+dir=/data/jyz/next/llm/model/internlm3-8b-instruct
+method: LFS -> sha256 vs x-linked-etag ; other -> git blob sha1 vs etag
+SKIP     config.json (no official hash) size=1010
+SKIP     configuration_internlm3.py (no official hash) size=10536
+SKIP     generation_config.json (no official hash) size=124
+SKIP     LICENSE.txt (no official hash) size=11357
+MATCH    sha256 model-00001-of-00002.safetensors local=9a18eb700cd28f03c0745ac75ab53ead514cfa703fabb82c61a37b85cb593ff4 official=9a18eb700cd28f03c0745ac75ab53ead514cfa703fabb82c61a37b85cb593ff4 size=9928388896
+MATCH    sha256 model-00002-of-00002.safetensors local=e324110df616ca5190f20469528f13421476f38f0e2597dac4d9ee0bdcede797 official=e324110df616ca5190f20469528f13421476f38f0e2597dac4d9ee0bdcede797 size=7680144544
+SKIP     modeling_internlm3.py (no official hash) size=56370
+SKIP     model.safetensors.index.json (no official hash) size=35838
+SKIP     README.md (no official hash) size=39850
+SKIP     special_tokens_map.json (no official hash) size=1003
+SKIP     tokenization_internlm3.py (no official hash) size=13220
+SKIP     tokenizer_config.json (no official hash) size=5692
+MATCH    sha256 tokenizer.model local=bcacff3229854f5103ee7a85473a30ca9a8b3a68f3aae9b7479574b23ac2256b official=bcacff3229854f5103ee7a85473a30ca9a8b3a68f3aae9b7479574b23ac2256b size=2475075
+ALL_MATCH True
