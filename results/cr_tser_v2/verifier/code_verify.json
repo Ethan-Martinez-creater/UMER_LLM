@@ -1,6 +1,6 @@
 {
  "mode": "code",
- "issues": 3,
+ "issues": 0,
  "pending": 0,
  "checks": [
   {
@@ -405,18 +405,18 @@
   },
   {
    "check": "v1_historical_immutable:code_verify.json",
-   "status": "fail",
-   "detail": "sha256=134b32e2f00765ab expected=edc76e509262d126"
+   "status": "pass",
+   "detail": "canonical_sha256=134b32e2f00765ab expected=134b32e2f00765ab"
   },
   {
    "check": "v1_historical_immutable:pilot_verify.json",
-   "status": "fail",
-   "detail": "sha256=c81000a97ed82c32 expected=a45dc514df41882a"
+   "status": "pass",
+   "detail": "canonical_sha256=c81000a97ed82c32 expected=c81000a97ed82c32"
   },
   {
    "check": "v1_verifier_dir_immutable",
-   "status": "fail",
-   "detail": "sha256=aba9f5169d63b39c expected=efae6c5a47d1a93a"
+   "status": "pass",
+   "detail": "canonical_sha256=aba9f5169d63b39c expected=aba9f5169d63b39c"
   }
  ]
 }

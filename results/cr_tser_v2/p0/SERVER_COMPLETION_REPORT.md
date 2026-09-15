@@ -1,5 +1,11 @@
 # CR-TSER V2-P0 Server Completion — Execution Report
 
+> **Historical record.** This report documents the server-completion round,
+> which ended in `P0_FAIL` because InternLM3 could not load under transformers
+> 4.57.6. The following **V2-P0 Compatibility Closure** round resolved that
+> (transformers 4.53.3) and reached `P0_PASS` — see
+> `COMPATIBILITY_CLOSURE_REPORT.md` and `P0_EVIDENCE_PACKAGE.md`.
+
 Round: **V2-P0 Server Completion** (`docs/CR_TSER_V2_P0_SERVER_COMPLETION_PLAN_v2.md`)
 Repository commit carrying this evidence: `3d76af20e04eb5e04a9ad152133478a01b45efba`
 Frozen scientific baseline: `fa8ddbbc6f2b4b86f963a8913a22d2f88b8bd82f`

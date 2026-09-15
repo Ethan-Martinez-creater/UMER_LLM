@@ -1,6 +1,6 @@
 {
  "protocol": "v2",
- "P0": "P0_FAIL",
+ "P0": "P0_PASS",
  "primary_dataset": "maweibo",
  "secondary_dataset": "pheme",
  "weibo22_status": "REJECTED_PRIMARY_CANDIDATE",
@@ -11,9 +11,9 @@
  "maweibo_viable_ok": true,
  "pheme_smoke": "OK",
  "pheme_smoke_ok": true,
- "readers_ready": false,
+ "readers_ready": true,
  "readers_checked": true,
- "ab_sanity_ok": false,
- "ab_boundaries_ok": false,
- "next_step": "STOP: a V2 P0 prerequisite is unmet (amendment V2 §10)"
+ "ab_sanity_ok": true,
+ "ab_boundaries_ok": true,
+ "next_step": "COMMIT PUSH STOP — research approval required before expensive labels (amendment V2 §26)"
 }

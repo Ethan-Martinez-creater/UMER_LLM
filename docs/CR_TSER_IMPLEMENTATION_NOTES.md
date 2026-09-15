@@ -751,6 +751,90 @@ single-reader / shared-residual training, Stage-A freeze, held-out reader
 evaluation, P1–P4, formal pilot report. No fallback was designed. The only
 admissible remedy is an environment/research decision about the R3 runtime.
 
+# 20. V2-P0 compatibility closure (P0_PASS, formal pilot NOT RUN)
+
+Round code commit `808fd83`; baseline entering the round `99dab76`. Two
+engineering problems, no science change.
+
+## 20.1 InternLM3 ↔ Transformers compatibility
+
+`internlm/internlm3-8b-instruct`'s official `modeling_internlm3.py` imports
+`LossKwargs`, which transformers **4.57.6 removed** (absent from both
+`transformers.utils` and `transformers.utils.generic`), and 4.57.6 ships no
+built-in `internlm3`. Because the frozen `InternLMReader` uses
+`trust_remote_code=True`, the R3 reader could not load.
+
+Resolution — rollback-safe isolation, DGPA untouched:
+
+* `dgpa_pip_freeze_before.txt` snapshots DGPA (transformers 4.57.6,
+  tokenizers 0.22.2, torch 2.7.1+cu128) before anything changes;
+* `transformers==4.53.3` plus `tokenizers>=0.21,<0.22` are installed into
+  `/data/jyz/next/llm/.cr_tser_v2p0/tf453` and injected with `PYTHONPATH`;
+* DGPA's own `site-packages` is never modified, so rollback is
+  `unset PYTHONPATH`.
+
+Result under 4.53.3 (`LossKwargs import: OK`): all three readers load
+(`ALL_LOADED True`), and the frozen teacher-forced A/B sanity passes for all
+three — qwen A=20/B=0, glm A=0/B=20, internlm A=17/B=3, each with
+`boundaries_ok=true`, `identical_predictions=true`, `identity_rate=1.0`.
+Qwen and GLM were re-scored as the minimal regression: the frozen scoring
+contract is unaffected by the version change.
+
+The official remote code was **not** modified, `LossKwargs` was **not**
+patched, and no model was substituted.
+
+## 20.2 Cross-platform V1 immutability
+
+`_verify_v1_historical_immutable` pinned raw worktree bytes, so a Windows
+checkout (`core.autocrlf=true`) and a Linux checkout could never both pass
+even though the stored git blobs are identical; `_dir_sha256` also leaked
+`os.sep` into the digest via `os.path.relpath`.
+
+Identity is now the **canonical LF digest**: `_canonical_bytes` normalizes
+CRLF→LF, `_canonical_sha256` digests a file, and `_dir_sha256` additionally
+POSIX-normalizes relative paths. New pins:
+
+```text
+code_verify.json   134b32e2f00765ab221ee710a8def67ede91b009b97da95beecfac4463e22f0e
+pilot_verify.json  c81000a97ed82c323c1953049d83fa864f9eba2b83640c6211af810076a061af
+verifier dir       aba9f5169d63b39c7e423d886e01ec5e40547f43aa0f46a5c937bf73df4d90c2
+```
+
+These equal the digests the Linux worktree already produced, so the pins are
+content-based and platform-stable; a real edit still changes them. New
+`project/cr_tser/tests/test_v1_immutability_cross_platform.py` (11 tests)
+covers CRLF/LF equivalence, content-change detection, directory digests, the
+live pins, pass-on-either-line-ending, tamper-fails and missing-file-fails.
+
+## 20.3 Final verification
+
+```text
+LOCAL/pytorch   pytest project/cr_tser/tests -q            -> 139 passed
+LOCAL/pytorch   verify_pilot.py --mode code --protocol v2  -> issues = 0
+LOCAL/pytorch   compileall project/cr_tser scripts         -> clean
+SERVER/DGPA     verify_pilot.py --mode code --protocol v2  -> issues = 0
+SERVER/DGPA     cr_tser_p0_audit.py --protocol v2 --readers --sanity
+                                                          -> P0_PASS (exit 0)
+SERVER/DGPA     verify_pilot.py --mode pilot --protocol v2 -> issues = 0, pending = 1
+```
+
+`P0_PASS` prerequisites: `MAWEIBO_READY`, viable 4591 ≥ 170, PHEME smoke OK,
+all three readers loaded, all boundaries OK, all repeated scoring
+deterministic.
+
+One operational note: the server's first `git fetch` in this round failed with
+`GnuTLS recv error (-54)` and the workspace silently stayed on `b5f91e1`,
+which reproduced the old three CRLF failures. After retrying the fetch
+(`b5f91e1..808fd83`) the chain was re-run in full; the reported results are
+from that corrected run.
+
+## 20.4 Not run
+
+formal manifests, utility labels, predictor training, Stage A/B, held-out
+reader evaluation, P1–P4, formal pilot. `P0_PASS` depends on the 4.53.3
+`PYTHONPATH` override — every later stage that loads the readers must use it,
+or DGPA must be moved to 4.53.3 by the research owner.
+
 
 
 

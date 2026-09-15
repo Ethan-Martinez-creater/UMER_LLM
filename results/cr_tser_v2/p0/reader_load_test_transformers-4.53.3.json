@@ -1,21 +1,8 @@
 {
  "qwen": {
-  "key": "qwen",
-  "model_id": "Qwen/Qwen3-8B",
   "model_path": "/data/jyz/next/llm/model/qwen3-8b",
-  "dtype": "bfloat16",
-  "device": "cuda",
-  "thinking": false,
-  "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
-  "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457",
-  "chat_template_hash": "",
-  "transformers_version": "4.53.3",
-  "device_config": "cuda",
-  "reader_identity_hash": "68fbef67c342281152be97ce3086c626d53a45aa24376db25319ecf45d54396e",
-  "model_path_exists": true,
-  "expected_model_id": "Qwen/Qwen3-8B",
   "loaded": true,
-  "identity_after_load": {
+  "identity": {
    "key": "qwen",
    "model_id": "Qwen/Qwen3-8B",
    "model_path": "/data/jyz/next/llm/model/qwen3-8b",
@@ -31,22 +18,9 @@
   }
  },
  "glm": {
-  "key": "glm",
-  "model_id": "zai-org/glm-4-9b-chat-hf",
   "model_path": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
-  "dtype": "bfloat16",
-  "device": "cuda",
-  "thinking": false,
-  "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
-  "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650",
-  "chat_template_hash": "",
-  "transformers_version": "4.53.3",
-  "device_config": "cuda",
-  "reader_identity_hash": "842ce645171fcb0fbf92175c71ca86a16e4f222d52e907ec4480db2705fe1716",
-  "model_path_exists": true,
-  "expected_model_id": "zai-org/glm-4-9b-chat-hf",
   "loaded": true,
-  "identity_after_load": {
+  "identity": {
    "key": "glm",
    "model_id": "zai-org/glm-4-9b-chat-hf",
    "model_path": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
@@ -62,22 +36,9 @@
   }
  },
  "internlm": {
-  "key": "internlm",
-  "model_id": "internlm/internlm3-8b-instruct",
   "model_path": "/data/jyz/next/llm/model/internlm3-8b-instruct",
-  "dtype": "bfloat16",
-  "device": "cuda",
-  "thinking": false,
-  "weight_hash": "3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff",
-  "tokenizer_hash": "c0ed5fe5c9f2d713b8704acf29e75f408aea50f7cdc5fce7fe4dcf57879a6491",
-  "chat_template_hash": "",
-  "transformers_version": "4.53.3",
-  "device_config": "cuda",
-  "reader_identity_hash": "bba80967e27cd5f6542cacb1ea0f49c9005b15b5d23a8a68d2923194d0e6ff7a",
-  "model_path_exists": true,
-  "expected_model_id": "internlm/internlm3-8b-instruct",
   "loaded": true,
-  "identity_after_load": {
+  "identity": {
    "key": "internlm",
    "model_id": "internlm/internlm3-8b-instruct",
    "model_path": "/data/jyz/next/llm/model/internlm3-8b-instruct",

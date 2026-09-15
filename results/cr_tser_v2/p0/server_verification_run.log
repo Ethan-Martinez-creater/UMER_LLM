@@ -1,0 +1,87 @@
+===== repository sync to 808fd83 (fetch retried) =====
+之前的 HEAD 位置是 b5f91e1 CR-TSER V2-P0 preflight complete — prerequisites FAIL, formal pilot NOT RUN
+HEAD 目前位于 808fd83 V2-P0 compatibility closure — cross-platform-stable V1 immutability pins
+HEAD=808fd83e61f71b0935a5a54543859519e6d0473d
+808fd83 V2-P0 compatibility closure — cross-platform-stable V1 immutability pins
+--- new canonical pins present in server verifier? ---
+1
+--- diff fa8ddbb..HEAD (files) ---
+docs/CR_TSER_IMPLEMENTATION_NOTES.md
+docs/CR_TSER_V2_P0_EXECUTION_PLAN.md
+docs/CR_TSER_V2_P0_SERVER_COMPLETION_PLAN_v2.md
+project/cr_tser/tests/test_v1_immutability_cross_platform.py
+results/cr_tser_v2/p0/P0_EVIDENCE_PACKAGE.md
+results/cr_tser_v2/p0/P0_READINESS.md
+results/cr_tser_v2/p0/SERVER_COMPLETION_REPORT.md
+results/cr_tser_v2/p0/environment.json
+results/cr_tser_v2/p0/label_scoring_sanity.json
+results/cr_tser_v2/p0/maweibo_audit.json
+results/cr_tser_v2/p0/maweibo_source_fingerprint.json
+results/cr_tser_v2/p0/official_verify_glm-4-9b-chat-hf.txt
+results/cr_tser_v2/p0/official_verify_internlm3-8b-instruct.txt
+results/cr_tser_v2/p0/official_verify_qwen3-8b.txt
+results/cr_tser_v2/p0/official_verify_qwen3-8b_nonLFS.txt
+results/cr_tser_v2/p0/p0_readiness.json
+results/cr_tser_v2/p0/pheme_smoke.json
+results/cr_tser_v2/p0/reader_audit.json
+results/cr_tser_v2/p0/snapshot_integrity.json
+results/cr_tser_v2/p0/v1_namespace_baseline.json
+results/cr_tser_v2/verifier/code_verify.json
+results/cr_tser_v2/verifier/pilot_verify.json
+scripts/cr_tser_verify_pilot.py
+
+===== environment under test =====
+CONDA_DEFAULT_ENV=DGPA
+PYTHONPATH=/data/jyz/next/llm/.cr_tser_v2p0/tf453
+Python 3.11.13
+torch 2.7.1+cu128
+transformers 4.53.3
+tokenizers 0.21.4
+
+===== S7a CODE VERIFIER (canonical V1 pins) =====
+{
+ "mode": "code",
+ "protocol": "v2",
+ "issues": 0,
+ "pending": 0,
+ "out": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/verifier/code_verify.json"
+}
+
+===== S6 AUTHORITATIVE V2 P0 =====
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.15it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:01,  2.19it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:01<00:00,  2.20it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:01<00:00,  2.42it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.28it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  2.73it/s]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.35it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  2.26it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:04<00:02,  2.04s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:14<00:00,  4.94s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:14<00:00,  3.55s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.89s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:16<00:00,  9.08s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:16<00:00,  8.45s/it]
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:05<00:20,  5.11s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:05<00:07,  2.61s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:06<00:03,  1.61s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:06<00:01,  1.11s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:06<00:00,  1.33it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:06<00:00,  1.37s/it]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  1.78it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.20s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:03<00:01,  1.04s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.22it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.13it/s]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.02s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.74s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.93s/it]
+{
+ "protocol": "v2",
+ "P0": "P0_PASS",
+ "primary_dataset": "maweibo",
+ "secondary_dataset": "pheme",
+ "weibo22_status": "REJECTED_PRIMARY_CANDIDATE",
+ "maweibo_source_integrity": true,
+ "maweibo_source_verdict": "MAWEIBO_READY",
+ "maweibo_viable_events": 4591,
+ "maweibo_viable_required": 170,
+ "maweibo_viable_ok": true,
+ "pheme_smoke": "OK",
+ "pheme_smoke_ok": true,
+ "readers_ready": true,
+ "readers_checked": true,
+ "ab_sanity_ok": true,
+ "ab_boundaries_ok": true,
+ "next_step": "COMMIT PUSH STOP — research approval required before expensive labels (amendment V2 §26)"
+}
+P0_EXIT=0
+
+===== S7b PILOT VERIFIER =====
+{
+ "mode": "pilot",
+ "protocol": "v2",
+ "issues": 0,
+ "pending": 1,
+ "out": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/verifier/pilot_verify.json"
+}
+  [pending] pilot_artifacts: pilot not executed yet: no /data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/manifests/<dataset>/event_split.json
+RERUN453_DONE 2026年 09月 15日 星期二 21:07:31 CST
