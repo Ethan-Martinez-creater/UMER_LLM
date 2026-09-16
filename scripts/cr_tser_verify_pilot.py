@@ -299,6 +299,7 @@ def verify_code(report: Report, protocol: str = "v2r1"):
         _verify_v2_migration(report, protocol)
     if protocol == "v2r1":
         _verify_reader_amendment_r1(report)
+        _verify_boundary_audit_a1(report)
 
 
 class _FakeTokenizer:
@@ -1505,6 +1506,233 @@ def _verify_reader_amendment_r1(report):
     except Exception as exc:  # pragma: no cover - defensive
         report.add("r1_migration_utility_fail_closed", False,
                    f"error: {exc}")
+
+
+# --------------------------------------------------------------------------
+# amendment A1 — v2r1 autoregressive boundary audit
+# --------------------------------------------------------------------------
+#: AST digests of the scorer functions amendment A1 explicitly freezes: the
+#: scoring mathematics, the prompt/continuation tokenizers, the legacy boundary
+#: check and the A1 audit layer itself. A changed digest means either the
+#: "do not change the scoring mathematics" clause was violated, or a *new*
+#: amendment must update this pin on purpose (with its own tests and report).
+SEQUENCE_SCORER_FUNCTION_SHA256 = {
+    "_render_chat":
+        "6a8e3afc848edae6b368f60d62b82aeed93074829d79b214d735b9ef33cceefd",
+    "apply_chat":
+        "1697880b8b78fd3b2a7392afb0dc392382428cac000891f1ccebbeac10cdda39",
+    "normalize_ab":
+        "9ca694a0725ac6910dd6df54401350b8f1626090d8fbb7d64d06fbcfce671bf6",
+    "ab_scores":
+        "c70052aab03ebb0e0d43815a37bc5af0d5177ed55ba1aff1f247a5072d77cee0",
+    "gold_probability":
+        "cfdc99f0c528d2da805c48698c73c96df3eeb87b5211d26b4fb5dbd9e94f9b2d",
+    "is_correct":
+        "e9e9b765376ff909b09eb9fe80ec638fb943dbf2840bdaf407316f6385218650",
+    "tokenize_prompt":
+        "0d08e9870f67cf1c39b2ff4e82012e3c264ba94af7d07ce687637ea0967543ed",
+    "tokenize_continuation":
+        "b9cd8a2cc28b465e0334f96c0373a174932b19d84a9ac9684b08f53b20a9fd95",
+    "continuation_boundary":
+        "30f8894aa5ac1f2c869ab28d306edcea94e4dace362cbf5df39f2a0eefc37e55",
+    "ab_token_report":
+        "2522738e516531c1ec2c13cb04328b4a148fa49938127eba09876a77d123178e",
+    "sequence_logprob":
+        "927a71a690a8ebf21bd88c3772f8f723b6636dea629d3717d39c38958be52b3c",
+    "candidate_logprobs_hf":
+        "2b534213ca5f478e1781eceaa1018a26532ed0055223c308e41a4e64a6704dd9",
+    "normalize_candidate_text":
+        "82e461514945b04b5ade636e56f4d6dc6924af424c3bb151ce31d9f0a61cdebc",
+    "native_prompt_ids":
+        "96f85307ae64189332ab4dcff680e53431727d3ba63cdb666310c5fd0b3e5d7e",
+    "candidate_token_audit":
+        "e84d1609629d5b96b32b7ec3d6b005873ef34fcd79c956010046da5f27817f75",
+    "ab_boundary_audit":
+        "f80a9d1d74cf5b719b73bbcbae792027b715ab76014ce46b1e2f1037c2e8fe9c",
+}
+
+
+def _function_sha256(source: str, names) -> dict:
+    """Per-function AST digest (formatting- and comment-insensitive)."""
+    import ast
+    tree = ast.parse(source)
+    return {node.name: hashlib.sha256(ast.dump(node).encode()).hexdigest()
+            for node in tree.body
+            if isinstance(node, ast.FunctionDef) and node.name in names}
+
+
+class _A1Tokenizer:
+    """SentencePiece-like double: merges the token at the prompt/candidate seam.
+
+    ``apply_chat_template(..., tokenize=True)`` encodes the rendered text the
+    same way the scorer does, while re-tokenizing ``prompt + candidate`` merges
+    ``]A`` / ``]B`` into one id — Mistral's ``[/INST]`` behaviour, the one that
+    produced the legacy ``boundaries_ok=false``. Sub-ids are character ordinals
+    so a decoded candidate round-trips to its label.
+    """
+
+    def __init__(self, native_offset: int = 0, special_ids=(),
+                 decode_map=None, empty_candidates=False):
+        self.native_offset = native_offset
+        self.all_special_ids = list(special_ids)
+        self._decode_map = dict(decode_map or {})
+        self._empty_candidates = empty_candidates
+
+    def __call__(self, text, add_special_tokens=True):
+        text = str(text)
+        if self._empty_candidates and len(text) == 1:
+            return {"input_ids": []}
+        ids, i = [], 0
+        while i < len(text):
+            if text[i] == "]" and i + 1 < len(text) and text[i + 1] in "AB":
+                ids.append(900 + ord(text[i + 1]))
+                i += 2
+            else:
+                ids.append(ord(text[i]))
+                i += 1
+        return {"input_ids": ids}
+
+    def apply_chat_template(self, messages, tokenize=False,
+                            add_generation_prompt=True, **kwargs):
+        rendered = "[/INST]"
+        if tokenize:
+            return [ord(c) + self.native_offset for c in rendered]
+        return rendered
+
+    def decode(self, ids, skip_special_tokens=False):
+        return "".join(self._decode_map.get(int(i), chr(int(i)))
+                       for i in ids if int(i) < 900)
+
+
+def _verify_boundary_audit_a1(report):
+    """Execute the amendment-A1 boundary contracts (A1 §2–§4, §7)."""
+    import importlib
+
+    scripts_dir = str(REPO / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+
+    src = (REPO / "project" / "cr_tser" / "readers" /
+           "sequence_scorer.py").read_bytes().replace(b"\r\n", b"\n").decode()
+    digests = _function_sha256(src, SEQUENCE_SCORER_FUNCTION_SHA256)
+    drift = {name: digests.get(name) for name, want
+             in SEQUENCE_SCORER_FUNCTION_SHA256.items()
+             if digests.get(name) != want}
+    report.add("a1_scoring_math_unchanged", not drift,
+               f"drift: {sorted(drift)}" if drift
+               else f"{len(SEQUENCE_SCORER_FUNCTION_SHA256)} frozen scorer "
+                    "functions match their AST digests")
+
+    ss = _pkg_code("cr_tser/readers/sequence_scorer.py")
+    report.add("a1_gate_fields_present",
+               "autoregressive_boundary_ok" in ss
+               and "text_retokenization_stable" in ss
+               and "legacy_all_boundaries_ok" in ss
+               and "all_boundaries_ok" in ss,
+               "the amended gate, the legacy diagnostic and the historical "
+               "field all coexist")
+
+    from cr_tser.readers.sequence_scorer import ab_boundary_audit
+
+    # Mistral's real shape: native prompt ids equal the scorer ids while the
+    # legacy re-tokenization merges at the seam, so the amended gate passes and
+    # the legacy result stays visible.
+    mistral_like = ab_boundary_audit(_A1Tokenizer(), "source post body")
+    cands = mistral_like["candidates"]
+    report.add("a1_amended_gate_accepts_native_equal_case",
+               mistral_like["native_prompt_matches_scorer"] is True
+               and mistral_like["autoregressive_boundary_ok"] is True
+               and mistral_like["text_retokenization_stable"] is False
+               and mistral_like["legacy_all_boundaries_ok"] is False
+               and cands["A"]["decoded"] == "A"
+               and cands["A"]["decode_matches_label"] is True
+               and cands["A"]["text_retokenization_stable"] is False
+               and cands["B"]["decoded"] == "B"
+               and mistral_like["no_empty_continuation"] is True
+               and mistral_like["no_special_tokens_in_candidates"] is True,
+               f"native_match="
+               f"{mistral_like['native_prompt_matches_scorer']} "
+               f"autoregressive={mistral_like['autoregressive_boundary_ok']} "
+               f"text_retokenization_stable="
+               f"{mistral_like['text_retokenization_stable']}")
+
+    # a tokenizer whose native ids differ from the scorer ids must fail closed
+    mismatched = ab_boundary_audit(_A1Tokenizer(native_offset=1),
+                                   "source post body")
+    report.add("a1_native_mismatch_fails_closed",
+               mismatched["native_prompt_matches_scorer"] is False
+               and mismatched["autoregressive_boundary_ok"] is False
+               and mismatched["candidate_ids_valid"] is True,
+               "native/scorer divergence blocks the gate without blaming the "
+               "candidates")
+
+    # candidate rejection: empty, special-token-bearing, non-round-tripping
+    empty = ab_boundary_audit(_A1Tokenizer(empty_candidates=True),
+                              "source post body")
+    special = ab_boundary_audit(_A1Tokenizer(special_ids=[ord("A")]),
+                                "source post body")
+    bad_decode = ab_boundary_audit(_A1Tokenizer(decode_map={ord("A"): "Z"}),
+                                   "source post body")
+    report.add("a1_candidate_rejection_fails_closed",
+               empty["candidate_ids_valid"] is False
+               and empty["autoregressive_boundary_ok"] is False
+               and empty["no_empty_continuation"] is False
+               and special["candidate_ids_valid"] is False
+               and special["no_special_tokens_in_candidates"] is False
+               and special["autoregressive_boundary_ok"] is False
+               and bad_decode["candidate_ids_valid"] is False
+               and bad_decode["candidates"]["A"]["decode_matches_label"]
+               is False
+               and bad_decode["autoregressive_boundary_ok"] is False,
+               f"empty={empty['no_empty_continuation']} "
+               f"special={special['no_special_tokens_in_candidates']} "
+               f"decode="
+               f"{bad_decode['candidates']['A']['decode_matches_label']}")
+
+    # the historical V1/V2 gate stays on the legacy field, and the amended gate
+    # is wired into the audit script without relaxing the old behaviour.
+    try:
+        p0 = importlib.import_module("cr_tser_p0_audit")
+        gates = (p0.boundary_gate_key("v1") == "boundaries_ok"
+                 and p0.boundary_gate_key("v2") == "boundaries_ok"
+                 and p0.boundary_gate_key("v2r1")
+                 == "autoregressive_boundary_ok")
+        sanity_src = _script("cr_tser_p0_audit.py")
+        wired = ("text_retokenization_stable" in sanity_src
+                 and "autoregressive_boundary_ok" in sanity_src
+                 and "ab_boundary_audit" in sanity_src
+                 and 'choices=("v1", "v2", "v2r1")' in sanity_src
+                 and 'protocol: str = "v2"' in sanity_src)
+        # The two gates must be independent: a reader that fails only the
+        # legacy identity passes under A1, and one that fails only the amended
+        # gate does not — while v2 keeps the legacy verdict in both cases.
+        legacy_bad = {"qwen": {"identical_predictions": True,
+                               "boundaries_ok": False,
+                               "autoregressive_boundary_ok": True}}
+        amended_bad = {"qwen": {"identical_predictions": True,
+                                "boundaries_ok": True,
+                                "autoregressive_boundary_ok": False}}
+        v2_a = p0.evaluate_readiness_v2({}, {}, {}, legacy_bad, False, True,
+                                        protocol="v2")
+        v2_b = p0.evaluate_readiness_v2({}, {}, {}, amended_bad, False, True,
+                                        protocol="v2")
+        r1_a = p0.evaluate_readiness_v2({}, {}, {}, legacy_bad, False, True,
+                                        protocol="v2r1")
+        r1_b = p0.evaluate_readiness_v2({}, {}, {}, amended_bad, False, True,
+                                        protocol="v2r1")
+        report.add("a1_p0_audit_gate_wiring",
+                   gates and wired
+                   and v2_a["ab_boundaries_ok"] is False
+                   and v2_b["ab_boundaries_ok"] is True
+                   and v2_b["ab_boundary_gate"] == "boundaries_ok"
+                   and r1_a["ab_boundaries_ok"] is True
+                   and r1_a["ab_boundary_gate"]
+                   == "autoregressive_boundary_ok"
+                   and r1_b["ab_boundaries_ok"] is False,
+                   f"gates={gates} wired={wired}; v2 gates on boundaries_ok, "
+                   "v2r1 on the autoregressive audit")
+    except Exception as exc:  # pragma: no cover - defensive
+        report.add("a1_p0_audit_gate_wiring", False, f"error: {exc}")
 
 
 def _canonical_bytes(data: bytes) -> bytes:

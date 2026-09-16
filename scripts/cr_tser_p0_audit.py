@@ -66,8 +66,19 @@ def weibo22_temporal_check(paths, raw_dir=None):
             "verdict_reason": "no Weibo22 temporal source configured"}
 
 
+def boundary_gate_key(protocol: str = "v2") -> str:
+    """Which boundary field is the *formal* gate for a protocol.
+
+    The historical V1/V2 semantics stay on the legacy concatenation identity
+    (``boundaries_ok``); amendment A1 makes the v2r1 gate the tokenizer-native
+    autoregressive one. Both are always recorded; only the gate differs.
+    """
+    return ("autoregressive_boundary_ok" if protocol == "v2r1"
+            else "boundaries_ok")
+
+
 def evaluate_readiness(audit, readers, sanity, readers_checked,
-                       sanity_requested):
+                       sanity_requested, protocol: str = "v1"):
     """P0 decision. Fail closed on every prerequisite (plan §25, §30).
 
     A/B sanity passes only when each reader produced *identical predictions*
@@ -75,12 +86,13 @@ def evaluate_readiness(audit, readers, sanity, readers_checked,
     validation succeeded; a recorded-but-failing boundary is a P0 failure, not
     a warning.
     """
+    gate = boundary_gate_key(protocol)
     readers_ready = all(
         r.get("model_path_exists") and (r.get("loaded") or not readers_checked)
         for r in readers.values())
     if sanity_requested:
         sanity_ok = bool(sanity) and all(
-            r.get("identical_predictions") and r.get("boundaries_ok")
+            r.get("identical_predictions") and r.get(gate)
             for r in sanity.values())
     else:
         sanity_ok = False
@@ -95,8 +107,9 @@ def evaluate_readiness(audit, readers, sanity, readers_checked,
         "readers_ready": readers_ready,
         "readers_checked": readers_checked,
         "ab_sanity_ok": sanity_ok if sanity_requested else None,
+        "ab_boundary_gate": gate,
         "ab_boundaries_ok": bool(sanity) and all(
-            r.get("boundaries_ok") for r in sanity.values())
+            r.get(gate) for r in sanity.values())
         if sanity_requested else None,
         "next_step": ("COMMIT PUSH STOP — research approval required before "
                       "expensive labels (plan §30)"
@@ -142,7 +155,8 @@ def reader_audit(paths, out_dir, dtype="bfloat16", device="cuda",
 
 
 def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
-                         readers=None, record_memory: bool = False):
+                         readers=None, record_memory: bool = False,
+                         protocol: str = "v2"):
     """Score fixed prompts twice per reader; prediction identity must be 100%.
 
     The artifact records the **explicit A/B tokenization** (prompt token count,
@@ -154,7 +168,15 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
     loads only the replacement reader); the default stays the full frozen set.
     ``record_memory`` adds the GPU memory evidence a single-reader preflight
     needs: free memory before load plus peak allocated/reserved afterwards.
+
+    Under ``protocol="v2r1"`` the formal boundary gate becomes the
+    tokenizer-native autoregressive identity (amendment A1 §2). The legacy
+    concatenation check is still recorded as ``boundaries_ok`` /
+    ``text_retokenization_stable`` — informational, never hidden — and the
+    candidate ids are additionally validated by decode and special-token
+    checks. V1/V2 keep their original semantics.
     """
+    amended = protocol == "v2r1"
     import math
 
     prompts = [f"Sanity example {i}: source post number {i}."
@@ -185,6 +207,7 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
             entry["device"] = reader.spec.device
             first, second = [], []
             tokenization = None
+            boundary_audit = None
             for i, prompt in enumerate(prompts):
                 out1 = reader.score_ab(prompt)
                 out2 = reader.score_ab(prompt)
@@ -192,6 +215,8 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
                 second.append(out2["prediction"])
                 if i == 0:
                     tokenization = reader.ab_token_report(prompt)
+                    if amended:
+                        boundary_audit = reader.ab_boundary_audit(prompt)
                     from cr_tser.readers.base_reader import (SYSTEM_PROMPT,
                                                              build_messages)
                     from cr_tser.readers.sequence_scorer import apply_chat
@@ -223,6 +248,29 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
             entry["tokenization_example"] = tokenization
             entry["boundaries_ok"] = bool(
                 tokenization and tokenization.get("all_boundaries_ok"))
+            entry["boundary_gate"] = boundary_gate_key(protocol)
+            if amended:
+                audit = boundary_audit or {}
+                entry["autoregressive_boundary_audit"] = audit
+                entry["autoregressive_boundary_ok"] = bool(
+                    audit.get("autoregressive_boundary_ok"))
+                entry["native_prompt_matches_scorer"] = bool(
+                    audit.get("native_prompt_matches_scorer"))
+                # informational under A1: recorded, never hidden
+                entry["text_retokenization_stable"] = bool(
+                    audit.get("text_retokenization_stable"))
+                entry["candidate_ids_valid"] = bool(
+                    audit.get("candidate_ids_valid"))
+                entry["candidate_decode"] = {
+                    c: {"candidate_ids": info.get("candidate_ids"),
+                        "decoded": info.get("decoded"),
+                        "decode_matches_label":
+                            info.get("decode_matches_label"),
+                        "has_unexpected_special_token":
+                            info.get("has_unexpected_special_token"),
+                        "text_retokenization_stable":
+                            info.get("text_retokenization_stable")}
+                    for c, info in (audit.get("candidates") or {}).items()}
             entry["identical_predictions"] = first == second
             entry["identity_rate"] = (sum(1 for a, b in zip(first, second)
                                           if a == b) / len(prompts))
@@ -237,9 +285,11 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
 
 def build_parser():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--protocol", choices=("v1", "v2"), default="v2",
-                    help="v2 (default) audits Ma-Weibo + PHEME; v1 keeps the "
-                         "historical Weibo22 preflight reachable")
+    ap.add_argument("--protocol", choices=("v1", "v2", "v2r1"), default="v2",
+                    help="v2 (default) audits Ma-Weibo + PHEME; v2r1 uses the "
+                         "amended autoregressive boundary gate and writes into "
+                         "the v2r1 namespace; v1 keeps the historical Weibo22 "
+                         "preflight reachable")
     ap.add_argument("--weibo22-raw", default=None)
     ap.add_argument("--maweibo-raw", default=None)
     ap.add_argument("--maweibo-labels", default=None)
@@ -387,8 +437,14 @@ def pheme_smoke(paths) -> dict:
 
 
 def evaluate_readiness_v2(audit, pheme, readers, sanity, readers_checked,
-                          sanity_requested):
-    """Amendment §10: every prerequisite must hold for P0 PASS."""
+                          sanity_requested, protocol: str = "v2"):
+    """Amendment §10: every prerequisite must hold for P0 PASS.
+
+    The dataset prerequisites are identical in v2 and v2r1 (amendment R1 leaves
+    the dataset protocol alone); only the A/B boundary gate differs, per
+    amendment A1.
+    """
+    gate = boundary_gate_key(protocol)
     integrity_ok = maweibo_integrity_ok(audit)
     viable = int(audit.get("total_viable_events", 0) or 0)
     viable_ok = viable >= V2_MIN_VIABLE_EVENTS
@@ -398,14 +454,14 @@ def evaluate_readiness_v2(audit, pheme, readers, sanity, readers_checked,
         for r in readers.values())
     if sanity_requested:
         sanity_ok = bool(sanity) and all(
-            r.get("identical_predictions") and r.get("boundaries_ok")
+            r.get("identical_predictions") and r.get(gate)
             for r in sanity.values())
     else:
         sanity_ok = False
     p0_pass = bool(integrity_ok and viable_ok and pheme_ok and readers_ready
                    and sanity_ok)
-    return {
-        "protocol": "v2",
+    payload = {
+        "protocol": protocol,
         "P0": "P0_PASS" if p0_pass else "P0_FAIL",
         "primary_dataset": "maweibo",
         "secondary_dataset": "pheme",
@@ -420,8 +476,9 @@ def evaluate_readiness_v2(audit, pheme, readers, sanity, readers_checked,
         "readers_ready": readers_ready,
         "readers_checked": readers_checked,
         "ab_sanity_ok": sanity_ok if sanity_requested else None,
+        "ab_boundary_gate": gate,
         "ab_boundaries_ok": bool(sanity) and all(
-            r.get("boundaries_ok") for r in sanity.values())
+            r.get(gate) for r in sanity.values())
         if sanity_requested else None,
         "next_step": (
             "COMMIT PUSH STOP — research approval required before expensive "
@@ -429,18 +486,27 @@ def evaluate_readiness_v2(audit, pheme, readers, sanity, readers_checked,
             if p0_pass else
             "STOP: a V2 P0 prerequisite is unmet (amendment V2 §10)"),
     }
+    if sanity_requested and sanity:
+        payload["ab_autoregressive_boundary_ok"] = all(
+            r.get("autoregressive_boundary_ok") for r in sanity.values())
+        payload["ab_text_retokenization_stable"] = all(
+            r.get("text_retokenization_stable", r.get("boundaries_ok"))
+            for r in sanity.values())
+    return payload
 
 
-def _v2_out_root(args, paths):
+def _v2_out_root(args, paths, protocol: str = "v2"):
+    from cr_tser.config.pilot_config import V2R1_RESULTS_ROOT
+    default_root = V2R1_RESULTS_ROOT if protocol == "v2r1" else V2_RESULTS_ROOT
     base = args.out_root or getattr(paths, "out_root", "") or \
-        str(REPO / V2_RESULTS_ROOT)
+        str(REPO / default_root)
     if not os.path.isabs(base):
         base = str(REPO / base)
     return base if args.out_root else os.path.join(base, "p0")
 
 
-def main_v2(args, paths):
-    out_root = _v2_out_root(args, paths)
+def main_v2(args, paths, protocol: str = "v2"):
+    out_root = _v2_out_root(args, paths, protocol)
     os.makedirs(out_root, exist_ok=True)
 
     audit = maweibo_integrity_check(paths, args.maweibo_raw,
@@ -454,14 +520,19 @@ def main_v2(args, paths):
     sanity = {}
     if args.sanity:
         sanity = label_scoring_sanity(paths, n_examples=args.n_sanity,
-                                      device=args.device)
+                                      device=args.device, protocol=protocol)
     _write_json(os.path.join(out_root, "label_scoring_sanity.json"), sanity)
 
     readiness = evaluate_readiness_v2(audit, pheme, readers, sanity,
-                                      args.readers, args.sanity)
+                                      args.readers, args.sanity,
+                                      protocol=protocol)
     _write_json(os.path.join(out_root, "p0_readiness.json"), readiness)
-    lines = ["# CR-TSER V2 P0 readiness (amendment V2 §9–§10)", "",
-             f"- **verdict**: {readiness['P0']}",
+    lines = [f"# CR-TSER {protocol.upper()} P0 readiness "
+             f"(amendment V2 §9–§10)", "",
+             f"- **verdict**: {readiness['P0']}"]
+    if protocol == "v2r1":
+        lines.append(f"- A/B boundary gate: `{readiness['ab_boundary_gate']}`")
+    lines += [
              f"- primary dataset: `maweibo` "
              f"(viable events {readiness['maweibo_viable_events']} / "
              f"{readiness['maweibo_viable_required']})",
@@ -486,8 +557,8 @@ def main_v2(args, paths):
 def main(argv=None):
     args = build_parser().parse_args(argv)
     paths = paths_from_env()
-    if args.protocol == "v2":
-        return main_v2(args, paths)
+    if args.protocol in ("v2", "v2r1"):
+        return main_v2(args, paths, protocol=args.protocol)
     return main_v1(args, paths)
 
 

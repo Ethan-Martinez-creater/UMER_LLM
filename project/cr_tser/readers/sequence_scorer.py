@@ -9,20 +9,33 @@ without loading a reader.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 
 from ..config.pilot_config import CANDIDATES
 
 
-def apply_chat(tokenizer, messages, thinking: bool = False) -> str:
-    """Single chat formatter shared by all readers (thinking disabled)."""
+def _render_chat(tokenizer, messages, thinking: bool = False,
+                 tokenize: bool = False):
+    """The single chat-template call site (frozen formatter, plan §9).
+
+    ``apply_chat`` renders text; the amendment-A1 boundary audit asks the same
+    call for tokenizer-native ids. Both go through here so the frozen
+    formatter — including its ``enable_thinking`` fallback — cannot drift
+    between the text path and the native path.
+    """
     try:
         return tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True,
+            messages, tokenize=tokenize, add_generation_prompt=True,
             enable_thinking=thinking)
     except TypeError:
         return tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True)
+            messages, tokenize=tokenize, add_generation_prompt=True)
+
+
+def apply_chat(tokenizer, messages, thinking: bool = False) -> str:
+    """Single chat formatter shared by all readers (thinking disabled)."""
+    return _render_chat(tokenizer, messages, thinking=thinking, tokenize=False)
 
 
 def normalize_ab(score_a: float, score_b: float) -> dict:
@@ -125,6 +138,147 @@ def ab_token_report(tokenizer, user_prompt: str, candidates=CANDIDATES) -> dict:
     report["all_boundaries_ok"] = all(
         c["boundary_ok"] for c in report["candidates"].values())
     return report
+
+
+# --------------------------------------------------------------------------
+# v2r1 autoregressive boundary audit (amendment A1)
+#
+# The legacy ``continuation_boundary`` check re-tokenizes
+# ``prompt + candidate`` as one string. A SentencePiece tokenizer may merge the
+# token straddling that seam, which fails the concatenation identity even
+# though autoregressive inference never re-tokenizes the already-tokenized
+# prompt prefix. Amendment A1 therefore keeps the legacy check as an
+# **informational** field (``text_retokenization_stable``) and makes the formal
+# v2r1 gate the tokenizer-native prompt identity below:
+#
+#   native_prompt_ids == scorer_prompt_ids  and  valid A/B candidate ids.
+#
+# The scoring mathematics, the prompt text, the chat template, the candidate
+# definitions and the token budget are untouched by this amendment (A1 §2).
+# --------------------------------------------------------------------------
+def _ids_hash(ids) -> str:
+    return hashlib.sha256(",".join(str(int(i)) for i in ids).encode()).hexdigest()
+
+
+def native_prompt_ids(tokenizer, messages, thinking: bool = False) -> list:
+    """Tokenizer-native prompt ids (amendment A1 §2.1).
+
+    ``apply_chat_template(..., tokenize=True, add_generation_prompt=True)`` is
+    the token sequence the model is actually conditioned on when it generates
+    the next token. The v2r1 gate requires it to equal the ids the teacher-
+    forced scorer builds from the rendered chat text.
+    """
+    ids = _render_chat(tokenizer, messages, thinking=thinking, tokenize=True)
+    if hasattr(ids, "get"):  # a return_dict tokenizer hands back a BatchEncoding
+        ids = ids["input_ids"]
+    if hasattr(ids, "tolist"):
+        ids = ids.tolist()
+    if ids and isinstance(ids[0], (list, tuple)):
+        ids = ids[0]
+    return [int(i) for i in ids]
+
+
+def normalize_candidate_text(text) -> str:
+    """The explicit, tested normalization used to check candidate decoding.
+
+    Whitespace is collapsed and the result upper-cased, so a tokenizer that
+    renders ``"A"`` as ``" A"`` or ``"a"`` still recovers the intended label
+    while anything else (empty text, extra words, a control token) does not.
+    """
+    return " ".join(str(text).split()).upper()
+
+
+def candidate_token_audit(tokenizer, candidate: str) -> dict:
+    """Validate one A/B candidate's continuation ids (amendment A1 §2.4).
+
+    A candidate is valid only when it is non-empty, contains no special or
+    control token, and decodes back to the intended label under
+    :func:`normalize_candidate_text`.
+    """
+    ids = [int(i) for i in tokenize_continuation(tokenizer, candidate)]
+    specials = {int(i) for i in (getattr(tokenizer, "all_special_ids", None)
+                                 or [])}
+    if hasattr(tokenizer, "decode"):
+        decoded = tokenizer.decode(ids, skip_special_tokens=False)
+    else:  # a test double without decode cannot claim a decode round-trip
+        decoded = ""
+    present = sorted(set(ids) & specials)
+    expected = normalize_candidate_text(candidate)
+    got = normalize_candidate_text(decoded)
+    audit = {
+        "candidate": candidate,
+        "candidate_ids": ids,
+        "n_tokens": len(ids),
+        "non_empty": bool(ids),
+        "decoded": decoded,
+        "decoded_normalized": got,
+        "expected_normalized": expected,
+        "decode_matches_label": got == expected,
+        "special_ids_present": present,
+        "has_unexpected_special_token": bool(present),
+    }
+    audit["valid"] = bool(audit["non_empty"]
+                          and not audit["has_unexpected_special_token"]
+                          and audit["decode_matches_label"])
+    return audit
+
+
+def ab_boundary_audit(tokenizer, user_prompt: str, candidates=CANDIDATES,
+                      thinking: bool = False) -> dict:
+    """v2r1 boundary audit record (amendment A1 §2, §3).
+
+    Formal gate: ``autoregressive_boundary_ok`` — the tokenizer-native prompt
+    ids equal the scorer's prompt ids **and** both candidates have valid
+    continuation ids.
+
+    Informational: ``text_retokenization_stable`` — the legacy concatenation
+    identity. It is recorded in full, including each candidate's joined tail,
+    so a tokenizer that fails it (Mistral's ``[/INST]`` seam) stays visible and
+    is never silently hidden.
+    """
+    from .base_reader import build_messages
+    messages = build_messages(user_prompt)
+    chat = _render_chat(tokenizer, messages, thinking=thinking, tokenize=False)
+    scorer_ids = [int(i) for i in tokenize_prompt(tokenizer, chat)]
+    native_ids = native_prompt_ids(tokenizer, messages, thinking=thinking)
+
+    cand_audit = {c: candidate_token_audit(tokenizer, c) for c in candidates}
+    for candidate in candidates:
+        legacy = continuation_boundary(tokenizer, chat, candidate)
+        cand_audit[candidate]["text_retokenization_stable"] = bool(
+            legacy["boundary_ok"])
+        cand_audit[candidate]["joined_tail"] = legacy["joined_tail"]
+        cand_audit[candidate]["joined_len"] = legacy["joined_len"]
+
+    native_match = native_ids == scorer_ids
+    candidates_valid = all(a["valid"] for a in cand_audit.values())
+    retok_stable = all(a["text_retokenization_stable"]
+                       for a in cand_audit.values())
+    return {
+        "audit": "v2r1_a1_autoregressive_boundary",
+        "score_mode": "teacher_forced_logprob_sum",
+        "prompt_tokens": len(scorer_ids),
+        "native_prompt_tokens": len(native_ids),
+        "native_prompt_ids_hash": _ids_hash(native_ids),
+        "scorer_prompt_ids_hash": _ids_hash(scorer_ids),
+        "native_prompt_matches_scorer": native_match,
+        "native_prompt_ids_head": native_ids[:16],
+        "native_prompt_ids_tail": native_ids[-8:],
+        "scorer_prompt_ids_head": scorer_ids[:16],
+        "scorer_prompt_ids_tail": scorer_ids[-8:],
+        "candidates": cand_audit,
+        "candidate_ids_valid": candidates_valid,
+        "no_empty_continuation": all(a["non_empty"]
+                                     for a in cand_audit.values()),
+        "no_special_tokens_in_candidates": all(
+            not a["has_unexpected_special_token"]
+            for a in cand_audit.values()),
+        # informational, never hidden (A1 §3)
+        "text_retokenization_stable": retok_stable,
+        "legacy_all_boundaries_ok": retok_stable,
+        # the formal v2r1 gate
+        "autoregressive_boundary_ok": bool(native_match and candidates_valid),
+    }
 
 
 def sequence_logprob(model, tokenizer, chat_text: str, candidate: str,

@@ -253,6 +253,19 @@ class BaseReader:
                 "reader tokenizer is not loaded; call load() first")
         return ab_token_report(self.tokenizer, user_prompt, candidates)
 
+    def ab_boundary_audit(self, user_prompt: str, candidates=CANDIDATES) -> dict:
+        """v2r1 autoregressive boundary audit (amendment A1 §2).
+
+        Shares the reader's frozen chat formatter and the teacher-forced
+        tokenizers, so the audit describes exactly the ids the scorer uses.
+        """
+        from .sequence_scorer import ab_boundary_audit
+        if self.tokenizer is None:
+            raise RuntimeError(
+                "reader tokenizer is not loaded; call load() first")
+        return ab_boundary_audit(self.tokenizer, user_prompt, candidates,
+                                 thinking=self.spec.thinking)
+
 
 def reader_specs(paths, dtype="bfloat16", device="cuda") -> dict:
     """Build the three frozen specs from resolved paths (plan §8)."""

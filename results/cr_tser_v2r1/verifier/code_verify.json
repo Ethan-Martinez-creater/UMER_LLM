@@ -472,6 +472,36 @@
    "check": "r1_migration_utility_fail_closed",
    "status": "pass",
    "detail": "dry_run=True no_glm=True nonempty_refused=True drift_refused=True"
+  },
+  {
+   "check": "a1_scoring_math_unchanged",
+   "status": "pass",
+   "detail": "16 frozen scorer functions match their AST digests"
+  },
+  {
+   "check": "a1_gate_fields_present",
+   "status": "pass",
+   "detail": "the amended gate, the legacy diagnostic and the historical field all coexist"
+  },
+  {
+   "check": "a1_amended_gate_accepts_native_equal_case",
+   "status": "pass",
+   "detail": "native_match=True autoregressive=True text_retokenization_stable=False"
+  },
+  {
+   "check": "a1_native_mismatch_fails_closed",
+   "status": "pass",
+   "detail": "native/scorer divergence blocks the gate without blaming the candidates"
+  },
+  {
+   "check": "a1_candidate_rejection_fails_closed",
+   "status": "pass",
+   "detail": "empty=False special=False decode=False"
+  },
+  {
+   "check": "a1_p0_audit_gate_wiring",
+   "status": "pass",
+   "detail": "gates=True wired=True; v2 gates on boundaries_ok, v2r1 on the autoregressive audit"
   }
  ]
 }
