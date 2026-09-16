@@ -144,18 +144,28 @@ Audit result for both datasets:
   `reader_identity_hash` non-empty on every row
 * no smoke contamination, and no cache written inside a smoke namespace
 
-Per-reader `prompt_tokens` range (observation, nothing tuned from it):
+Per-dataset/reader record (digest over that reader's cache lines, in file
+order):
 
-| dataset | qwen | internlm | mistral |
-|---|---|---|---|
-| maweibo | 152–1289 | 165–1460 | 183–2204 |
-| pheme | 133–1193 | 145–1416 | 145–1438 |
+| dataset | reader | rows | bytes | sha256 | `prompt_tokens` | sign distribution (NEUTRAL/HELPFUL/HARMFUL) |
+|---|---|---|---|---|---|---|
+| maweibo | qwen | 3202 | 5263621 | `a60e99ad0d8d75ad8689adefebb45e071c392772b3932d443bae76b3de894c49` | 152–1289 | 2686 / 255 / 261 |
+| maweibo | internlm | 3202 | 5352767 | `11a23e0674dbec31479b640071f20da1b749f008f4a81e485de81423bbcb9a59` | 165–1460 | 2609 / 347 / 246 |
+| maweibo | mistral | 3202 | 5398794 | `652627034d8748985a5a4cb8e7505b344f8970aa98c4c579cb7b97a77dda342a` | 183–2204 | 2695 / 309 / 198 |
+| pheme | qwen | 2879 | 4766875 | `f94053c6380a2b2dfdf404fb16ef6f6c5f6afd367e1d087e9331eba17f83a9b8` | 133–1193 | 2348 / 286 / 245 |
+| pheme | internlm | 2879 | 4821046 | `ef3bd90aee8672f9201b61ae5736feb4684ad84415e55365bdf7ec3a05d4341b` | 145–1416 | 2052 / 352 / 475 |
+| pheme | mistral | 2879 | 4869866 | `a872bb17972a3e07352d78580af136ae601a956a4810105841e055e2c5f6d99d` | 145–1438 | 2509 / 198 / 172 |
 
-The Mistral ranges are the longest because Mistral's tokenizer splits the same
-frozen text into more tokens; the evidence budget is accounted in canonical
-Qwen3-8B tokens (`CANDIDATE_TOKENIZER`/`BUDGET_REF`), which is the frozen
-contract, so this is a tokenizer-density property rather than a budget
-violation.
+Gold labels are identical across the three readers of a dataset
+(maweibo 1488 rumor / 1714 non-rumor, pheme 1560 / 1319), as they must be: they
+come from the frozen split, not from a reader. The distributions are recorded
+for the record only — no threshold, gate or budget was tuned from them.
+
+The Mistral `prompt_tokens` ranges are the longest because Mistral's tokenizer
+splits the same frozen text into more tokens; the evidence budget is accounted
+in canonical Qwen3-8B tokens (`CANDIDATE_TOKENIZER`, `BUDGET_REF = 1024`),
+which is the frozen contract, so this is a tokenizer-density property rather
+than a budget violation.
 
 ## 7. Verifiers
 
