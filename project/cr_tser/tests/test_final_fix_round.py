@@ -186,9 +186,9 @@ def test_s6_consumes_legacy_scores():
     forward = {n: float(i) for i, n in enumerate(ids)}
     reverse = {n: float(len(ids) - i) for i, n in enumerate(ids)}
     arm_a = build_arm("S6_legacy_utility_tm", units, src, {"legacy": forward},
-                      _Tok(), ["qwen", "glm"], seed=7319)
+                      _Tok(), ["qwen", "mistral"], seed=7319)
     arm_b = build_arm("S6_legacy_utility_tm", units, src, {"legacy": reverse},
-                      _Tok(), ["qwen", "glm"], seed=7319)
+                      _Tok(), ["qwen", "mistral"], seed=7319)
     assert arm_a["selected_node_ids"] != arm_b["selected_node_ids"]
     assert arm_a["selected_node_ids"]  # non-empty packing
 
@@ -200,11 +200,11 @@ def test_missing_candidate_prediction_fails_closed():
     partial = {n: 0.2 for n in ids[:-1]}
     with pytest.raises(MissingPredictionError):
         build_arm("S5_cross_reader_robust", units, src,
-                  {"qwen": partial, "glm": full}, _Tok(), ["qwen", "glm"],
+                  {"qwen": partial, "mistral": full}, _Tok(), ["qwen", "mistral"],
                   seed=7319)
     with pytest.raises(MissingPredictionError):
         build_arm("S4_shared", units, src, {"shared": partial}, _Tok(),
-                  ["qwen", "glm"], seed=7319)
+                  ["qwen", "mistral"], seed=7319)
 
 
 # --------------------------------------------------------------------------
@@ -215,7 +215,7 @@ def test_single_reader_artifact_guard(tmp_path):
     target = tmp_path / "predictor" / "pheme" / "single_qwen"
     target.mkdir(parents=True)
     (target / "predictions.json").write_text(json.dumps(
-        {"training_readers": ["qwen", "glm"], "predictions": {}}),
+        {"training_readers": ["qwen", "mistral"], "predictions": {}}),
         encoding="utf-8")
     with pytest.raises(ValueError):
         selection._load_single_predictions(str(tmp_path), "pheme", "qwen")

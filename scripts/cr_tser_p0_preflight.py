@@ -295,7 +295,7 @@ def _hf_cache_scan() -> dict:
     """
     cache = os.path.expanduser("~/.cache/huggingface/hub")
     entries = sorted(os.listdir(cache)) if os.path.isdir(cache) else []
-    wanted = {"qwen": "qwen3-8b", "glm": "glm-4-9b",
+    wanted = {"qwen": "qwen3-8b", "mistral": "mistral-7b",
               "internlm": "internlm3-8b"}
     matches = {key: [e for e in entries if needle in e.lower()]
                for key, needle in wanted.items()}

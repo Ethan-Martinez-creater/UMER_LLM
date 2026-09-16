@@ -63,9 +63,12 @@ def test_v2_dataset_roles():
     assert V2_RESULTS_ROOT != V1_RESULTS_ROOT
 
 
-def test_v1_default_out_root_moved_to_v2():
-    from ..config.pilot_config import paths_from_env
-    assert paths_from_env({}).out_root == V2_RESULTS_ROOT
+def test_default_out_root_follows_the_reader_protocol():
+    """The default namespace is the *current* protocol's, never V1's."""
+    from ..config.pilot_config import (V2R1_RESULTS_ROOT, paths_from_env)
+    assert V2R1_RESULTS_ROOT == "results/cr_tser_v2r1"
+    assert paths_from_env({}).out_root == V2R1_RESULTS_ROOT
+    assert V2R1_RESULTS_ROOT not in (V1_RESULTS_ROOT, V2_RESULTS_ROOT)
 
 
 # --------------------------------------------------------------------------

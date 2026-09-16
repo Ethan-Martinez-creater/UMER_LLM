@@ -42,18 +42,43 @@ CANONICAL_TOKENIZER_ID = "Qwen/Qwen3-8B"
 # --------------------------------------------------------------------------
 # Plan §8 — frozen readers (exactly three, no substitution)
 # --------------------------------------------------------------------------
-READER_KEYS = ("qwen", "glm", "internlm")
-READER_MODEL_IDS = {
+#: Reader Protocol Amendment R1 retired the GLM reader and added Mistral.
+#: The R0 reader set stays declared because ``results/cr_tser_v2/`` was
+#: produced with it and must remain readable byte-for-byte; it is never an
+#: execution loop any more (amendment R1 §4).
+READER_KEYS_V2 = ("qwen", "glm", "internlm")
+READER_MODEL_IDS_V2 = {
     "qwen": "Qwen/Qwen3-8B",
     "glm": "zai-org/glm-4-9b-chat-hf",
     "internlm": "internlm/internlm3-8b-instruct",
 }
-# Plan §20 — exactly three leave-one-reader-out rotations.
-LORO_ROTATIONS = (
+LORO_ROTATIONS_V2 = (
     ("qwen", "glm", "internlm"),      # train qwen+glm, hold internlm
     ("qwen", "internlm", "glm"),      # train qwen+internlm, hold glm
     ("glm", "internlm", "qwen"),      # train glm+internlm, hold qwen
 )
+
+#: The R1 reader set (amendment R1 §2) — the only set a v2r1 execution loop
+#: may touch. ``mistral`` is a new key: R1 never reuses the retired ``glm``
+#: key for the replacement reader.
+READER_KEYS = ("qwen", "mistral", "internlm")
+READER_MODEL_IDS = {
+    "qwen": "Qwen/Qwen3-8B",
+    "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+    "internlm": "internlm/internlm3-8b-instruct",
+}
+# Plan §20 — exactly three leave-one-reader-out rotations (R1 §2).
+LORO_ROTATIONS = (
+    ("qwen", "mistral", "internlm"),      # train qwen+mistral, hold internlm
+    ("qwen", "internlm", "mistral"),      # train qwen+internlm, hold mistral
+    ("mistral", "internlm", "qwen"),      # train mistral+internlm, hold qwen
+)
+
+#: Every reader key of any namespace, history included. Identity/registry
+#: lookups use this so historical V2 evidence stays addressable; it must never
+#: be used as an execution loop.
+KNOWN_READER_KEYS = ("qwen", "glm", "mistral", "internlm")
+KNOWN_READER_MODEL_IDS = {**READER_MODEL_IDS_V2, **READER_MODEL_IDS}
 
 # --------------------------------------------------------------------------
 # Plan §9 — reader task and label scoring
@@ -175,7 +200,7 @@ VERDICT_UNAVAILABLE = "WEIBO22_TEMPORAL_UNAVAILABLE"
 # Amendment V2 — dataset protocol (CR_TSER_DATASET_PROTOCOL_AMENDMENT_V2.md)
 # --------------------------------------------------------------------------
 # The dataset *roles* changed; every scientific constant above is unchanged.
-PROTOCOL_VERSION = "v2"
+DATASET_PROTOCOL_VERSION = "v2"
 PRIMARY_DATASET = "maweibo"
 SECONDARY_DATASET = "pheme"
 V2_DATASETS = (PRIMARY_DATASET, SECONDARY_DATASET)
@@ -202,6 +227,18 @@ V2_STRICT_ELIGIBILITY_DATASETS = (PRIMARY_DATASET,)
 V1_RESULTS_ROOT = "results/cr_tser"
 V2_RESULTS_ROOT = "results/cr_tser_v2"
 
+# --------------------------------------------------------------------------
+# Reader Protocol Amendment R1 — reader-set namespace
+# (CR_TSER_V2_READER_PROTOCOL_AMENDMENT_R1.md)
+# --------------------------------------------------------------------------
+#: R1 changes only the frozen reader set; the dataset protocol stays V2 and
+#: every scientific constant above is unchanged. The new artifacts must land
+#: in their own namespace so the historical V2 evidence cannot be rewritten
+#: (amendment R1 §4).
+READER_PROTOCOL_VERSION = "r1"
+PROTOCOL_VERSION = "v2r1"
+V2R1_RESULTS_ROOT = "results/cr_tser_v2r1"
+
 
 
 @dataclass
@@ -222,14 +259,18 @@ class PilotPaths:
     pheme_raw: str = ""
     semantic_model: str = ""
     qwen_model: str = ""
+    #: Reader Protocol Amendment R1 replacement reader.
+    mistral_model: str = ""
+    #: Historical R0 reader. Never resolved by a v2r1 execution loop, but kept
+    #: so the frozen V2 evidence stays addressable by key.
     glm_model: str = ""
     internlm_model: str = ""
     canonical_tokenizer: str = ""
-    out_root: str = V2_RESULTS_ROOT
+    out_root: str = V2R1_RESULTS_ROOT
     extra: dict = field(default_factory=dict)
 
     def reader_path(self, key: str) -> str:
-        if key not in READER_KEYS:
+        if key not in KNOWN_READER_KEYS:
             raise ValueError(f"unknown reader key {key!r}")
         return getattr(self, f"{key}_model")
 
@@ -250,7 +291,7 @@ def paths_from_env(env=None) -> PilotPaths:
     kw = {}
     for name in ("weibo22_raw", "weibo22_labels", "weibo22_normalized",
                  "maweibo_raw", "maweibo_labels", "pheme_raw",
-                 "semantic_model", "qwen_model", "glm_model",
+                 "semantic_model", "qwen_model", "mistral_model", "glm_model",
                  "internlm_model", "canonical_tokenizer", "out_root"):
         val = env.get(_ENV_PREFIX + name.upper())
         if val:
@@ -258,7 +299,7 @@ def paths_from_env(env=None) -> PilotPaths:
     # CRTSER_SMOKE only redirects the output root into the smoke namespace; it
     # is not a PilotPaths field.
     if env.get(_ENV_PREFIX + "SMOKE"):
-        kw["out_root"] = os.path.join(kw.get("out_root", V2_RESULTS_ROOT),
+        kw["out_root"] = os.path.join(kw.get("out_root", V2R1_RESULTS_ROOT),
                                       "smoke")
     return PilotPaths(**kw)
 
@@ -273,9 +314,15 @@ def frozen_constants() -> dict:
         "split_sizes": dict(SPLIT_SIZES),
         "cutoffs_min": list(CUTOFFS_MIN),
         "budget_ref": BUDGET_REF,
+        "dataset_protocol_version": DATASET_PROTOCOL_VERSION,
+        "reader_protocol_version": READER_PROTOCOL_VERSION,
+        "protocol_version": PROTOCOL_VERSION,
         "reader_keys": list(READER_KEYS),
         "reader_model_ids": dict(READER_MODEL_IDS),
         "loro_rotations": [list(r) for r in LORO_ROTATIONS],
+        "reader_keys_v2": list(READER_KEYS_V2),
+        "reader_model_ids_v2": dict(READER_MODEL_IDS_V2),
+        "loro_rotations_v2": [list(r) for r in LORO_ROTATIONS_V2],
         "utility_threshold": UTILITY_THRESHOLD,
         "atomic_cap": ATOMIC_CAP,
         "pilot_budget_fraction": PILOT_BUDGET_FRACTION,

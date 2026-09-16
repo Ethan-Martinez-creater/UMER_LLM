@@ -80,33 +80,33 @@ def _rot(held, delta, ok=True):
 
 
 def test_gate_p4_exact_thresholds():
-    ok = [_rot("internlm", 0.02), _rot("glm", 0.015), _rot("qwen", -0.004)]
+    ok = [_rot("internlm", 0.02), _rot("mistral", 0.015), _rot("qwen", -0.004)]
     assert gate_p4(ok)["pass"] is True
     # worst rotation below -0.005 fails
-    bad_worst = [_rot("internlm", 0.02), _rot("glm", -0.006),
+    bad_worst = [_rot("internlm", 0.02), _rot("mistral", -0.006),
                  _rot("qwen", 0.02)]
     assert gate_p4(bad_worst)["pass"] is False
     # only one positive rotation fails the 2/3 rule
-    one_positive = [_rot("internlm", 0.02), _rot("glm", -0.001),
+    one_positive = [_rot("internlm", 0.02), _rot("mistral", -0.001),
                     _rot("qwen", -0.001)]
     assert gate_p4(one_positive)["pass"] is False
     # token target breach fails
-    tokens_bad = [_rot("internlm", 0.02, False), _rot("glm", 0.02),
+    tokens_bad = [_rot("internlm", 0.02, False), _rot("mistral", 0.02),
                   _rot("qwen", 0.02)]
     assert gate_p4(tokens_bad)["pass"] is False
 
 
 def test_gate_p4_requires_exactly_three_distinct_rotations():
     # only two rotations -> fail closed even when both deltas are excellent
-    two = [_rot("internlm", 0.05), _rot("glm", 0.05)]
+    two = [_rot("internlm", 0.05), _rot("mistral", 0.05)]
     assert gate_p4(two)["pass"] is False
     assert gate_p4(two)["rotations_complete"] is False
     # duplicated held-out reader -> fail closed
     dup = [_rot("internlm", 0.05), _rot("internlm", 0.05),
-           _rot("glm", 0.05)]
+           _rot("mistral", 0.05)]
     assert gate_p4(dup)["pass"] is False
     # extra rotation -> fail closed
-    extra = [_rot("internlm", 0.05), _rot("glm", 0.05), _rot("qwen", 0.05),
+    extra = [_rot("internlm", 0.05), _rot("mistral", 0.05), _rot("qwen", 0.05),
              _rot("qwen", 0.05)]
     assert gate_p4(extra)["pass"] is False
 
@@ -148,10 +148,10 @@ def test_final_decision_requires_complete_pheme_evidence():
 
 def test_pheme_secondary_requires_complete_rotations():
     from ..evaluation.unseen_reader import pheme_secondary
-    two = [_rot("internlm", 0.01), _rot("glm", 0.01)]
+    two = [_rot("internlm", 0.01), _rot("mistral", 0.01)]
     assert pheme_secondary(two)["pass"] is False
     assert pheme_secondary(two)["complete"] is False
-    full = [_rot("internlm", 0.01), _rot("glm", 0.01), _rot("qwen", 0.01)]
+    full = [_rot("internlm", 0.01), _rot("mistral", 0.01), _rot("qwen", 0.01)]
     assert pheme_secondary(full)["pass"] is True
 
 
@@ -176,7 +176,7 @@ def test_gate_logic_exact():
     p3 = gate_p3({"macro_f1": 0.52, "spearman": 0.5},
                  {"B0": {"macro_f1": 0.50, "spearman": 0.5}},
                  delta_ci={"ci_low": 0.004, "ci_high": 0.03, "n_events": 12})
-    p4 = gate_p4([_rot("internlm", 0.02), _rot("glm", 0.015),
+    p4 = gate_p4([_rot("internlm", 0.02), _rot("mistral", 0.015),
                   _rot("qwen", -0.004)])
     assert all(g["pass"] for g in (p1, p2, p3, p4))
 

@@ -384,8 +384,8 @@ def write_report(out_root, gates, reports, decision, datasets):
              "secondary = PHEME; Weibo22 = rejected primary candidate",
              "- seed 7319; split 80/50/15/25; cutoffs 15m/1h/6h; "
              "B_ref=1024; B_pilot=floor(0.5*Tokens(C_ref))",
-             "- readers: Qwen3-8B / GLM-4-9B-Chat / InternLM3-8B-Instruct "
-             "(frozen, no substitution)",
+             "- readers: Qwen3-8B / Mistral-7B-Instruct-v0.3 / "
+             "InternLM3-8B-Instruct (frozen, no substitution)",
              f"- primary dataset: `{PRIMARY_DATASET}`; secondary (PHEME) "
              f"cannot produce FULL_GO", ""]
     for dataset in datasets:

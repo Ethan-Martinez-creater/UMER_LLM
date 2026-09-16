@@ -18,7 +18,8 @@ import os
 
 from tcdscr.llm import reader_prompt
 
-from ..config.pilot_config import CANDIDATES, READER_MODEL_IDS, READER_KEYS
+from ..config.pilot_config import (CANDIDATES, KNOWN_READER_KEYS,
+                                   KNOWN_READER_MODEL_IDS, READER_KEYS)
 
 SYSTEM_PROMPT = (
     "You are evaluating whether a social-media source post is a rumor.\n"
@@ -70,14 +71,19 @@ def build_messages(user_prompt: str):
 
 
 class ReaderSpec:
-    """Identity of one frozen reader (plan §8). No substitution after freeze."""
+    """Identity of one frozen reader (plan §8). No substitution after freeze.
+
+    ``key`` may name any reader of any namespace (``KNOWN_READER_KEYS``) so the
+    historical V2 evidence stays addressable; only ``READER_KEYS`` — the
+    current R1 set — is ever used as an execution loop (amendment R1 §10).
+    """
 
     def __init__(self, key: str, model_path: str, dtype: str = "bfloat16",
                  device: str = "cuda", thinking: bool = False):
-        if key not in READER_KEYS:
+        if key not in KNOWN_READER_KEYS:
             raise ValueError(f"unknown reader key {key!r}")
         self.key = key
-        self.model_id = READER_MODEL_IDS[key]
+        self.model_id = KNOWN_READER_MODEL_IDS[key]
         self.model_path = model_path
         self.dtype = dtype
         self.device = device
@@ -277,10 +283,15 @@ def build_reader(key: str, spec: ReaderSpec, mock: bool = False):
     if key == "qwen":
         from .qwen_reader import QwenReader
         return QwenReader(spec).load()
-    if key == "glm":
-        from .glm_reader import GLMReader
-        return GLMReader(spec).load()
+    if key == "mistral":
+        from .mistral_reader import MistralReader
+        return MistralReader(spec).load()
     if key == "internlm":
         from .internlm_reader import InternLMReader
         return InternLMReader(spec).load()
+    if key == "glm":
+        # Historical R0 reader: readable so frozen V2 evidence stays
+        # addressable, never part of a v2r1 execution loop (amendment R1 §4).
+        from .glm_reader import GLMReader
+        return GLMReader(spec).load()
     raise ValueError(f"unknown reader key {key!r}")

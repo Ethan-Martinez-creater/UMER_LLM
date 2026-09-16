@@ -48,6 +48,7 @@ PACKAGE_FILES = [
     "cr_tser/readers/sequence_scorer.py",
     "cr_tser/readers/qwen_reader.py",
     "cr_tser/readers/glm_reader.py",
+    "cr_tser/readers/mistral_reader.py",
     "cr_tser/readers/internlm_reader.py",
     "cr_tser/models/bitte.py",
     "cr_tser/models/text_baseline.py",
@@ -172,9 +173,43 @@ def _collect_test_names():
 # --------------------------------------------------------------------------
 # code mode
 # --------------------------------------------------------------------------
-def verify_code(report: Report, protocol: str = "v2"):
+def _expected_reader_set(protocol: str):
+    """Literal contract: ``(keys, model_ids, loro)`` a protocol must freeze.
+
+    The values are written out here rather than read from the configuration so
+    a drifted constant is caught instead of mirrored. ``v1``/``v2`` pin the R0
+    set that produced ``results/cr_tser_v2``; ``v2r1`` pins the amended R1 set
+    (amendment R1 §2, §10).
+    """
+    if protocol == "v2r1":
+        return (("qwen", "mistral", "internlm"),
+                {"qwen": "Qwen/Qwen3-8B",
+                 "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+                 "internlm": "internlm/internlm3-8b-instruct"},
+                (("qwen", "mistral", "internlm"),
+                 ("qwen", "internlm", "mistral"),
+                 ("mistral", "internlm", "qwen")))
+    return (("qwen", "glm", "internlm"),
+            {"qwen": "Qwen/Qwen3-8B",
+             "glm": "zai-org/glm-4-9b-chat-hf",
+             "internlm": "internlm/internlm3-8b-instruct"},
+            (("qwen", "glm", "internlm"),
+             ("qwen", "internlm", "glm"),
+             ("glm", "internlm", "qwen")))
+
+
+def _current_reader_set(protocol: str, C):
+    """``(keys, model_ids, loro)`` the configuration declares for a protocol."""
+    if protocol == "v2r1":
+        return C.READER_KEYS, C.READER_MODEL_IDS, C.LORO_ROTATIONS
+    return C.READER_KEYS_V2, C.READER_MODEL_IDS_V2, C.LORO_ROTATIONS_V2
+
+
+def verify_code(report: Report, protocol: str = "v2r1"):
     from cr_tser.config import pilot_config as C
 
+    _keys, _models, _loro = _expected_reader_set(protocol)
+    cur_keys, cur_models, cur_loro = _current_reader_set(protocol, C)
     missing = [f for f in PACKAGE_FILES if not (PROJECT / f).exists()]
     report.add("package_layout", not missing,
                f"missing: {missing}" if missing else "all §28 files present")
@@ -209,16 +244,12 @@ def verify_code(report: Report, protocol: str = "v2"):
     report.add("cutoffs_exact", tuple(C.CUTOFFS_MIN) == (15, 60, 360),
                f"cutoffs={C.CUTOFFS_MIN}")
     report.add("reader_models_exact",
-               C.READER_MODEL_IDS == {
-                   "qwen": "Qwen/Qwen3-8B",
-                   "glm": "zai-org/glm-4-9b-chat-hf",
-                   "internlm": "internlm/internlm3-8b-instruct"},
-               f"readers={C.READER_MODEL_IDS}")
+               tuple(cur_keys) == tuple(_keys)
+               and cur_models == _models,
+               f"readers={cur_models}")
     report.add("loro_rotations",
-               C.LORO_ROTATIONS == (("qwen", "glm", "internlm"),
-                                    ("qwen", "internlm", "glm"),
-                                    ("glm", "internlm", "qwen")),
-               f"rotations={C.LORO_ROTATIONS}")
+               cur_loro == _loro,
+               f"rotations={cur_loro}")
     report.add("utility_z_dim", C.UTILITY_Z_DIM == 1286,
                f"z_dim={C.UTILITY_Z_DIM}")
     report.add("loss_weights",
@@ -262,8 +293,12 @@ def verify_code(report: Report, protocol: str = "v2"):
                "adapter never derives time from original_order")
     _verify_review_fixes(report)
     _verify_semantics(report)
-    if protocol == "v2":
-        _verify_v2_migration(report)
+    if protocol in ("v2", "v2r1"):
+        # The dataset protocol is unchanged by amendment R1, so both
+        # namespaces run the same Ma-Weibo/PHEME closure checks.
+        _verify_v2_migration(report, protocol)
+    if protocol == "v2r1":
+        _verify_reader_amendment_r1(report)
 
 
 class _FakeTokenizer:
@@ -337,19 +372,19 @@ def _verify_semantics(report):
         full = {n: 0.2 for n in ids}
         arm_a = build_arm("S6_legacy_utility_tm", units, src,
                           {"legacy": {n: float(i) for i, n in enumerate(ids)}},
-                          tokenizer, ["qwen", "glm"], seed=7319)
+                          tokenizer, ["qwen", "mistral"], seed=7319)
         arm_b = build_arm("S6_legacy_utility_tm", units, src,
                           {"legacy": {n: float(len(ids) - i)
                                       for i, n in enumerate(ids)}},
-                          tokenizer, ["qwen", "glm"], seed=7319)
+                          tokenizer, ["qwen", "mistral"], seed=7319)
         report.add("s6_consumes_legacy_scores",
                    arm_a["selected_node_ids"] != arm_b["selected_node_ids"],
                    "different legacy scores must change the S6 subset")
         partial = {n: 0.2 for n in ids[:-1]}
         try:
             build_arm("S5_cross_reader_robust", units, src,
-                      {"qwen": partial, "glm": full}, tokenizer,
-                      ["qwen", "glm"], seed=7319)
+                      {"qwen": partial, "mistral": full}, tokenizer,
+                      ["qwen", "mistral"], seed=7319)
             raised = False
         except MissingPredictionError:
             raised = True
@@ -444,7 +479,7 @@ def _write_p3_fixture(root, rotations):
              "utility": utility, "sign": sign, "correctness_before": True,
              "correctness_after": True}
             for reader, utility, sign in (("qwen", 0.4, "HELPFUL"),
-                                          ("glm", -0.3, "HARMFUL"))]
+                                          ("mistral", -0.3, "HARMFUL"))]
     with open(_os.path.join(root, "utility_labels", "weibo22", "labels.jsonl"),
               "w", encoding="utf-8") as fh:
         for row in rows:
@@ -514,15 +549,15 @@ def _verify_protocol_closure(report):
     try:
         import cr_tser_run_pilot as pilot
         with tempfile.TemporaryDirectory() as tmp:
-            _write_p3_fixture(tmp, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
-                                    "glm_internlm": 0.3})
+            _write_p3_fixture(tmp, {"qwen_mistral": 0.9, "qwen_internlm": -0.9,
+                                    "mistral_internlm": 0.3})
             gate = pilot.utility_prediction_gate(tmp, "weibo22",
                                                  {"utility_eval": ["e1"]})
             report.add("p3_keeps_all_rotations",
                        gate is not None and gate.get("n_observations") == 4,
                        f"n_observations={gate and gate.get('n_observations')}")
         with tempfile.TemporaryDirectory() as tmp:
-            _write_p3_fixture(tmp, {"qwen_glm": 0.9})
+            _write_p3_fixture(tmp, {"qwen_mistral": 0.9})
             gate = pilot.utility_prediction_gate(tmp, "weibo22",
                                                  {"utility_eval": ["e1"]})
             report.add("p3_missing_rotation_fails_closed",
@@ -539,7 +574,7 @@ def _verify_protocol_closure(report):
         from cr_tser.evaluation.unseen_reader import final_decision, gate_p4
         two = [{"held_out_reader": "internlm", "delta": 0.05,
                 "token_target_ok": True},
-               {"held_out_reader": "glm", "delta": 0.05,
+               {"held_out_reader": "mistral", "delta": 0.05,
                 "token_target_ok": True}]
         three = two + [{"held_out_reader": "qwen", "delta": 0.05,
                         "token_target_ok": True}]
@@ -689,7 +724,7 @@ def _verify_aggregator_rotation_identity(report):
     """A lost ``held_out_reader`` must be caught at the aggregator, not just
     inside ``gate_p4`` (the code-freeze hotfix regression)."""
     import tempfile
-    held = ("internlm", "glm", "qwen")
+    held = ("internlm", "mistral", "qwen")
     try:
         import cr_tser_run_pilot as pilot
         with tempfile.TemporaryDirectory() as tmp:
@@ -847,7 +882,7 @@ def _verify_b2_artifact_contract(report):
         lambda encoder, items, device, batch_size=32: [
             (torch.zeros(it["num_nodes"], 768), torch.zeros(768),
              torch.zeros(2)) for it in items])
-    held = ("internlm", "glm", "qwen")
+    held = ("internlm", "mistral", "qwen")
     try:
         scorer = _Scorer("pheme", encoder=nn.Module(), selector=_Sel(),
                          proxy=_Proxy())
@@ -896,8 +931,8 @@ def _verify_b2_artifact_contract(report):
                        f"n_rows={b2['n_rows']}")
 
         with tempfile.TemporaryDirectory() as tmp:
-            _write_p3_fixture(tmp, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
-                                    "glm_internlm": 0.3})
+            _write_p3_fixture(tmp, {"qwen_mistral": 0.9, "qwen_internlm": -0.9,
+                                    "mistral_internlm": 0.3})
             gate = pilot.utility_prediction_gate(tmp, "weibo22",
                                                  {"utility_eval": ["e1"]})
             report.add(
@@ -975,8 +1010,13 @@ def _v2_paths(raw_dir, label_file):
                                  weibo22_raw="")
 
 
-def _verify_v2_migration(report):
-    """Execute the amendment-V2 dataset/orchestration contracts."""
+def _verify_v2_migration(report, protocol: str = "v2"):
+    """Execute the amendment-V2 dataset/orchestration contracts.
+
+    Amendment R1 left the dataset protocol untouched, so this runs for both
+    ``v2`` and ``v2r1``; only the namespace/reader-set checks are
+    protocol-specific.
+    """
     import tempfile
     from cr_tser.config import pilot_config as C
 
@@ -1154,15 +1194,19 @@ def _verify_v2_migration(report):
                    and legacy_arm_enabled("pheme") is True,
                    "B2/S6 are PHEME-only; Ma-Weibo has neither")
 
-        # 11./12. namespace separation
+        # 11./12. namespace separation: the default output root always follows
+        # the *current* reader protocol, historical roots stay declared
         report.add("v2_namespace_separate_from_v1",
                    V2_RESULTS_ROOT == "results/cr_tser_v2"
                    and V1_RESULTS_ROOT == "results/cr_tser"
                    and V2_RESULTS_ROOT != V1_RESULTS_ROOT,
                    f"v1={V1_RESULTS_ROOT} v2={V2_RESULTS_ROOT}")
-        report.add("default_out_root_is_v2",
-                   paths_from_env({}).out_root == V2_RESULTS_ROOT,
-                   f"out_root={paths_from_env({}).out_root}")
+        report.add("default_out_root_is_current_namespace",
+                   paths_from_env({}).out_root == C.V2R1_RESULTS_ROOT
+                   and C.V2R1_RESULTS_ROOT not in (V1_RESULTS_ROOT,
+                                                   V2_RESULTS_ROOT),
+                   f"out_root={paths_from_env({}).out_root} "
+                   f"current={C.V2R1_RESULTS_ROOT}")
 
         # 13. the V2 P0 audit runs end-to-end on synthetic data only
         with tempfile.TemporaryDirectory() as tmp:
@@ -1210,6 +1254,8 @@ def _verify_v2_migration(report):
             report.add(name, False, f"error: {exc}")
 
     # 15. the scientific constants are untouched by the dataset amendment
+    _proto_keys, _proto_models, _proto_loro = _expected_reader_set(protocol)
+    _cur_keys, _cur_models, _cur_loro = _current_reader_set(protocol, C)
     report.add("v2_scientific_constants_unchanged",
                C.CUTOFFS_MIN == (15, 60, 360)
                and C.PARTITION_SEED == 7319
@@ -1217,16 +1263,16 @@ def _verify_v2_migration(report):
                and C.SPLIT_SIZES == {"foundation_train": 80,
                                      "utility_train": 50,
                                      "utility_dev": 15, "utility_eval": 25}
-               and C.READER_MODEL_IDS == {
-                   "qwen": "Qwen/Qwen3-8B",
-                   "glm": "zai-org/glm-4-9b-chat-hf",
-                   "internlm": "internlm/internlm3-8b-instruct"}
+               and tuple(_cur_keys) == tuple(_proto_keys)
+               and _cur_models == _proto_models
+               and _cur_loro == _proto_loro
                and (C.UTILITY_THRESHOLD, C.P1_MEAN_DISAGREEMENT_MIN,
                     C.P2_EDGE_DELTA_MIN, C.P3_MACRO_F1_DELTA_MIN,
                     C.P4_MEAN_DELTA_MIN, C.P4_WORST_ROTATION_MIN,
                     C.PHEME_MEAN_DELTA_MIN)
                == (0.05, 0.10, 0.02, 0.02, 0.01, -0.005, -0.005),
-               "amendment V2 changes dataset roles only")
+               "the dataset amendment changes dataset roles only, and the "
+               "reader amendment changes the reader set only")
 
     # 16. dataset-aware eligibility: PHEME keeps the V1 evidence-unit contract
     try:
@@ -1268,6 +1314,197 @@ def _verify_v2_migration(report):
         report.add("invalid_parent_cannot_form_unit", False, f"error: {exc}")
 
     _verify_v1_historical_immutable(report)
+
+
+#: Canonical (LF-normalized) digests of the frozen V2 artifacts as they stood
+#: when amendment R1 was approved (commit ``6da025c``). Amendment R1 §4 makes
+#: ``results/cr_tser_v2/`` immutable history: the new reader set must not have
+#: rewritten the manifests, the hashes or the partial GLM cache.
+V2_FROZEN_MANIFEST_SHA256 = {
+    "results/cr_tser_v2/manifests/maweibo/source.json":
+        "80b07954ce3199c57cb25e7ca11b07115dd0e20a84787b97effc1cfed291b783",
+    "results/cr_tser_v2/manifests/maweibo/hashes.json":
+        "fac953a5aaec6571f2ae90ebeb7a5f017c20673896ff2a65ae14991a2254154b",
+    "results/cr_tser_v2/manifests/maweibo/event_split.json":
+        "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2",
+    "results/cr_tser_v2/manifests/pheme/source.json":
+        "1a85a6d9e1f1da9ff7404d3231664463a38b5db444a57bb0f0292876b5b0e363",
+    "results/cr_tser_v2/manifests/pheme/hashes.json":
+        "4b865d5a811efe74a560e921bf888e6a7838ef3a20c854dbaa8b2bcf5b8b08f3",
+    "results/cr_tser_v2/manifests/pheme/event_split.json":
+        "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
+}
+
+
+def _migration_fixture(src_root: str, dst_root: str, readers=("qwen",
+                                                              "internlm",
+                                                              "glm")):
+    """Synthetic V2/v2r1 namespaces for the migration fail-closed checks."""
+    source = {"dataset": "pheme", "kind": "pheme_raw", "path": "/raw",
+              "exists": True, "sha256": "aa", "bytes": 10, "n_files": 1}
+    readers_record = {
+        key: {"model_id": f"org/{key}", "weight_hash": f"w-{key}",
+              "tokenizer_hash": f"t-{key}"}
+        for key in ("qwen", "mistral", "internlm")}
+    hashes = {"dataset": "pheme", "source": source,
+              "event_split_sha256": "es", "cutoffs": [15, 60, 360],
+              "viable_events": 200, "n_snapshots": 3, "n_interventions": 3,
+              "readers": readers_record}
+    for root in (src_root, dst_root):
+        mdir = os.path.join(root, "manifests", "pheme")
+        os.makedirs(mdir, exist_ok=True)
+        with open(os.path.join(mdir, "source.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(source, fh)
+        with open(os.path.join(mdir, "hashes.json"), "w",
+                  encoding="utf-8") as fh:
+            json.dump(hashes, fh)
+    cache = os.path.join(src_root, "utility_labels", "pheme", "labels.jsonl")
+    os.makedirs(os.path.dirname(cache), exist_ok=True)
+    with open(cache, "w", encoding="utf-8") as fh:
+        for i, reader in enumerate(readers):
+            row = {"dataset": "pheme", "event_id": f"e{i}", "cutoff": 60,
+                   "reader": reader, "intervention_id": "I0",
+                   "base_context_hash": f"b{i}", "intervened_context_hash":
+                       f"c{i}", "reader_hash": f"w-{reader}",
+                   "reader_identity_hash": f"id-{reader}",
+                   "tokenizer_hash": f"t-{reader}",
+                   "chat_template_hash": f"ct-{reader}",
+                   "prompt_hash": f"p{i}", "prompt_ids_hash": f"pi{i}"}
+            fh.write(json.dumps(row) + "\n")
+    return src_root, dst_root
+
+
+def _verify_reader_amendment_r1(report):
+    """Execute the amendment-R1 reader-set contracts (R1 §10, §13)."""
+    import tempfile
+    import types as _types
+
+    from cr_tser.config import pilot_config as C
+    from cr_tser.config.pilot_config import paths_from_env
+
+    report.add("r1_reader_keys_exact",
+               tuple(C.READER_KEYS) == ("qwen", "mistral", "internlm"),
+               f"READER_KEYS={C.READER_KEYS}")
+    report.add("r1_reader_model_ids_exact",
+               C.READER_MODEL_IDS == {
+                   "qwen": "Qwen/Qwen3-8B",
+                   "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+                   "internlm": "internlm/internlm3-8b-instruct"},
+               f"READER_MODEL_IDS={C.READER_MODEL_IDS}")
+    report.add("r1_loro_exact",
+               C.LORO_ROTATIONS == (("qwen", "mistral", "internlm"),
+                                    ("qwen", "internlm", "mistral"),
+                                    ("mistral", "internlm", "qwen")),
+               f"rotations={C.LORO_ROTATIONS}")
+    report.add("r1_protocol_versions",
+               C.DATASET_PROTOCOL_VERSION == "v2"
+               and C.READER_PROTOCOL_VERSION == "r1"
+               and C.PROTOCOL_VERSION == "v2r1",
+               f"dataset={C.DATASET_PROTOCOL_VERSION} "
+               f"reader={C.READER_PROTOCOL_VERSION} "
+               f"protocol={C.PROTOCOL_VERSION}")
+    report.add("v2r1_namespace_separate",
+               C.V2R1_RESULTS_ROOT == "results/cr_tser_v2r1"
+               and len({C.V1_RESULTS_ROOT, C.V2_RESULTS_ROOT,
+                        C.V2R1_RESULTS_ROOT}) == 3,
+               f"v1={C.V1_RESULTS_ROOT} v2={C.V2_RESULTS_ROOT} "
+               f"v2r1={C.V2R1_RESULTS_ROOT}")
+
+    # the retired reader must not be reachable from any v2r1 execution loop
+    loop_scripts = ("cr_tser_build_manifests.py", "cr_tser_generate_labels.py",
+                    "cr_tser_train_predictors.py", "cr_tser_run_selection.py",
+                    "cr_tser_run_pilot.py")
+    offenders = [name for name in loop_scripts
+                 if "glm" in _script(name).lower()]
+    report.add("glm_absent_from_r1_loops",
+               "glm" not in C.READER_KEYS
+               and not any("glm" in rotation for rotation in C.LORO_ROTATIONS)
+               and "glm" not in C.READER_MODEL_IDS
+               and not offenders,
+               f"offenders={offenders}")
+    report.add("glm_kept_only_as_history",
+               C.READER_KEYS_V2 == ("qwen", "glm", "internlm")
+               and C.KNOWN_READER_MODEL_IDS["glm"]
+               == "zai-org/glm-4-9b-chat-hf",
+               "the R0 key stays addressable for frozen V2 evidence only")
+
+    # path/env wiring
+    paths = paths_from_env({"CRTSER_MISTRAL_MODEL": "/models/mistral"})
+    report.add("mistral_path_and_env_resolution",
+               paths.reader_path("mistral") == "/models/mistral"
+               and paths.reader_path("glm") == ""
+               and set(paths.reader_paths()) == set(C.READER_KEYS),
+               f"mistral={paths.reader_path('mistral')!r}")
+
+    # the replacement reader must use the shared teacher-forced scorer
+    msrc = _code_only(_read(PROJECT / "cr_tser" / "readers" /
+                            "mistral_reader.py"))
+    report.add("mistral_reader_uses_shared_scorer",
+               "candidate_logprobs_hf" in msrc
+               and ".generate(" not in msrc
+               and "trust_remote_code = False" in msrc
+               and "torch_dtype=getattr(torch, self.spec.dtype)" in msrc,
+               "Mistral must reuse the shared A/B teacher-forced scorer")
+
+    # the historical V2 namespace must be untouched
+    drifted = {}
+    for rel, expected in V2_FROZEN_MANIFEST_SHA256.items():
+        path = REPO / rel
+        if not path.exists():
+            drifted[rel] = "missing"
+        elif _canonical_sha256(path) != expected:
+            drifted[rel] = "changed"
+    report.add("v2_history_untouched", not drifted,
+               f"drift: {drifted}" if drifted
+               else f"{len(V2_FROZEN_MANIFEST_SHA256)} frozen V2 files match")
+
+    # the migration utility must be fail-closed end-to-end
+    try:
+        import cr_tser_migrate_v2_labels as migration
+        with tempfile.TemporaryDirectory() as tmp:
+            src_root, dst_root = _migration_fixture(os.path.join(tmp, "v2"),
+                                                    os.path.join(tmp, "v2r1"))
+            ok = migration.migrate("pheme", src_root, dst_root)
+            good = (ok["migrated_rows"] == 2 and ok["skipped_retired_rows"] == 1
+                    and ok["readers_migrated"] == ["internlm", "qwen"])
+
+            applied = migration.migrate("pheme", src_root, dst_root, apply=True)
+            written = [json.loads(l) for l in
+                       open(applied["target_cache"], encoding="utf-8")
+                       if l.strip()]
+            no_glm = (len(written) == 2
+                      and all(r["reader"] != "glm" for r in written))
+            try:
+                migration.migrate("pheme", src_root, dst_root)
+                nonempty_refused = False
+            except migration.MigrationRefused:
+                nonempty_refused = True
+
+            bad_root = os.path.join(tmp, "drift")
+            _migration_fixture(bad_root, os.path.join(tmp, "drift_t"))
+            with open(os.path.join(bad_root, "manifests", "pheme",
+                                   "hashes.json"), encoding="utf-8") as fh:
+                payload = json.load(fh)
+            payload["event_split_sha256"] = "tampered"
+            with open(os.path.join(bad_root, "manifests", "pheme",
+                                   "hashes.json"), "w", encoding="utf-8") as fh:
+                json.dump(payload, fh)
+            try:
+                migration.migrate("pheme", bad_root,
+                                  os.path.join(tmp, "drift_t"))
+                drift_refused = False
+            except migration.MigrationRefused:
+                drift_refused = True
+
+        report.add("r1_migration_utility_fail_closed",
+                   good and no_glm and nonempty_refused and drift_refused,
+                   f"dry_run={good} no_glm={no_glm} "
+                   f"nonempty_refused={nonempty_refused} "
+                   f"drift_refused={drift_refused}")
+    except Exception as exc:  # pragma: no cover - defensive
+        report.add("r1_migration_utility_fail_closed", False,
+                   f"error: {exc}")
 
 
 def _canonical_bytes(data: bytes) -> bytes:
@@ -1623,9 +1860,10 @@ def _verify_pilot_review(report, root):
 def build_parser():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=("code", "pilot"), default="code")
-    ap.add_argument("--protocol", choices=("v1", "v2"), default="v2",
-                    help="v2 (default) adds the Ma-Weibo dataset-protocol "
-                         "checks; v1 keeps the historical checks only")
+    ap.add_argument("--protocol", choices=("v1", "v2", "v2r1"), default="v2r1",
+                    help="v2r1 (default) verifies the amended R1 reader set; "
+                         "v2 verifies the frozen R0 namespace; v1 keeps the "
+                         "historical checks only")
     ap.add_argument("--results-root", default=None)
     ap.add_argument("--out", default=None)
     return ap
@@ -1633,9 +1871,12 @@ def build_parser():
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    from cr_tser.config.pilot_config import V1_RESULTS_ROOT, V2_RESULTS_ROOT
+    from cr_tser.config.pilot_config import (V1_RESULTS_ROOT,
+                                             V2_RESULTS_ROOT,
+                                             V2R1_RESULTS_ROOT)
 
-    read_root = V2_RESULTS_ROOT if args.protocol == "v2" else V1_RESULTS_ROOT
+    read_root = {"v2r1": V2R1_RESULTS_ROOT,
+                 "v2": V2_RESULTS_ROOT}.get(args.protocol, V1_RESULTS_ROOT)
     report = Report()
     if args.mode == "code":
         verify_code(report, args.protocol)
@@ -1644,11 +1885,14 @@ def main(argv=None):
             "CRTSER_OUT_ROOT", str(REPO / read_root))
         verify_pilot(report, root)
     payload = report.to_dict(args.mode)
-    # Every run writes into the V2 namespace: the V1 directory is frozen
-    # history and must never be rewritten by a verifier re-run (amendment §22).
-    out_name = (f"{args.mode}_verify.json" if args.protocol == "v2"
-                else f"v1_{args.mode}_verify.json")
-    out = args.out or str(REPO / V2_RESULTS_ROOT / "verifier" / out_name)
+    # Verifier output always lands in the namespace it verified: the V1 and V2
+    # directories are frozen history and must never be rewritten by a re-run
+    # (amendment V2 §22, amendment R1 §4).
+    v1_run = args.protocol == "v1"
+    out_name = (f"v1_{args.mode}_verify.json" if v1_run
+                else f"{args.mode}_verify.json")
+    write_root = V2_RESULTS_ROOT if v1_run else read_root
+    out = args.out or str(REPO / write_root / "verifier" / out_name)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     with open(out, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=1)

@@ -66,7 +66,9 @@ def rotation_delta(arm_metrics, token_target_ok: bool = True) -> dict:
     }
 
 
-EXPECTED_HELDOUT_READERS = ("internlm", "glm", "qwen")
+#: Held-out readers of the current reader protocol (amendment R1): the three
+#: leave-one-reader-out rotations are held-out = internlm / mistral / qwen.
+EXPECTED_HELDOUT_READERS = ("internlm", "mistral", "qwen")
 
 
 def rotation_completeness(rotations, expected=EXPECTED_HELDOUT_READERS) -> dict:

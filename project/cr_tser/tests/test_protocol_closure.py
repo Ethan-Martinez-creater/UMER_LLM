@@ -102,7 +102,7 @@ def test_legacy_ranking_follows_selector_not_proxy():
             return {"input_ids": list(range(len(str(text).split())))}
 
     arm = build_arm("S6_legacy_utility_tm", units, src, {"legacy": legacy},
-                    _Tok(), ["qwen", "glm"], seed=7319)
+                    _Tok(), ["qwen", "mistral"], seed=7319)
     # the highest selector utilities win the packing
     assert set(arm["selected_node_ids"]) == {"n6", "n5", "n4"}
 
@@ -125,7 +125,7 @@ def _p3_fixture(tmp_path, rotations):
                "utility": 0.4, "sign": "HELPFUL", "correctness_before": True,
                "correctness_after": True},
               {"dataset": "weibo22", "event_id": "e1", "cutoff": 60,
-               "reader": "glm", "intervention_type": "I1_atomic",
+               "reader": "mistral", "intervention_type": "I1_atomic",
                "intervention_id": "I1:n1", "affected_reply_ids": ["n1"],
                "utility": -0.3, "sign": "HARMFUL", "correctness_before": True,
                "correctness_after": True}]
@@ -158,7 +158,7 @@ def _p3_fixture(tmp_path, rotations):
 def test_p3_keeps_predictions_from_every_rotation(tmp_path):
     import cr_tser_run_pilot as pilot
     root = _p3_fixture(tmp_path, {
-        "qwen_glm": 0.9, "qwen_internlm": -0.9, "glm_internlm": 0.3})
+        "qwen_mistral": 0.9, "qwen_internlm": -0.9, "mistral_internlm": 0.3})
     split = {"utility_eval": ["e1"]}
     gate = pilot.utility_prediction_gate(root, "weibo22", split)
     assert gate is not None
@@ -171,7 +171,7 @@ def test_p3_keeps_predictions_from_every_rotation(tmp_path):
 
 def test_p3_missing_rotation_fails_closed(tmp_path):
     import cr_tser_run_pilot as pilot
-    root = _p3_fixture(tmp_path, {"qwen_glm": 0.9})
+    root = _p3_fixture(tmp_path, {"qwen_mistral": 0.9})
     gate = pilot.utility_prediction_gate(root, "weibo22",
                                          {"utility_eval": ["e1"]})
     assert gate["pass"] is False
@@ -198,7 +198,7 @@ def test_modified_frozen_subset_is_rejected(tmp_path):
     import os
     os.makedirs(frozen, exist_ok=True)
     record = {"stage": "A_freeze_subsets", "dataset": "pheme",
-              "train_readers": ["qwen", "glm"], "held_out_reader": "internlm",
+              "train_readers": ["qwen", "mistral"], "held_out_reader": "internlm",
               "subsets": [{"arm": "S0_src_full", "event_id": "e1", "cutoff": 60,
                            "gold": 1, "selected_node_ids": ["n1"],
                            "total_tokens": 1, "target_tokens": 1,
@@ -338,7 +338,7 @@ def test_crtser_smoke_env_builds_smoke_root():
 #    ``compute_gates``, because a lost identity makes every three-rotation
 #    condition fail closed on complete evidence.
 # --------------------------------------------------------------------------
-THREE_HELD_OUT = ("internlm", "glm", "qwen")
+THREE_HELD_OUT = ("internlm", "mistral", "qwen")
 
 
 def _write_aggregator_tree(root, dataset, held_readers, delta=0.05,
@@ -514,9 +514,9 @@ def test_stage_a_refuses_when_a_single_rotation_exists(tmp_path, monkeypatch):
     _freeze_environment(monkeypatch, root)
     _os.makedirs(selection.frozen_dir(root, "pheme"), exist_ok=True)
     record = {"stage": "A_freeze_subsets", "dataset": "pheme",
-              "held_out_reader": "glm", "subsets": []}
+              "held_out_reader": "mistral", "subsets": []}
     record["sha256"] = selection._canonical_sha(record)
-    path = selection._frozen_path(root, "pheme", "glm")
+    path = selection._frozen_path(root, "pheme", "mistral")
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(record, fh)
     with pytest.raises(selection.FrozenSubsetAlreadyExists):
@@ -572,7 +572,7 @@ def test_b2_surface_outputs_enter_pheme_artifact(tmp_path, monkeypatch):
     item = {"event_id": "e1", "cutoff_minutes": 60, "label": 1,
             "num_nodes": 2, "node_ids": ["n0", "n1"], "source_pos": 0}
     frozen = [{"held_out_reader": "internlm", "sha256": "sha-a"},
-              {"held_out_reader": "glm", "sha256": "sha-b"},
+              {"held_out_reader": "mistral", "sha256": "sha-b"},
               {"held_out_reader": "qwen", "sha256": "sha-c"}]
     payload = selection._write_b2_diagnostic(
         "pheme", str(tmp_path), scorer, [item], [["n1"]], frozen)
@@ -588,7 +588,7 @@ def test_b2_surface_outputs_enter_pheme_artifact(tmp_path, monkeypatch):
     assert on_disk["frozen_fingerprint"]["s6_score_source"] == \
         "StaticUtilitySelector"
     assert on_disk["frozen_subset_sha256"] == {
-        "internlm": "sha-a", "glm": "sha-b", "qwen": "sha-c"}
+        "internlm": "sha-a", "mistral": "sha-b", "qwen": "sha-c"}
     # the metric is the real Proxy surface (gold=1, p[1] maximal -> pred 1)
     assert on_disk["metrics"]["n"] == 1
     assert on_disk["metrics"]["accuracy"] == 1.0
@@ -654,8 +654,8 @@ def test_b2_is_never_part_of_p3_or_p4_comparison(tmp_path):
     from ..config.pilot_config import SIMPLE_BASELINE_ARMS
     from ..evaluation.unseen_reader import (best_simple_baseline,
                                             rotation_delta)
-    root = _p3_fixture(tmp_path, {"qwen_glm": 0.9, "qwen_internlm": -0.9,
-                                  "glm_internlm": 0.3})
+    root = _p3_fixture(tmp_path, {"qwen_mistral": 0.9, "qwen_internlm": -0.9,
+                                  "mistral_internlm": 0.3})
     gate = pilot.utility_prediction_gate(root, "weibo22",
                                          {"utility_eval": ["e1"]})
     assert set(gate["per_model_metrics"]) <= {

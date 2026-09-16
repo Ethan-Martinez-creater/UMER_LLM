@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import hashlib
 
-from ..config.pilot_config import CANDIDATES, READER_MODEL_IDS
+from ..config.pilot_config import CANDIDATES, KNOWN_READER_MODEL_IDS
 from .base_reader import BaseReader, ReaderSpec
 
 
@@ -43,7 +43,8 @@ class MockReader(BaseReader):
         return {c: float(out[c]) for c in candidates}
 
     def identity(self) -> dict:
-        return {"key": self.spec.key, "model_id": READER_MODEL_IDS.get(self.spec.key),
+        return {"key": self.spec.key,
+                "model_id": KNOWN_READER_MODEL_IDS.get(self.spec.key),
                 "mock": True}
 
 

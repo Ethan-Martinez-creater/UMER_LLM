@@ -1,0 +1,477 @@
+{
+ "mode": "code",
+ "issues": 0,
+ "pending": 0,
+ "checks": [
+  {
+   "check": "package_layout",
+   "status": "pass",
+   "detail": "all \u00a728 files present"
+  },
+  {
+   "check": "frozen_constants",
+   "status": "pass",
+   "detail": "all frozen constants match the plan"
+  },
+  {
+   "check": "split_sizes",
+   "status": "pass",
+   "detail": "SPLIT_SIZES={'foundation_train': 80, 'utility_train': 50, 'utility_dev': 15, 'utility_eval': 25}"
+  },
+  {
+   "check": "cutoffs_exact",
+   "status": "pass",
+   "detail": "cutoffs=(15, 60, 360)"
+  },
+  {
+   "check": "reader_models_exact",
+   "status": "pass",
+   "detail": "readers={'qwen': 'Qwen/Qwen3-8B', 'mistral': 'mistralai/Mistral-7B-Instruct-v0.3', 'internlm': 'internlm/internlm3-8b-instruct'}"
+  },
+  {
+   "check": "loro_rotations",
+   "status": "pass",
+   "detail": "rotations=(('qwen', 'mistral', 'internlm'), ('qwen', 'internlm', 'mistral'), ('mistral', 'internlm', 'qwen'))"
+  },
+  {
+   "check": "utility_z_dim",
+   "status": "pass",
+   "detail": "z_dim=1286"
+  },
+  {
+   "check": "loss_weights",
+   "status": "pass",
+   "detail": "loss weights 1.0/0.5/0.5/0.01"
+  },
+  {
+   "check": "required_tests",
+   "status": "pass",
+   "detail": "all 23 \u00a735 tests present"
+  },
+  {
+   "check": "bitte_no_1021_signature",
+   "status": "pass",
+   "detail": "BiTTE must not use the retired 1021D adjacency signature"
+  },
+  {
+   "check": "src_reader_gold_proxy_independent",
+   "status": "pass",
+   "detail": "SRC uses only MiniLM + Qwen tokenizer"
+  },
+  {
+   "check": "weibo22_fail_closed",
+   "status": "pass",
+   "detail": "Weibo22 refuses pseudo-time and raises when timestamps are absent"
+  },
+  {
+   "check": "no_timestamp_synthesis",
+   "status": "pass",
+   "detail": "adapter never derives time from original_order"
+  },
+  {
+   "check": "cr_tser_snapshot_uncapped",
+   "status": "pass",
+   "detail": "CR-TSER snapshot must not inherit the TC-DSCR 1021 cap"
+  },
+  {
+   "check": "loro_isolation_entrance",
+   "status": "pass",
+   "detail": "dataset fails closed when a held-out reader is present"
+  },
+  {
+   "check": "loro_isolation_wired",
+   "status": "pass",
+   "detail": "training entry filters the cache to the two training readers"
+  },
+  {
+   "check": "evidence_key_defined",
+   "status": "pass",
+   "detail": "canonical evidence key defined exactly once"
+  },
+  {
+   "check": "evidence_key_contract_consistent",
+   "status": "pass",
+   "detail": "modules not using the canonical key: []"
+  },
+  {
+   "check": "manifest_immutable_after_labels",
+   "status": "pass",
+   "detail": "manifests refuse rewriting once any label cache exists"
+  },
+  {
+   "check": "viability_before_split",
+   "status": "pass",
+   "detail": "viability filtering must precede the 7319 split"
+  },
+  {
+   "check": "p2_reader_snapshot_pairing",
+   "status": "pass",
+   "detail": "P2 pairs inside one reader and snapshot before the event bootstrap"
+  },
+  {
+   "check": "p3_bootstrap_gate",
+   "status": "pass",
+   "detail": "P3 requires the event-level paired bootstrap CI to pass"
+  },
+  {
+   "check": "p3_all_rotations",
+   "status": "pass",
+   "detail": "P3 pools every LORO rotation, not just the first"
+  },
+  {
+   "check": "primary_secondary_separated",
+   "status": "pass",
+   "detail": "the primary dataset drives P1-P4; PHEME is secondary only"
+  },
+  {
+   "check": "b2_s6_pheme_only",
+   "status": "pass",
+   "detail": "legacy TC-DSCR diagnostic is PHEME-only and inference-only"
+  },
+  {
+   "check": "teacher_forced_tokenization",
+   "status": "pass",
+   "detail": "prompt/continuation tokenized without duplicate special tokens"
+  },
+  {
+   "check": "cache_fingerprint_fail_closed",
+   "status": "pass",
+   "detail": "cache hits are fingerprint-validated or refused"
+  },
+  {
+   "check": "prompt_hash_full_chat",
+   "status": "pass",
+   "detail": "prompt identity covers chat text and tokenized prompt ids"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_build_manifests.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_run_selection.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_train_predictors.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_run_pilot.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "dataset_namespace:cr_tser_generate_labels.py",
+   "status": "pass",
+   "detail": "artifact paths are dataset-scoped"
+  },
+  {
+   "check": "weibo22_normalized_path_wired",
+   "status": "pass",
+   "detail": "field=True common=True stages={'cr_tser_p0_audit.py': True, 'cr_tser_build_manifests.py': True, 'cr_tser_generate_labels.py': True, 'cr_tser_train_predictors.py': True, 'cr_tser_run_selection.py': True}"
+  },
+  {
+   "check": "p0_boundary_failure_blocks_pass",
+   "status": "pass",
+   "detail": "bad=P0_FAIL good=P0_PASS"
+  },
+  {
+   "check": "s6_consumes_legacy_scores",
+   "status": "pass",
+   "detail": "different legacy scores must change the S6 subset"
+  },
+  {
+   "check": "selector_missing_prediction_fails_closed",
+   "status": "pass",
+   "detail": "S5 must refuse a candidate set without full coverage"
+  },
+  {
+   "check": "cache_identity_substitution_fails_closed",
+   "status": "pass",
+   "detail": "4/4 substitutions detected"
+  },
+  {
+   "check": "p3_predicted_sign_from_sign_head",
+   "status": "pass",
+   "detail": "P3 must use the model sign head, never correctness"
+  },
+  {
+   "check": "p3_per_model_predictions",
+   "status": "pass",
+   "detail": "each model contributes independent predictions/metrics"
+  },
+  {
+   "check": "inference_covers_all_candidates",
+   "status": "pass",
+   "detail": "label-capped rows must not limit inference candidates"
+  },
+  {
+   "check": "s3_single_reader_trained",
+   "status": "pass",
+   "detail": "S3a/S3b must come from single-reader-trained artifacts"
+  },
+  {
+   "check": "s6_uses_static_utility_selector",
+   "status": "pass",
+   "detail": "scores={1: 3.0, 2: 2.0, 3: 1.0} selector_calls=1 proxy_calls=0"
+  },
+  {
+   "check": "p3_keeps_all_rotations",
+   "status": "pass",
+   "detail": "n_observations=4"
+  },
+  {
+   "check": "p3_missing_rotation_fails_closed",
+   "status": "pass",
+   "detail": "missing=['qwen+internlm', 'mistral+internlm']"
+  },
+  {
+   "check": "p4_requires_three_rotations",
+   "status": "pass",
+   "detail": "two rotations must never satisfy P4"
+  },
+  {
+   "check": "missing_pheme_cannot_full_go",
+   "status": "pass",
+   "detail": "PHEME secondary evidence is required for FULL_GO"
+  },
+  {
+   "check": "freeze_stage_excludes_heldout_reader",
+   "status": "pass",
+   "detail": "Stage A must not construct a held-out reader"
+  },
+  {
+   "check": "modified_frozen_subset_rejected",
+   "status": "pass",
+   "detail": "a tampered subset must not be scored"
+  },
+  {
+   "check": "normalized_parent_coverage_not_false_ready",
+   "status": "pass",
+   "detail": "valid=False parent_coverage=0.500"
+  },
+  {
+   "check": "manifest_fingerprint_matches_source",
+   "status": "pass",
+   "detail": "a changed normalized source must be refused"
+  },
+  {
+   "check": "crtser_smoke_env_resolves",
+   "status": "pass",
+   "detail": "out_root=/tmp/out\\smoke"
+  },
+  {
+   "check": "p4_rotation_identity_preserved",
+   "status": "pass",
+   "detail": "complete=True distinct=['internlm', 'mistral', 'qwen'] pass=True"
+  },
+  {
+   "check": "pheme_rotation_identity_complete",
+   "status": "pass",
+   "detail": "pheme_complete=True"
+  },
+  {
+   "check": "incomplete_rotations_fail_closed",
+   "status": "pass",
+   "detail": "two rotations -> pass=False"
+  },
+  {
+   "check": "frozen_subset_write_once",
+   "status": "pass",
+   "detail": "second freeze refused=True unchanged=True"
+  },
+  {
+   "check": "b2_surface_enters_pheme_artifact",
+   "status": "pass",
+   "detail": "metrics={'accuracy': 1.0, 'macro_f1': 0.5, 'rumor_f1': 1.0, 'non_rumor_f1': 0.0, 'n': 1}"
+  },
+  {
+   "check": "b2_never_changes_gates",
+   "status": "pass",
+   "detail": "gates_identical=True n_rows=3"
+  },
+  {
+   "check": "b2_excluded_from_p3_comparison",
+   "status": "pass",
+   "detail": "P3 models=['B0_text', 'B3_text_graph']"
+  },
+  {
+   "check": "b2_excluded_from_p4_comparison",
+   "status": "pass",
+   "detail": "best simple baseline selected 'S2_semantic_tm'"
+  },
+  {
+   "check": "v2_primary_dataset_is_maweibo",
+   "status": "pass",
+   "detail": "primary=maweibo secondary=pheme"
+  },
+  {
+   "check": "weibo22_absent_from_v2_loops",
+   "status": "pass",
+   "detail": "offenders=[]"
+  },
+  {
+   "check": "maweibo_bridge_reuses_audited_adapter",
+   "status": "pass",
+   "detail": "forbidden learned-artifact refs: []"
+  },
+  {
+   "check": "maweibo_timestamp_from_raw_t",
+   "status": "pass",
+   "detail": "node timestamps must equal the raw t field"
+  },
+  {
+   "check": "maweibo_fingerprint_is_composite",
+   "status": "pass",
+   "detail": "kind=maweibo_composite"
+  },
+  {
+   "check": "maweibo_source_replacement_fails_closed",
+   "status": "pass",
+   "detail": "a changed label file must be refused"
+  },
+  {
+   "check": "maweibo_p0a_fields_complete",
+   "status": "pass",
+   "detail": "missing=[]"
+  },
+  {
+   "check": "maweibo_fixture_all_events_viable",
+   "status": "pass",
+   "detail": "viable=2 of 2"
+  },
+  {
+   "check": "empty_text_not_an_evidence_unit",
+   "status": "pass",
+   "detail": "statuses={'7_s': 'VALID', '7_a': 'VALID', '7_b': 'EMPTY_TEXT', '7_c': 'VALID'} units=['7_a', '7_c']"
+  },
+  {
+   "check": "pheme_keeps_v1_evidence_units",
+   "status": "pass",
+   "detail": "pheme units=['7_a', '7_b', '7_c']"
+  },
+  {
+   "check": "maweibo_viability_filter_runs",
+   "status": "pass",
+   "detail": "every fixture event has a valid Reply\u2013Parent unit"
+  },
+  {
+   "check": "viable_lt_170_blocks_p0",
+   "status": "pass",
+   "detail": "169->P0_FAIL 170->P0_PASS"
+  },
+  {
+   "check": "maweibo_b2_s6_forbidden",
+   "status": "pass",
+   "detail": "B2/S6 are PHEME-only; Ma-Weibo has neither"
+  },
+  {
+   "check": "v2_namespace_separate_from_v1",
+   "status": "pass",
+   "detail": "v1=results/cr_tser v2=results/cr_tser_v2"
+  },
+  {
+   "check": "default_out_root_is_current_namespace",
+   "status": "pass",
+   "detail": "out_root=results/cr_tser_v2r1 current=results/cr_tser_v2r1"
+  },
+  {
+   "check": "v2_p0_audit_runs_synthetic",
+   "status": "pass",
+   "detail": "rc=2 files=['P0_READINESS.md', 'label_scoring_sanity.json', 'maweibo_audit.json', 'p0_readiness.json', 'pheme_smoke.json', 'reader_audit.json']"
+  },
+  {
+   "check": "maweibo_primary_path_has_no_legacy_artifacts",
+   "status": "pass",
+   "detail": "the legacy TC-DSCR scorer stays behind the PHEME-only legacy gate"
+  },
+  {
+   "check": "v2_scientific_constants_unchanged",
+   "status": "pass",
+   "detail": "the dataset amendment changes dataset roles only, and the reader amendment changes the reader set only"
+  },
+  {
+   "check": "eligibility_is_dataset_aware",
+   "status": "pass",
+   "detail": "strict=['b'] v1=['a', 'b']"
+  },
+  {
+   "check": "invalid_parent_cannot_form_unit",
+   "status": "pass",
+   "detail": "a VALID child must not smuggle an invalid parent"
+  },
+  {
+   "check": "v1_historical_immutable:code_verify.json",
+   "status": "pass",
+   "detail": "canonical_sha256=134b32e2f00765ab expected=134b32e2f00765ab"
+  },
+  {
+   "check": "v1_historical_immutable:pilot_verify.json",
+   "status": "pass",
+   "detail": "canonical_sha256=c81000a97ed82c32 expected=c81000a97ed82c32"
+  },
+  {
+   "check": "v1_verifier_dir_immutable",
+   "status": "pass",
+   "detail": "canonical_sha256=aba9f5169d63b39c expected=aba9f5169d63b39c"
+  },
+  {
+   "check": "r1_reader_keys_exact",
+   "status": "pass",
+   "detail": "READER_KEYS=('qwen', 'mistral', 'internlm')"
+  },
+  {
+   "check": "r1_reader_model_ids_exact",
+   "status": "pass",
+   "detail": "READER_MODEL_IDS={'qwen': 'Qwen/Qwen3-8B', 'mistral': 'mistralai/Mistral-7B-Instruct-v0.3', 'internlm': 'internlm/internlm3-8b-instruct'}"
+  },
+  {
+   "check": "r1_loro_exact",
+   "status": "pass",
+   "detail": "rotations=(('qwen', 'mistral', 'internlm'), ('qwen', 'internlm', 'mistral'), ('mistral', 'internlm', 'qwen'))"
+  },
+  {
+   "check": "r1_protocol_versions",
+   "status": "pass",
+   "detail": "dataset=v2 reader=r1 protocol=v2r1"
+  },
+  {
+   "check": "v2r1_namespace_separate",
+   "status": "pass",
+   "detail": "v1=results/cr_tser v2=results/cr_tser_v2 v2r1=results/cr_tser_v2r1"
+  },
+  {
+   "check": "glm_absent_from_r1_loops",
+   "status": "pass",
+   "detail": "offenders=[]"
+  },
+  {
+   "check": "glm_kept_only_as_history",
+   "status": "pass",
+   "detail": "the R0 key stays addressable for frozen V2 evidence only"
+  },
+  {
+   "check": "mistral_path_and_env_resolution",
+   "status": "pass",
+   "detail": "mistral='/models/mistral'"
+  },
+  {
+   "check": "mistral_reader_uses_shared_scorer",
+   "status": "pass",
+   "detail": "Mistral must reuse the shared A/B teacher-forced scorer"
+  },
+  {
+   "check": "v2_history_untouched",
+   "status": "pass",
+   "detail": "6 frozen V2 files match"
+  },
+  {
+   "check": "r1_migration_utility_fail_closed",
+   "status": "pass",
+   "detail": "dry_run=True no_glm=True nonempty_refused=True drift_refused=True"
+  }
+ ]
+}

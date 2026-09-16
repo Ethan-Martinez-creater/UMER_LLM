@@ -155,7 +155,7 @@ def test_predictor_selector_key_contract_end_to_end(fake_tokenizer):
     artifact = {
         "qwen": {evidence_key("pheme", snap["event_id"], 360, nid):
                  {"utility": 0.3} for nid in ids},
-        "glm": {evidence_key("pheme", snap["event_id"], 360, nid):
+        "mistral": {evidence_key("pheme", snap["event_id"], 360, nid):
                 {"utility": -0.1} for nid in ids},
         "shared": {evidence_key("pheme", snap["event_id"], 360, nid):
                    {"utility": 0.05} for nid in ids},
@@ -163,7 +163,7 @@ def test_predictor_selector_key_contract_end_to_end(fake_tokenizer):
     per_snapshot = {
         key: selection.predictions_for_snapshot(artifact, "pheme",
                                                 snap["event_id"], 360, key)
-        for key in ("qwen", "glm", "shared")}
+        for key in ("qwen", "mistral", "shared")}
     assert per_snapshot["qwen"] == {nid: 0.3 for nid in ids}
     # a different cutoff must not collide with the 360m rows
     assert selection.predictions_for_snapshot(
@@ -175,7 +175,7 @@ def test_predictor_selector_key_contract_end_to_end(fake_tokenizer):
     for arm in ("S3a_single_a", "S3b_single_b", "S4_shared",
                 "S5_cross_reader_robust"):
         result = build_arm(arm, units, src, per_snapshot, fake_tokenizer,
-                           ["qwen", "glm"], seed=7319)
+                           ["qwen", "mistral"], seed=7319)
         assert set(result["selected_node_ids"]) <= set(ids)
 
 
@@ -321,7 +321,7 @@ def test_p2_pairs_within_reader_and_snapshot():
     assert len(_pair_deltas(payloads["e1"], "pc", "na")) == 1
     # adding an I3 for a different reader must not create a cross-reader pair
     with_other_reader = base + [
-        {"event": "e1", "cutoff": 60, "reader": "glm", "type": "I3",
+        {"event": "e1", "cutoff": 60, "reader": "mistral", "type": "I3",
          "utility": 0.3, "members": [0.1, 0.1]}]
     payloads2 = build_event_payloads(with_other_reader)
     assert len(_pair_deltas(payloads2["e1"], "pc", "na")) == 1
