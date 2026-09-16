@@ -907,6 +907,48 @@ contract, utility definition or P1–P4 threshold was touched.
 
 LOCAL/pytorch: `143 passed`, code verifier `issues = 0`, `compileall` clean.
 
+# 23. V2-P1A execution — manifests frozen, utility labels partial (GLM blocked)
+
+Baseline `c3c08dc`, hotfix `57895a3`. Full detail in
+`results/cr_tser_v2/p1a/P1A_MANIFEST_UTILITY_LABEL_REPORT.md`.
+
+Frozen manifests (server-authoritative hashes committed with the round):
+
+```text
+maweibo  270 snapshots / 3839 interventions / 12 zero-reply / 4591 viable
+         max_snapshot_nodes 24192 (the retired MAX_NODES=1021 cap is not
+         applied); source.json 80b07954…, event_split.json 24e18ed1…,
+         snapshot_manifest.jsonl 611cb9c6…,
+         intervention_manifest.jsonl f37c3ffc…, hashes.json fac953a5…
+pheme    not rebuilt; byte-identical to the previous round
+both     split 80/50/15/25 seed 7319, label-balanced, event-disjoint,
+         cutoffs 15/60/360 only, no future-node leak, no cap hit
+```
+
+Ma-Weibo's composite identity reproduced exactly
+(`b982076d…`, no drift). Utility labels were then generated one reader at a
+time on SERVER/DGPA under the transformers 4.53.3 overlay: `maweibo/qwen`,
+`maweibo/internlm`, `pheme/qwen` and `pheme/internlm` all completed and passed
+the plan §8 audit (3202 / 3202 / 2879 / 2879 rows, zero duplicate keys, zero
+missing fields, zero NaN/Inf, reader identity matching the frozen manifest). No
+`CacheIdentityMismatch` occurred.
+
+`maweibo/glm` and `pheme/glm` are **blocked by shared-GPU memory contention**,
+not by a code defect: GLM-4-9B needs ≈19.3 GiB in bf16 while another user's six
+python jobs hold ~3.3 GiB of the 24 GiB RTX 4090 and return immediately after
+any short idle window, so the 674 MiB `logits.float()` peak cannot be
+allocated. Two attempts OOM'd (23:08:33 after 121 rows, 01:03:30 after 0 rows);
+tracebacks are preserved under `.cr_tser_v2p0/logs/` and
+`results/cr_tser_v2/p1a/logs/`. The model, dtype, token budget, cutoffs and
+protocol were not changed; the remaining GPU work waits for a sustained free
+window and the retry sets `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`
+(the allocator setting torch itself recommends), which changes no numeric
+computation. The round stops for approval with those two pairs pending.
+
+Verifiers at `57895a3` on the server: code `issues = 0, pending = 0`; pilot
+`issues = 0, pending = 3` (the P1–P4 artifacts this round must not produce).
+Predictor training, Stage A/B, held-out-reader scoring and P1–P4 were not run.
+
 
 
 

@@ -1,0 +1,9 @@
+resume: 3323 cached rows
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:11<00:11, 11.52s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:39<00:00, 21.22s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:39<00:00, 19.76s/it]
+reader internlm identity: 3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff
+{
+ "dataset": "maweibo",
+ "rows_written": 3202,
+ "rows_skipped": 0,
+ "label_file": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/utility_labels/maweibo/labels.jsonl"
+}

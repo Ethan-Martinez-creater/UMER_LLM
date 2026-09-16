@@ -1,0 +1,275 @@
+{
+ "maweibo": {
+  "files": {
+   "source.json": {
+    "exists": true,
+    "bytes": 752,
+    "sha256": "80b07954ce3199c57cb25e7ca11b07115dd0e20a84787b97effc1cfed291b783"
+   },
+   "event_split.json": {
+    "exists": true,
+    "bytes": 101074,
+    "sha256": "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2"
+   },
+   "snapshot_manifest.jsonl": {
+    "exists": true,
+    "bytes": 88494,
+    "sha256": "611cb9c6ca43afbaec8a0eba10d71c1fcc4dcb9af3ebbd7cd90a2660a2f434dc"
+   },
+   "intervention_manifest.jsonl": {
+    "exists": true,
+    "bytes": 800357,
+    "sha256": "f37c3ffcb07e8e0142a082326ec405417c8f99399a1b09fd907cfaba9b680782"
+   },
+   "hashes.json": {
+    "exists": true,
+    "bytes": 2133,
+    "sha256": "fac953a5aaec6571f2ae90ebeb7a5f017c20673896ff2a65ae14991a2254154b"
+   }
+  },
+  "checks": {
+   "source_frozen_kind": true,
+   "source_exists_true": true,
+   "split_sizes": true,
+   "split_seed": true,
+   "event_disjoint": true,
+   "cutoffs_only_15_60_360": true,
+   "no_future_node_leak": true,
+   "no_cap_hit": true,
+   "snapshot_cap_none": true,
+   "no_1021_truncation": true,
+   "snapshots_only_from_labeled_events": true,
+   "no_dataset_mixing": true,
+   "unique_snapshot_keys": true,
+   "reader_ids": true,
+   "readers_nonempty_hash": true
+  },
+  "all_checks_pass": true,
+  "n_snapshots": 270,
+  "n_interventions": 3839,
+  "n_zero_reply": 12,
+  "max_snapshot_nodes": 24192,
+  "max_nodes_exceeds_1021": true,
+  "largest_snapshots": [
+   {
+    "event_id": "3918595647661796",
+    "cutoff": 60,
+    "num_nodes": 24192,
+    "num_replies": 24191
+   },
+   {
+    "event_id": "3918595647661796",
+    "cutoff": 360,
+    "num_nodes": 24192,
+    "num_replies": 24191
+   },
+   {
+    "event_id": "3918595647661796",
+    "cutoff": 15,
+    "num_nodes": 3563,
+    "num_replies": 3562
+   },
+   {
+    "event_id": "3484377063826489",
+    "cutoff": 360,
+    "num_nodes": 2143,
+    "num_replies": 2142
+   },
+   {
+    "event_id": "3912003082833585",
+    "cutoff": 360,
+    "num_nodes": 1289,
+    "num_replies": 1288
+   }
+  ],
+  "viable_events": 4591,
+  "cutoffs": [
+   15,
+   60,
+   360
+  ],
+  "source_combined_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+  "source_top_level_keys": [
+   "bytes",
+   "combined_source_sha256",
+   "dataset",
+   "exists",
+   "kind",
+   "label_file",
+   "n_files",
+   "path",
+   "raw_json",
+   "sha256"
+  ],
+  "split_label_counts": {
+   "foundation_train": {
+    "0": 40,
+    "1": 40
+   },
+   "utility_train": {
+    "0": 25,
+    "1": 25
+   },
+   "utility_dev": {
+    "0": 8,
+    "1": 7
+   },
+   "utility_eval": {
+    "0": 12,
+    "1": 13
+   }
+  },
+  "readers": {
+   "qwen": {
+    "model_id": "Qwen/Qwen3-8B",
+    "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
+    "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457"
+   },
+   "glm": {
+    "model_id": "zai-org/glm-4-9b-chat-hf",
+    "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
+    "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650"
+   },
+   "internlm": {
+    "model_id": "internlm/internlm3-8b-instruct",
+    "weight_hash": "3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff",
+    "tokenizer_hash": "c0ed5fe5c9f2d713b8704acf29e75f408aea50f7cdc5fce7fe4dcf57879a6491"
+   }
+  }
+ },
+ "pheme": {
+  "files": {
+   "source.json": {
+    "exists": true,
+    "bytes": 228,
+    "sha256": "1a85a6d9e1f1da9ff7404d3231664463a38b5db444a57bb0f0292876b5b0e363"
+   },
+   "event_split.json": {
+    "exists": true,
+    "bytes": 136816,
+    "sha256": "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385"
+   },
+   "snapshot_manifest.jsonl": {
+    "exists": true,
+    "bytes": 87801,
+    "sha256": "8c2ec0462a1fbf9ff681d237fb9e57df09afd9af5c7e402779c2defe8812315f"
+   },
+   "intervention_manifest.jsonl": {
+    "exists": true,
+    "bytes": 724632,
+    "sha256": "a0c0ad7abb5c8132ecb9483143ad8c70bc6836568a183e32797a8af73201d2e3"
+   },
+   "hashes.json": {
+    "exists": true,
+    "bytes": 1588,
+    "sha256": "4b865d5a811efe74a560e921bf888e6a7838ef3a20c854dbaa8b2bcf5b8b08f3"
+   }
+  },
+  "checks": {
+   "source_frozen_kind": true,
+   "source_exists_true": true,
+   "split_sizes": true,
+   "split_seed": true,
+   "event_disjoint": true,
+   "cutoffs_only_15_60_360": true,
+   "no_future_node_leak": true,
+   "no_cap_hit": true,
+   "snapshot_cap_none": true,
+   "no_1021_truncation": true,
+   "snapshots_only_from_labeled_events": true,
+   "no_dataset_mixing": true,
+   "unique_snapshot_keys": true,
+   "reader_ids": true,
+   "readers_nonempty_hash": true
+  },
+  "all_checks_pass": true,
+  "n_snapshots": 270,
+  "n_interventions": 3412,
+  "n_zero_reply": 9,
+  "max_snapshot_nodes": 79,
+  "max_nodes_exceeds_1021": false,
+  "largest_snapshots": [
+   {
+    "event_id": "525051210349289472",
+    "cutoff": 360,
+    "num_nodes": 79,
+    "num_replies": 78
+   },
+   {
+    "event_id": "525051210349289472",
+    "cutoff": 60,
+    "num_nodes": 52,
+    "num_replies": 51
+   },
+   {
+    "event_id": "544454229960974336",
+    "cutoff": 360,
+    "num_nodes": 52,
+    "num_replies": 51
+   },
+   {
+    "event_id": "544434450918932480",
+    "cutoff": 360,
+    "num_nodes": 46,
+    "num_replies": 45
+   },
+   {
+    "event_id": "544508725420380160",
+    "cutoff": 360,
+    "num_nodes": 44,
+    "num_replies": 43
+   }
+  ],
+  "viable_events": 5669,
+  "cutoffs": [
+   15,
+   60,
+   360
+  ],
+  "source_combined_sha256": null,
+  "source_top_level_keys": [
+   "bytes",
+   "dataset",
+   "exists",
+   "kind",
+   "n_files",
+   "path",
+   "sha256"
+  ],
+  "split_label_counts": {
+   "foundation_train": {
+    "0": 40,
+    "1": 40
+   },
+   "utility_train": {
+    "0": 25,
+    "1": 25
+   },
+   "utility_dev": {
+    "0": 8,
+    "1": 7
+   },
+   "utility_eval": {
+    "0": 12,
+    "1": 13
+   }
+  },
+  "readers": {
+   "qwen": {
+    "model_id": "Qwen/Qwen3-8B",
+    "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
+    "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457"
+   },
+   "glm": {
+    "model_id": "zai-org/glm-4-9b-chat-hf",
+    "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
+    "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650"
+   },
+   "internlm": {
+    "model_id": "internlm/internlm3-8b-instruct",
+    "weight_hash": "3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff",
+    "tokenizer_hash": "c0ed5fe5c9f2d713b8704acf29e75f408aea50f7cdc5fce7fe4dcf57879a6491"
+   }
+  }
+ }
+}

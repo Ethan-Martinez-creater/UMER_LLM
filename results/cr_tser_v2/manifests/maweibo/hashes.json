@@ -1,0 +1,76 @@
+{
+ "dataset": "maweibo",
+ "source": {
+  "dataset": "maweibo",
+  "kind": "maweibo_composite",
+  "raw_json": {
+   "path": "/data/jyz/next/llm/data/maweibo_raw",
+   "exists": true,
+   "sha256": "c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27",
+   "bytes": 3995877128,
+   "n_files": 4664
+  },
+  "label_file": {
+   "path": "/data/jyz/next/llm/data/maweibo_labels.txt",
+   "exists": true,
+   "sha256": "032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4",
+   "bytes": 64463295,
+   "n_files": 1
+  },
+  "combined_source_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+  "path": "/data/jyz/next/llm/data/maweibo_raw",
+  "exists": true,
+  "sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+  "bytes": 4060340423,
+  "n_files": 4665
+ },
+ "event_split_sha256": "d54dda6a33c027c18e3678d646ecf187e6348b831872fd94f2f64a36c0a37710",
+ "cutoffs": [
+  15,
+  60,
+  360
+ ],
+ "loro_rotations": [
+  [
+   "qwen",
+   "glm",
+   "internlm"
+  ],
+  [
+   "qwen",
+   "internlm",
+   "glm"
+  ],
+  [
+   "glm",
+   "internlm",
+   "qwen"
+  ]
+ ],
+ "readers": {
+  "qwen": {
+   "model_id": "Qwen/Qwen3-8B",
+   "path": "/data/jyz/next/llm/model/qwen3-8b",
+   "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
+   "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457"
+  },
+  "glm": {
+   "model_id": "zai-org/glm-4-9b-chat-hf",
+   "path": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
+   "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
+   "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650"
+  },
+  "internlm": {
+   "model_id": "internlm/internlm3-8b-instruct",
+   "path": "/data/jyz/next/llm/model/internlm3-8b-instruct",
+   "weight_hash": "3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff",
+   "tokenizer_hash": "c0ed5fe5c9f2d713b8704acf29e75f408aea50f7cdc5fce7fe4dcf57879a6491"
+  }
+ },
+ "viable_events": 4591,
+ "n_snapshots": 270,
+ "n_interventions": 3839,
+ "n_zero_reply_snapshots": 12,
+ "max_snapshot_nodes": 24192,
+ "snapshot_cap": null
+}

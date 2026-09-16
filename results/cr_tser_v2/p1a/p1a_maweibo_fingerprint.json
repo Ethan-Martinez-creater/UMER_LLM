@@ -1,0 +1,24 @@
+{
+ "dataset": "maweibo",
+ "kind": "maweibo_composite",
+ "raw_json": {
+  "path": "/data/jyz/next/llm/data/maweibo_raw",
+  "exists": true,
+  "sha256": "c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27",
+  "bytes": 3995877128,
+  "n_files": 4664
+ },
+ "label_file": {
+  "path": "/data/jyz/next/llm/data/maweibo_labels.txt",
+  "exists": true,
+  "sha256": "032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4",
+  "bytes": 64463295,
+  "n_files": 1
+ },
+ "combined_source_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+ "path": "/data/jyz/next/llm/data/maweibo_raw",
+ "exists": true,
+ "sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+ "bytes": 4060340423,
+ "n_files": 4665
+}

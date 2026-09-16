@@ -1,0 +1,61 @@
+{
+ "dataset": "pheme",
+ "source": {
+  "dataset": "pheme",
+  "kind": "pheme_raw",
+  "path": "/data/jyz/next/llm/data/pheme_raw",
+  "exists": true,
+  "sha256": "88a27f230b577502674f9439ee1ca579d1b5e5a872ec93d5ed96a281f9816e6b",
+  "bytes": 322990857,
+  "n_files": 255945
+ },
+ "event_split_sha256": "35b69a964ef35a33a6d1c3973cad1945fe99f0e53670687406f41e4e9702e1b8",
+ "cutoffs": [
+  15,
+  60,
+  360
+ ],
+ "loro_rotations": [
+  [
+   "qwen",
+   "glm",
+   "internlm"
+  ],
+  [
+   "qwen",
+   "internlm",
+   "glm"
+  ],
+  [
+   "glm",
+   "internlm",
+   "qwen"
+  ]
+ ],
+ "readers": {
+  "qwen": {
+   "model_id": "Qwen/Qwen3-8B",
+   "path": "/data/jyz/next/llm/model/qwen3-8b",
+   "weight_hash": "345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197",
+   "tokenizer_hash": "26a5805b76938647244b41b841fa742e0270bba814de7e4f71c5d655721da457"
+  },
+  "glm": {
+   "model_id": "zai-org/glm-4-9b-chat-hf",
+   "path": "/data/jyz/next/llm/model/glm-4-9b-chat-hf",
+   "weight_hash": "50b8b4f31d1ce5d7ddb9da6f2181c11fb4c2e9899bddf7491e8e068052abc583",
+   "tokenizer_hash": "263851b177e6d7a0ac7e7fe2302d6a6303a493a4ffc4a4d06e3fb2e8c71dc650"
+  },
+  "internlm": {
+   "model_id": "internlm/internlm3-8b-instruct",
+   "path": "/data/jyz/next/llm/model/internlm3-8b-instruct",
+   "weight_hash": "3ac547bf153173e20c832a3331c9e9098479cf9c8e546992e0171288fb3bdcff",
+   "tokenizer_hash": "c0ed5fe5c9f2d713b8704acf29e75f408aea50f7cdc5fce7fe4dcf57879a6491"
+  }
+ },
+ "viable_events": 5669,
+ "n_snapshots": 270,
+ "n_interventions": 3412,
+ "n_zero_reply_snapshots": 9,
+ "max_snapshot_nodes": 79,
+ "snapshot_cap": null
+}

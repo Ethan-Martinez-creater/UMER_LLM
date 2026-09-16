@@ -4,6 +4,16 @@ Round: **V2-P1A (formal manifest freeze + frozen-reader utility labels)**
 Baseline: `c4773a3ec605e40d6aa26cd2244a41ccb51b998a`
 Status: **STOPPED — genuine code defect, not patched**
 
+> **Follow-up (V2-P1A manifest hotfix, commit `57895a3`).** The defect was
+> approved for repair and fixed in the unified fingerprint contract
+> (`project/cr_tser/data/source_manifest.py`): the `maweibo_composite` branch
+> now exposes the same top-level field set as every other source kind, with
+> `"exists"` a real conjunction of the raw directory and the label file.
+> Ma-Weibo manifests were then built successfully (270 snapshots / 3839
+> interventions) and utility labels were generated; see
+> `P1A_MANIFEST_UTILITY_LABEL_REPORT.md`. The text below is the original
+> stop-time record and is kept unchanged.
+
 Per plan §10 ("If a genuine runtime/code defect blocks this frozen stage:
 STOP, preserve evidence, report the defect, do not patch and continue
 automatically"), the round stopped at the Ma-Weibo manifest build. No source
