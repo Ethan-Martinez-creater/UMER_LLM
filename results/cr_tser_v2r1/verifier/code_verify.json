@@ -542,6 +542,36 @@
    "check": "p1_p2_bootstrap_protocol_unchanged",
    "status": "pass",
    "detail": "iterations=10000 seed=7319 matching=reader_x_snapshot bootstrap=event"
+  },
+  {
+   "check": "feasibility_closure_present",
+   "status": "pass",
+   "detail": "FEASIBILITY_CLOSURE.json=True FEASIBILITY_CLOSURE.md=True"
+  },
+  {
+   "check": "feasibility_closure_matches_evidence",
+   "status": "pass",
+   "detail": "P1_PASS / P2_FAIL and the reported statistics match the gate artifacts"
+  },
+  {
+   "check": "feasibility_closure_thresholds_unchanged",
+   "status": "pass",
+   "detail": "{'utility_threshold': 0.05, 'p1_mean_disagreement_min': 0.1, 'p1_pair_disagreement_min': 0.05, 'p1_pairs_required': 2, 'p2_edge_delta_min': 0.02, 'bootstrap_iterations': 10000, 'bootstrap_seed': 7319, 'cutoffs': [15, 60, 360], 'partition_seed': 7319, 'split_sizes': {'foundation_train': 80, 'utility_train': 50, 'utility_dev': 15, 'utility_eval': 25}, 'matching_unit': 'reader_x_snapshot', 'bootstrap_unit': 'event'}"
+  },
+  {
+   "check": "feasibility_closure_no_p3_p4",
+   "status": "pass",
+   "detail": "stale=[] absent={'predictor': True, 'unseen_reader': True} P3=NOT_RUN P4=NOT_RUN"
+  },
+  {
+   "check": "feasibility_closure_verdict_and_reason",
+   "status": "pass",
+   "detail": "NO_GO / STRUCTURED_INTERACTION_GATE_NOT_SUPPORTED"
+  },
+  {
+   "check": "feasibility_closure_inputs_pinned",
+   "status": "pass",
+   "detail": "labels={'maweibo': '6c6591eaa76451c45917e97bdedf493cddcc06261a98ec8c8ff1eaab065646c3', 'pheme': '773bee3e98d8d0f0ffc521bb9024839beeb64d2d8c2572f9f8a07dbcfff4ec15'}"
   }
  ]
 }

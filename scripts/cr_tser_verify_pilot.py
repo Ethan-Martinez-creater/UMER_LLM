@@ -302,6 +302,7 @@ def verify_code(report: Report, protocol: str = "v2r1"):
         _verify_boundary_audit_a1(report)
         _verify_v2r1_manifest_freeze(report)
         _verify_p1_p2_stage(report)
+        _verify_feasibility_closure(report)
 
 
 class _FakeTokenizer:
@@ -1485,6 +1486,102 @@ def _verify_p1_p2_stage(report):
                f"seed={boot.get('bootstrap_seed')} "
                f"matching={boot.get('matching_unit')} "
                f"bootstrap={boot.get('bootstrap_unit')}")
+
+
+def _verify_feasibility_closure(report):
+    """The P2-failure closure must match the evidence it closes (fail closed).
+
+    Checks: the closure artifacts exist, P1 is PASS and P2 is FAIL, no P3/P4
+    artifact exists, the recorded thresholds are the frozen ones, the reason
+    code is the expected one, and the frozen caches/manifests are the pinned
+    ones.
+    """
+    closure_dir = REPO / "results" / "cr_tser_v2r1" / "closure"
+    json_path = closure_dir / "FEASIBILITY_CLOSURE.json"
+    md_path = closure_dir / "FEASIBILITY_CLOSURE.md"
+    report.add("feasibility_closure_present",
+               json_path.exists() and md_path.exists(),
+               f"{json_path.name}={json_path.exists()} "
+               f"{md_path.name}={md_path.exists()}")
+    if not json_path.exists():
+        return
+
+    from cr_tser.config.pilot_config import (BOOTSTRAP_ITERATIONS,
+                                             BOOTSTRAP_SEED,
+                                             P1_MEAN_DISAGREEMENT_MIN,
+                                             P1_PAIR_DISAGREEMENT_MIN,
+                                             P1_PAIRS_REQUIRED,
+                                             P2_EDGE_DELTA_MIN,
+                                             PROTOCOL_VERSION, READER_KEYS,
+                                             UTILITY_THRESHOLD)
+    closure = json.loads(_read(json_path))
+
+    gates = json.loads(_read(REPO / "results" / "cr_tser_v2r1" / "gates" /
+                             "p1_maweibo.json"))
+    gates2 = json.loads(_read(REPO / "results" / "cr_tser_v2r1" / "gates" /
+                              "p2_maweibo.json"))
+    consistent = (
+        closure.get("P1", {}).get("verdict") == "P1_PASS"
+        and closure.get("P2", {}).get("verdict") == "P2_FAIL"
+        and gates.get("verdict") == "P1_PASS"
+        and gates2.get("verdict") == "P2_FAIL"
+        and closure["P2"].get("delta_edge") == gates2["report"]["edge"]["delta"]
+        and closure["P2"].get("edge_ci_low")
+        == gates2["report"]["edge"]["ci_low"]
+        and closure["P1"].get("mean_disagreement")
+        == gates["report"]["macro_mean_disagreement"])
+    report.add("feasibility_closure_matches_evidence", consistent,
+               "P1_PASS / P2_FAIL and the reported statistics match the gate "
+               "artifacts" if consistent else "the closure disagrees with the "
+               "gate artifacts")
+
+    frozen = closure.get("frozen_thresholds", {})
+    ok_thresholds = (
+        frozen.get("utility_threshold") == UTILITY_THRESHOLD
+        and frozen.get("p1_mean_disagreement_min")
+        == P1_MEAN_DISAGREEMENT_MIN
+        and frozen.get("p1_pair_disagreement_min")
+        == P1_PAIR_DISAGREEMENT_MIN
+        and frozen.get("p1_pairs_required") == P1_PAIRS_REQUIRED
+        and frozen.get("p2_edge_delta_min") == P2_EDGE_DELTA_MIN
+        and frozen.get("bootstrap_iterations") == BOOTSTRAP_ITERATIONS
+        and frozen.get("bootstrap_seed") == BOOTSTRAP_SEED
+        and frozen.get("matching_unit") == "reader_x_snapshot"
+        and frozen.get("bootstrap_unit") == "event")
+    report.add("feasibility_closure_thresholds_unchanged", ok_thresholds,
+               f"{frozen}")
+
+    gates_dir = REPO / "results" / "cr_tser_v2r1" / "gates"
+    stale = sorted(p.name for p in gates_dir.glob("*.json")
+                   if p.name.startswith(("p3_", "p4_")))
+    absent = {name: not (REPO / "results" / "cr_tser_v2r1" / name).exists()
+              for name in ("predictor", "unseen_reader")}
+    report.add("feasibility_closure_no_p3_p4",
+               not stale and all(absent.values())
+               and closure.get("P3") == "NOT_RUN"
+               and closure.get("P4") == "NOT_RUN",
+               f"stale={stale} absent={absent} P3={closure.get('P3')} "
+               f"P4={closure.get('P4')}")
+
+    report.add("feasibility_closure_verdict_and_reason",
+               closure.get("final_feasibility_verdict") == "NO_GO"
+               and closure.get("reason_code")
+               == "STRUCTURED_INTERACTION_GATE_NOT_SUPPORTED"
+               and closure.get("protocol") == PROTOCOL_VERSION
+               and sorted(closure.get("reader_keys") or [])
+               == sorted(READER_KEYS)
+               and closure.get("dataset_roles", {}).get(
+                   "primary_decision_dataset") == "maweibo"
+               and closure.get("dataset_roles", {}).get(
+                   "pheme_decides_any_gate") is False,
+               f"{closure.get('final_feasibility_verdict')} / "
+               f"{closure.get('reason_code')}")
+
+    seen = closure.get("frozen_inputs", {}).get("labels_sha256", {})
+    report.add("feasibility_closure_inputs_pinned",
+               all(seen.get(d) == pinned for d, pinned
+                   in V2R1_FROZEN_LABELS_SHA256.items()),
+               f"labels={seen}")
 
 
 def _verify_v2r1_manifest_freeze(report):

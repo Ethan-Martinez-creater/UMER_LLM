@@ -1,0 +1,321 @@
+{
+ "artifact": "CR_TSER_V2R1_FEASIBILITY_CLOSURE",
+ "baseline_commit": "052cf13b41f4a68e9849644614fe5541944ce919",
+ "protocol": "v2r1",
+ "round": "P2_failure_closure",
+ "reader_keys": [
+  "qwen",
+  "mistral",
+  "internlm"
+ ],
+ "reader_model_ids": {
+  "qwen": "Qwen/Qwen3-8B",
+  "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+  "internlm": "internlm/internlm3-8b-instruct"
+ },
+ "dataset_roles": {
+  "primary_decision_dataset": "maweibo",
+  "secondary_dataset": "pheme",
+  "secondary_role": "diagnostic_only",
+  "pheme_decides_any_gate": false
+ },
+ "frozen_thresholds": {
+  "utility_threshold": 0.05,
+  "p1_mean_disagreement_min": 0.1,
+  "p1_pair_disagreement_min": 0.05,
+  "p1_pairs_required": 2,
+  "p2_edge_delta_min": 0.02,
+  "bootstrap_iterations": 10000,
+  "bootstrap_seed": 7319,
+  "cutoffs": [
+   15,
+   60,
+   360
+  ],
+  "partition_seed": 7319,
+  "split_sizes": {
+   "foundation_train": 80,
+   "utility_train": 50,
+   "utility_dev": 15,
+   "utility_eval": 25
+  },
+  "matching_unit": "reader_x_snapshot",
+  "bootstrap_unit": "event"
+ },
+ "P1": {
+  "verdict": "P1_PASS",
+  "dataset": "maweibo",
+  "mean_disagreement": 0.40820148473402224,
+  "pairs": [
+   {
+    "reader_a": "qwen",
+    "reader_b": "mistral",
+    "n_active": 81,
+    "disagreement": 0.5061728395061729,
+    "utility_spearman": 0.23923979907914814,
+    "sign_contingency": {
+     "-1:1": 28,
+     "-1:-1": 14,
+     "1:-1": 13,
+     "1:1": 26
+    }
+   },
+   {
+    "reader_a": "qwen",
+    "reader_b": "internlm",
+    "n_active": 123,
+    "disagreement": 0.4146341463414634,
+    "utility_spearman": 0.205138009851265,
+    "sign_contingency": {
+     "1:-1": 22,
+     "-1:-1": 30,
+     "-1:1": 29,
+     "1:1": 42
+    }
+   },
+   {
+    "reader_a": "mistral",
+    "reader_b": "internlm",
+    "n_active": 79,
+    "disagreement": 0.3037974683544304,
+    "utility_spearman": 0.23643857849470698,
+    "sign_contingency": {
+     "1:1": 39,
+     "-1:1": 17,
+     "-1:-1": 16,
+     "1:-1": 7
+    }
+   }
+  ],
+  "active_counts": {
+   "qwen": {
+    "atomic_rows": 2549,
+    "active": 437
+   },
+   "mistral": {
+    "atomic_rows": 2549,
+    "active": 444
+   },
+   "internlm": {
+    "atomic_rows": 2549,
+    "active": 448
+   },
+   "utility_threshold": 0.05
+  },
+  "jointly_active_pairs": {
+   "qwen+mistral": 81,
+   "qwen+internlm": 123,
+   "mistral+internlm": 79
+  },
+  "coverage": {
+   "labelled_pool_events": 90,
+   "events_with_labels": 90,
+   "events_missing_labels": 0,
+   "cutoffs": [
+    15,
+    60,
+    360
+   ],
+   "event_cutoff_pairs": 258,
+   "split_sizes": {
+    "foundation_train": 80,
+    "utility_train": 50,
+    "utility_dev": 15,
+    "utility_eval": 25
+   },
+   "split_seed": 7319,
+   "source_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d"
+  },
+  "gate": {
+   "gate": "P1_reader_heterogeneity",
+   "mean_disagreement": 0.40820148473402224,
+   "mean_threshold": 0.1,
+   "pairs_above_pair_threshold": 3,
+   "pairs_required": 2,
+   "pair_threshold": 0.05,
+   "pass": true
+  },
+  "artifact": "gates/p1_maweibo.json",
+  "artifact_sha256": "8c8e661107d17bdd5dd17026e3618a642c5ae69e56d29cc933a05910b64c6c34"
+ },
+ "P2": {
+  "verdict": "P2_FAIL",
+  "dataset": "maweibo",
+  "delta_edge": 0.012150108092362793,
+  "edge_ci_low": -0.0023418881087771456,
+  "edge_ci_high": 0.02719584140052812,
+  "edge_n_events": 49,
+  "edge_n_matched_pairs": 297,
+  "delta_subtree": 0.016012813915071814,
+  "subtree_ci_low": -0.0035993185698382805,
+  "subtree_ci_high": 0.03548618705633272,
+  "subtree_n_events": 47,
+  "subtree_n_matched_pairs": 276,
+  "slot_means": {
+   "pc": {
+    "n_pairs": 300,
+    "mean_abs_interaction": 0.0550867242425659
+   },
+   "na": {
+    "n_pairs": 300,
+    "mean_abs_interaction": 0.04286533216767624
+   },
+   "sub": {
+    "n_pairs": 300,
+    "mean_abs_interaction": 0.07819316201934746
+   },
+   "disc": {
+    "n_pairs": 276,
+    "mean_abs_interaction": 0.06278685313258224
+   }
+  },
+  "record_counts": {
+   "structured_records": 1176,
+   "structured_records_by_reader": {
+    "qwen": 392,
+    "internlm": 392,
+    "mistral": 392
+   },
+   "cache_rows_by_intervention_type": {
+    "I0_base": 774,
+    "I1_atomic": 7647,
+    "I2_parent_child": 303,
+    "I3_matched_nonadjacent": 300,
+    "I4_subtree": 303,
+    "I5_matched_disconnected": 279
+   }
+  },
+  "coverage": {
+   "labelled_pool_events": 90,
+   "events_with_labels": 90,
+   "events_missing_labels": 0,
+   "cutoffs": [
+    15,
+    60,
+    360
+   ],
+   "event_cutoff_pairs": 258,
+   "split_sizes": {
+    "foundation_train": 80,
+    "utility_train": 50,
+    "utility_dev": 15,
+    "utility_eval": 25
+   },
+   "split_seed": 7319,
+   "source_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d"
+  },
+  "gate": {
+   "gate": "P2_structured_interaction",
+   "edge_delta": 0.012150108092362793,
+   "edge_ci_low": -0.0023418881087771456,
+   "edge_threshold": 0.02,
+   "n_matched_pairs": 297,
+   "matching_unit": "reader_x_snapshot",
+   "bootstrap_unit": "event",
+   "pass": false,
+   "subtree_confirmatory": {
+    "n_matched_pairs": 276,
+    "mean_delta": 0.016012813915071814,
+    "delta": 0.016012813915071814,
+    "ci_low": -0.0035993185698382805,
+    "ci_high": 0.03548618705633272,
+    "n_events": 47
+   }
+  },
+  "artifact": "gates/p2_maweibo.json",
+  "artifact_sha256": "8de1f10b644cbbae80af5dd54065d3908afa1952c2a186dfd5bd154c0e1585f0"
+ },
+ "pheme_diagnostic": {
+  "role": "diagnostic_only",
+  "decides_primary_gate": false,
+  "P1": {
+   "verdict": "DIAGNOSTIC_ONLY",
+   "mean_disagreement": 0.3763996068343894,
+   "diagnostic_gate": {
+    "gate": "P1_reader_heterogeneity",
+    "mean_disagreement": 0.3763996068343894,
+    "mean_threshold": 0.1,
+    "pairs_above_pair_threshold": 3,
+    "pairs_required": 2,
+    "pair_threshold": 0.05,
+    "pass": true
+   },
+   "artifact": "gates/p1_pheme_diagnostic.json",
+   "artifact_sha256": "4790dd286cdde59c75f9c295249ca9fb9abef272554a7a57304011e412c6bb12"
+  },
+  "P2": {
+   "verdict": "DIAGNOSTIC_ONLY",
+   "delta_edge": 0.0038350639691513712,
+   "edge_ci_low": -0.01082203613597484,
+   "edge_ci_high": 0.018170631390902917,
+   "delta_subtree": 0.005817885275685223,
+   "diagnostic_gate": {
+    "gate": "P2_structured_interaction",
+    "edge_delta": 0.0038350639691513712,
+    "edge_ci_low": -0.01082203613597484,
+    "edge_threshold": 0.02,
+    "n_matched_pairs": 381,
+    "matching_unit": "reader_x_snapshot",
+    "bootstrap_unit": "event",
+    "pass": false,
+    "subtree_confirmatory": {
+     "n_matched_pairs": 369,
+     "mean_delta": 0.005817885275685229,
+     "delta": 0.005817885275685223,
+     "ci_low": -0.013562674075666567,
+     "ci_high": 0.025112659330392518,
+     "n_events": 53
+    }
+   },
+   "artifact": "gates/p2_pheme_diagnostic.json",
+   "artifact_sha256": "412cdb424b6e29cb14ebefc39ec271599551e2b1dbd05b948677f935ef5b1c56"
+  }
+ },
+ "P3": "NOT_RUN",
+ "P4": "NOT_RUN",
+ "final_feasibility_verdict": "NO_GO",
+ "reason_code": "STRUCTURED_INTERACTION_GATE_NOT_SUPPORTED",
+ "reason": "The frozen pilot did not establish the required structural-interaction effect: the observed edge gap was positive but below the pre-registered threshold and its event-bootstrap confidence interval crossed zero.",
+ "gate_artifacts": {
+  "p1_maweibo.json": "8c8e661107d17bdd5dd17026e3618a642c5ae69e56d29cc933a05910b64c6c34",
+  "p2_maweibo.json": "8de1f10b644cbbae80af5dd54065d3908afa1952c2a186dfd5bd154c0e1585f0",
+  "p1_pheme_diagnostic.json": "4790dd286cdde59c75f9c295249ca9fb9abef272554a7a57304011e412c6bb12",
+  "p2_pheme_diagnostic.json": "412cdb424b6e29cb14ebefc39ec271599551e2b1dbd05b948677f935ef5b1c56"
+ },
+ "frozen_inputs": {
+  "labels_sha256": {
+   "maweibo": "6c6591eaa76451c45917e97bdedf493cddcc06261a98ec8c8ff1eaab065646c3",
+   "pheme": "773bee3e98d8d0f0ffc521bb9024839beeb64d2d8c2572f9f8a07dbcfff4ec15"
+  },
+  "manifest_sha256": {
+   "results/cr_tser_v2r1/manifests/maweibo/source.json": "80b07954ce3199c57cb25e7ca11b07115dd0e20a84787b97effc1cfed291b783",
+   "results/cr_tser_v2r1/manifests/maweibo/event_split.json": "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2",
+   "results/cr_tser_v2r1/manifests/maweibo/hashes.json": "f106af7a60b5cb76fd338a4bea53c56a9de79ee700c43a2525c848384d7d7045",
+   "results/cr_tser_v2r1/manifests/maweibo/snapshot_manifest.jsonl": "611cb9c6ca43afbaec8a0eba10d71c1fcc4dcb9af3ebbd7cd90a2660a2f434dc",
+   "results/cr_tser_v2r1/manifests/maweibo/intervention_manifest.jsonl": "f37c3ffcb07e8e0142a082326ec405417c8f99399a1b09fd907cfaba9b680782",
+   "results/cr_tser_v2r1/manifests/pheme/source.json": "1a85a6d9e1f1da9ff7404d3231664463a38b5db444a57bb0f0292876b5b0e363",
+   "results/cr_tser_v2r1/manifests/pheme/event_split.json": "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
+   "results/cr_tser_v2r1/manifests/pheme/hashes.json": "a3c46403d9173bdcacc00604706ecd4586f8e80b5a97e5d8992f91a373fe9cd9",
+   "results/cr_tser_v2r1/manifests/pheme/snapshot_manifest.jsonl": "8c2ec0462a1fbf9ff681d237fb9e57df09afd9af5c7e402779c2defe8812315f",
+   "results/cr_tser_v2r1/manifests/pheme/intervention_manifest.jsonl": "a0c0ad7abb5c8132ecb9483143ad8c70bc6836568a183e32797a8af73201d2e3"
+  },
+  "manifests_unchanged": true,
+  "utility_caches_unchanged": true,
+  "historical_namespace_untouched": "results/cr_tser_v2"
+ },
+ "not_run": [
+  "predictor_training",
+  "b0_b1_b3_training",
+  "stage_a",
+  "stage_b",
+  "held_out_reader_evaluation",
+  "P3",
+  "P4",
+  "final_selector_experiments",
+  "final_pilot_report"
+ ],
+ "p3_p4_artifacts_absent": {
+  "predictor": true,
+  "unseen_reader": true
+ }
+}

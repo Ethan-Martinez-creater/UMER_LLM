@@ -1154,6 +1154,44 @@ evaluation. Report: `results/cr_tser_v2r1/gates/P1_P2_REPORT.md`.
 Not run: predictor training, B0/B1/B3, Stage A/B, held-out-reader evaluation,
 P3, P4, final Pilot.
 
+# 28. V2R1 P2 failure closure — feasibility = NO_GO
+
+Baseline `052cf13`. This round ran no experiment: it re-verified the frozen
+P1/P2 evidence and wrote the formal closure.
+
+```text
+P1 = PASS
+P2 = FAIL
+P3 = NOT RUN
+P4 = NOT RUN
+
+CR_TSER_V2R1_FEASIBILITY = NO_GO
+reason = STRUCTURED_INTERACTION_GATE_NOT_SUPPORTED
+```
+
+The wording is deliberate: the observed edge gap was positive (Δedge 0.012150,
+parent-child 0.05509 vs matched-nonadjacent 0.04287) but below the
+pre-registered 0.02 threshold with an event-bootstrap CI of (-0.002342,
+0.027196), so the frozen pilot **did not establish** the required
+structural-interaction effect rather than showing that structure has no effect.
+
+`scripts/cr_tser_feasibility_closure.py` assembles the closure: it reads the
+four gate artifacts, compares every threshold against the frozen configuration,
+checks protocol `v2r1`, the exact reader set, Ma-Weibo as the decision dataset,
+PHEME as diagnostic-only, the pinned cache and manifest digests, and that no
+P3/P4 artifact exists — refusing (`ClosureRefused`, exit 3) on any mismatch.
+It writes `results/cr_tser_v2r1/closure/FEASIBILITY_CLOSURE.json` and
+`FEASIBILITY_CLOSURE.md`. The verifier gained six checks
+(`feasibility_closure_present`, `_matches_evidence`,
+`_thresholds_unchanged`, `_no_p3_p4`, `_verdict_and_reason`,
+`_inputs_pinned`) and `test_v2r1_feasibility_closure.py` covers the success path
+plus eleven refusal paths.
+
+LOCAL: 219 tests pass, code verifier `issues = 0` for v1/v2/v2r1, `compileall`
+clean. No threshold, reader, dataset, split, cutoff, intervention group or
+utility label was changed in response to the P2 result, and no P3/P4 artifact
+exists.
+
 
 
 
