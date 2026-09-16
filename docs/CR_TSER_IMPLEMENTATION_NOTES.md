@@ -986,6 +986,81 @@ one of the three readers in that state. Nothing was changed to force the check
 green — the prompt, template, scoring math and budget are frozen — so the round
 stops here for research review with options A–D recorded in the report.
 
+# 25. V2R1 Boundary Audit Amendment A1 — reader preflight PASS
+
+Amendment A1 (`docs/CR_TSER_V2R1_BOUNDARY_AUDIT_AMENDMENT_A1.md`, baseline
+`27dc0a6`, implementation `c5bb078`) resolves the R1 open finding without
+waiving it. The v2r1 formal gate becomes the tokenizer-native autoregressive
+identity:
+
+```text
+native_prompt_ids = apply_chat_template(messages, tokenize=True,
+                                        add_generation_prompt=True)
+scorer_prompt_ids = tokenize_prompt(apply_chat_template(messages,
+                                                        tokenize=False))
+autoregressive_boundary_ok = native_prompt_ids == scorer_prompt_ids
+                             and valid A/B candidate ids
+```
+
+A candidate is valid when its continuation ids are non-empty, carry no
+unexpected special/control token, and decode back to the intended label under
+the explicit tested normalization (`strip + collapse whitespace + upper`).
+
+The legacy concatenation check is **not** deleted or hidden: it is recorded as
+`text_retokenization_stable` alongside each candidate's joined tail. The
+amendment's expected combination — `text_retokenization_stable = false` with
+`autoregressive_boundary_ok = true` — is exactly what Mistral produces.
+
+Why the legacy criterion was wrong: it re-tokenizes `prompt + candidate` as one
+string, but autoregressive inference never re-tokenizes an already-tokenized
+prompt prefix. Mistral's SentencePiece merges the token crossing the literal
+`[/INST]` seam (`prompt + "A"` → `29509` where the candidate's own id is
+`1098`), so the diagnostic failed while the ids the scorer actually conditions
+on are byte-identical to the tokenizer-native ones.
+
+Implementation (`project/cr_tser/readers/sequence_scorer.py`): one shared
+chat-template call site (`_render_chat`, used by both the text and the native
+path so the frozen formatter cannot drift) plus `native_prompt_ids`,
+`normalize_candidate_text`, `candidate_token_audit` and `ab_boundary_audit`.
+`sequence_logprob`, `normalize_ab`, `tokenize_prompt`,
+`tokenize_continuation`, `continuation_boundary` and `ab_token_report` are
+unchanged — the verifier pins all sixteen scorer functions by AST digest
+(`a1_scoring_math_unchanged`). `scripts/cr_tser_p0_audit.py` gained
+`--protocol v2r1` and a protocol-aware gate selector: v1 and v2 still gate on
+`boundaries_ok`, v2r1 gates on `autoregressive_boundary_ok`. New tests:
+`project/cr_tser/tests/test_v2r1_boundary_audit_a1.py` (20 synthetic-tokenizer
+tests, including the `[/INST]` merge double, mismatch fail-closed, empty and
+special-token candidate rejection, and the V1/V2 regression).
+
+Server result (`DGPA`, 20 prompts × 2 passes per reader):
+
+| reader | native/scorer prompt ids | A / B candidate ids → decode | `autoregressive_boundary_ok` | `text_retokenization_stable` | `identity_rate` |
+|---|---|---|---|---|---|
+| qwen | 70 == 70 | `[32]`/`[33]` → `A`/`B` | true | true | 1.0 |
+| mistral | 65 == 65 | `[1098]`/`[1133]` → `A`/`B` | true | **false** | 1.0 |
+| internlm | 72 == 72 | `[28005]`/`[28022]` → `A`/`B` | true | true | 1.0 |
+
+All 14 required checks pass for every reader, `identical_predictions = true`,
+log probs finite, no empty continuation. GPU peaks: qwen 15737 MiB, mistral
+13854 MiB, internlm 16893 MiB against a 24564 MiB card — far below the retired
+GLM reader's ~19.3 GiB. `V2R1_READER_PREFLIGHT = PASS`.
+
+LOCAL: 185 tests pass, code verifier `issues = 0` for v1/v2/v2r1, `compileall`
+clean. The server v2r1 code verifier also reports `issues = 0`. The V2
+utility-label cache was byte-identical before and after the server checkout
+(maweibo 6525 rows, pheme 5758 rows) and the frozen V2 manifests still match
+their pins, so `results/cr_tser_v2/` remains read-only history.
+
+One verifier detail was made platform-stable in the same round: the
+`crtser_smoke_env_resolves` detail now prints the joined path POSIX-normalized,
+so a Windows and a Linux checkout produce the same `code_verify.json` bytes.
+
+Report: `results/cr_tser_v2r1/reader_amendment/A1_BOUNDARY_REPORT.md` with the
+raw artifacts `a1_boundary_preflight.json` and `a1_boundary_preflight.log`.
+
+Not run: formal v2r1 manifests, Qwen/InternLM cache migration, Mistral utility
+labels, predictor training, Stage A/B, P1–P4.
+
 
 
 

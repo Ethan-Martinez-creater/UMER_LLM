@@ -1,0 +1,95 @@
+A1_PREFLIGHT_START 2026年 09月 16日 星期三 17:52:33 CST
+HEAD=c5bb07841f064f54125cdd368340316c4b7cd4a0
+Python 3.11.13
+torch 2.7.1+cu128
+transformers 4.53.3
+tokenizers 0.21.4
+CRTSER_QWEN_MODEL=/data/jyz/next/llm/model/qwen3-8b
+CRTSER_MISTRAL_MODEL=/data/jyz/next/llm/model/mistral-7b-instruct-v0.3
+CRTSER_INTERNLM_MODEL=/data/jyz/next/llm/model/internlm3-8b-instruct
+24564 MiB, 193 MiB, 23891 MiB
+--- other processes on the GPU ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:06<00:25,  6.31s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:28<00:47, 15.90s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:51<00:37, 18.99s/it]Loading checkpoint shards:  80%|████████  | 4/5 [01:01<00:15, 15.51s/it]Loading checkpoint shards: 100%|██████████| 5/5 [01:08<00:00, 12.50s/it]Loading checkpoint shards: 100%|██████████| 5/5 [01:08<00:00, 13.79s/it]
+{
+ "reader": "qwen",
+ "pass": true,
+ "failed": [],
+ "native_prompt_matches_scorer": true,
+ "autoregressive_boundary_ok": true,
+ "text_retokenization_stable": true,
+ "boundaries_ok_legacy": true,
+ "candidate_decode": {
+  "A": "A",
+  "B": "B"
+ },
+ "identity_rate": 1.0,
+ "gpu_peak_allocated_mib": 15737,
+ "gpu_peak_reserved_mib": 15856,
+ "status": null
+}
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:10<00:20, 10.00s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:23<00:12, 12.12s/it]Loading checkpoint shards: 100%|██████████| 3/3 [00:40<00:00, 14.26s/it]Loading checkpoint shards: 100%|██████████| 3/3 [00:40<00:00, 13.47s/it]
+{
+ "reader": "mistral",
+ "pass": true,
+ "failed": [],
+ "native_prompt_matches_scorer": true,
+ "autoregressive_boundary_ok": true,
+ "text_retokenization_stable": false,
+ "boundaries_ok_legacy": false,
+ "candidate_decode": {
+  "A": "A",
+  "B": "B"
+ },
+ "identity_rate": 1.0,
+ "gpu_peak_allocated_mib": 13854,
+ "gpu_peak_reserved_mib": 13890,
+ "status": null
+}
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:43<00:43, 43.91s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:14<00:00, 35.81s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:14<00:00, 37.02s/it]
+{
+ "reader": "internlm",
+ "pass": true,
+ "failed": [],
+ "native_prompt_matches_scorer": true,
+ "autoregressive_boundary_ok": true,
+ "text_retokenization_stable": true,
+ "boundaries_ok_legacy": true,
+ "candidate_decode": {
+  "A": "A",
+  "B": "B"
+ },
+ "identity_rate": 1.0,
+ "gpu_peak_allocated_mib": 16893,
+ "gpu_peak_reserved_mib": 16980,
+ "status": null
+}
+{
+ "V2R1_READER_PREFLIGHT": "PASS",
+ "reader_set_exact": true,
+ "per_reader": {
+  "qwen": {
+   "pass": true,
+   "status": null,
+   "native_prompt_matches_scorer": true,
+   "autoregressive_boundary_ok": true,
+   "text_retokenization_stable": true
+  },
+  "mistral": {
+   "pass": true,
+   "status": null,
+   "native_prompt_matches_scorer": true,
+   "autoregressive_boundary_ok": true,
+   "text_retokenization_stable": false
+  },
+  "internlm": {
+   "pass": true,
+   "status": null,
+   "native_prompt_matches_scorer": true,
+   "autoregressive_boundary_ok": true,
+   "text_retokenization_stable": true
+  }
+ }
+}
+A1_JSON_WRITTEN results/cr_tser_v2r1/reader_amendment/a1_boundary_preflight.json
+a1_preflight_rc=0
+A1_PREFLIGHT_DONE 2026年 09月 16日 星期三 17:55:56 CST

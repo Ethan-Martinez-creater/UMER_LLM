@@ -692,9 +692,11 @@ def _verify_protocol_closure(report):
         from cr_tser.config.pilot_config import paths_from_env
         paths = paths_from_env({"CRTSER_SMOKE": "1",
                                 "CRTSER_OUT_ROOT": "/tmp/out"})
+        # the detail is POSIX-normalized so the artifact is byte-identical on a
+        # Windows and a Linux checkout (the two os.path.join separators)
         report.add("crtser_smoke_env_resolves",
                    paths.out_root.endswith("smoke"),
-                   f"out_root={paths.out_root}")
+                   f"out_root={str(paths.out_root).replace(chr(92), '/')}")
     except Exception as exc:
         report.add("crtser_smoke_env_resolves", False, f"error: {exc}")
 
