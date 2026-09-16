@@ -141,17 +141,26 @@ def reader_audit(paths, out_dir, dtype="bfloat16", device="cuda",
     return audit
 
 
-def label_scoring_sanity(paths, n_examples: int = 20, device="cuda"):
+def label_scoring_sanity(paths, n_examples: int = 20, device="cuda",
+                         readers=None, record_memory: bool = False):
     """Score fixed prompts twice per reader; prediction identity must be 100%.
 
     The artifact records the **explicit A/B tokenization** (prompt token count,
     each candidate's token ids, and the continuation boundary check) so it is
     auditable that scoring is teacher-forced candidate scoring and not
     generated text or generated confidence (plan §9, §30).
+
+    ``readers`` restricts the sweep to a subset (the reader-amendment preflight
+    loads only the replacement reader); the default stays the full frozen set.
+    ``record_memory`` adds the GPU memory evidence a single-reader preflight
+    needs: free memory before load plus peak allocated/reserved afterwards.
     """
-    prompts = [f"Sanity example {i}: source post number {i}." for i in range(n_examples)]
+    import math
+
+    prompts = [f"Sanity example {i}: source post number {i}."
+               for i in range(n_examples)]
     report = {}
-    for key in READER_KEYS:
+    for key in (readers or READER_KEYS):
         spec = ReaderSpec(key, paths.reader_path(key), device=device)
         entry = {"model_id": READER_MODEL_IDS[key], "n_examples": n_examples,
                  "identical_predictions": False, "loaded": False,
@@ -163,9 +172,17 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda"):
             report[key] = entry
             continue
         try:
+            import torch
+            if record_memory and torch.cuda.is_available():
+                free0, total = torch.cuda.mem_get_info()
+                entry["gpu_total_mib"] = round(total / 2 ** 20)
+                entry["gpu_free_before_load_mib"] = round(free0 / 2 ** 20)
+                torch.cuda.reset_peak_memory_stats()
             reader = build_reader(key, spec)
             entry["loaded"] = True
             entry["identity"] = reader.identity()
+            entry["dtype"] = reader.spec.dtype
+            entry["device"] = reader.spec.device
             first, second = [], []
             tokenization = None
             for i, prompt in enumerate(prompts):
@@ -175,6 +192,34 @@ def label_scoring_sanity(paths, n_examples: int = 20, device="cuda"):
                 second.append(out2["prediction"])
                 if i == 0:
                     tokenization = reader.ab_token_report(prompt)
+                    from cr_tser.readers.base_reader import (SYSTEM_PROMPT,
+                                                             build_messages)
+                    from cr_tser.readers.sequence_scorer import apply_chat
+                    chat = apply_chat(reader.tokenizer, build_messages(prompt))
+                    entry["system_prompt_preserved"] = (
+                        SYSTEM_PROMPT[:40] in chat)
+                    entry["user_prompt_preserved"] = prompt[:40] in chat
+                    entry["rendered_prompt_head"] = chat[:200]
+                    values = [out1.get(k) for k in
+                              ("score_A", "score_B", "p_rumor", "p_nonrumor")]
+                    entry["finite_logprobs"] = all(
+                        isinstance(v, float) and math.isfinite(v)
+                        for v in values)
+                    entry["first_scores"] = values
+                    entry["continuation_tokens"] = {
+                        c: len(info.get("candidate_ids", []))
+                        for c, info in tokenization["candidates"].items()}
+                    entry["no_empty_continuation"] = all(
+                        n > 0 for n in entry["continuation_tokens"].values())
+                    template = getattr(reader.tokenizer, "chat_template", "")
+                    entry["chat_template"] = template
+            if record_memory and torch.cuda.is_available():
+                entry["gpu_peak_allocated_mib"] = round(
+                    torch.cuda.max_memory_allocated() / 2 ** 20)
+                entry["gpu_peak_reserved_mib"] = round(
+                    torch.cuda.max_memory_reserved() / 2 ** 20)
+                free1, _total = torch.cuda.mem_get_info()
+                entry["gpu_free_after_scoring_mib"] = round(free1 / 2 ** 20)
             entry["tokenization_example"] = tokenization
             entry["boundaries_ok"] = bool(
                 tokenization and tokenization.get("all_boundaries_ok"))
