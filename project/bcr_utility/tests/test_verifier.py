@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 
 from bcr_utility import verifier
 from bcr_utility.config import protocol as P
@@ -12,6 +13,33 @@ from .conftest import _write
 def boot(synth_repo):
     synth_repo.seed_bootstrap()
     return str(synth_repo.root)
+
+
+def test_git_status_counts_only_tracked_changes(tmp_path):
+    """Untracked server-side caches must not read as frozen-evidence drift."""
+    namespace = "results/cr_tser_v2r1"
+    (tmp_path / namespace).mkdir(parents=True)
+    frozen = tmp_path / namespace / "event_split.json"
+    frozen.write_text("{}\n", encoding="utf-8")
+    git = ["git", "-c", "user.email=t@example.invalid",
+           "-c", "user.name=test", "-c", "commit.gpgsign=false"]
+    subprocess.run(["git", "init", "-q"], cwd=str(tmp_path), check=True)
+    subprocess.run(git + ["add", namespace], cwd=str(tmp_path), check=True)
+    subprocess.run(git + ["commit", "-q", "-m", "frozen"],
+                   cwd=str(tmp_path), check=True)
+
+    clean, detail = verifier._git_status_clean(str(tmp_path), (namespace,))
+    assert clean is True, detail
+
+    cache = tmp_path / namespace / "utility_labels" / "maweibo"
+    cache.mkdir(parents=True)
+    (cache / "labels.jsonl").write_text("{}\n", encoding="utf-8")
+    clean, detail = verifier._git_status_clean(str(tmp_path), (namespace,))
+    assert clean is True and "untracked" in detail, detail
+
+    frozen.write_text('{"changed": true}\n', encoding="utf-8")
+    clean, detail = verifier._git_status_clean(str(tmp_path), (namespace,))
+    assert clean is False and "tracked changes" in detail, detail
 
 
 def failing(payload, name):

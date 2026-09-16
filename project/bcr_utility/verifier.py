@@ -55,7 +55,14 @@ def _read_json(path):
 
 
 def _git_status_clean(repo_root: str, paths) -> tuple:
-    """``(clean, detail)`` for the read-only historical namespaces."""
+    """``(clean, detail)`` for the read-only historical namespaces.
+
+    Only *tracked* changes fail the check. The frozen label caches are
+    deliberately untracked on SERVER (they are large server-side artifacts), so
+    an ``??`` entry under a historical namespace is reported but is not itself
+    a modification of frozen evidence — their bytes are checked separately by
+    the cache-digest check.
+    """
     paths = tuple(paths)
     if not paths:
         return True, "no historical namespace paths configured"
@@ -67,8 +74,15 @@ def _git_status_clean(repo_root: str, paths) -> tuple:
         return None, f"git unavailable: {exc}"
     if proc.returncode != 0:
         return None, f"git status failed: {proc.stderr.strip()[:200]}"
-    out = proc.stdout.strip()
-    return (out == ""), (out if out else "no changes in historical namespaces")
+    lines = [line for line in proc.stdout.splitlines() if line.strip()]
+    tracked = [line for line in lines if not line.startswith("??")]
+    untracked = [line for line in lines if line.startswith("??")]
+    if tracked:
+        return False, "tracked changes in historical namespaces: " + \
+            "; ".join(tracked[:5])
+    return True, ("no tracked changes in historical namespaces"
+                  + (f" ({len(untracked)} untracked artifact path(s) present)"
+                     if untracked else ""))
 
 
 # --------------------------------------------------------------------------
