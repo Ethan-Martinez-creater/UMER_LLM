@@ -1,0 +1,28 @@
+{
+ "dataset": "maweibo",
+ "source_root": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2",
+ "target_root": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2r1",
+ "source_cache": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2/utility_labels/maweibo/labels.jsonl",
+ "target_cache": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2r1/utility_labels/maweibo/labels.jsonl",
+ "source_rows": 6525,
+ "migrated_rows": 6404,
+ "skipped_retired_rows": 121,
+ "skipped_unknown_reader_rows": 0,
+ "readers_migrated": [
+  "internlm",
+  "qwen"
+ ],
+ "duplicate_keys": 0,
+ "identity_fields_preserved": [
+  "base_context_hash",
+  "intervened_context_hash",
+  "reader_hash",
+  "reader_identity_hash",
+  "tokenizer_hash",
+  "chat_template_hash",
+  "prompt_hash",
+  "prompt_ids_hash"
+ ],
+ "dry_run": false,
+ "written_bytes": 10616388
+}

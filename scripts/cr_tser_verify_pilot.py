@@ -300,6 +300,7 @@ def verify_code(report: Report, protocol: str = "v2r1"):
     if protocol == "v2r1":
         _verify_reader_amendment_r1(report)
         _verify_boundary_audit_a1(report)
+        _verify_v2r1_manifest_freeze(report)
 
 
 class _FakeTokenizer:
@@ -1337,6 +1338,98 @@ V2_FROZEN_MANIFEST_SHA256 = {
     "results/cr_tser_v2/manifests/pheme/event_split.json":
         "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
 }
+
+#: The formal v2r1 manifests frozen by the P1A round. The V2R1-P1A plan makes
+#: them immutable from the first formal label row onwards, so any later edit
+#: has to be a conscious decision that also updates this pin. The four files
+#: V2 also has (source / event_split / snapshot / intervention) are byte-equal
+#: to their V2 counterparts; ``hashes.json`` carries the R1 reader contract
+#: and therefore differs in exactly ``readers`` and ``loro_rotations``.
+V2R1_FROZEN_MANIFEST_SHA256 = {
+    "results/cr_tser_v2r1/manifests/maweibo/source.json":
+        "80b07954ce3199c57cb25e7ca11b07115dd0e20a84787b97effc1cfed291b783",
+    "results/cr_tser_v2r1/manifests/maweibo/event_split.json":
+        "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2",
+    "results/cr_tser_v2r1/manifests/maweibo/hashes.json":
+        "f106af7a60b5cb76fd338a4bea53c56a9de79ee700c43a2525c848384d7d7045",
+    "results/cr_tser_v2r1/manifests/maweibo/snapshot_manifest.jsonl":
+        "611cb9c6ca43afbaec8a0eba10d71c1fcc4dcb9af3ebbd7cd90a2660a2f434dc",
+    "results/cr_tser_v2r1/manifests/maweibo/intervention_manifest.jsonl":
+        "f37c3ffcb07e8e0142a082326ec405417c8f99399a1b09fd907cfaba9b680782",
+    "results/cr_tser_v2r1/manifests/pheme/source.json":
+        "1a85a6d9e1f1da9ff7404d3231664463a38b5db444a57bb0f0292876b5b0e363",
+    "results/cr_tser_v2r1/manifests/pheme/event_split.json":
+        "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
+    "results/cr_tser_v2r1/manifests/pheme/hashes.json":
+        "a3c46403d9173bdcacc00604706ecd4586f8e80b5a97e5d8992f91a373fe9cd9",
+    "results/cr_tser_v2r1/manifests/pheme/snapshot_manifest.jsonl":
+        "8c2ec0462a1fbf9ff681d237fb9e57df09afd9af5c7e402779c2defe8812315f",
+    "results/cr_tser_v2r1/manifests/pheme/intervention_manifest.jsonl":
+        "a0c0ad7abb5c8132ecb9483143ad8c70bc6836568a183e32797a8af73201d2e3",
+}
+
+
+def _verify_v2r1_manifest_freeze(report):
+    """The frozen v2r1 manifests and their R1 reader contract (P1A plan §Freeze).
+
+    Runs only for ``--protocol v2r1``; the four files V2 shares must also be
+    byte-equal to their V2 counterparts, which is what makes the reuse of the
+    migrated Qwen/InternLM labels legitimate.
+    """
+    drifted = {}
+    for rel, expected in V2R1_FROZEN_MANIFEST_SHA256.items():
+        path = REPO / rel
+        if not path.exists():
+            drifted[rel] = "missing"
+        elif _canonical_sha256(path) != expected:
+            drifted[rel] = "changed"
+    report.add("v2r1_manifest_pins", not drifted,
+               f"drift: {sorted(drifted)}" if drifted
+               else f"{len(V2R1_FROZEN_MANIFEST_SHA256)} frozen v2r1 files "
+                    "match")
+
+    # Every v2r1 manifest file that V2 also has must be byte-equal to it: that
+    # is what lets the migrated Qwen/InternLM labels be reused as-is.
+    shared = ("source.json", "event_split.json", "snapshot_manifest.jsonl",
+              "intervention_manifest.jsonl")
+    same_as_v2 = {}
+    for dataset in ("maweibo", "pheme"):
+        for name in shared:
+            rel = f"manifests/{dataset}/{name}"
+            old = REPO / "results" / "cr_tser_v2" / rel
+            new = REPO / "results" / "cr_tser_v2r1" / rel
+            same_as_v2[f"{dataset}/{name}"] = bool(
+                old.exists() and new.exists()
+                and _canonical_sha256(old) == _canonical_sha256(new))
+    report.add("v2r1_manifests_match_v2", all(same_as_v2.values()),
+               f"{sum(same_as_v2.values())}/{len(same_as_v2)} shared files "
+               f"identical: {same_as_v2}")
+
+    try:
+        contract = {}
+        for dataset in ("maweibo", "pheme"):
+            path = (REPO / "results" / "cr_tser_v2r1" / "manifests" / dataset
+                    / "hashes.json")
+            frozen = json.loads(_read(path))
+            contract[dataset] = {
+                "readers": list(frozen.get("readers", {})),
+                "cutoffs": frozen.get("cutoffs"),
+                "snapshot_cap": frozen.get("snapshot_cap"),
+                "loro": [list(r) for r in frozen.get("loro_rotations", [])],
+            }
+        from cr_tser.config.pilot_config import (CUTOFFS_MIN, LORO_ROTATIONS,
+                                                 READER_KEYS)
+        ok = all(
+            sorted(c["readers"]) == sorted(READER_KEYS)
+            and c["cutoffs"] == list(CUTOFFS_MIN)
+            and c["snapshot_cap"] is None
+            and tuple(tuple(r) for r in c["loro"]) == tuple(LORO_ROTATIONS)
+            and not any("glm" in r for r in c["readers"])
+            for c in contract.values())
+        report.add("v2r1_reader_contract_in_manifest", ok,
+                   f"{contract}")
+    except Exception as exc:  # pragma: no cover - defensive
+        report.add("v2r1_reader_contract_in_manifest", False, f"error: {exc}")
 
 
 def _migration_fixture(src_root: str, dst_root: str, readers=("qwen",

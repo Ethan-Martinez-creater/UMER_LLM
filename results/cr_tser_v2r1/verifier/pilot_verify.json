@@ -1,0 +1,147 @@
+{
+ "mode": "pilot",
+ "issues": 0,
+ "pending": 3,
+ "checks": [
+  {
+   "check": "split_events_disjoint:maweibo",
+   "status": "pass",
+   "detail": "overlap: []"
+  },
+  {
+   "check": "split_sizes_exact:maweibo",
+   "status": "pass",
+   "detail": {
+    "foundation_train": 80,
+    "utility_train": 50,
+    "utility_dev": 15,
+    "utility_eval": 25
+   }
+  },
+  {
+   "check": "snapshot_no_future_node:maweibo",
+   "status": "pass",
+   "detail": "0 leaking snapshots"
+  },
+  {
+   "check": "snapshot_uses_true_timestamp:maweibo",
+   "status": "pass",
+   "detail": "0 rows substituted row order for time"
+  },
+  {
+   "check": "snapshot_uncapped:maweibo",
+   "status": "pass",
+   "detail": "0 capped snapshot rows"
+  },
+  {
+   "check": "snapshot_cutoffs_frozen:maweibo",
+   "status": "pass",
+   "detail": "cutoffs outside {15,60,360}"
+  },
+  {
+   "check": "structured_intervention_valid_in_gt:maweibo",
+   "status": "pass",
+   "detail": "0 invalid structured interventions"
+  },
+  {
+   "check": "reader_hashes_frozen:maweibo",
+   "status": "pass",
+   "detail": "reader hashes: ['qwen', 'mistral', 'internlm']"
+  },
+  {
+   "check": "unseen_reader_artifacts:maweibo",
+   "status": "pending",
+   "detail": "unseen_reader/<dataset>/ missing"
+  },
+  {
+   "check": "split_events_disjoint:pheme",
+   "status": "pass",
+   "detail": "overlap: []"
+  },
+  {
+   "check": "split_sizes_exact:pheme",
+   "status": "pass",
+   "detail": {
+    "foundation_train": 80,
+    "utility_train": 50,
+    "utility_dev": 15,
+    "utility_eval": 25
+   }
+  },
+  {
+   "check": "snapshot_no_future_node:pheme",
+   "status": "pass",
+   "detail": "0 leaking snapshots"
+  },
+  {
+   "check": "snapshot_uses_true_timestamp:pheme",
+   "status": "pass",
+   "detail": "0 rows substituted row order for time"
+  },
+  {
+   "check": "snapshot_uncapped:pheme",
+   "status": "pass",
+   "detail": "0 capped snapshot rows"
+  },
+  {
+   "check": "snapshot_cutoffs_frozen:pheme",
+   "status": "pass",
+   "detail": "cutoffs outside {15,60,360}"
+  },
+  {
+   "check": "structured_intervention_valid_in_gt:pheme",
+   "status": "pass",
+   "detail": "0 invalid structured interventions"
+  },
+  {
+   "check": "reader_hashes_frozen:pheme",
+   "status": "pass",
+   "detail": "reader hashes: ['qwen', 'mistral', 'internlm']"
+  },
+  {
+   "check": "unseen_reader_artifacts:pheme",
+   "status": "pending",
+   "detail": "unseen_reader/<dataset>/ missing"
+  },
+  {
+   "check": "pilot_summary",
+   "status": "pending",
+   "detail": "CR_TSER_PILOT_SUMMARY.json missing"
+  },
+  {
+   "check": "artifact_namespace_dataset_tagged",
+   "status": "pass",
+   "detail": "namespaces present: ['maweibo', 'pheme']"
+  },
+  {
+   "check": "viability_before_split_recorded",
+   "status": "pass",
+   "detail": "split manifest must record the viability filter"
+  },
+  {
+   "check": "primary_secondary_artifacts_separate",
+   "status": "pass",
+   "detail": "Ma-Weibo primary and PHEME secondary coexist"
+  },
+  {
+   "check": "snapshot_uncapped:maweibo",
+   "status": "pass",
+   "detail": "0 capped snapshot rows"
+  },
+  {
+   "check": "cache_hashes_nonempty:maweibo",
+   "status": "pass",
+   "detail": "0 rows with an empty prompt/reader hash"
+  },
+  {
+   "check": "snapshot_uncapped:pheme",
+   "status": "pass",
+   "detail": "0 capped snapshot rows"
+  },
+  {
+   "check": "cache_hashes_nonempty:pheme",
+   "status": "pass",
+   "detail": "0 rows with an empty prompt/reader hash"
+  }
+ ]
+}

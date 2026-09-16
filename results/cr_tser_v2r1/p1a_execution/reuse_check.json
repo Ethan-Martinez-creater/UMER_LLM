@@ -1,0 +1,37 @@
+{
+ "runs": {
+  "maweibo/qwen": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/reuse_maweibo_qwen.json",
+   "rows_written": 0,
+   "rows_skipped": 3202,
+   "expected_reused_rows": 3202,
+   "cache_identity_mismatch": false,
+   "traceback": false
+  },
+  "maweibo/internlm": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/reuse_maweibo_internlm.json",
+   "rows_written": 0,
+   "rows_skipped": 3202,
+   "expected_reused_rows": 3202,
+   "cache_identity_mismatch": false,
+   "traceback": false
+  },
+  "pheme/qwen": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/reuse_pheme_qwen.json",
+   "rows_written": 0,
+   "rows_skipped": 2879,
+   "expected_reused_rows": 2879,
+   "cache_identity_mismatch": false,
+   "traceback": false
+  },
+  "pheme/internlm": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/reuse_pheme_internlm.json",
+   "rows_written": 0,
+   "rows_skipped": 2879,
+   "expected_reused_rows": 2879,
+   "cache_identity_mismatch": false,
+   "traceback": false
+  }
+ },
+ "issues": []
+}

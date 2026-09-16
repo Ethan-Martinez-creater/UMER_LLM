@@ -1,0 +1,23 @@
+{
+ "runs": {
+  "maweibo": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/mistral_maweibo.json",
+   "rows_written": 3202,
+   "rows_skipped": 0,
+   "expected_rows": 3202,
+   "cache_identity_mismatch": false,
+   "source_identity_error": false,
+   "traceback": false
+  },
+  "pheme": {
+   "log": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/mistral_pheme.json",
+   "rows_written": 2879,
+   "rows_skipped": 0,
+   "expected_rows": 2879,
+   "cache_identity_mismatch": false,
+   "source_identity_error": false,
+   "traceback": false
+  }
+ },
+ "issues": []
+}

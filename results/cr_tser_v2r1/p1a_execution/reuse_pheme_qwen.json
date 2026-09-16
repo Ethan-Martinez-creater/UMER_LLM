@@ -1,0 +1,9 @@
+resume: 5758 cached rows
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:13<00:52, 13.19s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:14<00:18,  6.29s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:18<00:10,  5.36s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:19<00:03,  3.45s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:19<00:00,  2.26s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:19<00:00,  3.91s/it]
+reader qwen identity: 345a676964219bec144ec6d9d9eaf7c9f53b8e53f73d47b0982531f91007b197
+{
+ "dataset": "pheme",
+ "rows_written": 0,
+ "rows_skipped": 2879,
+ "label_file": "/data/jyz/next/llm/cr_tser_ws/results/cr_tser_v2r1/utility_labels/pheme/labels.jsonl"
+}

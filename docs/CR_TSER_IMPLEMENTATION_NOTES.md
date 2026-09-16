@@ -1061,6 +1061,54 @@ raw artifacts `a1_boundary_preflight.json` and `a1_boundary_preflight.log`.
 Not run: formal v2r1 manifests, Qwen/InternLM cache migration, Mistral utility
 labels, predictor training, Stage A/B, P1–P4.
 
+# 26. V2R1-P1A — formal manifest freeze, cache migration, Mistral labels
+
+Baseline `5295d58`, plan `docs/CR_TSER_V2R1_P1A_EXECUTION_PLAN.md`. This round
+produced the first formal v2r1 artifacts and stopped there.
+
+Ma-Weibo reproduced the approved source fingerprint
+`b982076d…` (composite, 4665 files, 4 060 340 423 bytes); no source drift.
+
+The ten v2r1 manifest files are frozen and pinned in the verifier
+(`V2R1_FROZEN_MANIFEST_SHA256`) and in `test_v2r1_p1a_freeze.py`. Four of them
+(`source.json`, `event_split.json`, `snapshot_manifest.jsonl`,
+`intervention_manifest.jsonl`) are byte-equal to their V2 counterparts for both
+datasets — that equality is exactly what makes reusing the migrated labels
+legitimate. `hashes.json` differs from V2 in `readers` and `loro_rotations`
+only, which is the reader amendment; every other field matches. Cutoffs are
+15/60/360, `snapshot_cap` is `null`, no snapshot hits 1021, no future leakage,
+and `glm` appears zero times in the manifest blob.
+
+The migration selected 6404 rows for Ma-Weibo (qwen 3202 + internlm 3202, 121
+GLM rows retired) and 5758 for PHEME (qwen 2879 + internlm 2879), with 0
+unknown readers and 0 duplicate keys — the plan's expected counts exactly. A
+line-by-line comparison against the V2 originals reports `checked 6404/5758,
+missing 0, changed 0, extra 0`, on the post-migration and the final cache both.
+
+The ordinary generator then reused everything: four runs
+(`maweibo|pheme × qwen|internlm`) wrote **0** rows each and reused 3202/3202/
+2879/2879, with no `CacheIdentityMismatch`. Mistral was only generated after
+that gate passed: 3202 and 2879 rows, both as expected.
+
+Final caches: Ma-Weibo 9606 rows (3202 × 3, 16 015 182 bytes,
+`6c6591ea…`) and PHEME 8637 rows (2879 × 3, 14 457 787 bytes,
+`773bee3e…`). Audit: reader set exactly qwen/mistral/internlm, 0 GLM rows, 0
+duplicates, 0 NaN/Inf, 0 missing fields, cutoffs only 15/60/360, identity
+single-valued per reader, no smoke contamination. Mistral's `prompt_tokens`
+range is the widest (183–2204 on Ma-Weibo) because its tokenizer splits the
+same frozen text more finely; the budget is accounted in canonical Qwen3-8B
+tokens, so this is tokenizer density, not a budget breach.
+
+Verifiers: code `issues = 0, pending = 0`; pilot `issues = 0, pending = 3`, the
+three being the downstream artifacts this round must not produce
+(`unseen_reader/<dataset>/` twice and `CR_TSER_PILOT_SUMMARY.json`). LOCAL: 192
+tests pass. `results/cr_tser_v2/` is byte-identical before and after (manifests
+and both label caches compare with `added/removed/changed` all empty).
+
+No predictor training, Stage A/B, held-out evaluation, P1–P4 or final Pilot was
+run. Full report: `results/cr_tser_v2r1/P1A_REPORT.md`; raw evidence in
+`results/cr_tser_v2r1/p1a_execution/`.
+
 
 
 

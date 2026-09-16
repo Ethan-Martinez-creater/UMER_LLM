@@ -502,6 +502,21 @@
    "check": "a1_p0_audit_gate_wiring",
    "status": "pass",
    "detail": "gates=True wired=True; v2 gates on boundaries_ok, v2r1 on the autoregressive audit"
+  },
+  {
+   "check": "v2r1_manifest_pins",
+   "status": "pass",
+   "detail": "10 frozen v2r1 files match"
+  },
+  {
+   "check": "v2r1_manifests_match_v2",
+   "status": "pass",
+   "detail": "8/8 shared files identical: {'maweibo/source.json': True, 'maweibo/event_split.json': True, 'maweibo/snapshot_manifest.jsonl': True, 'maweibo/intervention_manifest.jsonl': True, 'pheme/source.json': True, 'pheme/event_split.json': True, 'pheme/snapshot_manifest.jsonl': True, 'pheme/intervention_manifest.jsonl': True}"
+  },
+  {
+   "check": "v2r1_reader_contract_in_manifest",
+   "status": "pass",
+   "detail": "{'maweibo': {'readers': ['qwen', 'mistral', 'internlm'], 'cutoffs': [15, 60, 360], 'snapshot_cap': None, 'loro': [['qwen', 'mistral', 'internlm'], ['qwen', 'internlm', 'mistral'], ['mistral', 'internlm', 'qwen']]}, 'pheme': {'readers': ['qwen', 'mistral', 'internlm'], 'cutoffs': [15, 60, 360], 'snapshot_cap': None, 'loro': [['qwen', 'mistral', 'internlm'], ['qwen', 'internlm', 'mistral'], ['mistral', 'internlm', 'qwen']]}}"
   }
  ]
 }

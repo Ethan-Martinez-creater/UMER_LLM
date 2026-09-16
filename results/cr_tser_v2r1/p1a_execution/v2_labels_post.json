@@ -1,0 +1,8 @@
+{
+ "root": "results/cr_tser_v2/utility_labels",
+ "n_files": 2,
+ "hashes": {
+  "pheme/labels.jsonl": "29f6e4a0a48c28de4f66c26e3cc39cc05d3a8fbeffbcea8431bda4c3cf8fa3b9",
+  "maweibo/labels.jsonl": "8bfecf4d503dc200131e06be0a1ac228734bc61a6eb450d77d7445b6095256f4"
+ }
+}

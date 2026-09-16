@@ -1,0 +1,9 @@
+{
+ "dataset": "pheme",
+ "kind": "pheme_raw",
+ "path": "/data/jyz/next/llm/data/pheme_raw",
+ "exists": true,
+ "sha256": "88a27f230b577502674f9439ee1ca579d1b5e5a872ec93d5ed96a281f9816e6b",
+ "bytes": 322990857,
+ "n_files": 255945
+}

@@ -1,0 +1,76 @@
+{
+ "maweibo": {
+  "dataset": "maweibo",
+  "kind": "maweibo_composite",
+  "raw_json": {
+   "path": "/data/jyz/next/llm/data/maweibo_raw",
+   "exists": true,
+   "sha256": "c6afd1c50a6cde8c27137d367d8e420b4a3afc43e017e3b19846e8b001ca1a27",
+   "bytes": 3995877128,
+   "n_files": 4664
+  },
+  "label_file": {
+   "path": "/data/jyz/next/llm/data/maweibo_labels.txt",
+   "exists": true,
+   "sha256": "032f10e2175fa461203bdba77ef2a492e0ebde1cdd24b9bcd2100e307bc6b8e4",
+   "bytes": 64463295,
+   "n_files": 1
+  },
+  "combined_source_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+  "path": "/data/jyz/next/llm/data/maweibo_raw",
+  "exists": true,
+  "sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+  "bytes": 4060340423,
+  "n_files": 4665
+ },
+ "pheme": {
+  "dataset": "pheme",
+  "kind": "pheme_raw",
+  "path": "/data/jyz/next/llm/data/pheme_raw",
+  "exists": true,
+  "sha256": "88a27f230b577502674f9439ee1ca579d1b5e5a872ec93d5ed96a281f9816e6b",
+  "bytes": 322990857,
+  "n_files": 255945
+ },
+ "expected_maweibo_sha256": "b982076df8f8ea8ce1eb167538801eecd5304a11bd6aa8bb23ec361e7df8c90d",
+ "maweibo_source_ok": true,
+ "v2_manifests": {
+  "n_files": 10,
+  "hashes": {
+   "pheme/event_split.json": "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
+   "pheme/hashes.json": "4b865d5a811efe74a560e921bf888e6a7838ef3a20c854dbaa8b2bcf5b8b08f3",
+   "pheme/intervention_manifest.jsonl": "a0c0ad7abb5c8132ecb9483143ad8c70bc6836568a183e32797a8af73201d2e3",
+   "pheme/snapshot_manifest.jsonl": "8c2ec0462a1fbf9ff681d237fb9e57df09afd9af5c7e402779c2defe8812315f",
+   "pheme/source.json": "1a85a6d9e1f1da9ff7404d3231664463a38b5db444a57bb0f0292876b5b0e363",
+   "maweibo/event_split.json": "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2",
+   "maweibo/hashes.json": "fac953a5aaec6571f2ae90ebeb7a5f017c20673896ff2a65ae14991a2254154b",
+   "maweibo/intervention_manifest.jsonl": "f37c3ffcb07e8e0142a082326ec405417c8f99399a1b09fd907cfaba9b680782",
+   "maweibo/snapshot_manifest.jsonl": "611cb9c6ca43afbaec8a0eba10d71c1fcc4dcb9af3ebbd7cd90a2660a2f434dc",
+   "maweibo/source.json": "80b07954ce3199c57cb25e7ca11b07115dd0e20a84787b97effc1cfed291b783"
+  }
+ },
+ "v2_labels": {
+  "n_files": 2,
+  "hashes": {
+   "pheme/labels.jsonl": "29f6e4a0a48c28de4f66c26e3cc39cc05d3a8fbeffbcea8431bda4c3cf8fa3b9",
+   "maweibo/labels.jsonl": "8bfecf4d503dc200131e06be0a1ac228734bc61a6eb450d77d7445b6095256f4"
+  }
+ },
+ "v2r1_state": {
+  "maweibo": {
+   "manifests_exist": false,
+   "manifest_files": [],
+   "labels_exist": false,
+   "v2_labels_exist": true,
+   "v2_rows": 6525
+  },
+  "pheme": {
+   "manifests_exist": false,
+   "manifest_files": [],
+   "labels_exist": false,
+   "v2_labels_exist": true,
+   "v2_rows": 5758
+  }
+ },
+ "head": "5295d5838be3f78daca53a34e9d6a9c661a45e29"
+}

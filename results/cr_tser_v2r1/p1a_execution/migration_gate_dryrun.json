@@ -1,0 +1,34 @@
+{
+ "phase": "dryrun",
+ "datasets": {
+  "maweibo": {
+   "report": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/migrate_maweibo_dryrun.json",
+   "dry_run": true,
+   "source_rows": 6525,
+   "migrated_rows": 6404,
+   "skipped_retired_rows": 121,
+   "skipped_unknown_reader_rows": 0,
+   "readers_migrated": [
+    "internlm",
+    "qwen"
+   ],
+   "duplicate_keys": 0,
+   "written_bytes": null
+  },
+  "pheme": {
+   "report": "/data/jyz/next/llm/.cr_tser_v2p0/pre_p1a2_backup/migrate_pheme_dryrun.json",
+   "dry_run": true,
+   "source_rows": 5758,
+   "migrated_rows": 5758,
+   "skipped_retired_rows": 0,
+   "skipped_unknown_reader_rows": 0,
+   "readers_migrated": [
+    "internlm",
+    "qwen"
+   ],
+   "duplicate_keys": 0,
+   "written_bytes": null
+  }
+ },
+ "issues": []
+}
