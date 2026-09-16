@@ -1,0 +1,166 @@
+{
+ "repo_id": "mistralai/Mistral-7B-Instruct-v0.3",
+ "resolved_revision": "c170c708c41dac9275d15a8fff4eca08d52bab71",
+ "local_dir": "/data/jyz/next/llm/model/mistral-7b-instruct-v0.3",
+ "n_hub_files": 15,
+ "n_present": 12,
+ "missing_files": [
+  ".gitattributes",
+  "consolidated.safetensors",
+  "tokenizer.model.v3"
+ ],
+ "files": {
+  ".gitattributes": {
+   "hub_size": 1519,
+   "present": false
+  },
+  "README.md": {
+   "hub_size": 7893,
+   "present": true,
+   "local_size": 7893,
+   "local_sha256": "3166974023134d972368b585d730fa5f70100873684f90a10a773b20e80b30ba",
+   "sha256_match": null
+  },
+  "config.json": {
+   "hub_size": 601,
+   "present": true,
+   "local_size": 601,
+   "local_sha256": "affafc6478ec0fd07a32f0ca57aa2fc57743f4d17d6730f86a96ac24d1507f99",
+   "sha256_match": null
+  },
+  "consolidated.safetensors": {
+   "hub_size": 14496078512,
+   "present": false
+  },
+  "generation_config.json": {
+   "hub_size": 116,
+   "present": true,
+   "local_size": 116,
+   "local_sha256": "b4669f1b8f4185324bd9b12a69e85a1ad2289bc48111ef739cfaaea3bba6b0a9",
+   "sha256_match": null
+  },
+  "model-00001-of-00003.safetensors": {
+   "hub_size": 4949453792,
+   "present": true,
+   "local_size": 4949453792,
+   "local_sha256": "ce6fb6f6f4d0183f4813cbf4ece24109da629a08d4210da46f77e1d8b0bd5c19",
+   "sha256_match": true
+  },
+  "model-00002-of-00003.safetensors": {
+   "hub_size": 4999819336,
+   "present": true,
+   "local_size": 4999819336,
+   "local_sha256": "8c0e72f148366b6a3709e002a98706a33d31aec8515090c856c95b2044f92ae0",
+   "sha256_match": true
+  },
+  "model-00003-of-00003.safetensors": {
+   "hub_size": 4546807800,
+   "present": true,
+   "local_size": 4546807800,
+   "local_sha256": "905dd405363e43d95779c1c1155a2dbfd36155914ae95dbd934e12e490cfb4ca",
+   "sha256_match": true
+  },
+  "model.safetensors.index.json": {
+   "hub_size": 23950,
+   "present": true,
+   "local_size": 23950,
+   "local_sha256": "e489ba553b87cde188d921b1a8283c2e0b9d33d635b88147d96ff0fcd6250016",
+   "sha256_match": null
+  },
+  "params.json": {
+   "hub_size": 202,
+   "present": true,
+   "local_size": 202,
+   "local_sha256": "8a64b8657de37af1f828eef1517dc186247938d66e7fea2c78c31d5b9071efe6",
+   "sha256_match": null
+  },
+  "special_tokens_map.json": {
+   "hub_size": 414,
+   "present": true,
+   "local_size": 414,
+   "local_sha256": "6fa06efa2785e450051989a6f8fb4416b10149ded485ddd3f127a40734f5cfd0",
+   "sha256_match": null
+  },
+  "tokenizer.json": {
+   "hub_size": 1961548,
+   "present": true,
+   "local_size": 1961548,
+   "local_sha256": "e553af6fff7d7ad76e830608b218c5c0b0822998d5a1a96099a74cd3c1cb1a49",
+   "sha256_match": null
+  },
+  "tokenizer.model": {
+   "hub_size": 587404,
+   "present": true,
+   "local_size": 587404,
+   "local_sha256": "37f00374dea48658ee8f5d0f21895b9bc55cb0103939607c8185bfd1c6ca1f89",
+   "sha256_match": true
+  },
+  "tokenizer.model.v3": {
+   "hub_size": 587404,
+   "present": false
+  },
+  "tokenizer_config.json": {
+   "hub_size": 140874,
+   "present": true,
+   "local_size": 140874,
+   "local_sha256": "0533dec9cfe319163801b6618d0f3ec9cfa126b6288e3df5deca6e32acb09cd2",
+   "sha256_match": null
+  }
+ },
+ "transformers_version": "4.53.3",
+ "model_weight_hash": "6491d69e717ce45baaffaef7d668041897a10b3315bdc98f6dbf13f660899abe",
+ "tokenizer_hash": "5c1a8c918530a4d75fb5e19223ef7e88343c71fe1313254b65f3e54576438340",
+ "config_sha256": "affafc6478ec0fd07a32f0ca57aa2fc57743f4d17d6730f86a96ac24d1507f99",
+ "config": {
+  "architectures": [
+   "MistralForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 1,
+  "eos_token_id": 2,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.02,
+  "intermediate_size": 14336,
+  "max_position_embeddings": 32768,
+  "model_type": "mistral",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "rms_norm_eps": 1e-05,
+  "rope_theta": 1000000.0,
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.42.0.dev0",
+  "use_cache": true,
+  "vocab_size": 32768
+ },
+ "index_sha256": "e489ba553b87cde188d921b1a8283c2e0b9d33d635b88147d96ff0fcd6250016",
+ "index_shards": {
+  "model-00001-of-00003.safetensors": {
+   "present": true,
+   "sha256_match": true,
+   "local_size": 4949453792
+  },
+  "model-00002-of-00003.safetensors": {
+   "present": true,
+   "sha256_match": true,
+   "local_size": 4999819336
+  },
+  "model-00003-of-00003.safetensors": {
+   "present": true,
+   "sha256_match": true,
+   "local_size": 4546807800
+  }
+ },
+ "index_shards_complete": true,
+ "index_shards_sha256_match": true,
+ "n_index_shards": 3,
+ "weights_are_official_shards": true,
+ "undownloaded_redundant_files": [
+  ".gitattributes",
+  "consolidated.safetensors",
+  "tokenizer.model.v3"
+ ]
+}

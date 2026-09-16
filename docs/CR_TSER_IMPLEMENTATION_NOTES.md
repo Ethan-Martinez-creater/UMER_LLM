@@ -949,6 +949,43 @@ Verifiers at `57895a3` on the server: code `issues = 0, pending = 0`; pilot
 `issues = 0, pending = 3` (the P1–P4 artifacts this round must not produce).
 Predictor training, Stage A/B, held-out-reader scoring and P1–P4 were not run.
 
+# 24. V2 Reader Protocol Amendment R1 — implementation + Mistral preflight
+
+Baseline `6da025c`, code commits `0777912` and `4efffbb`. Full detail in
+`results/cr_tser_v2r1/reader_amendment/READER_AMENDMENT_R1_REPORT.md`.
+
+The frozen reader set is now `("qwen", "mistral", "internlm")` with the R1 LORO
+rotations, protocol `v2r1`, output root `results/cr_tser_v2r1/`. The retired
+`glm` key survives only as history so the frozen V2 evidence stays addressable;
+it is absent from `READER_KEYS`, from `LORO_ROTATIONS` and from the five v2r1
+execution scripts. New code: `mistral_reader.py`, the fail-closed
+`cr_tser_migrate_v2_labels.py` (utility implemented and synthetic-tested only),
+`--protocol v2r1` in the verifier, and
+`test_v2r1_reader_amendment.py` (22 tests). LOCAL: 165 tests pass, code
+verifier `issues = 0` for v1, v2 **and** v2r1, `compileall` clean.
+
+Mistral-7B-Instruct-v0.3 was deployed on the server from the HF mirror at
+revision `c170c708c41dac9275d15a8fff4eca08d52bab71`; all three indexed shards
+match the hub LFS sha256. The SentencePiece tokenizer needed `protobuf` and
+`sentencepiece`, installed only into the isolated `.cr_tser_v2p0/tf453` overlay
+(DGPA untouched).
+
+Preflight passes 11 of 12 required checks: loaded, bf16, cuda, identical
+predictions, `identity_rate = 1.0`, finite log probs, single-token
+continuations, system and user prompt preserved, teacher-forced scoring. Peak
+GPU memory is 13.9 GiB against the retired GLM reader's ~19.3 GiB, so the
+resource blocker is resolved.
+
+**Open finding:** `boundaries_ok = false`. The official Mistral template ends
+the prompt with `[/INST]` and adds no whitespace, so tokenizing
+`prompt + "A"` yields a merged `]A` token (`29509`) while
+`tokenize(prompt) + tokenize("A")` is `[4, 1098]`. Adding a space or newline
+does not restore the identity. Scoring stays deterministic, but the A/B score
+sits at a position Mistral would not itself produce, and Mistral is the only
+one of the three readers in that state. Nothing was changed to force the check
+green — the prompt, template, scoring math and budget are frozen — so the round
+stops here for research review with options A–D recorded in the report.
+
 
 
 

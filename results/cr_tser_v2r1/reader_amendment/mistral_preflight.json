@@ -1,0 +1,152 @@
+{
+ "reader_key": "mistral",
+ "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+ "model_path": "/data/jyz/next/llm/model/mistral-7b-instruct-v0.3",
+ "model_path_exists": true,
+ "dtype_requested": "bfloat16",
+ "device_requested": "cuda",
+ "transformers_version": "4.53.3",
+ "weight_hash": "6491d69e717ce45baaffaef7d668041897a10b3315bdc98f6dbf13f660899abe",
+ "tokenizer_hash": "5c1a8c918530a4d75fb5e19223ef7e88343c71fe1313254b65f3e54576438340",
+ "n_sanity_prompts": 20,
+ "scoring_passes_per_prompt": 2,
+ "sanity": {
+  "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "n_examples": 20,
+  "identical_predictions": true,
+  "loaded": true,
+  "scoring_mode": "teacher_forced_logprob_sum",
+  "generated_text_used": false,
+  "generated_confidence_used": false,
+  "gpu_total_mib": 24083,
+  "gpu_free_before_load_mib": 19651,
+  "identity": {
+   "key": "mistral",
+   "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+   "model_path": "/data/jyz/next/llm/model/mistral-7b-instruct-v0.3",
+   "dtype": "bfloat16",
+   "device": "cuda",
+   "thinking": false,
+   "weight_hash": "6491d69e717ce45baaffaef7d668041897a10b3315bdc98f6dbf13f660899abe",
+   "tokenizer_hash": "5c1a8c918530a4d75fb5e19223ef7e88343c71fe1313254b65f3e54576438340",
+   "chat_template_hash": "e16746b40344d6c5b5265988e0328a0bf7277be86f1c335156eae07e29c82826",
+   "transformers_version": "4.53.3",
+   "device_config": "cuda",
+   "reader_identity_hash": "6d521c764a7812f75b5a48313c8444d320453b80cf74cc78140e6f31672f6d78"
+  },
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "system_prompt_preserved": true,
+  "user_prompt_preserved": true,
+  "rendered_prompt_head": "<s>[INST] You are evaluating whether a social-media source post is a rumor.\nUse only the source post and the supplied observed social evidence.\nDo not add external facts.\nAnswer with exactly one lette",
+  "finite_logprobs": true,
+  "first_scores": [
+   -0.22208775579929352,
+   -1.9720877408981323,
+   0.8519528000888387,
+   0.14804719991116141
+  ],
+  "continuation_tokens": {
+   "A": 1,
+   "B": 1
+  },
+  "no_empty_continuation": true,
+  "chat_template": "{%- if messages[0][\"role\"] == \"system\" %}\n    {%- set system_message = messages[0][\"content\"] %}\n    {%- set loop_messages = messages[1:] %}\n{%- else %}\n    {%- set loop_messages = messages %}\n{%- endif %}\n{%- if not tools is defined %}\n    {%- set tools = none %}\n{%- endif %}\n{%- set user_messages = loop_messages | selectattr(\"role\", \"equalto\", \"user\") | list %}\n\n{#- This block checks for alternating user/assistant messages, skipping tool calling messages #}\n{%- set ns = namespace() %}\n{%- set ns.index = 0 %}\n{%- for message in loop_messages %}\n    {%- if not (message.role == \"tool\" or message.role == \"tool_results\" or (message.tool_calls is defined and message.tool_calls is not none)) %}\n        {%- if (message[\"role\"] == \"user\") != (ns.index % 2 == 0) %}\n            {{- raise_exception(\"After the optional system message, conversation roles must alternate user/assistant/user/assistant/...\") }}\n        {%- endif %}\n        {%- set ns.index = ns.index + 1 %}\n    {%- endif %}\n{%- endfor %}\n\n{{- bos_token }}\n{%- for message in loop_messages %}\n    {%- if message[\"role\"] == \"user\" %}\n        {%- if tools is not none and (message == user_messages[-1]) %}\n            {{- \"[AVAILABLE_TOOLS] [\" }}\n            {%- for tool in tools %}\n                {%- set tool = tool.function %}\n                {{- '{\"type\": \"function\", \"function\": {' }}\n                {%- for key, val in tool.items() if key != \"return\" %}\n                    {%- if val is string %}\n                        {{- '\"' + key + '\": \"' + val + '\"' }}\n                    {%- else %}\n                        {{- '\"' + key + '\": ' + val|tojson }}\n                    {%- endif %}\n                    {%- if not loop.last %}\n                        {{- \", \" }}\n                    {%- endif %}\n                {%- endfor %}\n                {{- \"}}\" }}\n                {%- if not loop.last %}\n                    {{- \", \" }}\n                {%- else %}\n                    {{- \"]\" }}\n                {%- endif %}\n            {%- endfor %}\n            {{- \"[/AVAILABLE_TOOLS]\" }}\n            {%- endif %}\n        {%- if loop.last and system_message is defined %}\n            {{- \"[INST] \" + system_message + \"\\n\\n\" + message[\"content\"] + \"[/INST]\" }}\n        {%- else %}\n            {{- \"[INST] \" + message[\"content\"] + \"[/INST]\" }}\n        {%- endif %}\n    {%- elif message.tool_calls is defined and message.tool_calls is not none %}\n        {{- \"[TOOL_CALLS] [\" }}\n        {%- for tool_call in message.tool_calls %}\n            {%- set out = tool_call.function|tojson %}\n            {{- out[:-1] }}\n            {%- if not tool_call.id is defined or tool_call.id|length != 9 %}\n                {{- raise_exception(\"Tool call IDs should be alphanumeric strings with length 9!\") }}\n            {%- endif %}\n            {{- ', \"id\": \"' + tool_call.id + '\"}' }}\n            {%- if not loop.last %}\n                {{- \", \" }}\n            {%- else %}\n                {{- \"]\" + eos_token }}\n            {%- endif %}\n        {%- endfor %}\n    {%- elif message[\"role\"] == \"assistant\" %}\n        {{- \" \" + message[\"content\"]|trim + eos_token}}\n    {%- elif message[\"role\"] == \"tool_results\" or message[\"role\"] == \"tool\" %}\n        {%- if message.content is defined and message.content.content is defined %}\n            {%- set content = message.content.content %}\n        {%- else %}\n            {%- set content = message.content %}\n        {%- endif %}\n        {{- '[TOOL_RESULTS] {\"content\": ' + content|string + \", \" }}\n        {%- if not message.tool_call_id is defined or message.tool_call_id|length != 9 %}\n            {{- raise_exception(\"Tool call IDs should be alphanumeric strings with length 9!\") }}\n        {%- endif %}\n        {{- '\"call_id\": \"' + message.tool_call_id + '\"}[/TOOL_RESULTS]' }}\n    {%- else %}\n        {{- raise_exception(\"Only user and assistant roles are supported, with the exception of an initial optional system message!\") }}\n    {%- endif %}\n{%- endfor %}\n",
+  "gpu_peak_allocated_mib": 13854,
+  "gpu_peak_reserved_mib": 13882,
+  "gpu_free_after_scoring_mib": 5733,
+  "tokenization_example": {
+   "prompt_tokens": 65,
+   "prompt_token_ids_head": [
+    1,
+    3,
+    1763,
+    1228,
+    7316,
+    1845,
+    3929,
+    1032,
+    3577,
+    29501,
+    10428,
+    3600,
+    2472,
+    1117,
+    1032,
+    10971
+   ],
+   "prompt_token_ids_tail": [
+    29515,
+    3600,
+    2472,
+    2242,
+    29473,
+    29502,
+    29491,
+    4
+   ],
+   "candidates": {
+    "A": {
+     "prompt_tokens": 65,
+     "candidate_ids": [
+      1098
+     ],
+     "joined_tail": [
+      29509
+     ],
+     "joined_len": 66,
+     "boundary_ok": false,
+     "score_mode": "teacher_forced_logprob_sum"
+    },
+    "B": {
+     "prompt_tokens": 65,
+     "candidate_ids": [
+      1133
+     ],
+     "joined_tail": [
+      29528
+     ],
+     "joined_len": 66,
+     "boundary_ok": false,
+     "score_mode": "teacher_forced_logprob_sum"
+    }
+   },
+   "all_boundaries_ok": false
+  },
+  "boundaries_ok": false,
+  "identity_rate": 1.0,
+  "label_distribution": {
+   "A": 20,
+   "B": 0
+  }
+ },
+ "reader_identity": {
+  "key": "mistral",
+  "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+  "model_path": "/data/jyz/next/llm/model/mistral-7b-instruct-v0.3",
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "thinking": false,
+  "weight_hash": "6491d69e717ce45baaffaef7d668041897a10b3315bdc98f6dbf13f660899abe",
+  "tokenizer_hash": "5c1a8c918530a4d75fb5e19223ef7e88343c71fe1313254b65f3e54576438340",
+  "chat_template_hash": "e16746b40344d6c5b5265988e0328a0bf7277be86f1c335156eae07e29c82826",
+  "transformers_version": "4.53.3",
+  "device_config": "cuda",
+  "reader_identity_hash": "6d521c764a7812f75b5a48313c8444d320453b80cf74cc78140e6f31672f6d78"
+ },
+ "required": {
+  "loaded": true,
+  "dtype_bfloat16": true,
+  "device_cuda": true,
+  "boundaries_ok": false,
+  "identical_predictions": true,
+  "identity_rate_1.0": true,
+  "finite_logprobs": true,
+  "no_empty_continuation": true,
+  "system_prompt_preserved": true,
+  "user_prompt_preserved": true,
+  "generated_text_not_used": true,
+  "teacher_forced_scoring": true
+ },
+ "preflight_pass": false
+}
