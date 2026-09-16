@@ -200,7 +200,7 @@ class SynthRepo:
             "intervention_type": intervention_type,
             "affected_reply_ids": [node] if node else list(affected),
             "utility": float(utility), "sign": sign,
-            "correct_before": True, "correct_after": True,
+            "correctness_before": True, "correctness_after": True,
         }
 
     # ---- patching ------------------------------------------------------

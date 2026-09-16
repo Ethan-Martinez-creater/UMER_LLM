@@ -82,13 +82,13 @@ def extract_atomic_index(labels_file: str, dataset: str,
         node_id = affected[0]
         key = evidence_key(dataset, row["event_id"], row["cutoff"], node_id)
         utility = _finite(row["utility"], f"{key}/{reader}")
-        correct_before = row.get("correct_before")
-        correct_after = row.get("correct_after")
-        if not isinstance(correct_before, bool) or \
-                not isinstance(correct_after, bool):
+        correctness_before = row.get("correctness_before")
+        correctness_after = row.get("correctness_after")
+        if not isinstance(correctness_before, bool) or \
+                not isinstance(correctness_after, bool):
             raise AtomicIndexRefused(
                 f"{key}/{reader}: correctness flags must be booleans")
-        sign = tri_class_label(utility, correct_before, correct_after)
+        sign = tri_class_label(utility, correctness_before, correctness_after)
         if row.get("sign") != sign:
             raise AtomicIndexRefused(
                 f"{key}/{reader}: cached sign {row.get('sign')!r} != frozen "
@@ -99,15 +99,15 @@ def extract_atomic_index(labels_file: str, dataset: str,
             "cutoff": int(row["cutoff"]),
             "node_id": str(node_id),
             "utility": {}, "sign": {},
-            "correct_before": {}, "correct_after": {},
+            "correctness_before": {}, "correctness_after": {},
         })
         if reader in entry["utility"]:
             raise AtomicIndexRefused(
                 f"{key}/{reader}: duplicate I1 row for the same reader")
         entry["utility"][reader] = utility
         entry["sign"][reader] = sign
-        entry["correct_before"][reader] = correct_before
-        entry["correct_after"][reader] = correct_after
+        entry["correctness_before"][reader] = correctness_before
+        entry["correctness_after"][reader] = correctness_after
 
     if not index:
         raise AtomicIndexRefused(f"{dataset}: no I1_atomic rows found")
@@ -208,8 +208,8 @@ def validate_atomic_index(index: dict, dataset: str = None) -> None:
             raise AtomicIndexRefused(f"{entry.get('key')}: reader panel drifted")
         for reader in P.READER_KEYS:
             utility = _finite(entry["utility"][reader], entry["key"])
-            sign = tri_class_label(utility, entry["correct_before"][reader],
-                                   entry["correct_after"][reader])
+            sign = tri_class_label(utility, entry["correctness_before"][reader],
+                                   entry["correctness_after"][reader])
             if sign != entry["sign"][reader]:
                 raise AtomicIndexRefused(
                     f"{entry['key']}/{reader}: sign does not follow the frozen "

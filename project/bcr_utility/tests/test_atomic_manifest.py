@@ -21,8 +21,8 @@ def i1_row(dataset="maweibo", event="u0", cutoff=15, node="n1", reader="qwen",
         "dataset": dataset, "event_id": event, "cutoff": cutoff,
         "reader": reader, "intervention_id": f"I1:{node}",
         "intervention_type": "I1_atomic", "affected_reply_ids": [node],
-        "utility": utility, "sign": sign, "correct_before": before,
-        "correct_after": after,
+        "utility": utility, "sign": sign, "correctness_before": before,
+        "correctness_after": after,
     }
 
 
@@ -107,7 +107,24 @@ def test_unknown_reader_is_refused(tmp_path):
 
 def test_non_boolean_correctness_is_refused(tmp_path):
     rows = [i1_row(reader=r) for r in WRITERS]
-    rows[0]["correct_before"] = 1
+    rows[0]["correctness_before"] = 1
+    with pytest.raises(am.AtomicIndexRefused):
+        am.extract_atomic_index(write_rows(tmp_path, rows), "maweibo")
+
+
+def test_missing_correctness_flags_are_refused(tmp_path):
+    rows = [i1_row(reader=r) for r in WRITERS]
+    rows[0].pop("correctness_after")
+    with pytest.raises(am.AtomicIndexRefused):
+        am.extract_atomic_index(write_rows(tmp_path, rows), "maweibo")
+
+
+def test_source_field_names_are_the_frozen_ones(tmp_path):
+    """The frozen cache spells the flags ``correctness_before/after``."""
+    rows = [i1_row(reader=r) for r in WRITERS]
+    for row in rows:
+        row["correct_before"] = row.pop("correctness_before")
+        row["correct_after"] = row.pop("correctness_after")
     with pytest.raises(am.AtomicIndexRefused):
         am.extract_atomic_index(write_rows(tmp_path, rows), "maweibo")
 

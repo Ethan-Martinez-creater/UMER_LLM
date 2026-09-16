@@ -164,8 +164,8 @@ def _activity(entries, readers) -> dict:
     active = {}
     for reader in readers:
         flags = [bool(is_active(e["utility"][reader],
-                                e["correct_before"][reader],
-                                e["correct_after"][reader]))
+                                e["correctness_before"][reader],
+                                e["correctness_after"][reader]))
                  for e in entries]
         values = [float(e["utility"][reader]) for e in entries]
         active[reader] = flags
@@ -225,8 +225,8 @@ def _pair_geometry(entries, event_slices, readers, draws) -> tuple:
     signs = {r: np.array([SIGN_INDEX[e["sign"][r]] for e in entries])
              for r in readers}
     active = {r: np.array([bool(is_active(e["utility"][r],
-                                         e["correct_before"][r],
-                                         e["correct_after"][r]))
+                                         e["correctness_before"][r],
+                                         e["correctness_after"][r]))
                            for e in entries])
               for r in readers}
     n_events = len(event_slices)
