@@ -116,6 +116,12 @@ magnitude ordering with an opposite sign yields `spearman_abs = 1.0` and
 `sign_agreement = 0.0`, which is exactly why the report keeps ordinal geometry
 and conditional signed direction apart (plan §1.2).
 
+**Sample-size caveat.** Pairwise signed and ordinal statistics are computed only
+on the jointly active keys (79–138 keys out of 2107–2549), because that is the
+frozen activity definition. The interaction-share decomposition uses all keys,
+with a bootstrap over 90 events. Both are descriptive, so nothing beyond the
+observed values should be inferred from them.
+
 **What this does and does not mean.** The interaction share says that most of
 the variance in these records is reader-specific rather than shared across
 evidence items — a *motivation* for the BCR question, consistent with the
