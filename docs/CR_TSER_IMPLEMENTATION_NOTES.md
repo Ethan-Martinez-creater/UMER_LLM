@@ -1109,6 +1109,51 @@ No predictor training, Stage A/B, held-out evaluation, P1–P4 or final Pilot wa
 run. Full report: `results/cr_tser_v2r1/P1A_REPORT.md`; raw evidence in
 `results/cr_tser_v2r1/p1a_execution/`.
 
+# 27. V2R1 P1/P2 formal gate evaluation — P1 PASS, P2 FAIL
+
+Baseline `daf82b6`. Both gates were computed from the frozen caches only: no
+model was loaded, no label written, no intervention re-matched, no threshold
+touched.
+
+**P1 (Ma-Weibo, primary) = PASS.** Mean sign disagreement over jointly active
+atomic interventions is **0.4082** against a 0.10 threshold, with all three
+pairs above the 0.05 pair threshold: qwen+mistral 0.5062 (81 jointly active),
+qwen+internlm 0.4146 (123), mistral+internlm 0.3038 (79). Pairwise utility
+Spearman is only 0.21–0.24, so the readers correlate weakly. Active counts per
+reader are 437 / 444 / 448 out of 2549 atomic evidence keys.
+
+**P2 (Ma-Weibo, primary) = FAIL.** `Delta_edge` is **0.012150** against a 0.02
+threshold with a 95% event-bootstrap CI of **(-0.002342, 0.027196)** over 49
+events and 297 matched (reader, snapshot) pairs, so neither the threshold nor
+the positive-lower-bound condition holds. The direction is right — parent-child
+removal costs more than matched-nonadjacent removal (slot means 0.05509 vs
+0.04287) — but the effect is too small and its interval crosses zero. The
+confirmatory subtree condition behaves the same way: `Delta_subtree` 0.016013,
+CI (-0.003599, 0.035486), 47 events.
+
+PHEME produced the same reports with `diagnostic_only = true` and
+`decides_primary_gate = false` (P1 macro 0.3764; P2 edge 0.003835, CI
+(-0.010822, 0.018171)) and decided nothing.
+
+New code is a thin entrypoint, `scripts/cr_tser_eval_p1_p2.py`: it verifies the
+frozen manifest and cache digests (refusing otherwise), calls the existing
+frozen `heterogeneity_report`/`gate_p1` and
+`structural_interaction_report`/`gate_p2`, reuses
+`cr_tser_run_pilot.load_unit_table`/`load_interaction_records`, and only adds
+descriptive per-slot means and coverage counts. The verifier checks that it
+reuses those functions and carries no threshold literal
+(`p1_p2_stage_reuses_frozen_statistics`), plus the artifact contract
+(`p1_p2_primary_and_diagnostic_contract`, `p1_p2_bootstrap_protocol_unchanged`).
+`test_v2r1_p1_p2_stage.py` reproduces the frozen statistics on a
+hand-computable synthetic case and covers the fail-closed paths.
+
+LOCAL: 202 tests pass, code verifier `issues = 0`. Both cache digests
+(`6c6591ea…` / `773bee3e…`) and all ten manifest digests are unchanged by the
+evaluation. Report: `results/cr_tser_v2r1/gates/P1_P2_REPORT.md`.
+
+Not run: predictor training, B0/B1/B3, Stage A/B, held-out-reader evaluation,
+P3, P4, final Pilot.
+
 
 
 

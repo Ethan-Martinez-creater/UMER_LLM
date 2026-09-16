@@ -301,6 +301,7 @@ def verify_code(report: Report, protocol: str = "v2r1"):
         _verify_reader_amendment_r1(report)
         _verify_boundary_audit_a1(report)
         _verify_v2r1_manifest_freeze(report)
+        _verify_p1_p2_stage(report)
 
 
 class _FakeTokenizer:
@@ -1367,6 +1368,123 @@ V2R1_FROZEN_MANIFEST_SHA256 = {
     "results/cr_tser_v2r1/manifests/pheme/intervention_manifest.jsonl":
         "a0c0ad7abb5c8132ecb9483143ad8c70bc6836568a183e32797a8af73201d2e3",
 }
+
+
+#: The frozen v2r1 formal label caches. The P1/P2 stage may only read these,
+#: so a drift here invalidates the gate artifacts as well.
+V2R1_FROZEN_LABELS_SHA256 = {
+    "maweibo":
+        "6c6591eaa76451c45917e97bdedf493cddcc06261a98ec8c8ff1eaab065646c3",
+    "pheme":
+        "773bee3e98d8d0f0ffc521bb9024839beeb64d2d8c2572f9f8a07dbcfff4ec15",
+}
+
+P1_P2_GATE_FILES = ("p1_maweibo.json", "p2_maweibo.json",
+                    "p1_pheme_diagnostic.json", "p2_pheme_diagnostic.json")
+
+
+def _verify_p1_p2_stage(report):
+    """P1/P2 formal gate artifacts (fail closed, v2r1 only).
+
+    The stage is only allowed to load frozen artifacts and call the frozen
+    evaluation functions, so the checks are: the script reuses those functions
+    and carries no threshold of its own; the primary artifacts decide the gate
+    on Ma-Weibo with exactly the frozen reader set and the frozen cache; the
+    PHEME artifacts are diagnostic-only; and the bootstrap protocol is the
+    frozen one.
+    """
+    script = REPO / "scripts" / "cr_tser_eval_p1_p2.py"
+    report.add("p1_p2_stage_present", script.exists(),
+               "scripts/cr_tser_eval_p1_p2.py")
+    if not script.exists():
+        return
+    src = script.read_text(encoding="utf-8")
+    reused = all(token in src for token in (
+        "from cr_tser.evaluation.heterogeneity import",
+        "heterogeneity_report", "gate_p1",
+        "from cr_tser.evaluation.structural_interaction import",
+        "structural_interaction_report", "gate_p2",
+        "pilot.load_unit_table", "pilot.load_interaction_records"))
+    own_thresholds = [lit for lit in ("0.10", "0.02", "0.05)")
+                      if lit in src]
+    report.add("p1_p2_stage_reuses_frozen_statistics",
+               reused and not own_thresholds,
+               f"reused={reused} own_threshold_literals={own_thresholds}")
+
+    gates_dir = REPO / "results" / "cr_tser_v2r1" / "gates"
+    missing = [name for name in P1_P2_GATE_FILES
+               if not (gates_dir / name).exists()]
+    if missing:
+        report.add("p1_p2_gate_artifacts_present", False,
+                   f"missing: {missing}")
+        return
+    report.add("p1_p2_gate_artifacts_present", True,
+               f"{len(P1_P2_GATE_FILES)} artifacts")
+
+    from cr_tser.config.pilot_config import (BOOTSTRAP_ITERATIONS,
+                                             BOOTSTRAP_SEED, PROTOCOL_VERSION,
+                                             READER_KEYS)
+    issues = []
+    contracts = {}
+    for name in P1_P2_GATE_FILES:
+        payload = json.loads(_read(gates_dir / name))
+        primary = name.endswith("_maweibo.json")
+        entry = {
+            "protocol": payload.get("protocol"),
+            "decides_primary_gate": payload.get("decides_primary_gate"),
+            "diagnostic_only": payload.get("diagnostic_only"),
+            "readers_present": payload.get("readers_present"),
+            "reader_set_exact": payload.get("reader_set_exact"),
+            "retired_readers_present": payload.get("retired_readers_present"),
+            "verdict": payload.get("verdict"),
+        }
+        contracts[name] = entry
+        if payload.get("protocol") != PROTOCOL_VERSION:
+            issues.append(f"{name}: protocol {payload.get('protocol')!r}")
+        if sorted(entry["readers_present"] or []) != sorted(READER_KEYS):
+            issues.append(f"{name}: readers {entry['readers_present']}")
+        if entry["retired_readers_present"]:
+            issues.append(f"{name}: retired readers present")
+        if primary:
+            if entry["decides_primary_gate"] is not True or \
+                    entry["diagnostic_only"] is not False:
+                issues.append(f"{name}: a primary artifact must decide")
+            if payload.get("dataset") != "maweibo":
+                issues.append(f"{name}: dataset {payload.get('dataset')!r}")
+            if not str(entry["verdict"]).endswith(("_PASS", "_FAIL")):
+                issues.append(f"{name}: verdict {entry['verdict']!r}")
+            frozen = payload.get("frozen_inputs", {})
+            got = (frozen.get("labels_sha256") or {}).get("maweibo")
+            want = V2R1_FROZEN_LABELS_SHA256["maweibo"]
+            if got != want:
+                issues.append(f"{name}: maweibo cache digest {got!r}")
+            for rel, expected in V2R1_FROZEN_MANIFEST_SHA256.items():
+                short = rel.split("manifests/", 1)[1]
+                if (frozen.get("manifest_sha256") or {}).get(short) != expected:
+                    issues.append(f"{name}: manifest digest {short}")
+        else:
+            if entry["diagnostic_only"] is not True or \
+                    entry["decides_primary_gate"] is not False:
+                issues.append(f"{name}: PHEME must stay diagnostic-only")
+            if entry["verdict"] != "DIAGNOSTIC_ONLY":
+                issues.append(f"{name}: verdict {entry['verdict']!r}")
+
+    report.add("p1_p2_primary_and_diagnostic_contract", not issues,
+               f"{contracts}" if issues else
+               "Ma-Weibo decides, PHEME is diagnostic-only, reader set and "
+               "cache digests exact")
+
+    boot = json.loads(_read(gates_dir / "p2_maweibo.json")).get(
+        "frozen_statistics", {})
+    report.add("p1_p2_bootstrap_protocol_unchanged",
+               boot.get("bootstrap_iterations") == BOOTSTRAP_ITERATIONS
+               and boot.get("bootstrap_seed") == BOOTSTRAP_SEED
+               and boot.get("matching_unit") == "reader_x_snapshot"
+               and boot.get("bootstrap_unit") == "event",
+               f"iterations={boot.get('bootstrap_iterations')} "
+               f"seed={boot.get('bootstrap_seed')} "
+               f"matching={boot.get('matching_unit')} "
+               f"bootstrap={boot.get('bootstrap_unit')}")
 
 
 def _verify_v2r1_manifest_freeze(report):

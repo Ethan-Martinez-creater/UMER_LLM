@@ -517,6 +517,31 @@
    "check": "v2r1_reader_contract_in_manifest",
    "status": "pass",
    "detail": "{'maweibo': {'readers': ['qwen', 'mistral', 'internlm'], 'cutoffs': [15, 60, 360], 'snapshot_cap': None, 'loro': [['qwen', 'mistral', 'internlm'], ['qwen', 'internlm', 'mistral'], ['mistral', 'internlm', 'qwen']]}, 'pheme': {'readers': ['qwen', 'mistral', 'internlm'], 'cutoffs': [15, 60, 360], 'snapshot_cap': None, 'loro': [['qwen', 'mistral', 'internlm'], ['qwen', 'internlm', 'mistral'], ['mistral', 'internlm', 'qwen']]}}"
+  },
+  {
+   "check": "p1_p2_stage_present",
+   "status": "pass",
+   "detail": "scripts/cr_tser_eval_p1_p2.py"
+  },
+  {
+   "check": "p1_p2_stage_reuses_frozen_statistics",
+   "status": "pass",
+   "detail": "reused=True own_threshold_literals=[]"
+  },
+  {
+   "check": "p1_p2_gate_artifacts_present",
+   "status": "pass",
+   "detail": "4 artifacts"
+  },
+  {
+   "check": "p1_p2_primary_and_diagnostic_contract",
+   "status": "pass",
+   "detail": "Ma-Weibo decides, PHEME is diagnostic-only, reader set and cache digests exact"
+  },
+  {
+   "check": "p1_p2_bootstrap_protocol_unchanged",
+   "status": "pass",
+   "detail": "iterations=10000 seed=7319 matching=reader_x_snapshot bootstrap=event"
   }
  ]
 }
