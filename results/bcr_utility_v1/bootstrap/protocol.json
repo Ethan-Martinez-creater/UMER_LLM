@@ -1,0 +1,167 @@
+{
+ "protocol": "bcr_v1",
+ "baseline_commit": "518a821d8d839fb7857be99acb91fde71b80c846",
+ "stage": "M0",
+ "namespace": {
+  "results_root": "results/bcr_utility_v1",
+  "bootstrap_dir": "results/bcr_utility_v1/bootstrap",
+  "read_only_historical_namespaces": [
+   "results/cr_tser",
+   "results/cr_tser_v2",
+   "results/cr_tser_v2r1"
+  ]
+ },
+ "frozen_constants": {
+  "protocol_version": "bcr_v1",
+  "baseline_commit": "518a821d8d839fb7857be99acb91fde71b80c846",
+  "primary_dataset": "maweibo",
+  "secondary_dataset": "pheme",
+  "datasets": [
+   "maweibo",
+   "pheme"
+  ],
+  "utility_threshold": 0.05,
+  "cutoffs_min": [
+   15,
+   60,
+   360
+  ],
+  "sign_classes": [
+   "HELPFUL",
+   "NEUTRAL",
+   "HARMFUL"
+  ],
+  "seed": 7319,
+  "bootstrap_seed": 7319,
+  "bootstrap_iterations": 10000,
+  "bootstrap_unit": "event",
+  "reader_keys": [
+   "qwen",
+   "mistral",
+   "internlm"
+  ],
+  "reader_model_ids": {
+   "qwen": "Qwen/Qwen3-8B",
+   "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+   "internlm": "internlm/internlm3-8b-instruct"
+  },
+  "atomic_intervention_type": "I1_atomic",
+  "non_supervision_intervention_types": [
+   "I2_parent_child",
+   "I3_matched_nonadjacent",
+   "I4_subtree",
+   "I5_matched_disconnected"
+  ],
+  "frozen_atomic_keys": {
+   "maweibo": 2549,
+   "pheme": 2107
+  },
+  "probe_seed": 7319,
+  "probe_events_per_dataset": 36,
+  "probe_events_per_cutoff": 12,
+  "probe_items_total": 72,
+  "probe_contexts": [
+   "P0",
+   "P1",
+   "P2",
+   "P3"
+  ],
+  "probe_source_split": "foundation_train",
+  "non_probe_splits": [
+   "utility_train",
+   "utility_dev",
+   "utility_eval"
+  ],
+  "results_root": "results/bcr_utility_v1",
+  "historical_results_root": "results/cr_tser_v2r1"
+ },
+ "inherited_from_cr_tser": {
+  "utility_threshold": 0.05,
+  "cutoffs_min": [
+   15,
+   60,
+   360
+  ],
+  "reader_keys": [
+   "qwen",
+   "mistral",
+   "internlm"
+  ],
+  "reader_model_ids": {
+   "qwen": "Qwen/Qwen3-8B",
+   "mistral": "mistralai/Mistral-7B-Instruct-v0.3",
+   "internlm": "internlm/internlm3-8b-instruct"
+  },
+  "atomic_cap": 20,
+  "budget_ref": 1024,
+  "semantic_dim": 384,
+  "canonical_tokenizer_id": "Qwen/Qwen3-8B"
+ },
+ "not_inherited": {
+  "structured_interaction": "BCR does not adopt the CR-TSER structural-interaction hypothesis; I2-I5 are read-only historical evidence and are never BCR supervision.",
+  "non_supervision_intervention_types": [
+   "I2_parent_child",
+   "I3_matched_nonadjacent",
+   "I4_subtree",
+   "I5_matched_disconnected"
+  ]
+ },
+ "utility_target": {
+  "definition": "u_r(e) = p_r(gold|SRC) - p_r(gold|SRC \\ e)",
+  "threshold": 0.05,
+  "classes": [
+   "HELPFUL",
+   "NEUTRAL",
+   "HARMFUL"
+  ],
+  "atomic_intervention_type": "I1_atomic"
+ },
+ "probe_protocol": {
+  "source_split": "foundation_train",
+  "events_per_dataset": 36,
+  "events_per_cutoff": 12,
+  "items_total": 72,
+  "seed": 7319,
+  "contexts": {
+   "contexts": [
+    "P0",
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "requirements": {
+    "P0": "source only",
+    "P1": "source + highest semantic-relevance valid evidence unit",
+    "P2": "source + lowest semantic-relevance unit among SRC-selected units",
+    "P3": "source + full SRC under the frozen 1024 canonical-token budget"
+   },
+   "selection_is_reader_independent": true,
+   "selection_uses_utility_outcomes": false,
+   "evidence_source": "frozen CR-TSER build_src (relevance ranking + SRC)"
+  }
+ },
+ "reused_cr_tser_modules": {
+  "project/cr_tser/config/pilot_config.py": "62421eede1688492188ba025d16e45283811b9070e019015d433640ec8ff26d0",
+  "project/cr_tser/data/snapshot_bridge.py": "c002e1613b770f0d901add4143b3ab3feaa287f0183b68d433e55d250346c9d1",
+  "project/cr_tser/intervention/evidence_units.py": "9955df33cef26d8f21949c391aa10286ac7898a7c29914926fab4831dc0e6137",
+  "project/cr_tser/intervention/semantic_reference.py": "7deba75406154901e5fad3a8130cd3ec1a94cb9438e8ef8e91250d0ed82f10f1",
+  "project/cr_tser/evaluation/bootstrap.py": "18ef892996d4ed3a86e47debe8257448d6c3312702e368b2d1992e7820507643",
+  "project/cr_tser/readers/sequence_scorer.py": "33b38315a631bbc8d1125284feaa147cca23f79c0094478c392390b8ab531051",
+  "project/cr_tser/readers/base_reader.py": "56bdb862cfcce40b2793a2552ebeea0548ee79f6d91baed6d55a2ca5ccc0eb70",
+  "project/cr_tser/models/utility_heads.py": "01799db01051c944912947248c94b4aae93b9eed0d19b537c56a381e8506cc21",
+  "scripts/cr_tser_common.py": "7c66e7568b7ac01406526d7279f2c09691cc3e4f96407a4d2b551c7129f934bf"
+ },
+ "m0_contract": {
+  "runs_reader_inference": false,
+  "downloads_models": false,
+  "generates_utility_labels": false,
+  "trains_predictors": false,
+  "phases_not_started": [
+   "M1",
+   "M2",
+   "M3",
+   "M4",
+   "M5"
+  ]
+ }
+}

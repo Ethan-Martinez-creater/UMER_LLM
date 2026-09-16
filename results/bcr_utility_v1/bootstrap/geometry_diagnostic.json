@@ -1,0 +1,707 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "M0",
+ "bootstrap": {
+  "unit": "event",
+  "iterations": 10000,
+  "seed": 7319
+ },
+ "datasets": {
+  "maweibo": {
+   "protocol": "bcr_v1",
+   "dataset": "maweibo",
+   "scope": "diagnostic_only",
+   "decides_gate": false,
+   "reader_keys": [
+    "qwen",
+    "mistral",
+    "internlm"
+   ],
+   "utility_threshold": 0.05,
+   "bootstrap": {
+    "unit": "event",
+    "iterations": 10000,
+    "seed": 7319
+   },
+   "n_evidence_keys": 2549,
+   "n_events": 90,
+   "cutoffs": [
+    15,
+    60,
+    360
+   ],
+   "source_index_keys_sha256": "5f2d0575c3200ff675f5564a73ed7dfc4f5e390ea46d5112f1a586f87225daa9",
+   "activity": {
+    "per_reader": {
+     "qwen": {
+      "n_keys": 2549,
+      "n_active": 437,
+      "active_rate": 0.17143978030600235,
+      "mean_utility": 0.0008546379635307117,
+      "mean_abs_utility": 0.03999531464854564,
+      "sign_counts": {
+       "HELPFUL": 209,
+       "NEUTRAL": 2112,
+       "HARMFUL": 228
+      }
+     },
+     "mistral": {
+      "n_keys": 2549,
+      "n_active": 444,
+      "active_rate": 0.17418595527657904,
+      "mean_utility": 0.010597490851973057,
+      "mean_abs_utility": 0.04812349259305721,
+      "sign_counts": {
+       "HELPFUL": 272,
+       "NEUTRAL": 2105,
+       "HARMFUL": 172
+      }
+     },
+     "internlm": {
+      "n_keys": 2549,
+      "n_active": 448,
+      "active_rate": 0.1757551981169086,
+      "mean_utility": 0.001270324807436116,
+      "mean_abs_utility": 0.026255790239298724,
+      "sign_counts": {
+       "HELPFUL": 254,
+       "NEUTRAL": 2101,
+       "HARMFUL": 194
+      }
+     }
+    },
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 81,
+      "jointly_active_rate": 0.031777167516673206
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 123,
+      "jointly_active_rate": 0.04825421734013339
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 79,
+      "jointly_active_rate": 0.030992546096508436
+     }
+    }
+   },
+   "ordinal_geometry": {
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 81,
+      "spearman_abs_utility": 0.015347001533129097,
+      "pearson_abs_utility": 0.053026644566859425,
+      "spearman_signed_utility": 0.23923979907914814,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.053026644566859425,
+       "ci_low": -0.20417048437843194,
+       "ci_high": 0.2864383978823169,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 123,
+      "spearman_abs_utility": 0.2717080155498636,
+      "pearson_abs_utility": 0.3438536771912471,
+      "spearman_signed_utility": 0.205138009851265,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.3438536771912471,
+       "ci_low": -0.06665175016280442,
+       "ci_high": 0.6433061377002101,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 79,
+      "spearman_abs_utility": 0.1685591104038199,
+      "pearson_abs_utility": 0.11788472843890092,
+      "spearman_signed_utility": 0.23643857849470698,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.11788472843890092,
+       "ci_low": -0.10498091511510634,
+       "ci_high": 0.2791842572813684,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     }
+    },
+    "caveat": "Ordinal reader geometry describes how similarly two readers rank evidence magnitude. A stable ordinal geometry does not by itself establish that a signed help/harm intervention transfers between readers, so the signed direction is reported separately (plan §1.2)."
+   },
+   "signed_direction_geometry": {
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 81,
+      "n_directional": 81,
+      "sign_agreement_rate": 0.49382716049382713,
+      "directional_agreement_rate": 0.49382716049382713,
+      "sign_disagreement_rate": 0.5061728395061729,
+      "signed_pearson": 0.30062980114780163,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 14,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 28,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 13,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 26
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 42,
+        "p_sign_b": {
+         "HARMFUL": 0.3333333333333333,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.6666666666666666
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 39,
+        "p_sign_b": {
+         "HARMFUL": 0.3333333333333333,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.6666666666666666
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.49382716049382713,
+       "ci_low": 0.32926829268292684,
+       "ci_high": 0.6736842105263158,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": 0.30062980114780163,
+       "ci_low": -0.04759938488661278,
+       "ci_high": 0.5806218963538043,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 123,
+      "n_directional": 123,
+      "sign_agreement_rate": 0.5853658536585366,
+      "directional_agreement_rate": 0.5853658536585366,
+      "sign_disagreement_rate": 0.41463414634146345,
+      "signed_pearson": 0.10003115257175794,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 30,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 29,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 22,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 42
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 59,
+        "p_sign_b": {
+         "HARMFUL": 0.5084745762711864,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.4915254237288136
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 64,
+        "p_sign_b": {
+         "HARMFUL": 0.34375,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.65625
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.5853658536585366,
+       "ci_low": 0.4307692307692308,
+       "ci_high": 0.7558139534883721,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": 0.10003115257175794,
+       "ci_low": -0.29728500676821845,
+       "ci_high": 0.47793498766715103,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 79,
+      "n_directional": 79,
+      "sign_agreement_rate": 0.6962025316455697,
+      "directional_agreement_rate": 0.6962025316455697,
+      "sign_disagreement_rate": 0.30379746835443033,
+      "signed_pearson": 0.14079683063139328,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 16,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 17,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 7,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 39
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 33,
+        "p_sign_b": {
+         "HARMFUL": 0.48484848484848486,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.5151515151515151
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 46,
+        "p_sign_b": {
+         "HARMFUL": 0.15217391304347827,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.8478260869565217
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.6962025316455697,
+       "ci_low": 0.5625,
+       "ci_high": 0.8348623853211009,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": 0.14079683063139328,
+       "ci_low": -0.1535135044107311,
+       "ci_high": 0.4676202814041469,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     }
+    },
+    "caveat": "Signed direction is the quantity the BCR research question is about; it is reported independently of the ordinal geometry and with the full 3x3 sign contingency, not as a single correlation."
+   },
+   "reader_evidence_interaction": {
+    "n_keys": 2549,
+    "n_readers": 3,
+    "ss_total": 87.66478903955752,
+    "ss_reader": 0.15471750638853604,
+    "ss_evidence": 31.12106065458018,
+    "ss_residual": 56.389010878588806,
+    "reader_share": 0.0017648762756814701,
+    "evidence_share": 0.35500069064829703,
+    "interaction_share": 0.6432344330760216,
+    "interaction_share_event_ci": {
+     "observed": 0.6432344330760216,
+     "ci_low": 0.616786318453828,
+     "ci_high": 0.6672661726048589,
+     "n_events": 90,
+     "iterations": 10000,
+     "seed": 7319,
+     "n_replicates_used": 10000
+    }
+   },
+   "interpretation": {
+    "ordinal_is_not_transfer": "Ordinal reader geometry describes how similarly two readers rank evidence magnitude. A stable ordinal geometry does not by itself establish that a signed help/harm intervention transfers between readers, so the signed direction is reported separately (plan §1.2).",
+    "signed_direction_reported_independently": "Signed direction is the quantity the BCR research question is about; it is reported independently of the ordinal geometry and with the full 3x3 sign contingency, not as a single correlation.",
+    "m0_scope": "M0 reports geometry only; it does not establish, weaken or decide BCR feasibility and must not be read as a GO/NO-GO."
+   }
+  },
+  "pheme": {
+   "protocol": "bcr_v1",
+   "dataset": "pheme",
+   "scope": "diagnostic_only",
+   "decides_gate": false,
+   "reader_keys": [
+    "qwen",
+    "mistral",
+    "internlm"
+   ],
+   "utility_threshold": 0.05,
+   "bootstrap": {
+    "unit": "event",
+    "iterations": 10000,
+    "seed": 7319
+   },
+   "n_evidence_keys": 2107,
+   "n_events": 90,
+   "cutoffs": [
+    15,
+    60,
+    360
+   ],
+   "source_index_keys_sha256": "2b47c0b8208c4a75d725d5449f83b3c671e3f12f40c02054c27e73ec96fc74b8",
+   "activity": {
+    "per_reader": {
+     "qwen": {
+      "n_keys": 2107,
+      "n_active": 405,
+      "active_rate": 0.19221642145230186,
+      "mean_utility": 0.005223697786519848,
+      "mean_abs_utility": 0.06936272504115092,
+      "sign_counts": {
+       "HELPFUL": 212,
+       "NEUTRAL": 1702,
+       "HARMFUL": 193
+      }
+     },
+     "mistral": {
+      "n_keys": 2107,
+      "n_active": 292,
+      "active_rate": 0.13858566682486947,
+      "mean_utility": -0.003403754336604784,
+      "mean_abs_utility": 0.05029280073669871,
+      "sign_counts": {
+       "HELPFUL": 155,
+       "NEUTRAL": 1815,
+       "HARMFUL": 137
+      }
+     },
+     "internlm": {
+      "n_keys": 2107,
+      "n_active": 600,
+      "active_rate": 0.28476506881822494,
+      "mean_utility": -0.003530376046324643,
+      "mean_abs_utility": 0.03300968230217991,
+      "sign_counts": {
+       "HELPFUL": 256,
+       "NEUTRAL": 1507,
+       "HARMFUL": 344
+      }
+     }
+    },
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 99,
+      "jointly_active_rate": 0.04698623635500712
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 138,
+      "jointly_active_rate": 0.06549596582819174
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 70,
+      "jointly_active_rate": 0.03322259136212625
+     }
+    }
+   },
+   "ordinal_geometry": {
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 99,
+      "spearman_abs_utility": 0.147269730654938,
+      "pearson_abs_utility": 0.08401661212769895,
+      "spearman_signed_utility": 0.01502192372267762,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.08401661212769895,
+       "ci_low": -0.15044405724550017,
+       "ci_high": 0.2735026788162061,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 138,
+      "spearman_abs_utility": 0.06960527344727374,
+      "pearson_abs_utility": 0.20551750757913378,
+      "spearman_signed_utility": 0.31580282031540313,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.20551750757913378,
+       "ci_low": -0.08812913582883315,
+       "ci_high": 0.4625112418705935,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 70,
+      "spearman_abs_utility": 0.07827799111031825,
+      "pearson_abs_utility": 0.045069943396501874,
+      "spearman_signed_utility": 0.4154023873975619,
+      "abs_utility_pearson_event_ci": {
+       "observed": 0.045069943396501874,
+       "ci_low": -0.23072664654121303,
+       "ci_high": 0.3917299638558503,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     }
+    },
+    "caveat": "Ordinal reader geometry describes how similarly two readers rank evidence magnitude. A stable ordinal geometry does not by itself establish that a signed help/harm intervention transfers between readers, so the signed direction is reported separately (plan §1.2)."
+   },
+   "signed_direction_geometry": {
+    "per_pair": {
+     "qwen|mistral": {
+      "n_jointly_active": 99,
+      "n_directional": 99,
+      "sign_agreement_rate": 0.5252525252525253,
+      "directional_agreement_rate": 0.5252525252525253,
+      "sign_disagreement_rate": 0.4747474747474747,
+      "signed_pearson": -0.024302728542663618,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 22,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 25,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 22,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 30
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 47,
+        "p_sign_b": {
+         "HARMFUL": 0.46808510638297873,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.5319148936170213
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 52,
+        "p_sign_b": {
+         "HARMFUL": 0.4230769230769231,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.5769230769230769
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.5252525252525253,
+       "ci_low": 0.3611111111111111,
+       "ci_high": 0.6774193548387096,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": -0.024302728542663618,
+       "ci_low": -0.25113046645821113,
+       "ci_high": 0.2929666679107142,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "qwen|internlm": {
+      "n_jointly_active": 138,
+      "n_directional": 138,
+      "sign_agreement_rate": 0.6884057971014492,
+      "directional_agreement_rate": 0.6884057971014492,
+      "sign_disagreement_rate": 0.3115942028985508,
+      "signed_pearson": 0.3183680850590655,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 59,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 15,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 28,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 36
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 74,
+        "p_sign_b": {
+         "HARMFUL": 0.7972972972972973,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.20270270270270271
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 64,
+        "p_sign_b": {
+         "HARMFUL": 0.4375,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.5625
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.6884057971014492,
+       "ci_low": 0.5775401069518716,
+       "ci_high": 0.8181818181818182,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": 0.3183680850590655,
+       "ci_low": 0.12240394626349937,
+       "ci_high": 0.557670034512435,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     },
+     "mistral|internlm": {
+      "n_jointly_active": 70,
+      "n_directional": 70,
+      "sign_agreement_rate": 0.6571428571428571,
+      "directional_agreement_rate": 0.6571428571428571,
+      "sign_disagreement_rate": 0.34285714285714286,
+      "signed_pearson": 0.4057299533071633,
+      "sign_contingency": {
+       "HARMFUL:HARMFUL": 23,
+       "HARMFUL:NEUTRAL": 0,
+       "HARMFUL:HELPFUL": 8,
+       "NEUTRAL:HARMFUL": 0,
+       "NEUTRAL:NEUTRAL": 0,
+       "NEUTRAL:HELPFUL": 0,
+       "HELPFUL:HARMFUL": 16,
+       "HELPFUL:NEUTRAL": 0,
+       "HELPFUL:HELPFUL": 23
+      },
+      "conditional_direction": {
+       "HARMFUL": {
+        "n": 31,
+        "p_sign_b": {
+         "HARMFUL": 0.7419354838709677,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.25806451612903225
+        }
+       },
+       "NEUTRAL": {
+        "n": 0,
+        "p_sign_b": {
+         "HARMFUL": null,
+         "NEUTRAL": null,
+         "HELPFUL": null
+        }
+       },
+       "HELPFUL": {
+        "n": 39,
+        "p_sign_b": {
+         "HARMFUL": 0.41025641025641024,
+         "NEUTRAL": 0.0,
+         "HELPFUL": 0.5897435897435898
+        }
+       }
+      },
+      "sign_agreement_event_ci": {
+       "observed": 0.6571428571428571,
+       "ci_low": 0.5,
+       "ci_high": 0.8604651162790697,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      },
+      "signed_pearson_event_ci": {
+       "observed": 0.4057299533071633,
+       "ci_low": 0.1255349691541233,
+       "ci_high": 0.7150679412043512,
+       "n_events": 90,
+       "iterations": 10000,
+       "seed": 7319,
+       "n_replicates_used": 10000
+      }
+     }
+    },
+    "caveat": "Signed direction is the quantity the BCR research question is about; it is reported independently of the ordinal geometry and with the full 3x3 sign contingency, not as a single correlation."
+   },
+   "reader_evidence_interaction": {
+    "n_keys": 2107,
+    "n_readers": 3,
+    "ss_total": 142.63697774013303,
+    "ss_reader": 0.10611046677323613,
+    "ss_evidence": 49.80456400878727,
+    "ss_residual": 92.72630326457254,
+    "reader_share": 0.0007439197636853769,
+    "evidence_share": 0.3491700735522105,
+    "interaction_share": 0.6500860066841041,
+    "interaction_share_event_ci": {
+     "observed": 0.6500860066841041,
+     "ci_low": 0.620401458149399,
+     "ci_high": 0.672533745839471,
+     "n_events": 90,
+     "iterations": 10000,
+     "seed": 7319,
+     "n_replicates_used": 10000
+    }
+   },
+   "interpretation": {
+    "ordinal_is_not_transfer": "Ordinal reader geometry describes how similarly two readers rank evidence magnitude. A stable ordinal geometry does not by itself establish that a signed help/harm intervention transfers between readers, so the signed direction is reported separately (plan §1.2).",
+    "signed_direction_reported_independently": "Signed direction is the quantity the BCR research question is about; it is reported independently of the ordinal geometry and with the full 3x3 sign contingency, not as a single correlation.",
+    "m0_scope": "M0 reports geometry only; it does not establish, weaken or decide BCR feasibility and must not be read as a GO/NO-GO."
+   }
+  }
+ }
+}

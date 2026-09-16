@@ -1,0 +1,644 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "M0",
+ "source_split": "foundation_train",
+ "seed": 7319,
+ "design": {
+  "events_per_dataset": 36,
+  "events_per_cutoff": 12,
+  "items_total": 72,
+  "cutoffs_min": [
+   15,
+   60,
+   360
+  ],
+  "event_disjoint_across_cutoffs": true,
+  "min_visible_units": 1,
+  "min_src_selected": 1,
+  "gold_labels_used_for": "probe-event sampling balance only",
+  "gold_labels_stored_per_item": false,
+  "contexts": [
+   "P0",
+   "P1",
+   "P2",
+   "P3"
+  ],
+  "requirements": {
+   "P0": "source only",
+   "P1": "source + highest semantic-relevance valid evidence unit",
+   "P2": "source + lowest semantic-relevance unit among SRC-selected units",
+   "P3": "source + full SRC under the frozen 1024 canonical-token budget"
+  },
+  "selection_is_reader_independent": true,
+  "selection_uses_utility_outcomes": false,
+  "evidence_source": "frozen CR-TSER build_src (relevance ranking + SRC)"
+ },
+ "datasets": {
+  "maweibo": {
+   "dataset": "maweibo",
+   "n_items": 36,
+   "n_events": 36,
+   "per_cutoff_counts": {
+    "15": 12,
+    "60": 12,
+    "360": 12
+   },
+   "label_balance": {
+    "15": {
+     "0": 6,
+     "1": 6
+    },
+    "60": {
+     "0": 6,
+     "1": 6
+    },
+    "360": {
+     "0": 6,
+     "1": 6
+    }
+   },
+   "total_label_balance": {
+    "0": 18,
+    "1": 18
+   },
+   "candidate_pool": {
+    "15": 75,
+    "60": 78,
+    "360": 80
+   },
+   "items": [
+    {
+     "event_id": "11501258141",
+     "cutoff": 15,
+     "n_visible_units": 122,
+     "src_selected": 11,
+     "n_visible_nodes": 123
+    },
+    {
+     "event_id": "3489035978933121",
+     "cutoff": 15,
+     "n_visible_units": 23,
+     "src_selected": 8,
+     "n_visible_nodes": 24
+    },
+    {
+     "event_id": "3489186630221600",
+     "cutoff": 15,
+     "n_visible_units": 1,
+     "src_selected": 1,
+     "n_visible_nodes": 2
+    },
+    {
+     "event_id": "3496365798037366",
+     "cutoff": 15,
+     "n_visible_units": 45,
+     "src_selected": 9,
+     "n_visible_nodes": 46
+    },
+    {
+     "event_id": "3573756108683552",
+     "cutoff": 15,
+     "n_visible_units": 18,
+     "src_selected": 16,
+     "n_visible_nodes": 19
+    },
+    {
+     "event_id": "3580357981071019",
+     "cutoff": 15,
+     "n_visible_units": 8,
+     "src_selected": 8,
+     "n_visible_nodes": 9
+    },
+    {
+     "event_id": "3601548871988403",
+     "cutoff": 15,
+     "n_visible_units": 43,
+     "src_selected": 7,
+     "n_visible_nodes": 44
+    },
+    {
+     "event_id": "3908089419470722",
+     "cutoff": 15,
+     "n_visible_units": 176,
+     "src_selected": 17,
+     "n_visible_nodes": 177
+    },
+    {
+     "event_id": "3909178366223186",
+     "cutoff": 15,
+     "n_visible_units": 11,
+     "src_selected": 11,
+     "n_visible_nodes": 12
+    },
+    {
+     "event_id": "3912026696948012",
+     "cutoff": 15,
+     "n_visible_units": 352,
+     "src_selected": 5,
+     "n_visible_nodes": 353
+    },
+    {
+     "event_id": "3912115921917906",
+     "cutoff": 15,
+     "n_visible_units": 82,
+     "src_selected": 19,
+     "n_visible_nodes": 83
+    },
+    {
+     "event_id": "3914107511640336",
+     "cutoff": 15,
+     "n_visible_units": 52,
+     "src_selected": 9,
+     "n_visible_nodes": 53
+    },
+    {
+     "event_id": "3481776967900908",
+     "cutoff": 60,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    },
+    {
+     "event_id": "3489035374832682",
+     "cutoff": 60,
+     "n_visible_units": 50,
+     "src_selected": 13,
+     "n_visible_nodes": 51
+    },
+    {
+     "event_id": "3489442075923379",
+     "cutoff": 60,
+     "n_visible_units": 131,
+     "src_selected": 9,
+     "n_visible_nodes": 132
+    },
+    {
+     "event_id": "3523142439447223",
+     "cutoff": 60,
+     "n_visible_units": 124,
+     "src_selected": 10,
+     "n_visible_nodes": 125
+    },
+    {
+     "event_id": "3567830068390832",
+     "cutoff": 60,
+     "n_visible_units": 110,
+     "src_selected": 10,
+     "n_visible_nodes": 111
+    },
+    {
+     "event_id": "3578315706971179",
+     "cutoff": 60,
+     "n_visible_units": 26,
+     "src_selected": 19,
+     "n_visible_nodes": 27
+    },
+    {
+     "event_id": "3833708971216979",
+     "cutoff": 60,
+     "n_visible_units": 59,
+     "src_selected": 18,
+     "n_visible_nodes": 60
+    },
+    {
+     "event_id": "3908511328776502",
+     "cutoff": 60,
+     "n_visible_units": 84,
+     "src_selected": 25,
+     "n_visible_nodes": 85
+    },
+    {
+     "event_id": "3909857809710194",
+     "cutoff": 60,
+     "n_visible_units": 100,
+     "src_selected": 24,
+     "n_visible_nodes": 101
+    },
+    {
+     "event_id": "3911209453157696",
+     "cutoff": 60,
+     "n_visible_units": 41,
+     "src_selected": 9,
+     "n_visible_nodes": 42
+    },
+    {
+     "event_id": "3911538412778681",
+     "cutoff": 60,
+     "n_visible_units": 80,
+     "src_selected": 23,
+     "n_visible_nodes": 81
+    },
+    {
+     "event_id": "3912054773485313",
+     "cutoff": 60,
+     "n_visible_units": 237,
+     "src_selected": 24,
+     "n_visible_nodes": 238
+    },
+    {
+     "event_id": "3478713406418470",
+     "cutoff": 360,
+     "n_visible_units": 279,
+     "src_selected": 8,
+     "n_visible_nodes": 280
+    },
+    {
+     "event_id": "3478848236361500",
+     "cutoff": 360,
+     "n_visible_units": 41,
+     "src_selected": 11,
+     "n_visible_nodes": 42
+    },
+    {
+     "event_id": "3487700189668878",
+     "cutoff": 360,
+     "n_visible_units": 1714,
+     "src_selected": 7,
+     "n_visible_nodes": 1715
+    },
+    {
+     "event_id": "3514044067395788",
+     "cutoff": 360,
+     "n_visible_units": 303,
+     "src_selected": 9,
+     "n_visible_nodes": 304
+    },
+    {
+     "event_id": "3531594978010028",
+     "cutoff": 360,
+     "n_visible_units": 226,
+     "src_selected": 14,
+     "n_visible_nodes": 227
+    },
+    {
+     "event_id": "3587568375939436",
+     "cutoff": 360,
+     "n_visible_units": 65,
+     "src_selected": 11,
+     "n_visible_nodes": 66
+    },
+    {
+     "event_id": "3630502047476920",
+     "cutoff": 360,
+     "n_visible_units": 49,
+     "src_selected": 8,
+     "n_visible_nodes": 50
+    },
+    {
+     "event_id": "3908098957544079",
+     "cutoff": 360,
+     "n_visible_units": 245,
+     "src_selected": 29,
+     "n_visible_nodes": 246
+    },
+    {
+     "event_id": "3909146518716717",
+     "cutoff": 360,
+     "n_visible_units": 336,
+     "src_selected": 10,
+     "n_visible_nodes": 337
+    },
+    {
+     "event_id": "3909864088209357",
+     "cutoff": 360,
+     "n_visible_units": 125,
+     "src_selected": 9,
+     "n_visible_nodes": 126
+    },
+    {
+     "event_id": "3912120204429529",
+     "cutoff": 360,
+     "n_visible_units": 168,
+     "src_selected": 8,
+     "n_visible_nodes": 169
+    },
+    {
+     "event_id": "3918796504841684",
+     "cutoff": 360,
+     "n_visible_units": 186,
+     "src_selected": 9,
+     "n_visible_nodes": 187
+    }
+   ],
+   "source_availability": {
+    "event_split_sha256": "24e18ed10954e8387c49d9a119e78934e2c8d33ccb582aa62e4f2cf201b8dde2",
+    "availability_digest": "8a49a0671df0151455f5e6e96a94822bf0ed09948092096ecd5b1da85f1a7b10",
+    "n_foundation_events": 80
+   },
+   "overlap_audit": {
+    "utility_train": 0,
+    "utility_dev": 0,
+    "utility_eval": 0
+   }
+  },
+  "pheme": {
+   "dataset": "pheme",
+   "n_items": 36,
+   "n_events": 36,
+   "per_cutoff_counts": {
+    "15": 12,
+    "60": 12,
+    "360": 12
+   },
+   "label_balance": {
+    "15": {
+     "0": 6,
+     "1": 6
+    },
+    "60": {
+     "0": 6,
+     "1": 6
+    },
+    "360": {
+     "0": 6,
+     "1": 6
+    }
+   },
+   "total_label_balance": {
+    "0": 18,
+    "1": 18
+   },
+   "candidate_pool": {
+    "15": 71,
+    "60": 75,
+    "360": 80
+   },
+   "items": [
+    {
+     "event_id": "498280074941313024",
+     "cutoff": 15,
+     "n_visible_units": 2,
+     "src_selected": 2,
+     "n_visible_nodes": 3
+    },
+    {
+     "event_id": "499455799723184130",
+     "cutoff": 15,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    },
+    {
+     "event_id": "500405384503238656",
+     "cutoff": 15,
+     "n_visible_units": 1,
+     "src_selected": 1,
+     "n_visible_nodes": 2
+    },
+    {
+     "event_id": "522286703848218624",
+     "cutoff": 15,
+     "n_visible_units": 2,
+     "src_selected": 2,
+     "n_visible_nodes": 3
+    },
+    {
+     "event_id": "529695483661664257",
+     "cutoff": 15,
+     "n_visible_units": 1,
+     "src_selected": 1,
+     "n_visible_nodes": 2
+    },
+    {
+     "event_id": "529723807591038977",
+     "cutoff": 15,
+     "n_visible_units": 1,
+     "src_selected": 1,
+     "n_visible_nodes": 2
+    },
+    {
+     "event_id": "544353257175654400",
+     "cutoff": 15,
+     "n_visible_units": 16,
+     "src_selected": 12,
+     "n_visible_nodes": 17
+    },
+    {
+     "event_id": "544514474963922944",
+     "cutoff": 15,
+     "n_visible_units": 21,
+     "src_selected": 21,
+     "n_visible_nodes": 22
+    },
+    {
+     "event_id": "552839518974660608",
+     "cutoff": 15,
+     "n_visible_units": 9,
+     "src_selected": 9,
+     "n_visible_nodes": 10
+    },
+    {
+     "event_id": "552851838928953344",
+     "cutoff": 15,
+     "n_visible_units": 5,
+     "src_selected": 5,
+     "n_visible_nodes": 6
+    },
+    {
+     "event_id": "553533499643547648",
+     "cutoff": 15,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    },
+    {
+     "event_id": "580335398683058176",
+     "cutoff": 15,
+     "n_visible_units": 2,
+     "src_selected": 2,
+     "n_visible_nodes": 3
+    },
+    {
+     "event_id": "500366417674268673",
+     "cutoff": 60,
+     "n_visible_units": 18,
+     "src_selected": 12,
+     "n_visible_nodes": 19
+    },
+    {
+     "event_id": "524926184069808129",
+     "cutoff": 60,
+     "n_visible_units": 8,
+     "src_selected": 8,
+     "n_visible_nodes": 9
+    },
+    {
+     "event_id": "524943615437848576",
+     "cutoff": 60,
+     "n_visible_units": 30,
+     "src_selected": 16,
+     "n_visible_nodes": 31
+    },
+    {
+     "event_id": "524949026064850944",
+     "cutoff": 60,
+     "n_visible_units": 6,
+     "src_selected": 6,
+     "n_visible_nodes": 7
+    },
+    {
+     "event_id": "524951439417044992",
+     "cutoff": 60,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    },
+    {
+     "event_id": "524953918166794240",
+     "cutoff": 60,
+     "n_visible_units": 6,
+     "src_selected": 6,
+     "n_visible_nodes": 7
+    },
+    {
+     "event_id": "544309275141885952",
+     "cutoff": 60,
+     "n_visible_units": 20,
+     "src_selected": 11,
+     "n_visible_nodes": 21
+    },
+    {
+     "event_id": "544433739539812353",
+     "cutoff": 60,
+     "n_visible_units": 12,
+     "src_selected": 12,
+     "n_visible_nodes": 13
+    },
+    {
+     "event_id": "544453564718804992",
+     "cutoff": 60,
+     "n_visible_units": 9,
+     "src_selected": 9,
+     "n_visible_nodes": 10
+    },
+    {
+     "event_id": "552787144373460992",
+     "cutoff": 60,
+     "n_visible_units": 13,
+     "src_selected": 11,
+     "n_visible_nodes": 14
+    },
+    {
+     "event_id": "552788886355996672",
+     "cutoff": 60,
+     "n_visible_units": 41,
+     "src_selected": 13,
+     "n_visible_nodes": 42
+    },
+    {
+     "event_id": "552985973445783552",
+     "cutoff": 60,
+     "n_visible_units": 5,
+     "src_selected": 5,
+     "n_visible_nodes": 6
+    },
+    {
+     "event_id": "498483279943962625",
+     "cutoff": 360,
+     "n_visible_units": 13,
+     "src_selected": 13,
+     "n_visible_nodes": 14
+    },
+    {
+     "event_id": "500388199064420352",
+     "cutoff": 360,
+     "n_visible_units": 24,
+     "src_selected": 14,
+     "n_visible_nodes": 25
+    },
+    {
+     "event_id": "524947867975561216",
+     "cutoff": 360,
+     "n_visible_units": 17,
+     "src_selected": 13,
+     "n_visible_nodes": 18
+    },
+    {
+     "event_id": "525055052801515521",
+     "cutoff": 360,
+     "n_visible_units": 7,
+     "src_selected": 7,
+     "n_visible_nodes": 8
+    },
+    {
+     "event_id": "544283374911627264",
+     "cutoff": 360,
+     "n_visible_units": 34,
+     "src_selected": 13,
+     "n_visible_nodes": 35
+    },
+    {
+     "event_id": "544495066258362368",
+     "cutoff": 360,
+     "n_visible_units": 47,
+     "src_selected": 12,
+     "n_visible_nodes": 48
+    },
+    {
+     "event_id": "544515517546254338",
+     "cutoff": 360,
+     "n_visible_units": 21,
+     "src_selected": 14,
+     "n_visible_nodes": 22
+    },
+    {
+     "event_id": "544520932405284864",
+     "cutoff": 360,
+     "n_visible_units": 34,
+     "src_selected": 12,
+     "n_visible_nodes": 35
+    },
+    {
+     "event_id": "553202028575731713",
+     "cutoff": 360,
+     "n_visible_units": 5,
+     "src_selected": 5,
+     "n_visible_nodes": 6
+    },
+    {
+     "event_id": "553225701701066752",
+     "cutoff": 360,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    },
+    {
+     "event_id": "553591526937600001",
+     "cutoff": 360,
+     "n_visible_units": 19,
+     "src_selected": 15,
+     "n_visible_nodes": 20
+    },
+    {
+     "event_id": "576889864907427840",
+     "cutoff": 360,
+     "n_visible_units": 4,
+     "src_selected": 4,
+     "n_visible_nodes": 5
+    }
+   ],
+   "source_availability": {
+    "event_split_sha256": "f4a2a1cb5a2d81c84eb394fec45373b261c436cc43822a79d5c1a41dcbada385",
+    "availability_digest": "5be9dcaff0c4613b918b89ea27615ce1f18394a90632712125134f0b86688485",
+    "n_foundation_events": 80
+   },
+   "overlap_audit": {
+    "utility_train": 0,
+    "utility_dev": 0,
+    "utility_eval": 0
+   }
+  }
+ },
+ "overlap_audit": {
+  "maweibo": {
+   "utility_train": 0,
+   "utility_dev": 0,
+   "utility_eval": 0
+  },
+  "pheme": {
+   "utility_train": 0,
+   "utility_dev": 0,
+   "utility_eval": 0
+  }
+ }
+}
