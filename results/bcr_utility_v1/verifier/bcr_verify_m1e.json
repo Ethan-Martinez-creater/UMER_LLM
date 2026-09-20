@@ -251,7 +251,7 @@
   {
    "check": "m1e_m1_evidence_unchanged",
    "ok": true,
-   "detail": "36 M1 artifacts match their committed blobs at 41a9b7ebe9fa; no tracked changes",
+   "detail": "36 tracked M1 artifacts match their committed blobs at 375ea0ce6421; no tracked changes; 0 gitignored smoke files outside the frozen evidence",
    "pending": false
   },
   {

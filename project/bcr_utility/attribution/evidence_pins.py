@@ -41,17 +41,40 @@ def _git(repo_root, *args) -> str:
 
 
 def m1_artifact_paths(repo_root) -> list:
-    """Every tracked file under the M1 artifact root."""
+    """Every **git-tracked** file under the M1 artifact root.
+
+    Tracked files are the frozen evidence. Mock/smoke outputs are untracked
+    and gitignored on purpose; unexpected untracked files are caught
+    separately by :func:`m1_untracked_paths`.
+    """
     root = os.path.join(str(repo_root), P.RESULTS_ROOT, P.M1_DIRNAME)
     if not os.path.isdir(root):
         raise EvidencePinRefused(f"M1 artifact root missing: {root}")
-    paths = []
-    for dirpath, _dirs, files in os.walk(root):
-        for name in sorted(files):
-            full = os.path.join(dirpath, name)
-            rel = os.path.relpath(full, str(repo_root)).replace(os.sep, "/")
-            paths.append(rel)
+    out = _git(repo_root, "ls-files", "--",
+               f"{P.RESULTS_ROOT}/{P.M1_DIRNAME}")
+    paths = [line.strip() for line in out.splitlines() if line.strip()]
+    if not paths:
+        raise EvidencePinRefused(f"no tracked files under {root}")
     return sorted(paths)
+
+
+def m1_untracked_paths(repo_root) -> list:
+    """Untracked **and not ignored** files under the M1 root.
+
+    A non-empty result means a file appeared in the frozen-evidence tree
+    without being committed or declared ignorable (the smoke namespaces are
+    gitignored, so they never show up here).
+    """
+    out = _git(repo_root, "ls-files", "--others", "--exclude-standard",
+               "--", f"{P.RESULTS_ROOT}/{P.M1_DIRNAME}")
+    return sorted(line.strip() for line in out.splitlines() if line.strip())
+
+
+def m1_ignored_paths(repo_root) -> list:
+    """Gitignored files under the M1 root (the smoke namespaces)."""
+    out = _git(repo_root, "ls-files", "--others", "--ignored",
+               "--exclude-standard", "--", f"{P.RESULTS_ROOT}/{P.M1_DIRNAME}")
+    return sorted(line.strip() for line in out.splitlines() if line.strip())
 
 
 def _committed_blobs(repo_root, commit: str) -> dict:
@@ -100,6 +123,14 @@ def pin_m1_evidence(repo_root, commit: str = None) -> dict:
         problems.append(f"{len(extra)} committed M1 artifacts missing from "
                         f"the worktree: {extra[:3]}")
 
+    untracked = m1_untracked_paths(repo_root)
+    if untracked:
+        problems.append(
+            f"{len(untracked)} untracked, non-ignored files under the M1 "
+            f"root (not part of the frozen evidence and not declared "
+            f"ignorable): {untracked[:3]}")
+    ignored = m1_ignored_paths(repo_root)
+
     status = _git(repo_root, "status", "--porcelain", "--",
                   f"{P.RESULTS_ROOT}/{P.M1_DIRNAME}")
     tracked_changes = [line for line in status.splitlines()
@@ -128,6 +159,8 @@ def pin_m1_evidence(repo_root, commit: str = None) -> dict:
         "commit": commit,
         "n_artifacts": len(records),
         "artifacts": records,
+        "n_ignored_smoke_files": len(ignored),
+        "ignored_examples": ignored[:3],
         "m1_verdict": verdict.get("final_outcome"),
         "zero_touch_passed": verdict.get("zero_touch_passed"),
         "light_touch_passed": verdict.get("light_touch_passed"),

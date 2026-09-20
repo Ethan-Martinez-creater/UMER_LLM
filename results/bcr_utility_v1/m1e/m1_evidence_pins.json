@@ -1,5 +1,5 @@
 {
- "commit": "fef08cd581fab3b2208cc5b55c49cccb5e9915d4",
+ "commit": "375ea0ce6421c13b67a98306ca0b196a458403de",
  "n_artifacts": 36,
  "artifacts": {
   "results/bcr_utility_v1/m1/M1_REPORT.md": {
@@ -183,6 +183,8 @@
    "bytes": 141751
   }
  },
+ "n_ignored_smoke_files": 0,
+ "ignored_examples": [],
  "m1_verdict": "M1_CONDITIONAL_GO",
  "zero_touch_passed": false,
  "light_touch_passed": true,

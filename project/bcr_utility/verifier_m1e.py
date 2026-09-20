@@ -28,8 +28,10 @@ def _check_pins(report, repo_root):
         report.add("m1e_m1_evidence_unchanged", False, str(exc)[:300])
         return None
     report.add("m1e_m1_evidence_unchanged", True,
-               f"{pin['n_artifacts']} M1 artifacts match their committed "
-               f"blobs at {pin['commit'][:12]}; no tracked changes")
+               f"{pin['n_artifacts']} tracked M1 artifacts match their "
+               f"committed blobs at {pin['commit'][:12]}; no tracked changes; "
+               f"{pin.get('n_ignored_smoke_files', 0)} gitignored smoke files "
+               "outside the frozen evidence")
     report.add("m1e_m1_verdict_unchanged",
                pin["m1_verdict"] == P.M1E_EXPECTED_M1_VERDICT,
                f"final_outcome={pin['m1_verdict']}")
