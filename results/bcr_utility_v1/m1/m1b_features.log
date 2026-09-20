@@ -1,0 +1,50 @@
+=== M1-B start 2026年 09月 20日 星期日 10:43:57 CST HEAD=aba8d6db6dd5e2d38000da75ed3345f5a769e1f2 ===
+--- fingerprints ---
+[m1b] fingerprints frozen: 2a5d7cdd1c532c2b... (51076 B)
+[m1b] audit written: /data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/fingerprint_audit_full.json (823 B)
+{
+ "stage": "fingerprints",
+ "protocol": "bcr_v1",
+ "fingerprints": {
+  "fingerprints": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/fingerprints.json",
+   "bytes": 51076,
+   "sha256": "818f02d403da9876afb32611ebef39aebde826993d76f40dca66062d4fb1bd84"
+  },
+  "raw_vectors": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/raw_vectors.json",
+   "bytes": 200280,
+   "sha256": "1eac16341b5647d51c00a80691ea303d99ae3e924c5aa32e4532c194be778d9c"
+  },
+  "audit": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/fingerprint_audit.json",
+   "bytes": 982,
+   "sha256": "1372d4b19fbe7cd4db7cdbd7076bf31087f2ee727197a7a3cf4e1bdbd85de753"
+  },
+  "sha256": "2a5d7cdd1c532c2b34979edac90b7868b3c20c9d53e07076f4e03579f9c4afc5"
+ }
+}
+--- features maweibo 2026年 09月 20日 星期日 10:43:57 CST ---
+[m1b] maweibo: NLI MoritzLaurer/mDeBERTa-v3-base-mnli-xnli weights=aec70edcce71ae71... device=cuda
+[m1b] maweibo: 60/258 snapshots (56.0s)
+[m1b] maweibo: 120/258 snapshots (75.6s)
+[m1b] maweibo: 180/258 snapshots (92.8s)
+[m1b] maweibo: 240/258 snapshots (119.2s)
+[m1b] audit written: results/bcr_utility_v1/m1/features/feature_audit_maweibo.json (2766 B)
+{
+ "stage": "features",
+ "protocol": "bcr_v1"
+}
+--- features pheme 2026年 09月 20日 星期日 10:47:57 CST ---
+[m1b] pheme: NLI MoritzLaurer/mDeBERTa-v3-base-mnli-xnli weights=aec70edcce71ae71... device=cuda
+[m1b] pheme: 60/261 snapshots (8.9s)
+[m1b] pheme: 120/261 snapshots (11.2s)
+[m1b] pheme: 180/261 snapshots (13.5s)
+[m1b] pheme: 240/261 snapshots (15.9s)
+[m1b] audit written: results/bcr_utility_v1/m1/features/feature_audit_pheme.json (2757 B)
+{
+ "stage": "features",
+ "protocol": "bcr_v1"
+}
+merged feature_audit.json
+=== M1-B complete 2026年 09月 20日 星期日 10:48:20 CST ===

@@ -1,0 +1,10 @@
+{
+ "python": "3.11.13",
+ "torch": "2.7.1+cu128",
+ "transformers": "4.53.3",
+ "numpy": "1.26.4",
+ "device": "cpu (deterministic small-MLP training)",
+ "platform": "Linux-5.15.0-139-generic-x86_64-with-glibc2.31",
+ "fingerprints_sha256": "2a5d7cdd1c532c2b34979edac90b7868b3c20c9d53e07076f4e03579f9c4afc5",
+ "stage": "light_touch"
+}

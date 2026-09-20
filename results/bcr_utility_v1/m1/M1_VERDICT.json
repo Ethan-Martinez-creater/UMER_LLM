@@ -1,0 +1,112 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "m1c",
+ "zero_touch_passed": false,
+ "maweibo_gate": {
+  "dataset": "maweibo",
+  "decides_m1_gate": true,
+  "thresholds": {
+   "mean_delta_min": 0.03,
+   "ci_alpha": 0.05,
+   "positive_readers_min": 2,
+   "worst_reader_min": -0.05
+  },
+  "checks": {
+   "mean_delta_gte_0.03": false,
+   "ci_low_gt_0": false,
+   "positive_readers_gte_2": true,
+   "worst_reader_gte_-0.05": false
+  },
+  "aggregate": {
+   "mean_delta_macro_f1": -0.003817466138671242,
+   "ci_low": -0.0360152107222611,
+   "ci_high": 0.025488942216863285,
+   "iterations": 10000,
+   "seed": 7319,
+   "per_reader_delta": {
+    "qwen": 0.011227170967406136,
+    "mistral": -0.09775601924925567,
+    "internlm": 0.07507644986583581
+   },
+   "positive_readers": 2,
+   "worst_reader_delta": -0.09775601924925567
+  },
+  "passed": false,
+  "verdict_if_passed": "M1_FULL_GO",
+  "verdict_if_failed": "proceed_to_M1_D"
+ },
+ "pheme_diagnostic": {
+  "diagnostic_only": true,
+  "decides_m1_gate": false,
+  "aggregate": {
+   "mean_delta_macro_f1": 0.03122093957480877,
+   "ci_low": 0.0033205922267455024,
+   "ci_high": 0.062159414120206785,
+   "iterations": 10000,
+   "seed": 7319,
+   "per_reader_delta": {
+    "qwen": -0.0010870422771755428,
+    "mistral": 0.0390132717670508,
+    "internlm": 0.05573658923455105
+   },
+   "positive_readers": 2,
+   "worst_reader_delta": -0.0010870422771755428
+  }
+ },
+ "next": "M1_CONDITIONAL_GO",
+ "seconds": 374.4128701686859,
+ "light_touch_passed": true,
+ "light_touch_gate": {
+  "dataset": "maweibo",
+  "decides_m1_gate": true,
+  "thresholds": {
+   "mean_delta_min": 0.03,
+   "ci_alpha": 0.05,
+   "positive_readers_min": 2,
+   "worst_reader_min": -0.05
+  },
+  "checks": {
+   "mean_delta_gte_0.03": true,
+   "ci_low_gt_0": true,
+   "positive_readers_gte_2": true,
+   "worst_reader_gte_-0.05": true
+  },
+  "aggregate": {
+   "mean_delta_macro_f1": 0.06156053786651813,
+   "ci_low": 0.006803032636524084,
+   "ci_high": 0.10837213139348402,
+   "iterations": 10000,
+   "seed": 7319,
+   "per_reader_delta": {
+    "qwen": 0.12471127051595693,
+    "mistral": 0.04691478008799427,
+    "internlm": 0.013055562995603176
+   },
+   "positive_readers": 3,
+   "worst_reader_delta": 0.013055562995603176
+  },
+  "passed": true,
+  "verdict_if_passed": "M1_FULL_GO",
+  "verdict_if_failed": "proceed_to_M1_D"
+ },
+ "light_touch_pheme_diagnostic": {
+  "diagnostic_only": true,
+  "decides_m1_gate": false,
+  "aggregate": {
+   "mean_delta_macro_f1": -0.10631063603450437,
+   "ci_low": -0.13666415913643673,
+   "ci_high": -0.07591781089064337,
+   "iterations": 10000,
+   "seed": 7319,
+   "per_reader_delta": {
+    "qwen": -0.18718856489481528,
+    "mistral": 0.027531884428145942,
+    "internlm": -0.1592752276368438
+   },
+   "positive_readers": 1,
+   "worst_reader_delta": -0.18718856489481528
+  }
+ },
+ "final_outcome": "M1_CONDITIONAL_GO",
+ "seconds_light_touch": 338.55841088294983
+}

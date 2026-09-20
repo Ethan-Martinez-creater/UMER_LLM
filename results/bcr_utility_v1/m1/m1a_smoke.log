@@ -1,0 +1,22 @@
+HEAD=aba8d6db6dd5e2d38000da75ed3345f5a769e1f2
+start 2026年 09月 20日 星期日 10:33:20 CST
+[m1a] reader qwen identity None...
+{
+ "dataset": "maweibo",
+ "reader": "qwen",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses_smoke/probe_responses_maweibo_qwen.jsonl",
+ "rows_written": 8,
+ "rows_resumed": 0,
+ "rows_total": 8,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": null,
+ "seconds": 0.40028905868530273
+}
+[m1a] shard complete: False
+rc=2 2026年 09月 20日 星期日 10:33:48 CST
+总用量 16
+drwxrwxr-x 2 jyz jyz 4096 9月  20 10:33 .
+drwxrwxr-x 3 jyz jyz 4096 9月  20 10:31 ..
+-rw-rw-r-- 1 jyz jyz 5930 9月  20 10:33 probe_responses_maweibo_qwen.jsonl
+SMOKE_DONE

@@ -1,0 +1,33 @@
+{
+ "dataset": "maweibo",
+ "decides_m1_gate": true,
+ "thresholds": {
+  "mean_delta_min": 0.03,
+  "ci_alpha": 0.05,
+  "positive_readers_min": 2,
+  "worst_reader_min": -0.05
+ },
+ "checks": {
+  "mean_delta_gte_0.03": true,
+  "ci_low_gt_0": true,
+  "positive_readers_gte_2": true,
+  "worst_reader_gte_-0.05": true
+ },
+ "aggregate": {
+  "mean_delta_macro_f1": 0.06156053786651813,
+  "ci_low": 0.006803032636524084,
+  "ci_high": 0.10837213139348402,
+  "iterations": 10000,
+  "seed": 7319,
+  "per_reader_delta": {
+   "qwen": 0.12471127051595693,
+   "mistral": 0.04691478008799427,
+   "internlm": 0.013055562995603176
+  },
+  "positive_readers": 3,
+  "worst_reader_delta": 0.013055562995603176
+ },
+ "passed": true,
+ "verdict_if_passed": "M1_FULL_GO",
+ "verdict_if_failed": "proceed_to_M1_D"
+}

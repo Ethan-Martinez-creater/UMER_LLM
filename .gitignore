@@ -33,3 +33,7 @@ data_raw/
 
 # TC-DSCR local ops helpers (environment-specific)
 scripts/tcdscr_code/
+
+# BCR-Utility M1 smoke namespaces (mock readers, never formal)
+results/bcr_utility_v1/m1/probe_responses_smoke/
+results/bcr_utility_v1/m1/features_smoke/

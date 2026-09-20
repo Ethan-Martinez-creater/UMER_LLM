@@ -1,0 +1,193 @@
+{
+ "features": {
+  "maweibo": {
+   "schema": "bcr_m1_features_v1",
+   "protocol": "bcr_v1",
+   "dataset": "maweibo",
+   "n_atomic_keys": 2549,
+   "e0": {
+    "rows": 2549,
+    "unique_keys": 2549,
+    "parent_available_rows": 2549,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e0_maweibo.jsonl",
+    "bytes": 2118886,
+    "sha256": "f462533dbe4755c8d4c31e53d308b800af5753874cbd1c30fbc9da37da3abff5",
+    "features": [
+     "cos_reply_source",
+     "cos_parent_source",
+     "cos_reply_parent",
+     "src_relevance",
+     "src_rank_percentile",
+     "canonical_token_cost",
+     "reply_chars",
+     "parent_chars",
+     "combined_chars",
+     "elapsed_seconds",
+     "cutoff_minutes"
+    ],
+    "struct_features_b1_only": [
+     "depth_norm",
+     "child_count_norm",
+     "degree_norm",
+     "subtree_size_norm",
+     "sibling_count_norm",
+     "is_source_child",
+     "is_leaf",
+     "elapsed_norm",
+     "parent_lag_norm",
+     "arrival_rank"
+    ]
+   },
+   "e1": {
+    "rows": 2549,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e1_maweibo.jsonl",
+    "bytes": 1375353,
+    "sha256": "8663bc9acf9240ea5f33c61d21647941ba9ecfde95b3c94e66062174093d3b9a",
+    "features": [
+     "nli_source_reply_entailment",
+     "nli_source_reply_neutral",
+     "nli_source_reply_contradiction",
+     "nli_source_parent_entailment",
+     "nli_source_parent_neutral",
+     "nli_source_parent_contradiction",
+     "nli_reply_parent_entailment",
+     "nli_reply_parent_neutral",
+     "nli_reply_parent_contradiction"
+    ],
+    "extractor": {
+     "model_id": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+     "model_path": "/data/jyz/next/llm/model/mdeberta-v3-base-mnli-xnli",
+     "weight_hash": "aec70edcce71ae71978f49b49373d2d01cf8d045110f47490e22002e75caddf0",
+     "tokenizer_hash": "c95fe8b137b132cc1e52e25c67755bb59b663ebc8886f02184d39f9435fd5555",
+     "config_sha256": "4e4430c95100d613df80fa01276f231931e1b535557cf62fbb3cc50323e50cca",
+     "id2label": {
+      "0": "entailment",
+      "1": "neutral",
+      "2": "contradiction"
+     },
+     "device": "cuda"
+    }
+   },
+   "e2": {
+    "rows": 7647,
+    "per_reader": 2549,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e2_maweibo.jsonl",
+    "bytes": 1917146,
+    "sha256": "c12b6a6764661a4bbe4b7b4068585a8f88981a5b3783145595dc7ad0dc5b36a4",
+    "features": [
+     "reply_tokens",
+     "parent_tokens",
+     "unit_tokens",
+     "canonical_unit_tokens",
+     "reply_frac",
+     "unit_vs_canonical"
+    ],
+    "readers": [
+     "qwen",
+     "mistral",
+     "internlm"
+    ]
+   },
+   "seconds": 239.1114706993103,
+   "ok": true
+  },
+  "pheme": {
+   "schema": "bcr_m1_features_v1",
+   "protocol": "bcr_v1",
+   "dataset": "pheme",
+   "n_atomic_keys": 2107,
+   "e0": {
+    "rows": 2107,
+    "unique_keys": 2107,
+    "parent_available_rows": 2103,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e0_pheme.jsonl",
+    "bytes": 1751927,
+    "sha256": "943fce09697d0689a690ecaae36741d2954fd15315621d1fa50c28bf60039acf",
+    "features": [
+     "cos_reply_source",
+     "cos_parent_source",
+     "cos_reply_parent",
+     "src_relevance",
+     "src_rank_percentile",
+     "canonical_token_cost",
+     "reply_chars",
+     "parent_chars",
+     "combined_chars",
+     "elapsed_seconds",
+     "cutoff_minutes"
+    ],
+    "struct_features_b1_only": [
+     "depth_norm",
+     "child_count_norm",
+     "degree_norm",
+     "subtree_size_norm",
+     "sibling_count_norm",
+     "is_source_child",
+     "is_leaf",
+     "elapsed_norm",
+     "parent_lag_norm",
+     "arrival_rank"
+    ]
+   },
+   "e1": {
+    "rows": 2107,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e1_pheme.jsonl",
+    "bytes": 1134843,
+    "sha256": "7f99757438e0fe45750c25fcc1364fa5cb55d3ae1660d8c2ed07074e53b214b5",
+    "features": [
+     "nli_source_reply_entailment",
+     "nli_source_reply_neutral",
+     "nli_source_reply_contradiction",
+     "nli_source_parent_entailment",
+     "nli_source_parent_neutral",
+     "nli_source_parent_contradiction",
+     "nli_reply_parent_entailment",
+     "nli_reply_parent_neutral",
+     "nli_reply_parent_contradiction"
+    ],
+    "extractor": {
+     "model_id": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+     "model_path": "/data/jyz/next/llm/model/mdeberta-v3-base-mnli-xnli",
+     "weight_hash": "aec70edcce71ae71978f49b49373d2d01cf8d045110f47490e22002e75caddf0",
+     "tokenizer_hash": "c95fe8b137b132cc1e52e25c67755bb59b663ebc8886f02184d39f9435fd5555",
+     "config_sha256": "4e4430c95100d613df80fa01276f231931e1b535557cf62fbb3cc50323e50cca",
+     "id2label": {
+      "0": "entailment",
+      "1": "neutral",
+      "2": "contradiction"
+     },
+     "device": "cuda"
+    }
+   },
+   "e2": {
+    "rows": 6321,
+    "per_reader": 2107,
+    "ok": true,
+    "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e2_pheme.jsonl",
+    "bytes": 1591352,
+    "sha256": "dd6818eaf8a6aa4c10aacb7909db7c921e727adff03c2c7b7dc74aaeea4f28ba",
+    "features": [
+     "reply_tokens",
+     "parent_tokens",
+     "unit_tokens",
+     "canonical_unit_tokens",
+     "reply_frac",
+     "unit_vs_canonical"
+    ],
+    "readers": [
+     "qwen",
+     "mistral",
+     "internlm"
+    ]
+   },
+   "seconds": 21.787675142288208,
+   "ok": true
+  }
+ },
+ "ok": true
+}

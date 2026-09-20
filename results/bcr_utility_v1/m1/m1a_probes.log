@@ -1,0 +1,147 @@
+=== M1-A start 2026年 09月 20日 星期日 10:36:00 CST HEAD=aba8d6db6dd5e2d38000da75ed3345f5a769e1f2 ===
+--- shard maweibo/qwen 2026年 09月 20日 星期日 10:36:00 CST ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:22<01:31, 22.85s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:45<01:08, 22.81s/it]Loading checkpoint shards:  60%|██████    | 3/5 [01:08<00:45, 22.73s/it]Loading checkpoint shards:  80%|████████  | 4/5 [01:26<00:20, 20.99s/it]Loading checkpoint shards: 100%|██████████| 5/5 [01:33<00:00, 16.00s/it]Loading checkpoint shards: 100%|██████████| 5/5 [01:33<00:00, 18.75s/it]
+[m1a] reader qwen identity 3fc8ff4659f95020...
+[m1a] maweibo/qwen 6/36 events, 24 scored, 0 resumed, 6.2s
+[m1a] maweibo/qwen 12/36 events, 48 scored, 0 resumed, 11.0s
+[m1a] maweibo/qwen 18/36 events, 72 scored, 0 resumed, 16.0s
+[m1a] maweibo/qwen 24/36 events, 96 scored, 0 resumed, 20.0s
+[m1a] maweibo/qwen 30/36 events, 120 scored, 0 resumed, 29.1s
+[m1a] maweibo/qwen 36/36 events, 144 scored, 0 resumed, 34.8s
+{
+ "dataset": "maweibo",
+ "reader": "qwen",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_qwen.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "3fc8ff4659f9502077ad4bade9c547fd4f5facf7e20594d1a0498079b927704d",
+ "seconds": 34.79070210456848
+}
+[m1a] shard complete: True
+--- shard maweibo/qwen done rc=0 2026年 09月 20日 星期日 10:38:37 CST ---
+--- shard maweibo/mistral 2026年 09月 20日 星期日 10:38:37 CST ---
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.53it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.81it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.78it/s]
+[m1a] reader mistral identity 6d521c764a7812f7...
+[m1a] maweibo/mistral 6/36 events, 24 scored, 0 resumed, 4.4s
+[m1a] maweibo/mistral 12/36 events, 48 scored, 0 resumed, 9.7s
+[m1a] maweibo/mistral 18/36 events, 72 scored, 0 resumed, 15.3s
+[m1a] maweibo/mistral 24/36 events, 96 scored, 0 resumed, 19.7s
+[m1a] maweibo/mistral 30/36 events, 120 scored, 0 resumed, 29.6s
+[m1a] maweibo/mistral 36/36 events, 144 scored, 0 resumed, 35.9s
+{
+ "dataset": "maweibo",
+ "reader": "mistral",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_mistral.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "6d521c764a7812f75b5a48313c8444d320453b80cf74cc78140e6f31672f6d78",
+ "seconds": 35.875372886657715
+}
+[m1a] shard complete: True
+--- shard maweibo/mistral done rc=0 2026年 09月 20日 星期日 10:39:44 CST ---
+--- shard maweibo/internlm 2026年 09月 20日 星期日 10:39:44 CST ---
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.36s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:50<00:00, 27.75s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:50<00:00, 25.45s/it]
+[m1a] reader internlm identity c023219fa6b4af48...
+[m1a] maweibo/internlm 6/36 events, 24 scored, 0 resumed, 4.3s
+[m1a] maweibo/internlm 12/36 events, 48 scored, 0 resumed, 9.4s
+[m1a] maweibo/internlm 18/36 events, 72 scored, 0 resumed, 14.9s
+[m1a] maweibo/internlm 24/36 events, 96 scored, 0 resumed, 19.1s
+[m1a] maweibo/internlm 30/36 events, 120 scored, 0 resumed, 28.5s
+[m1a] maweibo/internlm 36/36 events, 144 scored, 0 resumed, 34.8s
+{
+ "dataset": "maweibo",
+ "reader": "internlm",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_internlm.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "c023219fa6b4af480a9c06e4b2521a95e1d218ae53008960e2d4e9dbb419295d",
+ "seconds": 34.781814098358154
+}
+[m1a] shard complete: True
+--- shard maweibo/internlm done rc=0 2026年 09月 20日 星期日 10:41:37 CST ---
+--- shard pheme/qwen 2026年 09月 20日 星期日 10:41:37 CST ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:05,  1.25s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.67it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  2.01it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:02<00:00,  2.71it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:02<00:00,  1.95it/s]
+[m1a] reader qwen identity 3fc8ff4659f95020...
+[m1a] pheme/qwen 6/36 events, 24 scored, 0 resumed, 1.9s
+[m1a] pheme/qwen 12/36 events, 48 scored, 0 resumed, 4.4s
+[m1a] pheme/qwen 18/36 events, 72 scored, 0 resumed, 7.0s
+[m1a] pheme/qwen 24/36 events, 96 scored, 0 resumed, 10.1s
+[m1a] pheme/qwen 30/36 events, 120 scored, 0 resumed, 13.4s
+[m1a] pheme/qwen 36/36 events, 144 scored, 0 resumed, 16.1s
+{
+ "dataset": "pheme",
+ "reader": "qwen",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_qwen.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "3fc8ff4659f9502077ad4bade9c547fd4f5facf7e20594d1a0498079b927704d",
+ "seconds": 16.058104276657104
+}
+[m1a] shard complete: True
+--- shard pheme/qwen done rc=0 2026年 09月 20日 星期日 10:42:02 CST ---
+--- shard pheme/mistral 2026年 09月 20日 星期日 10:42:02 CST ---
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  2.09it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:00<00:00,  2.09it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.20it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.17it/s]
+[m1a] reader mistral identity 6d521c764a7812f7...
+[m1a] pheme/mistral 6/36 events, 24 scored, 0 resumed, 1.9s
+[m1a] pheme/mistral 12/36 events, 48 scored, 0 resumed, 4.3s
+[m1a] pheme/mistral 18/36 events, 72 scored, 0 resumed, 6.8s
+[m1a] pheme/mistral 24/36 events, 96 scored, 0 resumed, 9.9s
+[m1a] pheme/mistral 30/36 events, 120 scored, 0 resumed, 13.1s
+[m1a] pheme/mistral 36/36 events, 144 scored, 0 resumed, 15.8s
+{
+ "dataset": "pheme",
+ "reader": "mistral",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_mistral.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "6d521c764a7812f75b5a48313c8444d320453b80cf74cc78140e6f31672f6d78",
+ "seconds": 15.77589750289917
+}
+[m1a] shard complete: True
+--- shard pheme/mistral done rc=0 2026年 09月 20日 星期日 10:42:27 CST ---
+--- shard pheme/internlm 2026年 09月 20日 星期日 10:42:27 CST ---
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.13it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.12it/s]
+[m1a] reader internlm identity c023219fa6b4af48...
+[m1a] pheme/internlm 6/36 events, 24 scored, 0 resumed, 2.2s
+[m1a] pheme/internlm 12/36 events, 48 scored, 0 resumed, 5.0s
+[m1a] pheme/internlm 18/36 events, 72 scored, 0 resumed, 8.0s
+[m1a] pheme/internlm 24/36 events, 96 scored, 0 resumed, 11.6s
+[m1a] pheme/internlm 30/36 events, 120 scored, 0 resumed, 15.4s
+[m1a] pheme/internlm 36/36 events, 144 scored, 0 resumed, 18.4s
+{
+ "dataset": "pheme",
+ "reader": "internlm",
+ "shard": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_internlm.jsonl",
+ "rows_written": 144,
+ "rows_resumed": 0,
+ "rows_total": 144,
+ "expected_rows": 144,
+ "manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "reader_identity_hash": "c023219fa6b4af480a9c06e4b2521a95e1d218ae53008960e2d4e9dbb419295d",
+ "seconds": 18.448116302490234
+}
+[m1a] shard complete: True
+--- shard pheme/internlm done rc=0 2026年 09月 20日 星期日 10:42:54 CST ---
+=== M1-A complete 2026年 09月 20日 星期日 10:42:54 CST ===
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_internlm.jsonl
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_mistral.jsonl
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_maweibo_qwen.jsonl
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_internlm.jsonl
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_mistral.jsonl
+   144 results/bcr_utility_v1/m1/probe_responses/probe_responses_pheme_qwen.jsonl
+   864 总用量

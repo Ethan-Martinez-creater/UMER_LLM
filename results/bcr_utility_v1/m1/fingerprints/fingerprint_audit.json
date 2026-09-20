@@ -1,0 +1,50 @@
+{
+ "schema": "bcr_m1_fingerprint_v1",
+ "probe_manifest_sha256": "48fb3ce44e27330667afedd1c6db1f0aa9a91d72c2cd04c956f7b414ac6c249c",
+ "shard_rows": {
+  "maweibo/qwen": 144,
+  "maweibo/mistral": 144,
+  "maweibo/internlm": 144,
+  "pheme/qwen": 144,
+  "pheme/mistral": 144,
+  "pheme/internlm": 144
+ },
+ "response_audit": {
+  "n_rows": 864,
+  "expected_rows": 864,
+  "per_reader_counts": {
+   "qwen": 288,
+   "mistral": 288,
+   "internlm": 288
+  },
+  "per_reader_expected": 288,
+  "duplicates": 0,
+  "missing": [],
+  "extra": [],
+  "model_ids": {
+   "qwen": [
+    "Qwen/Qwen3-8B"
+   ],
+   "mistral": [
+    "mistralai/Mistral-7B-Instruct-v0.3"
+   ],
+   "internlm": [
+    "internlm/internlm3-8b-instruct"
+   ]
+  },
+  "problems": [],
+  "ok": true
+ },
+ "fingerprints_sha256": "2a5d7cdd1c532c2b34979edac90b7868b3c20c9d53e07076f4e03579f9c4afc5",
+ "forbidden_inputs": [
+  "utility",
+  "sign",
+  "gold",
+  "label",
+  "helpful",
+  "harmful",
+  "correct",
+  "reader_id_embedding"
+ ],
+ "ok": true
+}

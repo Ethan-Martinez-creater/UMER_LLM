@@ -1,0 +1,278 @@
+=== M1-D E3 start 2026年 09月 20日 星期日 11:10:19 CST HEAD=86a168efde505397ceca8414a22d742992f672f9 ===
+--- e3 maweibo/qwen 2026年 09月 20日 星期日 11:10:19 CST ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.54it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:01,  2.65it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:01<00:00,  2.78it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:01<00:00,  2.90it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.77it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.24it/s]
+[m1d] maweibo/qwen 20/258 snapshots, 198 rows (46.5s)
+[m1d] maweibo/qwen 40/258 snapshots, 433 rows (77.0s)
+[m1d] maweibo/qwen 60/258 snapshots, 635 rows (96.3s)
+[m1d] maweibo/qwen 80/258 snapshots, 780 rows (112.1s)
+[m1d] maweibo/qwen 100/258 snapshots, 959 rows (130.4s)
+[m1d] maweibo/qwen 120/258 snapshots, 1127 rows (150.1s)
+[m1d] maweibo/qwen 140/258 snapshots, 1288 rows (166.4s)
+[m1d] maweibo/qwen 160/258 snapshots, 1471 rows (183.8s)
+[m1d] maweibo/qwen 180/258 snapshots, 1781 rows (208.1s)
+[m1d] maweibo/qwen 200/258 snapshots, 2003 rows (232.3s)
+[m1d] maweibo/qwen 220/258 snapshots, 2218 rows (253.8s)
+[m1d] maweibo/qwen 240/258 snapshots, 2412 rows (274.3s)
+{
+ "dataset": "maweibo",
+ "reader": "qwen",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "rows_written": 2549,
+ "rows_skipped": 0,
+ "seconds": 388.64526200294495
+}
+Traceback (most recent call last):
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/bcr_extract_features.py", line 461, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/bcr_extract_features.py", line 435, in main
+    audit = run_e3_validate(dataset, paths, args.repo_root)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/scripts/bcr_extract_features.py", line 415, in run_e3_validate
+    audit = cf.validate_e3_rows(rows, expected_keys)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jyz/next/llm/cr_tser_ws/project/bcr_utility/features/compatibility_features.py", line 106, in validate_e3_rows
+    raise CompatibilityRefused("; ".join(problems[:8]))
+bcr_utility.features.compatibility_features.CompatibilityRefused: 5098 missing: [('maweibo|11084174628|15|5609842908578051902', 'internlm'), ('maweibo|11084174628|15|5609842908578051902', 'mistral'), ('maweibo|11084174628|15|5609843093094967915', 'internlm')]
+=== M1-D E3 start 2026年 09月 20日 星期日 11:23:25 CST HEAD=13f72dc5ba40a867ed6efce2793e7727641c727b ===
+--- e3 maweibo/qwen 2026年 09月 20日 星期日 11:23:25 CST ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.37it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:01,  2.50it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:01<00:00,  2.63it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:01<00:00,  2.83it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.58it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.08it/s]
+[m1d] maweibo/qwen 20/258 snapshots, 0 rows (38.3s)
+[m1d] maweibo/qwen 40/258 snapshots, 0 rows (56.0s)
+[m1d] maweibo/qwen 60/258 snapshots, 0 rows (63.6s)
+[m1d] maweibo/qwen 80/258 snapshots, 0 rows (71.2s)
+[m1d] maweibo/qwen 100/258 snapshots, 0 rows (79.0s)
+[m1d] maweibo/qwen 120/258 snapshots, 0 rows (88.4s)
+[m1d] maweibo/qwen 140/258 snapshots, 0 rows (94.5s)
+[m1d] maweibo/qwen 160/258 snapshots, 0 rows (101.8s)
+[m1d] maweibo/qwen 180/258 snapshots, 0 rows (110.6s)
+[m1d] maweibo/qwen 200/258 snapshots, 0 rows (122.6s)
+[m1d] maweibo/qwen 220/258 snapshots, 0 rows (132.3s)
+[m1d] maweibo/qwen 240/258 snapshots, 0 rows (141.8s)
+{
+ "dataset": "maweibo",
+ "reader": "qwen",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "rows_written": 0,
+ "rows_skipped": 2549,
+ "seconds": 248.13293647766113
+}
+{
+ "dataset": "maweibo",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "bytes": 837983,
+ "sha256": "87e11cdaea570aace50b3f4b272aae3269a5576785ec8d5b66e2ab3a1e36ee8e",
+ "readers": [
+  "qwen"
+ ],
+ "rows": 2549,
+ "per_reader": 2549,
+ "ok": true
+}
+--- e3 maweibo/mistral 2026年 09月 20日 星期日 11:27:34 CST ---
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  2.10it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:00<00:00,  2.03it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.03it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.04it/s]
+[m1d] maweibo/mistral 20/258 snapshots, 198 rows (50.1s)
+[m1d] maweibo/mistral 40/258 snapshots, 433 rows (80.9s)
+[m1d] maweibo/mistral 60/258 snapshots, 635 rows (102.0s)
+[m1d] maweibo/mistral 80/258 snapshots, 780 rows (118.7s)
+[m1d] maweibo/mistral 100/258 snapshots, 959 rows (138.5s)
+[m1d] maweibo/mistral 120/258 snapshots, 1127 rows (159.6s)
+[m1d] maweibo/mistral 140/258 snapshots, 1288 rows (176.9s)
+[m1d] maweibo/mistral 160/258 snapshots, 1471 rows (195.2s)
+[m1d] maweibo/mistral 180/258 snapshots, 1781 rows (218.6s)
+[m1d] maweibo/mistral 200/258 snapshots, 2003 rows (244.6s)
+[m1d] maweibo/mistral 220/258 snapshots, 2218 rows (267.0s)
+[m1d] maweibo/mistral 240/258 snapshots, 2412 rows (288.7s)
+{
+ "dataset": "maweibo",
+ "reader": "mistral",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "rows_written": 2549,
+ "rows_skipped": 0,
+ "seconds": 404.440966129303
+}
+{
+ "dataset": "maweibo",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "bytes": 1704048,
+ "sha256": "f03e0788719be969e1b7d2db4fafb71bccf914f81d0dceccf57d23e1cad2887a",
+ "readers": [
+  "mistral"
+ ],
+ "rows": 2549,
+ "per_reader": 2549,
+ "ok": true
+}
+--- e3 maweibo/internlm 2026年 09月 20日 星期日 11:34:19 CST ---
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.18s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.09it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.04it/s]
+[m1d] maweibo/internlm 20/258 snapshots, 198 rows (48.5s)
+[m1d] maweibo/internlm 40/258 snapshots, 433 rows (80.4s)
+[m1d] maweibo/internlm 60/258 snapshots, 635 rows (101.2s)
+[m1d] maweibo/internlm 80/258 snapshots, 780 rows (117.8s)
+[m1d] maweibo/internlm 100/258 snapshots, 959 rows (137.3s)
+[m1d] maweibo/internlm 120/258 snapshots, 1127 rows (158.5s)
+[m1d] maweibo/internlm 140/258 snapshots, 1288 rows (176.1s)
+[m1d] maweibo/internlm 160/258 snapshots, 1471 rows (194.7s)
+[m1d] maweibo/internlm 180/258 snapshots, 1781 rows (220.7s)
+[m1d] maweibo/internlm 200/258 snapshots, 2003 rows (246.6s)
+[m1d] maweibo/internlm 220/258 snapshots, 2218 rows (269.5s)
+[m1d] maweibo/internlm 240/258 snapshots, 2412 rows (291.5s)
+{
+ "dataset": "maweibo",
+ "reader": "internlm",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "rows_written": 2549,
+ "rows_skipped": 0,
+ "seconds": 406.44175362586975
+}
+{
+ "dataset": "maweibo",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "bytes": 2551410,
+ "sha256": "8cf80e634b94707b1f85134430e3ba64343efbbef50166729306a8fabad0baa2",
+ "readers": [
+  "internlm"
+ ],
+ "rows": 2549,
+ "per_reader": 2549,
+ "ok": true
+}
+--- e3 validate maweibo 2026年 09月 20日 星期日 11:41:06 CST ---
+{
+ "dataset": "maweibo",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_maweibo.jsonl",
+ "bytes": 2551410,
+ "sha256": "8cf80e634b94707b1f85134430e3ba64343efbbef50166729306a8fabad0baa2",
+ "readers": [
+  "qwen",
+  "mistral",
+  "internlm"
+ ],
+ "rows": 7647,
+ "per_reader": 2549,
+ "ok": true
+}
+--- e3 pheme/qwen 2026年 09月 20日 星期日 11:41:06 CST ---
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:01,  2.59it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:01,  2.76it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:01<00:00,  2.86it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:01<00:00,  3.04it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.94it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:01<00:00,  3.37it/s]
+[m1d] pheme/qwen 20/261 snapshots, 126 rows (16.9s)
+[m1d] pheme/qwen 40/261 snapshots, 358 rows (31.2s)
+[m1d] pheme/qwen 60/261 snapshots, 506 rows (41.2s)
+[m1d] pheme/qwen 80/261 snapshots, 652 rows (51.6s)
+[m1d] pheme/qwen 100/261 snapshots, 776 rows (60.2s)
+[m1d] pheme/qwen 120/261 snapshots, 944 rows (71.5s)
+[m1d] pheme/qwen 140/261 snapshots, 1123 rows (83.6s)
+[m1d] pheme/qwen 160/261 snapshots, 1290 rows (94.5s)
+[m1d] pheme/qwen 180/261 snapshots, 1450 rows (105.2s)
+[m1d] pheme/qwen 200/261 snapshots, 1617 rows (116.5s)
+[m1d] pheme/qwen 220/261 snapshots, 1780 rows (127.3s)
+[m1d] pheme/qwen 240/261 snapshots, 1957 rows (139.0s)
+[m1d] pheme/qwen 260/261 snapshots, 2105 rows (148.9s)
+{
+ "dataset": "pheme",
+ "reader": "qwen",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "rows_written": 2107,
+ "rows_skipped": 0,
+ "seconds": 149.0956370830536
+}
+{
+ "dataset": "pheme",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "bytes": 695039,
+ "sha256": "e2d8546e852c682bc60cc8bd21e4a4b15c092a4a2b8cc765625d90dc8e8dccba",
+ "readers": [
+  "qwen"
+ ],
+ "rows": 2107,
+ "per_reader": 2107,
+ "ok": true
+}
+--- e3 pheme/mistral 2026年 09月 20日 星期日 11:43:36 CST ---
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:00,  2.11it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:00<00:00,  2.11it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.21it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.18it/s]
+[m1d] pheme/mistral 20/261 snapshots, 126 rows (16.0s)
+[m1d] pheme/mistral 40/261 snapshots, 358 rows (28.9s)
+[m1d] pheme/mistral 60/261 snapshots, 506 rows (37.9s)
+[m1d] pheme/mistral 80/261 snapshots, 652 rows (47.4s)
+[m1d] pheme/mistral 100/261 snapshots, 776 rows (55.1s)
+[m1d] pheme/mistral 120/261 snapshots, 944 rows (65.3s)
+[m1d] pheme/mistral 140/261 snapshots, 1123 rows (76.3s)
+[m1d] pheme/mistral 160/261 snapshots, 1290 rows (86.3s)
+[m1d] pheme/mistral 180/261 snapshots, 1450 rows (96.0s)
+[m1d] pheme/mistral 200/261 snapshots, 1617 rows (106.2s)
+[m1d] pheme/mistral 220/261 snapshots, 1780 rows (116.0s)
+[m1d] pheme/mistral 240/261 snapshots, 1957 rows (126.7s)
+[m1d] pheme/mistral 260/261 snapshots, 2105 rows (135.6s)
+{
+ "dataset": "pheme",
+ "reader": "mistral",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "rows_written": 2107,
+ "rows_skipped": 0,
+ "seconds": 135.77072405815125
+}
+{
+ "dataset": "pheme",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "bytes": 1415428,
+ "sha256": "03d956687624d7bf52395a3b3cb9da20a998f7c6cdc4d342c6ff66057a817fb0",
+ "readers": [
+  "mistral"
+ ],
+ "rows": 2107,
+ "per_reader": 2107,
+ "ok": true
+}
+--- e3 pheme/internlm 2026年 09月 20日 星期日 11:45:53 CST ---
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.23it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:01<00:00,  1.21it/s]
+[m1d] pheme/internlm 20/261 snapshots, 126 rows (17.9s)
+[m1d] pheme/internlm 40/261 snapshots, 358 rows (33.4s)
+[m1d] pheme/internlm 60/261 snapshots, 506 rows (44.2s)
+[m1d] pheme/internlm 80/261 snapshots, 652 rows (55.5s)
+[m1d] pheme/internlm 100/261 snapshots, 776 rows (64.8s)
+[m1d] pheme/internlm 120/261 snapshots, 944 rows (77.0s)
+[m1d] pheme/internlm 140/261 snapshots, 1123 rows (90.1s)
+[m1d] pheme/internlm 160/261 snapshots, 1290 rows (102.0s)
+[m1d] pheme/internlm 180/261 snapshots, 1450 rows (113.5s)
+[m1d] pheme/internlm 200/261 snapshots, 1617 rows (125.6s)
+[m1d] pheme/internlm 220/261 snapshots, 1780 rows (137.3s)
+[m1d] pheme/internlm 240/261 snapshots, 1957 rows (150.0s)
+[m1d] pheme/internlm 260/261 snapshots, 2105 rows (160.7s)
+{
+ "dataset": "pheme",
+ "reader": "internlm",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "rows_written": 2107,
+ "rows_skipped": 0,
+ "seconds": 160.90265655517578
+}
+{
+ "dataset": "pheme",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "bytes": 2116331,
+ "sha256": "4491ff3692669513f3d724eaae927fd9081a84dc6b3db727cd24d162abe5c111",
+ "readers": [
+  "internlm"
+ ],
+ "rows": 2107,
+ "per_reader": 2107,
+ "ok": true
+}
+--- e3 validate pheme 2026年 09月 20日 星期日 11:48:34 CST ---
+{
+ "dataset": "pheme",
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/features/e3_pheme.jsonl",
+ "bytes": 2116331,
+ "sha256": "4491ff3692669513f3d724eaae927fd9081a84dc6b3db727cd24d162abe5c111",
+ "readers": [
+  "qwen",
+  "mistral",
+  "internlm"
+ ],
+ "rows": 6321,
+ "per_reader": 2107,
+ "ok": true
+}
+=== M1-D E3 complete 2026年 09月 20日 星期日 11:48:34 CST ===
+   7647 results/bcr_utility_v1/m1/features/e3_maweibo.jsonl
+   6321 results/bcr_utility_v1/m1/features/e3_pheme.jsonl
+  13968 总用量

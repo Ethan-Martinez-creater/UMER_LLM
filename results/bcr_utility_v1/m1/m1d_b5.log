@@ -1,0 +1,61 @@
+=== M1-D B5 start 2026年 09月 20日 星期日 11:50:55 CST HEAD=13f72dc5ba40a867ed6efce2793e7727641c727b ===
+[m1d] maweibo: 2549 atomic keys, 2549 feature rows, models=('B0_evidence_only', 'B1_structure_time_control', 'B5_light_touch_bcr') (0.1s)
+[m1d] maweibo/hold=qwen/B0_evidence_only: macro_f1=0.2288 (178.3s)
+[m1d] maweibo/hold=qwen/B1_structure_time_control: macro_f1=0.2530 (178.3s)
+[m1d] maweibo/hold=qwen/B5_light_touch_bcr: macro_f1=0.3535 (178.3s)
+[m1d] maweibo/hold=qwen/B3_nearest_reader_transfer: macro_f1=0.3956 (178.3s)
+[m1d] maweibo/hold=mistral/B0_evidence_only: macro_f1=0.2626 (178.3s)
+[m1d] maweibo/hold=mistral/B1_structure_time_control: macro_f1=0.2823 (178.3s)
+[m1d] maweibo/hold=mistral/B5_light_touch_bcr: macro_f1=0.3095 (178.3s)
+[m1d] maweibo/hold=mistral/B3_nearest_reader_transfer: macro_f1=0.3959 (178.3s)
+[m1d] maweibo/hold=internlm/B0_evidence_only: macro_f1=0.2173 (178.3s)
+[m1d] maweibo/hold=internlm/B1_structure_time_control: macro_f1=0.2367 (178.3s)
+[m1d] maweibo/hold=internlm/B5_light_touch_bcr: macro_f1=0.2303 (178.3s)
+[m1d] maweibo/hold=internlm/B3_nearest_reader_transfer: macro_f1=0.3959 (178.3s)
+[m1d] maweibo: mean_delta=0.0616 CI=[0.0068, 0.1084] positive=3/3 worst=0.0131
+[m1d] pheme: 2107 atomic keys, 2107 feature rows, models=('B0_evidence_only', 'B1_structure_time_control', 'B5_light_touch_bcr') (0.1s)
+[m1d] pheme/hold=qwen/B0_evidence_only: macro_f1=0.2691 (160.2s)
+[m1d] pheme/hold=qwen/B1_structure_time_control: macro_f1=0.3797 (160.2s)
+[m1d] pheme/hold=qwen/B5_light_touch_bcr: macro_f1=0.0819 (160.2s)
+[m1d] pheme/hold=qwen/B3_nearest_reader_transfer: macro_f1=0.3618 (160.2s)
+[m1d] pheme/hold=mistral/B0_evidence_only: macro_f1=0.1791 (160.2s)
+[m1d] pheme/hold=mistral/B1_structure_time_control: macro_f1=0.2702 (160.2s)
+[m1d] pheme/hold=mistral/B5_light_touch_bcr: macro_f1=0.2066 (160.2s)
+[m1d] pheme/hold=mistral/B3_nearest_reader_transfer: macro_f1=0.2761 (160.2s)
+[m1d] pheme/hold=internlm/B0_evidence_only: macro_f1=0.2937 (160.2s)
+[m1d] pheme/hold=internlm/B1_structure_time_control: macro_f1=0.2964 (160.2s)
+[m1d] pheme/hold=internlm/B5_light_touch_bcr: macro_f1=0.1344 (160.2s)
+[m1d] pheme/hold=internlm/B3_nearest_reader_transfer: macro_f1=0.2761 (160.2s)
+[m1d] pheme: mean_delta=-0.1063 CI=[-0.1367, -0.0759] positive=1/3 worst=-0.1872
+{
+ "stage": "light_touch",
+ "gate_passed": true,
+ "final_outcome": "M1_CONDITIONAL_GO",
+ "next": "M1_CONDITIONAL_GO",
+ "evaluation": {
+  "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/evaluation/evaluation_light_touch.json",
+  "bytes": 1717715,
+  "sha256": "2535e3dfc55b2e38bc446f3b91226426517c6663d52ef8742a9974d0a6c0b8fe"
+ },
+ "gate_file": {
+  "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/evaluation/gate_light_touch.json",
+  "bytes": 782,
+  "sha256": "cddcfc610d41257f4b898f8f346f381387f82d46ad5a0bc1b6d260ae601f5080"
+ },
+ "predictions": {
+  "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/evaluation/predictions_light_touch.jsonl",
+  "bytes": 6422844,
+  "sha256": "d0c6f9b9671a9d8fd92861ea444882afa6172130d79d887f285f0cfea56e9897"
+ },
+ "verdict_file": {
+  "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/M1_VERDICT.json",
+  "bytes": 2881,
+  "sha256": "3fea3fbcf4883255f58b1d32b54d48f6fef2cd4025701388aebfd8fafff69746"
+ },
+ "environment": {
+  "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/environment.json",
+  "bytes": 329,
+  "sha256": "7019b2586107ec7ff9bde871e7fe72acb94e0de51dbcdd085482af00a7f7cc22"
+ }
+}
+=== M1-D B5 complete rc=0 2026年 09月 20日 星期日 11:56:34 CST ===

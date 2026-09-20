@@ -1,0 +1,144 @@
+{
+ "protocol": "bcr_v1",
+ "mode": "m0",
+ "issues": [],
+ "pending": [],
+ "n_issues": 0,
+ "n_pending": 0,
+ "checks": [
+  {
+   "check": "bcr_protocol_frozen",
+   "ok": true,
+   "detail": "{\"atomic_intervention_type\": \"I1_atomic\", \"baseline_commit\": \"518a821d8d839fb7857be99acb91fde71b80c846\", \"bootstrap_iterations\": 10000, \"bootstrap_seed\": 7319, \"bootstrap_unit\": \"event\", \"cutoffs_min\": [15, 60, 360], \"datasets\": [\"maweibo\", \"pheme\"], \"frozen_atomic_keys\": {\"maweibo\": 2549, \"pheme\": 2107}, \"historical_results_root\": \"results/cr_tser_v2r1\", \"non_probe_splits\": [\"utility_train\", \"utility_dev\", \"utility_eval\"], \"non_supervision_intervention_types\": [\"I2_parent_child\", \"I3_matched_nonadjacent\", \"I4_subtree\", \"I5_matched_disconnected\"], \"primary_dataset\": \"maweibo\", \"probe_contexts\": [\"P0\", \"P1\", \"P2\", \"P3\"], \"probe_events_per_cutoff\": 12, \"probe_events_per_dataset\": 36, \"probe_items_total\": 72, \"probe_seed\": 7319, \"probe_source_split\": \"foundation_train\", \"protocol_version\": \"bcr_v1\", \"reader_keys\": [\"qwen\", \"mistral\", \"internlm\"], \"reader_model_ids\": {\"internlm\": \"internlm/internlm3-8b-instruct\", \"mistral\": \"mistralai/Mistral-7B-Instruct-v0.3\", \"qwen\": \"Qwen/Qwen3-8B\"}, \"results_root\": \"results/bcr_utility_v1\", \"secondary_dataset\": \"pheme\", \"seed\": 7319, \"sign_classes\": [\"HELPFUL\", \"NEUTRAL\", \"HARMFUL\"], \"utility_threshold\": 0.05}",
+   "pending": false
+  },
+  {
+   "check": "bcr_inherited_constants_agree_with_cr_tser",
+   "ok": true,
+   "detail": "utility threshold, cutoffs and reader panel are identical to the frozen CR-TSER pilot",
+   "pending": false
+  },
+  {
+   "check": "bcr_does_not_inherit_structured_interaction",
+   "ok": true,
+   "detail": "BCR supervises only I1_atomic; I2-I5 are named as non-supervision",
+   "pending": false
+  },
+  {
+   "check": "historical_identity_present",
+   "ok": true,
+   "detail": "historical_identity.json",
+   "pending": false
+  },
+  {
+   "check": "historical_identity_protocol",
+   "ok": true,
+   "detail": "protocol=bcr_v1 baseline=518a821d8d839fb7857be99acb91fde71b80c846",
+   "pending": false
+  },
+  {
+   "check": "historical_labels_pinned_to_frozen_digest",
+   "ok": true,
+   "detail": "both frozen caches match the pinned SHA256 / rows / bytes",
+   "pending": false
+  },
+  {
+   "check": "historical_manifests_pinned_and_reader_panel_exact",
+   "ok": true,
+   "detail": "10 manifests pinned, R1 reader panel exact, split seed 7319",
+   "pending": false
+  },
+  {
+   "check": "historical_manifests_recomputed_from_worktree",
+   "ok": true,
+   "detail": "10 v2r1 manifests re-hashed in the working tree",
+   "pending": false
+  },
+  {
+   "check": "historical_namespaces_unmodified",
+   "ok": true,
+   "detail": "no tracked changes in historical namespaces (2 untracked artifact path(s) present)",
+   "pending": false
+  },
+  {
+   "check": "historical_label_caches_recomputed",
+   "ok": true,
+   "detail": "recomputed ['maweibo', 'pheme']: match",
+   "pending": false
+  },
+  {
+   "check": "reused_cr_tser_provenance_current",
+   "ok": true,
+   "detail": "9 reused CR-TSER files match the recorded digests",
+   "pending": false
+  },
+  {
+   "check": "atomic_index_present",
+   "ok": true,
+   "detail": "atomic_index.json for both datasets",
+   "pending": false
+  },
+  {
+   "check": "atomic_index_exact_and_i1_only",
+   "ok": true,
+   "detail": "keys exact ({'maweibo': 2549, 'pheme': 2107}), only I1_atomic indexed, I0/I2-I5 counted as excluded",
+   "pending": false
+  },
+  {
+   "check": "geometry_diagnostic_present",
+   "ok": true,
+   "detail": "geometry_diagnostic.json for both datasets",
+   "pending": false
+  },
+  {
+   "check": "geometry_reports_activity_ordinal_signed_interaction",
+   "ok": true,
+   "detail": "activity, ordinal, signed direction and interaction shares all present; ordinal is explicitly not read as transfer",
+   "pending": false
+  },
+  {
+   "check": "probe_manifest_present",
+   "ok": true,
+   "detail": "probe_manifest.json for both datasets",
+   "pending": false
+  },
+  {
+   "check": "probe_availability_present",
+   "ok": true,
+   "detail": "probe_availability.json for both datasets",
+   "pending": false
+  },
+  {
+   "check": "probe_manifest_exact_36_and_12_per_cutoff",
+   "ok": true,
+   "detail": "36 items / 12 per cutoff per dataset, all from foundation_train, no gold label stored",
+   "pending": false
+  },
+  {
+   "check": "probe_events_disjoint_from_utility_splits",
+   "ok": true,
+   "detail": "probe events x utility_train/dev/eval overlap = 0 (recomputed from the frozen event split)",
+   "pending": false
+  },
+  {
+   "check": "probe_context_plan_frozen",
+   "ok": true,
+   "detail": "{\"contexts\": [\"P0\", \"P1\", \"P2\", \"P3\"], \"evidence_source\": \"frozen CR-TSER build_src (relevance ranking + SRC)\", \"requirements\": {\"P0\": \"source only\", \"P1\": \"source + highest semantic-relevance valid evidence unit\", \"P2\": \"source + lowest semantic-relevance unit among SRC-selected units\", \"P3\": \"source + full SRC under the frozen 1024 canonical-token budget\"}, \"selection_is_reader_independent\": true, \"selection_uses_utility_outcomes\": false}",
+   "pending": false
+  },
+  {
+   "check": "no_reader_or_training_artifacts",
+   "ok": true,
+   "detail": "only ['bootstrap', 'verifier'] under results/bcr_utility_v1",
+   "pending": false
+  },
+  {
+   "check": "probe_events_disjoint_from_imported_atomic_events",
+   "ok": true,
+   "detail": "probe (foundation_train) and imported atomic utility events never coincide",
+   "pending": false
+  }
+ ],
+ "environment": "SERVER_DGPA",
+ "out_root": "results/bcr_utility_v1"
+}

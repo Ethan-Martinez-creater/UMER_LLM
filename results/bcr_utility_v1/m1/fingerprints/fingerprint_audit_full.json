@@ -1,0 +1,22 @@
+{
+ "stage": "fingerprints",
+ "protocol": "bcr_v1",
+ "fingerprints": {
+  "fingerprints": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/fingerprints.json",
+   "bytes": 51076,
+   "sha256": "818f02d403da9876afb32611ebef39aebde826993d76f40dca66062d4fb1bd84"
+  },
+  "raw_vectors": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/raw_vectors.json",
+   "bytes": 200280,
+   "sha256": "1eac16341b5647d51c00a80691ea303d99ae3e924c5aa32e4532c194be778d9c"
+  },
+  "audit": {
+   "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1/fingerprints/fingerprint_audit.json",
+   "bytes": 982,
+   "sha256": "1372d4b19fbe7cd4db7cdbd7076bf31087f2ee727197a7a3cf4e1bdbd85de753"
+  },
+  "sha256": "2a5d7cdd1c532c2b34979edac90b7868b3c20c9d53e07076f4e03579f9c4afc5"
+ }
+}
