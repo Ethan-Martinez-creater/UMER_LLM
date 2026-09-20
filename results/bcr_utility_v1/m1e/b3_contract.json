@@ -1,0 +1,181 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "m1e_b3_contract",
+ "scope": "post_hoc_diagnostic_only",
+ "datasets": {
+  "maweibo": {
+   "dataset": "maweibo",
+   "baseline": "B3_nearest_reader_transfer",
+   "per_rotation": {
+    "qwen": {
+     "train_readers": [
+      "mistral",
+      "internlm"
+     ],
+     "held_out": "qwen",
+     "nearest_reader": "internlm",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "mistral": 106.18156867743676,
+      "internlm": 104.15320726896984
+     },
+     "n_eval_rows": 611,
+     "n_rows_matching_a_training_reader_utility": 611,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "mistral": 0,
+      "internlm": 611
+     },
+     "n_sign_consistent_with_the_matched_reader": 611,
+     "n_predictions_from_the_nearest_reader": 611,
+     "uses_same_evidence_key_labels": true
+    },
+    "mistral": {
+     "train_readers": [
+      "qwen",
+      "internlm"
+     ],
+     "held_out": "mistral",
+     "nearest_reader": "internlm",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "qwen": 56.53522357520225,
+      "internlm": 53.16094785793655
+     },
+     "n_eval_rows": 611,
+     "n_rows_matching_a_training_reader_utility": 611,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "qwen": 3,
+      "internlm": 608
+     },
+     "n_sign_consistent_with_the_matched_reader": 611,
+     "n_predictions_from_the_nearest_reader": 611,
+     "uses_same_evidence_key_labels": true
+    },
+    "internlm": {
+     "train_readers": [
+      "qwen",
+      "mistral"
+     ],
+     "held_out": "internlm",
+     "nearest_reader": "mistral",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "qwen": 586.7909050206105,
+      "mistral": 585.3928525793693
+     },
+     "n_eval_rows": 611,
+     "n_rows_matching_a_training_reader_utility": 611,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "qwen": 0,
+      "mistral": 611
+     },
+     "n_sign_consistent_with_the_matched_reader": 611,
+     "n_predictions_from_the_nearest_reader": 611,
+     "uses_same_evidence_key_labels": true
+    }
+   },
+   "conclusion": {
+    "is_same_evidence_cross_reader_transfer": true,
+    "prediction_is_the_nearest_training_reader_label": true,
+    "nearest_reader_chosen_from_fingerprint_distance_only": true,
+    "requires_utility_label_on_at_least_one_existing_reader": true,
+    "held_out_utility_labels_used_for_selection": false,
+    "statement": "B3 is a same-evidence cross-reader transfer baseline: it predicts a held-out reader's utility for an evidence key by copying the real utility label of the fingerprint-nearest training reader at that same key. It therefore requires the evidence to already carry a utility label from at least one existing reader and is not equivalent to a new-event deployment scenario that calls no additional utility oracle."
+   },
+   "scope": "post_hoc_diagnostic_only"
+  },
+  "pheme": {
+   "dataset": "pheme",
+   "baseline": "B3_nearest_reader_transfer",
+   "per_rotation": {
+    "qwen": {
+     "train_readers": [
+      "mistral",
+      "internlm"
+     ],
+     "held_out": "qwen",
+     "nearest_reader": "internlm",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "mistral": 106.18156867743676,
+      "internlm": 104.15320726896984
+     },
+     "n_eval_rows": 695,
+     "n_rows_matching_a_training_reader_utility": 695,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "mistral": 0,
+      "internlm": 695
+     },
+     "n_sign_consistent_with_the_matched_reader": 695,
+     "n_predictions_from_the_nearest_reader": 695,
+     "uses_same_evidence_key_labels": true
+    },
+    "mistral": {
+     "train_readers": [
+      "qwen",
+      "internlm"
+     ],
+     "held_out": "mistral",
+     "nearest_reader": "internlm",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "qwen": 56.53522357520225,
+      "internlm": 53.16094785793655
+     },
+     "n_eval_rows": 695,
+     "n_rows_matching_a_training_reader_utility": 695,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "qwen": 1,
+      "internlm": 694
+     },
+     "n_sign_consistent_with_the_matched_reader": 695,
+     "n_predictions_from_the_nearest_reader": 695,
+     "uses_same_evidence_key_labels": true
+    },
+    "internlm": {
+     "train_readers": [
+      "qwen",
+      "mistral"
+     ],
+     "held_out": "internlm",
+     "nearest_reader": "mistral",
+     "nearest_reader_is_a_training_reader": true,
+     "distances": {
+      "qwen": 586.7909050206105,
+      "mistral": 585.3928525793693
+     },
+     "n_eval_rows": 695,
+     "n_rows_matching_a_training_reader_utility": 695,
+     "n_rows_unmatched": 0,
+     "match_rate": 1.0,
+     "matched_reader_counts": {
+      "qwen": 0,
+      "mistral": 695
+     },
+     "n_sign_consistent_with_the_matched_reader": 695,
+     "n_predictions_from_the_nearest_reader": 695,
+     "uses_same_evidence_key_labels": true
+    }
+   },
+   "conclusion": {
+    "is_same_evidence_cross_reader_transfer": true,
+    "prediction_is_the_nearest_training_reader_label": true,
+    "nearest_reader_chosen_from_fingerprint_distance_only": true,
+    "requires_utility_label_on_at_least_one_existing_reader": true,
+    "held_out_utility_labels_used_for_selection": false,
+    "statement": "B3 is a same-evidence cross-reader transfer baseline: it predicts a held-out reader's utility for an evidence key by copying the real utility label of the fingerprint-nearest training reader at that same key. It therefore requires the evidence to already carry a utility label from at least one existing reader and is not equivalent to a new-event deployment scenario that calls no additional utility oracle."
+   },
+   "scope": "post_hoc_diagnostic_only"
+  }
+ }
+}

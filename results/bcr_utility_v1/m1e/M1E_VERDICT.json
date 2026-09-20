@@ -1,0 +1,29 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "m1e",
+ "status": "INFRASTRUCTURE_PAUSE",
+ "m1_verdict_unchanged": true,
+ "m1_verdict": "M1_CONDITIONAL_GO",
+ "defines_new_gate": false,
+ "scope": "post_hoc_diagnostic_only",
+ "pheme_diagnostic": {
+  "diagnostic_only": true,
+  "decides_gate": false
+ },
+ "tasks_completed": [
+  "A_frozen_evidence_pins",
+  "D_dataset_shift_audit",
+  "E_reader_cutoff_class_concentration",
+  "F_b3_deployment_contract"
+ ],
+ "tasks_blocked": [
+  "B_feature_group_ablations_D0_D2_D3_D5",
+  "C_fingerprint_incremental_contribution_D4_vs_D5"
+ ],
+ "blocked_reason": "SERVER connection closed by 60.215.128.50:32985 (see INFRASTRUCTURE_PAUSE.json); stopped per the connection contract, no retry loop, no connection change, no server work moved to LOCAL",
+ "frozen_m1_results_untouched": true,
+ "reader_inference_run": false,
+ "utility_labels_generated": false,
+ "m2_entered": false,
+ "next": "resume M1-E Task B/C with next/.codex_tmp_ssh_run.cmd after the user restores the tunnel"
+}

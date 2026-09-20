@@ -43,9 +43,12 @@ def _check_attribution(report, repo_root):
                           f"{dataset}.json")
         payloads[dataset] = _read_json(path)
     missing = [d for d, p in payloads.items() if p is None]
+    verdict = _read_json(P.m1e_path(repo_root, P.M1E_VERDICT_FILENAME)) or {}
+    paused = verdict.get("status") == "INFRASTRUCTURE_PAUSE"
     report.add("m1e_attribution_present", not missing,
                f"missing: {missing}" if missing else
-               "attribution/<dataset>.json for both datasets")
+               "attribution/<dataset>.json for both datasets",
+               pending=bool(missing) and paused)
     if missing:
         return
 

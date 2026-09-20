@@ -1,0 +1,28 @@
+{
+ "stage": "m1e",
+ "status": "INFRASTRUCTURE_PAUSE",
+ "detected_at_local": "2026-09-20 (M1-E Task B/C launch attempt)",
+ "wrapper_used": "next/.codex_tmp_scp_run.cmd and next/.codex_tmp_ssh_run.cmd",
+ "raw_errors": [
+  "scp: Connection closed",
+  "scp: Connection closed",
+  "Connection closed by 60.215.128.50 port 32985",
+  "Connection closed by 60.215.128.50 port 32985"
+ ],
+ "host": "jyz@60.215.128.50",
+ "port": 32985,
+ "actions_taken": [
+  "stopped immediately (no host/port/user change, no alternative SSH/SCP, no retry loop)",
+  "one liveness probe with the same approved wrapper (also refused)",
+  "no server work moved to LOCAL"
+ ],
+ "blocked_work": [
+  "M1-E Task B/C: D0/D2/D3/D5 attribution training on SERVER",
+  "M1-E final report and verdict"
+ ],
+ "completed_work": [
+  "M1-E code committed (attribution modules, scripts, verifier_m1e, 22 tests)",
+  "Task A pins, Task D dataset-shift audit, Task E concentration audit, Task F B3 contract audit (LOCAL, read-only)"
+ ],
+ "waiting_for": "user restores the tunnel; then rerun next/.codex_tmp_ssh_run.cmd"
+}
