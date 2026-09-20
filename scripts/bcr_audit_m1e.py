@@ -27,7 +27,9 @@ sys.path.insert(0, str(REPO / "scripts"))
 from bcr_utility.attribution import b3_contract, concentration  # noqa: E402
 from bcr_utility.attribution import dataset_shift as ds  # noqa: E402
 from bcr_utility.attribution import evidence_pins as pins  # noqa: E402
+from bcr_utility.attribution import feature_ablation as fa  # noqa: E402
 from bcr_utility.config import protocol as P  # noqa: E402
+from bcr_utility.evaluation import utility_metrics as um  # noqa: E402
 
 
 def _load_json(path):
@@ -123,18 +125,61 @@ def task_b3(repo_root) -> dict:
     return out
 
 
+_METRIC_KEYS = ("macro_f1", "utility_spearman", "mae", "harmful_auprc",
+                "harmful_f1", "helpful_auprc")
+
+
+def task_vs_b0(repo_root) -> dict:
+    """Every variant against the frozen M1 ``B0`` baseline (post-hoc).
+
+    The M1 gate compares B4/B5 with B0, so this is the comparison that shows
+    what the attribution variants would have scored on the *frozen* gate
+    baseline. It is diagnostic only and defines no gate.
+    """
+    out = {"protocol": P.PROTOCOL_VERSION,
+           "stage": "m1e_vs_frozen_b0",
+           "scope": "post_hoc_diagnostic_only",
+           "defines_gate": False,
+           "baseline": P.MODEL_B0,
+           "bootstrap": {"unit": P.BOOTSTRAP_UNIT,
+                         "iterations": P.BOOTSTRAP_ITERATIONS,
+                         "seed": P.BOOTSTRAP_SEED},
+           "datasets": {}}
+    for dataset in P.DATASETS:
+        baseline = fa.load_frozen_b0_baseline(repo_root, dataset)
+        per_variant = {}
+        for variant in P.ATTRIBUTION_VARIANTS:
+            try:
+                frozen = fa.load_variant_predictions(repo_root, dataset,
+                                                     variant)
+            except fa.AttributionRefused as exc:
+                per_variant[variant] = {"error": str(exc)}
+                continue
+            comparison = fa.compare_frozen_to_baseline(frozen, baseline)
+            comparison["variant"] = variant
+            comparison["per_reader_metrics"] = {
+                held: {k: um.evaluate_predictions(entry["eval_rows"],
+                                                  entry["prediction"])[k]
+                       for k in _METRIC_KEYS}
+                for held, entry in frozen.items()}
+            per_variant[variant] = comparison
+        out["datasets"][dataset] = per_variant
+    return out
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--task", required=True,
                         choices=("pins", "shift", "concentration", "b3",
-                                 "all"))
+                                 "vs_b0", "all"))
     parser.add_argument("--repo-root", default=str(REPO))
     args = parser.parse_args(argv)
     tasks = {"pins": (task_pins, P.M1E_EVIDENCE_PINS_FILENAME),
              "shift": (task_shift, P.M1E_SHIFT_FILENAME),
              "concentration": (task_concentration,
                                P.M1E_CONCENTRATION_FILENAME),
-             "b3": (task_b3, P.M1E_B3_CONTRACT_FILENAME)}
+             "b3": (task_b3, P.M1E_B3_CONTRACT_FILENAME),
+             "vs_b0": (task_vs_b0, P.M1E_VS_B0_FILENAME)}
     selected = tasks if args.task == "all" else {args.task: tasks[args.task]}
     written = {}
     for name, (fn, filename) in selected.items():

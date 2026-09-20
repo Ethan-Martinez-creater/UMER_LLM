@@ -370,6 +370,7 @@ M1E_EVIDENCE_PINS_FILENAME = "m1_evidence_pins.json"
 M1E_SHIFT_FILENAME = "dataset_shift.json"
 M1E_CONCENTRATION_FILENAME = "concentration.json"
 M1E_B3_CONTRACT_FILENAME = "b3_contract.json"
+M1E_VS_B0_FILENAME = "comparisons_vs_B0.json"
 M1E_VERDICT_FILENAME = "M1E_VERDICT.json"
 M1E_REPORT_FILENAME = "M1E_REPORT.md"
 

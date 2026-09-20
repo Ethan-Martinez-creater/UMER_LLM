@@ -79,6 +79,50 @@ def load_inputs(repo_root, dataset):
     return entries, feature_table, split, fingerprints
 
 
+def _export_variant_predictions(path, dataset, variant, result) -> int:
+    """Persist one trained variant's eval predictions (for vs-B0 bootstraps)."""
+    rows_written = 0
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        for held, rot in result["rotations"].items():
+            for row, u_hat, probs in zip(rot["eval_rows"],
+                                         rot["prediction"]["utility"],
+                                         rot["prediction"]["sign_probs"]):
+                fh.write(json.dumps({
+                    "dataset": dataset, "held_out": held, "model": variant,
+                    "key": row["key"], "event_id": row["event_id"],
+                    "reader": row["reader"], "gold_sign": row["sign"],
+                    "gold_utility": row["utility"], "pred_utility": u_hat,
+                    "pred_sign": max(range(len(P.SIGN_CLASSES)),
+                                     key=lambda c: probs[c]),
+                    "prob_helpful": probs[0], "prob_neutral": probs[1],
+                    "prob_harmful": probs[2],
+                }, ensure_ascii=False) + "\n")
+                rows_written += 1
+    return rows_written
+
+
+def _export_frozen_predictions(path, dataset, variant, frozen) -> int:
+    """Persist a reused variant's frozen predictions in the same schema."""
+    rows_written = 0
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        for held, entry in frozen.items():
+            for row, u_hat, probs in zip(entry["eval_rows"],
+                                         entry["prediction"]["utility"],
+                                         entry["prediction"]["sign_probs"]):
+                fh.write(json.dumps({
+                    "dataset": dataset, "held_out": held, "model": variant,
+                    "key": row["key"], "event_id": row["event_id"],
+                    "reader": row["reader"], "gold_sign": row["sign"],
+                    "gold_utility": row["utility"], "pred_utility": u_hat,
+                    "pred_sign": max(range(len(P.SIGN_CLASSES)),
+                                     key=lambda c: probs[c]),
+                    "prob_helpful": probs[0], "prob_neutral": probs[1],
+                    "prob_harmful": probs[2],
+                }, ensure_ascii=False) + "\n")
+                rows_written += 1
+    return rows_written
+
+
 def run_dataset(repo_root, dataset) -> dict:
     t0 = time.time()
     entries, table, split, fingerprints = load_inputs(repo_root, dataset)
@@ -86,6 +130,7 @@ def run_dataset(repo_root, dataset) -> dict:
           f"{len(table)} feature rows")
 
     results = {}
+    pred_info = {}
     for variant in P.ATTRIBUTION_TRAINED:
         results[variant] = fa.run_variant(dataset, variant, entries, table,
                                           split, fingerprints)
@@ -94,6 +139,12 @@ def run_dataset(repo_root, dataset) -> dict:
         print(f"[m1e] {dataset}/{variant}: "
               + " ".join(f"{h}={v:.4f}" for h, v in f1.items())
               + f" ({time.time() - t0:.1f}s)")
+        pred_path = P.m1e_path(repo_root, P.M1E_ATTRIBUTION_DIRNAME,
+                               f"predictions_{dataset}_{variant}.jsonl")
+        n = _export_variant_predictions(pred_path, dataset, variant,
+                                       results[variant])
+        pred_info[variant] = {"path": pred_path, "rows": n,
+                              "sha256": _sha_file(pred_path)}
 
     # frozen D1 (=B4) and D4 (=B5): reused verbatim, never redefined
     frozen_predictions = {}
@@ -109,6 +160,13 @@ def run_dataset(repo_root, dataset) -> dict:
         print(f"[m1e] {dataset}/{variant}: reused frozen {model_kind} "
               + " ".join(f"{h}={v:.4f}"
                          for h, v in view["per_reader_macro_f1"].items()))
+        pred_path = P.m1e_path(repo_root, P.M1E_ATTRIBUTION_DIRNAME,
+                               f"predictions_{dataset}_{variant}.jsonl")
+        n = _export_frozen_predictions(pred_path, dataset, variant,
+                                       frozen_predictions[variant])
+        pred_info[variant] = {"path": pred_path, "rows": n, "reused": True,
+                              "frozen_model": model_kind,
+                              "sha256": _sha_file(pred_path)}
 
     baseline = results["D0_Z"]
     comparisons = {}
@@ -155,6 +213,7 @@ def run_dataset(repo_root, dataset) -> dict:
         "comparisons_vs_D0": comparisons,
         "fingerprint_increment_D4_vs_D5": fingerprint_increment,
         "secondary_metrics": secondary,
+        "variant_predictions": pred_info,
         "seconds": time.time() - t0,
     }
     return payload

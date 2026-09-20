@@ -214,23 +214,19 @@ def compare_to_baseline(variant_result: dict, baseline_result: dict,
     }
 
 
-def load_frozen_predictions(repo_root, dataset: str,
-                            model_kind: str) -> dict:
-    """Rebuild ``{held: {"eval_rows", "prediction"}}`` from the frozen
-    M1 ``predictions*.jsonl`` so D1/D4 join the same paired bootstrap as the
-    newly trained variants without re-running anything."""
-    name = "predictions.jsonl" if model_kind == P.MODEL_B4 \
-        else "predictions_light_touch.jsonl"
-    path = P.m1_path(repo_root, "evaluation", name)
+def load_predictions_jsonl(path: str, dataset: str,
+                           model_label: str) -> dict:
+    """``{held: {"eval_rows", "prediction"}}`` from any M1/M1-E
+    predictions file whose ``model`` field equals ``model_label``."""
     if not os.path.exists(path):
-        raise AttributionRefused(f"frozen predictions missing: {path}")
+        raise AttributionRefused(f"predictions missing: {path}")
     by_reader = {}
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             if not line.strip():
                 continue
             row = json.loads(line)
-            if row.get("dataset") != dataset or row.get("model") != model_kind:
+            if row.get("dataset") != dataset or row.get("model") != model_label:
                 continue
             entry = by_reader.setdefault(row["held_out"],
                                          {"eval_rows": [], "probs": [],
@@ -246,11 +242,53 @@ def load_frozen_predictions(repo_root, dataset: str,
             entry["utilities"].append(float(row["pred_utility"]))
     if not by_reader:
         raise AttributionRefused(
-            f"{dataset}/{model_kind}: no rows in {name}")
+            f"{dataset}/{model_label}: no rows in {path}")
     return {held: {"held_out": held, "eval_rows": entry["eval_rows"],
                    "prediction": {"sign_probs": entry["probs"],
                                   "utility": entry["utilities"]}}
             for held, entry in by_reader.items()}
+
+
+def load_frozen_predictions(repo_root, dataset: str,
+                            model_kind: str) -> dict:
+    """Rebuild ``{held: {"eval_rows", "prediction"}}`` from the frozen
+    M1 ``predictions*.jsonl`` so D1/D4 join the same paired bootstrap as the
+    newly trained variants without re-running anything."""
+    name = "predictions.jsonl" if model_kind == P.MODEL_B4 \
+        else "predictions_light_touch.jsonl"
+    return load_predictions_jsonl(P.m1_path(repo_root, "evaluation", name),
+                                  dataset, model_kind)
+
+
+def load_variant_predictions(repo_root, dataset: str, variant: str) -> dict:
+    """M1-E variant predictions written by ``bcr_run_attribution.py``."""
+    path = P.m1e_path(repo_root, P.M1E_ATTRIBUTION_DIRNAME,
+                      f"predictions_{dataset}_{variant}.jsonl")
+    return load_predictions_jsonl(path, dataset, variant)
+
+
+def load_frozen_b0_baseline(repo_root, dataset: str) -> dict:
+    """The frozen M1 ``B0`` baseline in the comparison result shape.
+
+    Read from **both** stage files and asserted to agree, so a B0 baseline
+    from either stage is provably the same frozen model output.
+    """
+    zero_touch = load_predictions_jsonl(
+        P.m1_path(repo_root, "evaluation", "predictions.jsonl"), dataset,
+        P.MODEL_B0)
+    light_touch = load_predictions_jsonl(
+        P.m1_path(repo_root, "evaluation", "predictions_light_touch.jsonl"),
+        dataset, P.MODEL_B0)
+    for held in sorted(set(zero_touch) & set(light_touch)):
+        a, b = zero_touch[held], light_touch[held]
+        if a["prediction"]["sign_probs"] != b["prediction"]["sign_probs"]:
+            raise AttributionRefused(
+                f"{dataset}/{held}: the frozen B0 predictions differ between "
+                "the two stage files")
+    return {"variant": P.MODEL_B0,
+            "rotations": {held: {"eval_rows": entry["eval_rows"],
+                                 "prediction": entry["prediction"]}
+                          for held, entry in light_touch.items()}}
 
 
 def compare_frozen_to_baseline(frozen: dict, baseline_result: dict,
