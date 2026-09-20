@@ -284,7 +284,7 @@ def run_features(dataset: str, paths, repo_root, nli_path: str,
 def build_parser():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--stage", choices=("fingerprints", "features", "e3",
-                                        "all"),
+                                        "e3_validate", "all"),
                         required=True)
     ap.add_argument("--dataset", choices=P.DATASETS, default=None)
     ap.add_argument("--reader", choices=P.READER_KEYS, default=None,
@@ -402,8 +402,8 @@ def run_e3(dataset: str, reader_key: str, paths, repo_root,
             "seconds": time.time() - t0}
 
 
-def run_e3_validate(dataset: str, paths, repo_root) -> dict:
-    """Coverage audit once all three reader shards of a dataset exist."""
+def run_e3_validate(dataset: str, paths, repo_root, readers=None) -> dict:
+    """Coverage audit over the given reader set of a dataset's E3 cache."""
     entries = _atomic_entries(repo_root, dataset)
     expected_keys = [e["key"] for e in entries]
     path = os.path.join(P.m1_path(repo_root, "features"),
@@ -412,9 +412,13 @@ def run_e3_validate(dataset: str, paths, repo_root) -> dict:
     if os.path.exists(path):
         with open(path, encoding="utf-8") as fh:
             rows = [json.loads(line) for line in fh if line.strip()]
-    audit = cf.validate_e3_rows(rows, expected_keys)
+    if readers:
+        rows = [r for r in rows if r["reader"] in set(readers)]
+    audit = cf.validate_e3_rows(rows, expected_keys,
+                                readers=readers or P.READER_KEYS)
     return {"dataset": dataset, "path": path, "bytes": os.path.getsize(path),
-            "sha256": _sha_file(path), **audit}
+            "sha256": _sha_file(path), "readers": list(readers or P.READER_KEYS),
+            **audit}
 
 
 def main(argv=None):
@@ -432,9 +436,16 @@ def main(argv=None):
                 print(json.dumps(result, indent=1))
                 summary["e3"].append(result)
             if not args.smoke and not args.limit:
-                audit = run_e3_validate(dataset, paths, args.repo_root)
+                audit = run_e3_validate(dataset, paths, args.repo_root,
+                                        readers=readers)
                 summary.setdefault("e3_audits", []).append(audit)
                 print(json.dumps(audit, indent=1))
+        return 0
+    if args.stage == "e3_validate":
+        datasets = [args.dataset] if args.dataset else list(P.DATASETS)
+        for dataset in datasets:
+            audit = run_e3_validate(dataset, paths, args.repo_root)
+            print(json.dumps(audit, indent=1))
         return 0
     if args.stage in ("fingerprints", "all"):
         summary["fingerprints"] = run_fingerprints(args.repo_root)
