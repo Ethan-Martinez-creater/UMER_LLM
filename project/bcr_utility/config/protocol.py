@@ -361,6 +361,58 @@ def m1_path(repo_root, *parts) -> str:
     return os.path.join(m1_dir(repo_root), *parts)
 
 
+# --------------------------------------------------------------------------
+# M1-E — Conditional-GO attribution audit (post-hoc diagnostic only)
+# --------------------------------------------------------------------------
+M1E_DIRNAME = "m1e"
+M1E_ATTRIBUTION_DIRNAME = "attribution"
+M1E_EVIDENCE_PINS_FILENAME = "m1_evidence_pins.json"
+M1E_SHIFT_FILENAME = "dataset_shift.json"
+M1E_CONCENTRATION_FILENAME = "concentration.json"
+M1E_B3_CONTRACT_FILENAME = "b3_contract.json"
+M1E_VERDICT_FILENAME = "M1E_VERDICT.json"
+M1E_REPORT_FILENAME = "M1E_REPORT.md"
+
+#: The frozen M1 verdict this audit must find unchanged.
+M1E_EXPECTED_M1_VERDICT = "M1_CONDITIONAL_GO"
+
+#: Frozen feature groups of the B5 input (M1 plan §17 / M1-E Task B).
+#: ``Z`` = ZERO-TOUCH evidence compatibility (E0+E1+E2),
+#: ``F`` = behavioral fingerprint, ``S`` = source-state E3,
+#: ``C`` = evidence-familiarity E3.
+E3_SOURCE_STATE_NAMES = ("source_only_margin", "source_only_entropy",
+                         "source_nll")
+E3_EVIDENCE_FAMILIARITY_NAMES = ("evidence_nll_per_token",
+                                 "conditional_evidence_nll_per_token",
+                                 "nll_gap")
+
+#: The pre-registered diagnostic variants. ``D1``/``D4`` are the frozen
+#: B4/B5 themselves and are reused, never redefined.
+ATTRIBUTION_VARIANTS = ("D0_Z", "D1_Z_F", "D2_Z_F_S", "D3_Z_F_C",
+                        "D4_Z_F_S_C", "D5_Z_S_C")
+ATTRIBUTION_FINGERPRINT_VARIANTS = ("D1_Z_F", "D2_Z_F_S", "D3_Z_F_C",
+                                    "D4_Z_F_S_C")
+ATTRIBUTION_NO_FINGERPRINT_VARIANTS = ("D0_Z", "D5_Z_S_C")
+#: Variants whose result is the already-frozen M1 model output.
+ATTRIBUTION_REUSED = {"D1_Z_F": MODEL_B4, "D4_Z_F_S_C": MODEL_B5}
+#: Variants this audit must train itself.
+ATTRIBUTION_TRAINED = ("D0_Z", "D2_Z_F_S", "D3_Z_F_C", "D5_Z_S_C")
+
+#: Artifact names that must not appear under ``m1e/`` (no reader inference,
+#: no labels, no next-stage artifacts).
+M1E_FORBIDDEN_ARTIFACT_DIRS = ("probe_responses", "reader_probes",
+                               "utility_labels", "fingerprints", "models",
+                               "m2", "m2_pilot", "phi", "gemma")
+
+
+def m1e_dir(repo_root) -> str:
+    return os.path.join(str(repo_root), RESULTS_ROOT, M1E_DIRNAME)
+
+
+def m1e_path(repo_root, *parts) -> str:
+    return os.path.join(m1e_dir(repo_root), *parts)
+
+
 def frozen_constants() -> dict:
     """The numbers the M0 verifier checks for drift."""
     return {

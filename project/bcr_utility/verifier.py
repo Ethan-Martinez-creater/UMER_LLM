@@ -470,26 +470,44 @@ def verify_m1(repo_root: str, environment: str = "") -> dict:
     return payload
 
 
+def verify_m1e(repo_root: str, environment: str = "") -> dict:
+    """M0 + M1 checks plus the M1-E attribution-audit checks."""
+    payload = verify_m1(repo_root, environment=environment)
+    from . import verifier_m1e
+    extra = verifier_m1e.verify(repo_root)
+    payload["mode"] = "m1e"
+    payload["checks"] += extra["checks"]
+    payload["issues"] += extra["issues"]
+    payload["pending"] += extra["pending"]
+    payload["n_issues"] = len(payload["issues"])
+    payload["n_pending"] = len(payload["pending"])
+    payload["m1e"] = extra.get("m1e", {})
+    return payload
+
+
 def main(argv=None) -> int:
     import argparse
     import sys
     from pathlib import Path
 
     parser = argparse.ArgumentParser(description="BCR-Utility verifier")
-    parser.add_argument("--mode", choices=("m0", "m1"), default="m0")
+    parser.add_argument("--mode", choices=("m0", "m1", "m1e"), default="m0")
     parser.add_argument("--repo-root", default=None)
     parser.add_argument("--environment", default="")
     parser.add_argument("--json", default=None,
                         help="write the verifier report here")
     args = parser.parse_args(argv)
     repo_root = args.repo_root or str(Path(__file__).resolve().parents[2])
-    if args.mode == "m1":
+    if args.mode == "m1e":
+        payload = verify_m1e(repo_root, environment=args.environment)
+    elif args.mode == "m1":
         payload = verify_m1(repo_root, environment=args.environment)
     else:
         payload = verify(repo_root, environment=args.environment)
     target = args.json or os.path.join(
         str(repo_root), P.RESULTS_ROOT, "verifier",
-        "bcr_verify.json" if args.mode == "m0" else "bcr_verify_m1.json")
+        {"m0": "bcr_verify.json", "m1": "bcr_verify_m1.json",
+         "m1e": "bcr_verify_m1e.json"}[args.mode])
     historical_import.write_json(target, payload)
     print(json.dumps({k: payload[k] for k in
                       ("protocol", "issues", "pending", "n_issues",
