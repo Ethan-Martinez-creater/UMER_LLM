@@ -178,6 +178,20 @@ def _nli_identity(nli_path, nli):
     }
 
 
+def _reader_tokenizers(paths):
+    """Tokenizer-only loads of the three frozen readers (E2; no weights).
+
+    ``trust_remote_code`` follows each reader's own frozen reader class —
+    InternLM's tokenizer requires it, Qwen/Mistral forbid it — so the E2
+    counts describe exactly the tokenizers the readers use.
+    """
+    from transformers import AutoTokenizer
+    trust = {"qwen": False, "mistral": False, "internlm": True}
+    return {r: AutoTokenizer.from_pretrained(
+        paths.reader_path(r), local_files_only=True,
+        trust_remote_code=trust[r]) for r in P.READER_KEYS}
+
+
 def run_features(dataset: str, paths, repo_root, nli_path: str,
                  device: str = "cpu") -> dict:
     t0 = time.time()
@@ -193,10 +207,7 @@ def run_features(dataset: str, paths, repo_root, nli_path: str,
                              f"loadable: {missing[:3]}")
     encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
     canonical = common.canonical_tokenizer(paths.canonical_tokenizer)
-    from transformers import AutoTokenizer
-    reader_tokenizers = {r: AutoTokenizer.from_pretrained(
-        paths.reader_path(r), local_files_only=True,
-        trust_remote_code=False) for r in P.READER_KEYS}
+    reader_tokenizers = _reader_tokenizers(paths)
     nli = nf.load_nli(nli_path, device=device)
     nli_identity = _nli_identity(nli_path, nli)
     print(f"[m1b] {dataset}: NLI {nli_identity['model_id']} "
