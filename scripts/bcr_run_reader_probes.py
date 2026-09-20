@@ -103,6 +103,9 @@ def run(dataset: str, reader_key: str, paths, repo_root, mock=False,
     identity = reader.identity()
     print(f"[m1a] reader {reader_key} identity "
           f"{str(identity.get('reader_identity_hash'))[:16]}...")
+    # Mock readers carry no tokenizer; smoke runs identify prompts with the
+    # canonical tokenizer instead (scoring itself is mocked anyway).
+    prompt_tokenizer = reader.tokenizer if not mock else canonical
 
     out_dir = P.m1_path(repo_root, "probe_responses" if not mock
                                      else "probe_responses_smoke")
@@ -133,7 +136,7 @@ def run(dataset: str, reader_key: str, paths, repo_root, mock=False,
             ctx = contexts[context_name]
             prompt = build_reader_prompt(source_text, cutoff, art["units"],
                                          ctx["evidence_block"])
-            identity_prompt = _prompt_identity(reader.tokenizer, prompt)
+            identity_prompt = _prompt_identity(prompt_tokenizer, prompt)
             canonical_ids = tokenize_prompt(
                 canonical, apply_chat(canonical, build_messages(prompt)))
             if key in existing:
