@@ -455,21 +455,41 @@ def verify(repo_root: str, environment: str = "") -> dict:
                           out_root=P.RESULTS_ROOT)
 
 
+def verify_m1(repo_root: str, environment: str = "") -> dict:
+    """M0 checks plus the M1 fail-closed gate (M1 plan §18)."""
+    payload = verify(repo_root, environment=environment)
+    from . import verifier_m1
+    extra = verifier_m1.verify(repo_root)
+    payload["mode"] = "m1"
+    payload["checks"] += extra["checks"]
+    payload["issues"] += extra["issues"]
+    payload["pending"] += extra["pending"]
+    payload["n_issues"] = len(payload["issues"])
+    payload["n_pending"] = len(payload["pending"])
+    payload["m1"] = extra.get("m1", {})
+    return payload
+
+
 def main(argv=None) -> int:
     import argparse
     import sys
     from pathlib import Path
 
-    parser = argparse.ArgumentParser(description="BCR-Utility M0 verifier")
+    parser = argparse.ArgumentParser(description="BCR-Utility verifier")
+    parser.add_argument("--mode", choices=("m0", "m1"), default="m0")
     parser.add_argument("--repo-root", default=None)
     parser.add_argument("--environment", default="")
     parser.add_argument("--json", default=None,
                         help="write the verifier report here")
     args = parser.parse_args(argv)
     repo_root = args.repo_root or str(Path(__file__).resolve().parents[2])
-    payload = verify(repo_root, environment=args.environment)
-    target = args.json or os.path.join(str(repo_root), P.RESULTS_ROOT,
-                                       "verifier", "bcr_verify.json")
+    if args.mode == "m1":
+        payload = verify_m1(repo_root, environment=args.environment)
+    else:
+        payload = verify(repo_root, environment=args.environment)
+    target = args.json or os.path.join(
+        str(repo_root), P.RESULTS_ROOT, "verifier",
+        "bcr_verify.json" if args.mode == "m0" else "bcr_verify_m1.json")
     historical_import.write_json(target, payload)
     print(json.dumps({k: payload[k] for k in
                       ("protocol", "issues", "pending", "n_issues",

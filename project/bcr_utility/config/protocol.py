@@ -207,6 +207,128 @@ FORBIDDEN_M0_ARTIFACT_DIRS = ("probe_responses", "reader_probes",
                               "utility_labels", "fingerprints", "models",
                               "predictions", "transfer")
 
+# --------------------------------------------------------------------------
+# M1 — three-reader mechanism pilot (M1 plan §5, §7–§17)
+# --------------------------------------------------------------------------
+M1_DIRNAME = "m1"
+M1_PROBE_RESPONSES_FILENAME = "probe_responses.jsonl"
+M1_PROBE_AUDIT_FILENAME = "probe_audit.json"
+M1_RAW_VECTORS_FILENAME = "raw_vectors.json"
+M1_FINGERPRINTS_FILENAME = "fingerprints.json"
+M1_FINGERPRINT_AUDIT_FILENAME = "fingerprint_audit.json"
+M1_FEATURE_AUDIT_FILENAME = "feature_audit.json"
+M1_EVALUATION_FILENAME = "evaluation.json"
+M1_PREDICTIONS_FILENAME = "predictions.jsonl"
+M1_GATE_FILENAME = "gate.json"
+M1_VERDICT_FILENAME = "M1_VERDICT.json"
+M1_REPORT_FILENAME = "M1_REPORT.md"
+
+#: The one frozen NLI extractor (M1 plan §5). No substitution is allowed.
+NLI_MODEL_ID = "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"
+NLI_SERVER_PATH = "/data/jyz/next/llm/model/mdeberta-v3-base-mnli-xnli"
+NLI_LABELS = ("entailment", "neutral", "contradiction")
+
+#: Probe responses (M1 plan §7). Exactly 72 items x 4 contexts per reader.
+PROBE_CONTEXT_EVALS_PER_READER = PROBE_ITEMS_TOTAL * len(PROBE_CONTEXTS)  # 288
+PROBE_TOTAL_EVALS = len(READER_KEYS) * PROBE_CONTEXT_EVALS_PER_READER     # 864
+
+#: Compact fingerprint layout (M1 plan §8): one group per
+#: dataset x cutoff x context; P1/P2/P3 groups carry the P0-relative block.
+FINGERPRINT_BASE_METRICS = (
+    "mean_signed_margin", "mean_abs_margin", "std_abs_margin",
+    "mean_entropy", "mean_log1p_reader_prompt_tokens",
+    "mean_log1p_canonical_qwen_tokens",
+)
+FINGERPRINT_DELTA_METRICS = (
+    "mean_delta_margin", "mean_abs_delta_margin", "flip_rate",
+    "mean_delta_entropy",
+)
+FINGERPRINT_DIM = (
+    len(DATASETS) * len(CUTOFFS_MIN) * len(PROBE_CONTEXTS)
+    * len(FINGERPRINT_BASE_METRICS)
+    + len(DATASETS) * len(CUTOFFS_MIN) * (len(PROBE_CONTEXTS) - 1)
+    * len(FINGERPRINT_DELTA_METRICS)
+)  # 24*6 + 18*4 = 216
+
+#: E0 reader-agnostic evidence features (M1 plan §9).
+E0_FEATURE_NAMES = (
+    "cos_reply_source", "cos_parent_source", "cos_reply_parent",
+    "src_relevance", "src_rank_percentile", "canonical_token_cost",
+    "reply_chars", "parent_chars", "combined_chars",
+    "elapsed_seconds", "cutoff_minutes",
+)
+#: E1 frozen NLI features: three text pairs x three NLI labels.
+E1_PAIRS = ("source_reply", "source_parent", "reply_parent")
+E1_FEATURE_NAMES = tuple(f"nli_{pair}_{label}"
+                         for pair in E1_PAIRS for label in NLI_LABELS)
+#: E2 tokenizer-only reader compatibility features (per reader).
+E2_FEATURE_NAMES = (
+    "reply_tokens", "parent_tokens", "unit_tokens",
+    "canonical_unit_tokens", "reply_frac", "unit_vs_canonical",
+)
+#: B1 control: the ten frozen CR-TSER structural/time scalars (reused).
+B1_STRUCT_NAMES = (
+    "depth_norm", "child_count_norm", "degree_norm", "subtree_size_norm",
+    "sibling_count_norm", "is_source_child", "is_leaf", "elapsed_norm",
+    "parent_lag_norm", "arrival_rank",
+)
+
+# --------------------------------------------------------------------------
+# M1 models (M1 plan §10–§11)
+# --------------------------------------------------------------------------
+MODEL_B0 = "B0_evidence_only"
+MODEL_B1 = "B1_structure_time_control"
+MODEL_B2 = "B2_reader_id_diagnostic"
+MODEL_B3 = "B3_nearest_reader_transfer"
+MODEL_B4 = "B4_zero_touch_bcr"
+MODEL_B5 = "B5_light_touch_bcr"
+ZERO_TOUCH_MODELS = (MODEL_B0, MODEL_B1, MODEL_B3, MODEL_B4)
+PRIMARY_COMPARISON = (MODEL_B4, MODEL_B0)
+
+B4_EMBED_DIM = 32
+B4_MAX_PARAMETERS = 250000
+
+HUBER_DELTA = 0.05
+LAMBDA_SIGN = 1.0
+MODEL_SEEDS = (7319, 17319, 27319)
+MODEL_GRID = {
+    "hidden": (32,),
+    "dropout": (0.0, 0.1),
+    "lr": (1e-3, 3e-4),
+    "weight_decay": (0.0, 1e-4),
+}
+#: Engineering defaults (not protocol surface): small-MLP training loop.
+TRAIN_BATCH_SIZE = 128
+TRAIN_MAX_EPOCHS = 100
+TRAIN_PATIENCE = 10
+TRAIN_GRAD_CLIP = 1.0
+
+#: Leave-one-reader-out rotations (M1 plan §12). ``(train, train, hold)`` and
+#: the hold order follows the approved sequence qwen, mistral, internlm.
+LORO_ROTATIONS = (
+    ("mistral", "internlm", "qwen"),
+    ("qwen", "internlm", "mistral"),
+    ("qwen", "mistral", "internlm"),
+)
+
+# --------------------------------------------------------------------------
+# M1 primary gate (M1 plan §15). Ma-Weibo only; PHEME is diagnostic-only.
+# --------------------------------------------------------------------------
+GATE_MEAN_DELTA_MIN = 0.03
+GATE_POSITIVE_READERS_MIN = 2
+GATE_WORST_READER_MIN = -0.05
+GATE_CI_ALPHA = 0.05
+SECONDARY_HARMFUL_AUPRC_MIN = -0.02
+
+M1_OUTCOMES = ("M1_FULL_GO", "M1_CONDITIONAL_GO", "M1_NO_GO",
+               "IMPLEMENTATION_BLOCKED", "INFRASTRUCTURE_PAUSE")
+
+#: Fields that must never appear in a probe response or fingerprint row —
+#: utility supervision, gold labels and reader identity are all forbidden
+#: fingerprint inputs (M1 plan §7, §8).
+PROBE_FORBIDDEN_FIELDS = ("utility", "sign", "gold", "label", "helpful",
+                          "harmful", "correct", "reader_id_embedding")
+
 
 def bootstrap_dir(repo_root) -> str:
     return os.path.join(str(repo_root), RESULTS_ROOT, BOOTSTRAP_DIRNAME)
@@ -218,6 +340,14 @@ def historical_root(repo_root) -> str:
 
 def result_path(repo_root, filename: str) -> str:
     return os.path.join(bootstrap_dir(repo_root), filename)
+
+
+def m1_dir(repo_root) -> str:
+    return os.path.join(str(repo_root), RESULTS_ROOT, M1_DIRNAME)
+
+
+def m1_path(repo_root, *parts) -> str:
+    return os.path.join(m1_dir(repo_root), *parts)
 
 
 def frozen_constants() -> dict:
