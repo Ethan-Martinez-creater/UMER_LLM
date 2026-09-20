@@ -63,7 +63,7 @@ def _load_jsonl(path):
         return [json.loads(line) for line in fh if line.strip()]
 
 
-def _inputs(repo_root, dataset):
+def _inputs(repo_root, dataset, need_e3=False):
     bootstrap = P.bootstrap_dir(repo_root)
     index = _load_json(os.path.join(bootstrap, P.ATOMIC_INDEX_FILENAME))
     entries = (index.get("datasets") or {}).get(dataset, {}).get("entries")
@@ -73,6 +73,9 @@ def _inputs(repo_root, dataset):
     e0 = _load_jsonl(os.path.join(fdir, f"e0_{dataset}.jsonl"))
     e1 = _load_jsonl(os.path.join(fdir, f"e1_{dataset}.jsonl"))
     e2 = _load_jsonl(os.path.join(fdir, f"e2_{dataset}.jsonl"))
+    e3 = None
+    if need_e3:
+        e3 = _load_jsonl(os.path.join(fdir, f"e3_{dataset}.jsonl"))
     split = _load_json(os.path.join(
         P.historical_root(repo_root), "manifests", dataset,
         "event_split.json"))
@@ -83,7 +86,7 @@ def _inputs(repo_root, dataset):
                                         "fingerprints.json"))
     if sorted(fingerprints.get("readers") or {}) != sorted(P.READER_KEYS):
         raise PilotRefused("fingerprint readers drift")
-    return entries, e0, e1, e2, split, fingerprints
+    return entries, e0, e1, e2, e3, split, fingerprints
 
 
 def _export_predictions(path, dataset, rotations_cache):
@@ -115,27 +118,38 @@ def _export_predictions(path, dataset, rotations_cache):
     return rows_written
 
 
-def run_dataset(repo_root, dataset, decides_gate: bool) -> dict:
+def run_dataset(repo_root, dataset, decides_gate: bool,
+                stage: str = "zero_touch") -> dict:
     t0 = time.time()
-    entries, e0, e1, e2, split, fingerprints = _inputs(repo_root, dataset)
-    table = lor.build_feature_table(dataset, entries, e0, e1, e2)
-    print(f"[m1c] {dataset}: {len(entries)} atomic keys, "
-          f"{len(table)} feature rows ({time.time() - t0:.1f}s)")
+    light = stage == "light_touch"
+    entries, e0, e1, e2, e3, split, fingerprints = _inputs(
+        repo_root, dataset, need_e3=light)
+    table = lor.build_feature_table(dataset, entries, e0, e1, e2,
+                                    e3_rows=e3)
+    models = (P.MODEL_B0, P.MODEL_B1, P.MODEL_B5) if light \
+        else ZERO_TOUCH_MODELS
+    primary = P.MODEL_B5 if light else P.MODEL_B4
+    print(f"[m1{'d' if light else 'c'}] {dataset}: {len(entries)} atomic "
+          f"keys, {len(table)} feature rows, models={models} "
+          f"({time.time() - t0:.1f}s)")
     result, aggregate, rotations_cache = lor.run_dataset(
-        dataset, entries, table, split, fingerprints,
-        models=ZERO_TOUCH_MODELS)
+        dataset, entries, table, split, fingerprints, models=models,
+        primary_model=primary)
+    tag = "m1d" if light else "m1c"
     for held in result["rotations"]:
         for model_kind, record in result["rotations"][held]["models"].items():
             metrics = record.get("eval_metrics") or {}
-            print(f"[m1c] {dataset}/hold={held}/{model_kind}: "
+            print(f"[{tag}] {dataset}/hold={held}/{model_kind}: "
                   f"macro_f1={metrics.get('macro_f1'):.4f} "
                   f"({time.time() - t0:.1f}s)")
-    b2 = lor.run_b2_in_domain(dataset, entries, table, split)
-    print(f"[m1c] {dataset}/B2 in-domain diagnostic: "
-          f"macro_f1={b2['eval_metrics']['macro_f1']:.4f}")
-    result["b2_in_domain_diagnostic"] = b2
+    if not light:
+        b2 = lor.run_b2_in_domain(dataset, entries, table, split)
+        print(f"[m1c] {dataset}/B2 in-domain diagnostic: "
+              f"macro_f1={b2['eval_metrics']['macro_f1']:.4f}")
+        result["b2_in_domain_diagnostic"] = b2
     result["decides_m1_gate"] = bool(decides_gate)
     result["diagnostic_only"] = not bool(decides_gate)
+    result["stage"] = stage
     result["seconds"] = time.time() - t0
     return {"result": result, "aggregate": aggregate,
             "rotations_cache": rotations_cache, "split": split,
@@ -160,14 +174,24 @@ def _environment(paths, extra) -> dict:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", default=str(REPO))
+    parser.add_argument("--stage", choices=("zero_touch", "light_touch"),
+                        default="zero_touch")
     parser.add_argument("--datasets", nargs="+", choices=P.DATASETS,
                         default=list(P.DATASETS))
     args = parser.parse_args(argv)
+    light = args.stage == "light_touch"
+    if light:
+        prior = _load_json(P.m1_path(args.repo_root, P.M1_VERDICT_FILENAME))
+        if prior.get("zero_touch_passed") is not False:
+            raise PilotRefused(
+                "the LIGHT-TOUCH stage requires a recorded ZERO-TOUCH "
+                "failure (M1 plan §17)")
     paths = common.paths_or_exit()
     t0 = time.time()
 
+    suffix = "_light_touch" if light else ""
     pred_path = P.m1_path(args.repo_root, "evaluation",
-                          P.M1_PREDICTIONS_FILENAME)
+                          f"predictions{suffix}.jsonl")
     os.makedirs(os.path.dirname(pred_path), exist_ok=True)
     if os.path.exists(pred_path):
         os.remove(pred_path)
@@ -175,15 +199,17 @@ def main(argv=None):
     outcomes = {}
     for dataset in args.datasets:
         decides = dataset == P.PRIMARY_DATASET
-        run = run_dataset(args.repo_root, dataset, decides_gate=decides)
+        run = run_dataset(args.repo_root, dataset, decides_gate=decides,
+                          stage=args.stage)
         n_pred = _export_predictions(pred_path, dataset,
                                      run["rotations_cache"])
         run["result"]["predictions_file"] = {
             "path": pred_path, "rows_appended": n_pred}
         outcomes[dataset] = run
         agg = run["result"]["aggregate"]
-        print(f"[m1c] {dataset}: mean_delta={agg['mean_delta_macro_f1']:.4f} "
-              f"CI=[{agg['ci_low']:.4f}, {agg['ci_high']:.4f}] "
+        tag = "m1d" if light else "m1c"
+        print(f"[{tag}] {dataset}: mean_delta={agg['mean_delta_macro_f1']:.4f}"
+              f" CI=[{agg['ci_low']:.4f}, {agg['ci_high']:.4f}] "
               f"positive={agg['positive_readers']}/3 "
               f"worst={agg['worst_reader_delta']:.4f}")
 
@@ -193,46 +219,66 @@ def main(argv=None):
 
     evaluation = {
         "protocol": P.PROTOCOL_VERSION,
-        "stage": "m1c_zero_touch",
-        "models": list(ZERO_TOUCH_MODELS) + [P.MODEL_B2, P.MODEL_B3],
-        "primary_comparison": list(P.PRIMARY_COMPARISON),
+        "stage": "m1d_light_touch" if light else "m1c_zero_touch",
+        "models": list((P.MODEL_B0, P.MODEL_B1, P.MODEL_B5) if light
+                       else ZERO_TOUCH_MODELS) + [P.MODEL_B3],
+        "primary_comparison": [P.MODEL_B5 if light else P.MODEL_B4,
+                               P.MODEL_B0],
         "bootstrap": {"unit": P.BOOTSTRAP_UNIT,
                       "iterations": P.BOOTSTRAP_ITERATIONS,
                       "seed": P.BOOTSTRAP_SEED},
         "datasets": {d: outcomes[d]["result"] for d in outcomes},
         "gate": gate,
     }
-    eval_info = _write_json(P.m1_path(args.repo_root, "evaluation",
-                                      "evaluation.json"), evaluation)
-    gate_info = _write_json(P.m1_path(args.repo_root, "evaluation",
-                                      P.M1_GATE_FILENAME), gate)
+    eval_info = _write_json(P.m1_path(
+        args.repo_root, "evaluation", f"evaluation{suffix}.json"), evaluation)
+    gate_info = _write_json(P.m1_path(
+        args.repo_root, "evaluation", f"gate{suffix}.json"), gate)
     pred_info = {"path": pred_path, "bytes": os.path.getsize(pred_path),
                  "sha256": _sha_file(pred_path)}
 
-    verdict = {
-        "protocol": P.PROTOCOL_VERSION,
-        "stage": "m1c",
-        "zero_touch_passed": gate["passed"],
-        "maweibo_gate": gate,
-        "pheme_diagnostic": {
+    if light:
+        verdict = dict(prior)
+        verdict["light_touch_passed"] = gate["passed"]
+        verdict["light_touch_gate"] = gate
+        verdict["light_touch_pheme_diagnostic"] = {
             "diagnostic_only": True,
             "decides_m1_gate": False,
             "aggregate": outcomes[P.SECONDARY_DATASET]["result"]["aggregate"]
             if P.SECONDARY_DATASET in outcomes else None,
-        },
-        "next": "M1_FULL_GO" if gate["passed"] else "run_M1_D",
-        "seconds": time.time() - t0,
-    }
+        }
+        verdict["final_outcome"] = ("M1_CONDITIONAL_GO" if gate["passed"]
+                                    else "M1_NO_GO")
+        verdict["next"] = verdict["final_outcome"]
+        verdict["seconds_light_touch"] = time.time() - t0
+    else:
+        verdict = {
+            "protocol": P.PROTOCOL_VERSION,
+            "stage": "m1c",
+            "zero_touch_passed": gate["passed"],
+            "maweibo_gate": gate,
+            "pheme_diagnostic": {
+                "diagnostic_only": True,
+                "decides_m1_gate": False,
+                "aggregate": outcomes[P.SECONDARY_DATASET]["result"][
+                    "aggregate"] if P.SECONDARY_DATASET in outcomes else None,
+            },
+            "next": "M1_FULL_GO" if gate["passed"] else "run_M1_D",
+            "seconds": time.time() - t0,
+        }
     verdict_info = _write_json(P.m1_path(args.repo_root,
                                          P.M1_VERDICT_FILENAME), verdict)
     env_info = _write_json(P.m1_path(
         args.repo_root, "environment.json"), _environment(paths, {
             "fingerprints_sha256": outcomes[P.PRIMARY_DATASET][
                 "fingerprints_sha256"],
+            "stage": args.stage,
         }))
 
     print(json.dumps({
-        "zero_touch_passed": gate["passed"],
+        "stage": args.stage,
+        "gate_passed": gate["passed"],
+        "final_outcome": verdict.get("final_outcome"),
         "next": verdict["next"],
         "evaluation": eval_info,
         "gate_file": gate_info,

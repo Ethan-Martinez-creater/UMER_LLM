@@ -31,7 +31,8 @@ sys.path.insert(0, str(REPO / "scripts"))
 import cr_tser_common as common  # noqa: E402
 
 from bcr_utility.config import protocol as P  # noqa: E402
-from bcr_utility.features import (evidence_features as ef,  # noqa: E402
+from bcr_utility.features import (compatibility_features as cf,  # noqa: E402
+                                  evidence_features as ef,
                                   nli_features as nf,
                                   tokenizer_features as tf)
 from bcr_utility.probes import fingerprint as fp  # noqa: E402
@@ -282,21 +283,159 @@ def run_features(dataset: str, paths, repo_root, nli_path: str,
 
 def build_parser():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--stage", choices=("fingerprints", "features", "all"),
-                    required=True)
+    ap.add_argument("--stage", choices=("fingerprints", "features", "e3",
+                                        "all"),
+                        required=True)
     ap.add_argument("--dataset", choices=P.DATASETS, default=None)
+    ap.add_argument("--reader", choices=P.READER_KEYS, default=None,
+                    help="E3 only: one reader per invocation (GPU memory)")
     ap.add_argument("--repo-root", default=str(REPO))
     ap.add_argument("--nli-path", default=os.environ.get(
         "CRTSER_NLI_MODEL", P.NLI_SERVER_PATH))
     ap.add_argument("--device", default="cpu")
+    ap.add_argument("--smoke", action="store_true",
+                    help="E3 only: mock reader; smoke namespace")
+    ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--audit-out", default=None)
     return ap
+
+
+# --------------------------------------------------------------------------
+# E3 LIGHT-TOUCH (only after a recorded ZERO-TOUCH failure, M1 plan §17)
+# --------------------------------------------------------------------------
+def run_e3(dataset: str, reader_key: str, paths, repo_root,
+           mock: bool = False, limit=None) -> dict:
+    """One (dataset, reader) shard of the E3 compatibility cache."""
+    from cr_tser.intervention.evidence_units import render_units_for_budget
+    from cr_tser.readers.base_reader import (ReaderSpec, build_reader,
+                                             build_reader_prompt)
+    verdict = _load_json(P.m1_path(repo_root, P.M1_VERDICT_FILENAME))
+    if verdict.get("zero_touch_passed") is not False:
+        raise ExtractRefused(
+            "E3 requires a recorded ZERO-TOUCH failure in "
+            f"{P.M1_VERDICT_FILENAME} (M1 plan §17)")
+    t0 = time.time()
+    entries = _atomic_entries(repo_root, dataset)
+    expected_keys = [e["key"] for e in entries]
+    event_ids = sorted({str(e["event_id"]) for e in entries})
+    events = {str(e["event_id"]): e
+              for e in common.load_dataset_events(dataset, paths)
+              if str(e["event_id"]) in set(event_ids)}
+    spec = ReaderSpec(reader_key, paths.reader_path(reader_key))
+    reader = build_reader(reader_key, spec, mock=mock)
+    model = reader.model
+    tokenizer = reader.tokenizer
+    if mock:  # the mock carries no torch model/tokenizer: use canned values
+        model = tokenizer = None
+    device = next(model.parameters()).device if model is not None else None
+    encoder = common.CrSemanticEncoder(paths.semantic_model, dataset)
+    canonical = common.canonical_tokenizer(paths.canonical_tokenizer)
+
+    out_path = os.path.join(
+        P.m1_path(repo_root, "features" if not mock else "features_smoke"),
+        f"e3_{dataset}.jsonl")
+    existing = set()
+    if os.path.exists(out_path):
+        with open(out_path, encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    row = json.loads(line)
+                    existing.add((row["key"], row["reader"]))
+    entries_by_snapshot = {}
+    for entry in entries:
+        entries_by_snapshot.setdefault(
+            (str(entry["event_id"]), int(entry["cutoff"])), []).append(entry)
+    n_done = n_skip = 0
+    n_snap = len(entries_by_snapshot)
+    for pos, ((event_id, cutoff), snapshot_entries) in enumerate(
+            sorted(entries_by_snapshot.items())):
+        if limit and n_done >= limit:
+            break
+        event = events[event_id]
+        art = common.snapshot_artifacts(event, cutoff, encoder, canonical)
+        units = art["units"]
+        source_text = next(n["text"] for n in event["nodes"]
+                           if n["node_id"] == event["source_id"])
+        if mock:
+            margin, entropy = 0.0, 1.0
+            source_nll = 1.0
+        else:
+            p0_prompt = build_reader_prompt(
+                source_text, cutoff, units, render_units_for_budget(units, []))
+            out = reader.score_ab(p0_prompt)
+            margin, entropy = cf.source_only_metrics(
+                out["score_A"], out["score_B"], out["p_rumor"])
+            source_nll = cf.mean_token_nll(model, tokenizer, "",
+                                           source_text, device=device)
+        unit_by_id = {u["node_id"]: u for u in units}
+        from tcdscr.llm.reader_prompt import render_evidence
+        rows = []
+        for entry in snapshot_entries:
+            if (entry["key"], reader_key) in existing:
+                n_skip += 1
+                continue
+            unit = unit_by_id[entry["node_id"]]
+            rendered = render_evidence(unit, 0)
+            if mock:
+                ev_nll, cond_nll = 1.5, 1.0
+            else:
+                ev_nll = cf.mean_token_nll(model, tokenizer, "", rendered,
+                                           device=device)
+                cond_nll = cf.mean_token_nll(model, tokenizer, source_text,
+                                             rendered, device=device)
+            rows.append({
+                "key": entry["key"], "reader": reader_key,
+                "e3": cf.e3_feature_dict(margin, entropy, source_nll,
+                                         ev_nll, cond_nll),
+            })
+        if rows:
+            with open(out_path, "a", encoding="utf-8", newline="\n") as fh:
+                for row in rows:
+                    fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+            n_done += len(rows)
+        if (pos + 1) % 20 == 0:
+            print(f"[m1d] {dataset}/{reader_key} {pos + 1}/{n_snap} "
+                  f"snapshots, {n_done} rows ({time.time() - t0:.1f}s)")
+    reader.unload()
+    return {"dataset": dataset, "reader": reader_key, "path": out_path,
+            "rows_written": n_done, "rows_skipped": n_skip,
+            "seconds": time.time() - t0}
+
+
+def run_e3_validate(dataset: str, paths, repo_root) -> dict:
+    """Coverage audit once all three reader shards of a dataset exist."""
+    entries = _atomic_entries(repo_root, dataset)
+    expected_keys = [e["key"] for e in entries]
+    path = os.path.join(P.m1_path(repo_root, "features"),
+                        f"e3_{dataset}.jsonl")
+    rows = []
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            rows = [json.loads(line) for line in fh if line.strip()]
+    audit = cf.validate_e3_rows(rows, expected_keys)
+    return {"dataset": dataset, "path": path, "bytes": os.path.getsize(path),
+            "sha256": _sha_file(path), **audit}
 
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
     paths = common.paths_or_exit()
     summary = {"stage": args.stage, "protocol": P.PROTOCOL_VERSION}
+    if args.stage == "e3":
+        datasets = [args.dataset] if args.dataset else list(P.DATASETS)
+        readers = [args.reader] if args.reader else list(P.READER_KEYS)
+        summary["e3"] = []
+        for dataset in datasets:
+            for reader in readers:
+                result = run_e3(dataset, reader, paths, args.repo_root,
+                                mock=args.smoke, limit=args.limit)
+                print(json.dumps(result, indent=1))
+                summary["e3"].append(result)
+            if not args.smoke and not args.limit:
+                audit = run_e3_validate(dataset, paths, args.repo_root)
+                summary.setdefault("e3_audits", []).append(audit)
+                print(json.dumps(audit, indent=1))
+        return 0
     if args.stage in ("fingerprints", "all"):
         summary["fingerprints"] = run_fingerprints(args.repo_root)
     if args.stage in ("features", "all"):

@@ -53,13 +53,20 @@ def e0e1_vector(e0_row: dict, e1_row: dict) -> list:
 
 
 def build_feature_table(dataset: str, atomic_entries, e0_rows, e1_rows,
-                        e2_rows) -> dict:
-    """``{key: {"event_id", "cutoff", "e0e1", "struct", "e2": {reader: [...]}}}``."""
+                        e2_rows, e3_rows=None) -> dict:
+    """``{key: {"event_id", "cutoff", "e0e1", "struct", "e2", "e3"}}``.
+
+    ``e3_rows`` exists only after a recorded ZERO-TOUCH failure (B5); a B4
+    table simply has no ``e3`` member and B4 rows never look at it.
+    """
     e0_by_key = {r["key"]: r for r in e0_rows}
     e1_by_key = {r["key"]: r for r in e1_rows}
     e2_by_key = {}
     for r in e2_rows:
         e2_by_key.setdefault(r["key"], {})[r["reader"]] = r["e2"]
+    e3_by_key = {}
+    for r in e3_rows or []:
+        e3_by_key.setdefault(r["key"], {})[r["reader"]] = r["e3"]
     table = {}
     for entry in atomic_entries:
         key = entry["key"]
@@ -72,7 +79,7 @@ def build_feature_table(dataset: str, atomic_entries, e0_rows, e1_rows,
                               f"e2={e2 is not None})")
         if sorted(e2) != sorted(P.READER_KEYS):
             raise LoroRefused(f"{key}: E2 readers {sorted(e2)}")
-        table[key] = {
+        record = {
             "event_id": str(entry["event_id"]),
             "cutoff": int(entry["cutoff"]),
             "e0e1": e0e1_vector(e0, e1),
@@ -80,6 +87,15 @@ def build_feature_table(dataset: str, atomic_entries, e0_rows, e1_rows,
             "e2": {reader: [e2[reader][name] for name in P.E2_FEATURE_NAMES]
                    for reader in P.READER_KEYS},
         }
+        if e3_rows is not None:
+            e3 = e3_by_key.get(key)
+            if e3 is None or sorted(e3) != sorted(P.READER_KEYS):
+                raise LoroRefused(f"{key}: E3 readers "
+                                  f"{sorted(e3) if e3 else None}")
+            record["e3"] = {
+                reader: [e3[reader][name] for name in P.E3_FEATURE_NAMES]
+                for reader in P.READER_KEYS}
+        table[key] = record
     return table
 
 
@@ -103,8 +119,11 @@ def make_rows(atomic_entries, table, readers, event_ids, model: str,
             base = list(features["e0e1"])
             if model in (P.MODEL_B1,):
                 x = base + list(features["struct"])
-            elif model in (P.MODEL_B4, P.MODEL_B5):
+            elif model == P.MODEL_B4:
                 x = base + list(features["e2"][reader])
+            elif model == P.MODEL_B5:
+                x = base + list(features["e2"][reader]) \
+                    + list(features["e3"][reader])
             else:
                 x = base
             rows.append({
@@ -158,7 +177,7 @@ def grid_configs() -> list:
 
 def _build_model(model_kind: str, in_dim: int, config: dict,
                  fingerprint_dim: int = None):
-    if model_kind == P.MODEL_B4:
+    if model_kind in (P.MODEL_B4, P.MODEL_B5):
         from ..models.conditioned_utility import build_conditioned_net
         return build_conditioned_net(in_dim, fingerprint_dim,
                                      embed=config["hidden"],
@@ -180,9 +199,9 @@ def select_and_train(model_kind: str, train_rows, dev_rows,
     in_dim = len(train_rows[0]["x"])
     forward_extra = None
     fingerprint_dim = None
-    if model_kind == P.MODEL_B4:
+    if model_kind in (P.MODEL_B4, P.MODEL_B5):
         if fingerprint_vectors is None:
-            raise LoroRefused("B4 needs fingerprint vectors")
+            raise LoroRefused(f"{model_kind} needs fingerprint vectors")
         fingerprint_dim = len(fingerprint_vectors[train_rows[0]["reader"]])
         forward_extra = lambda rows: [fingerprint_vectors[r["reader"]]
                                       for r in rows]  # noqa: E731
@@ -214,7 +233,7 @@ def select_and_train(model_kind: str, train_rows, dev_rows,
 def seed_averaged_eval(selected: dict, eval_rows, model_kind: str,
                        fingerprint_vectors=None) -> dict:
     forward_extra = None
-    if model_kind == P.MODEL_B4:
+    if model_kind in (P.MODEL_B4, P.MODEL_B5):
         forward_extra = lambda rows: [fingerprint_vectors[r["reader"]]
                                       for r in rows]  # noqa: E731
     preds = [predict(run["model"], eval_rows, forward_extra=forward_extra)
@@ -412,7 +431,10 @@ def run_b2_in_domain(dataset: str, atomic_entries, table, split,
 # dataset-level pilot + gate
 # --------------------------------------------------------------------------
 def run_dataset(dataset: str, atomic_entries, table, split, fingerprints,
-                models=(P.MODEL_B0, P.MODEL_B4), train_kwargs=None) -> dict:
+                models=(P.MODEL_B0, P.MODEL_B4), train_kwargs=None,
+                primary_model=P.MODEL_B4) -> dict:
+    if primary_model not in models:
+        raise LoroRefused(f"primary model {primary_model} not in {models}")
     rotations = {}
     for rotation in P.LORO_ROTATIONS:
         held = rotation[2]
@@ -426,16 +448,18 @@ def run_dataset(dataset: str, atomic_entries, table, split, fingerprints,
         held = rotation[2]
         cache = rotations[held]["eval_rows"]
         eval_rows, b0_pred = cache[P.MODEL_B0]
-        _rows, b4_pred = cache[P.MODEL_B4]
+        _rows, primary_pred = cache[primary_model]
         per_reader_bootstrap[held] = boot.paired_event_delta(
-            eval_rows, b4_pred["sign_probs"], b0_pred["sign_probs"])
-        agg_payloads.append((eval_rows, b4_pred["sign_probs"],
+            eval_rows, primary_pred["sign_probs"], b0_pred["sign_probs"])
+        agg_payloads.append((eval_rows, primary_pred["sign_probs"],
                              b0_pred["sign_probs"]))
     aggregate = boot.aggregate_delta(agg_payloads)
     per_reader_delta = {held: per_reader_bootstrap[held]["observed"]
                         for held in per_reader_bootstrap}
     result = {
         "dataset": dataset,
+        "primary_model": primary_model,
+        "primary_comparison": [primary_model, P.MODEL_B0],
         "rotations": {},
         "per_reader_bootstrap": per_reader_bootstrap,
         "aggregate": {

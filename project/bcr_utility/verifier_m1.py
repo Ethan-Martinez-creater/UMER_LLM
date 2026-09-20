@@ -135,8 +135,8 @@ def _check_features(report, repo_root):
     zero_touch_failed = bool(verdict) and \
         verdict.get("zero_touch_passed") is False
     if e3_present and not zero_touch_failed:
-        problems.append(f"E3 artifacts exist without a ZERO-TOUCH failure: "
-                        f"{e3_present}")
+        problems.append(f"E3 artifacts exist without a recorded ZERO-TOUCH "
+                        f"failure: {e3_present}")
     report.add("m1_no_e3_before_zero_touch_failure", not problems,
                "; ".join(problems) if problems else
                "no E3 artifacts (or E3 only after a recorded ZERO-TOUCH "
@@ -300,6 +300,61 @@ def _check_no_m2(report, repo_root):
                "no M2 artifacts, no Phi/Gemma references")
 
 
+def _check_light_touch(report, repo_root):
+    """B5 / E3 consistency — only when the LIGHT-TOUCH stage ran."""
+    evaluation = _read_json(P.m1_path(repo_root, "evaluation",
+                                      "evaluation_light_touch.json"))
+    verdict = _read_json(P.m1_path(repo_root, P.M1_VERDICT_FILENAME))
+    if evaluation is None:
+        report.add("m1_light_touch_consistent", True,
+                   "LIGHT-TOUCH stage not run (ZERO-TOUCH "
+                   f"passed={bool(verdict) and verdict.get('zero_touch_passed')}"
+                   if verdict else "no verdict yet",
+                   pending=verdict is None or
+                   verdict.get("zero_touch_passed") is None)
+        return
+    problems = []
+    if not verdict or verdict.get("zero_touch_passed") is not False:
+        problems.append("LIGHT-TOUCH ran without a ZERO-TOUCH failure")
+    if evaluation.get("stage") != "m1d_light_touch":
+        problems.append(f"stage={evaluation.get('stage')}")
+    for dataset in P.DATASETS:
+        result = (evaluation.get("datasets") or {}).get(dataset) or {}
+        for rotation in P.LORO_ROTATIONS:
+            models = ((result.get("rotations") or {}).get(rotation[2])
+                      or {}).get("models") or {}
+            if P.MODEL_B5 not in models:
+                problems.append(f"{dataset}/{rotation[2]}: B5 missing")
+        e3_path = P.m1_path(repo_root, "features", f"e3_{dataset}.jsonl")
+        if not os.path.exists(e3_path):
+            problems.append(f"{dataset}: e3 cache missing")
+        else:
+            n = _count_jsonl(e3_path)
+            expected = P.FROZEN_ATOMIC_KEYS[dataset] * len(P.READER_KEYS)
+            if n != expected:
+                problems.append(f"{dataset}: e3 rows {n} != {expected}")
+    gate = _read_json(P.m1_path(repo_root, "evaluation",
+                                "gate_light_touch.json"))
+    if gate is None:
+        problems.append("gate_light_touch.json missing")
+    else:
+        thresholds = gate.get("thresholds") or {}
+        if thresholds.get("mean_delta_min") != P.GATE_MEAN_DELTA_MIN or \
+                thresholds.get("worst_reader_min") != P.GATE_WORST_READER_MIN \
+                or thresholds.get("positive_readers_min") != \
+                P.GATE_POSITIVE_READERS_MIN:
+            problems.append("light-touch gate thresholds drift")
+        if gate.get("passed") != verdict.get("light_touch_passed"):
+            problems.append("verdict light_touch_passed inconsistent")
+    outcome = (verdict or {}).get("final_outcome")
+    if outcome not in ("M1_CONDITIONAL_GO", "M1_NO_GO"):
+        problems.append(f"final_outcome={outcome}")
+    report.add("m1_light_touch_consistent", not problems,
+               "; ".join(problems[:6]) if problems else
+               f"E3 rows exact (keys x {len(P.READER_KEYS)}), B5 rotations "
+               f"complete, gate thresholds frozen, outcome={outcome}")
+
+
 def verify(repo_root: str) -> dict:
     report = Report()
     _check_probe_responses(report, repo_root)
@@ -307,6 +362,7 @@ def verify(repo_root: str) -> dict:
     _check_features(report, repo_root)
     _check_loro(report, repo_root)
     _check_gate(report, repo_root)
+    _check_light_touch(report, repo_root)
     _check_no_m2(report, repo_root)
     return {"checks": report.checks, "issues": report.issues,
             "pending": report.pending, "m1": {"mode": "m1"}}

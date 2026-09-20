@@ -150,3 +150,41 @@ def test_run_b2_in_domain_diagnostic():
     assert out["in_domain"] is True
     assert out["kind"] == P.MODEL_B2
     assert 0.0 <= out["eval_metrics"]["macro_f1"] <= 1.0
+
+
+def _dataset_e3(name="maweibo"):
+    entries = S.synth_atomic_entries(name)
+    table = lor.build_feature_table(
+        name, entries, S.synth_e0_rows(entries), S.synth_e1_rows(entries),
+        S.synth_e2_rows(entries), e3_rows=S.synth_e3_rows(entries))
+    return entries, table, S.synth_split(), S.synth_fingerprints()
+
+
+def test_b5_feature_width_and_missing_e3_refused():
+    entries, table, split, _fp = _dataset_e3()
+    b5 = lor.make_rows(entries, table, ["qwen"], split["utility_train"][:2],
+                       P.MODEL_B5)
+    assert len(b5[0]["x"]) == 20 + 6 + 6
+    # without E3 rows a B5 table cannot be built at all
+    entries_z = S.synth_atomic_entries("maweibo")
+    with pytest.raises(lor.LoroRefused, match="E3"):
+        lor.build_feature_table("maweibo", entries_z,
+                                S.synth_e0_rows(entries_z),
+                                S.synth_e1_rows(entries_z),
+                                S.synth_e2_rows(entries_z),
+                                e3_rows=[])
+
+
+def test_run_dataset_light_touch_b5_uses_same_protocol():
+    entries, table, split, fingerprints = _dataset_e3()
+    result, aggregate, _cache = lor.run_dataset(
+        "maweibo", entries, table, split, fingerprints,
+        models=(P.MODEL_B0, P.MODEL_B5), primary_model=P.MODEL_B5,
+        train_kwargs=FAST)
+    assert result["primary_comparison"] == [P.MODEL_B5, P.MODEL_B0]
+    for held, rot in result["rotations"].items():
+        assert P.MODEL_B5 in rot["models"]
+        assert rot["models"][P.MODEL_B5]["selected_config"]["hidden"] == 32
+    assert aggregate["n_readers"] == 3
+    gate = lor.decide_primary_gate(result)
+    assert isinstance(gate["passed"], bool)

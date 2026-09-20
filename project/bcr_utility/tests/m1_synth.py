@@ -161,3 +161,15 @@ def synth_e2_rows(entries) -> list:
                   for name in P.E2_FEATURE_NAMES}
             rows.append({"key": e["key"], "reader": reader, "e2": e2})
     return rows
+
+
+def synth_e3_rows(entries) -> list:
+    rows = []
+    for e in entries:
+        for reader in P.READER_KEYS:
+            e3 = {name: abs(det_value(e["key"], reader, "e3", name)) % 3.0
+                  for name in P.E3_FEATURE_NAMES}
+            e3["nll_gap"] = (e3["evidence_nll_per_token"]
+                             - e3["conditional_evidence_nll_per_token"])
+            rows.append({"key": e["key"], "reader": reader, "e3": e3})
+    return rows

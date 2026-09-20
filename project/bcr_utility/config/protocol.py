@@ -266,6 +266,17 @@ E2_FEATURE_NAMES = (
     "reply_tokens", "parent_tokens", "unit_tokens",
     "canonical_unit_tokens", "reply_frac", "unit_vs_canonical",
 )
+#: E3 LIGHT-TOUCH reader-forward compatibility features (per key x reader;
+#: M1 plan §17 — generated only after a ZERO-TOUCH failure). The two
+#: source-only entries are defined per (event, cutoff, reader) and broadcast
+#: to that snapshot's evidence keys. ``nll_gap`` is
+#: ``evidence_nll_per_token - conditional_evidence_nll_per_token``: how much
+#: conditioning on the source lowers the evidence NLL.
+E3_FEATURE_NAMES = (
+    "source_only_margin", "source_only_entropy", "source_nll",
+    "evidence_nll_per_token", "conditional_evidence_nll_per_token",
+    "nll_gap",
+)
 #: B1 control: the ten frozen CR-TSER structural/time scalars (reused).
 B1_STRUCT_NAMES = (
     "depth_norm", "child_count_norm", "degree_norm", "subtree_size_norm",
