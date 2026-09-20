@@ -104,7 +104,8 @@ def run(dataset: str, reader_key: str, paths, repo_root, mock=False,
     print(f"[m1a] reader {reader_key} identity "
           f"{str(identity.get('reader_identity_hash'))[:16]}...")
 
-    out_dir = P.m1_path(repo_root, "probe_responses")
+    out_dir = P.m1_path(repo_root, "probe_responses" if not mock
+                                     else "probe_responses_smoke")
     os.makedirs(out_dir, exist_ok=True)
     shard = os.path.join(out_dir, SHARD_TEMPLATE.format(
         dataset=dataset, reader=reader_key))
