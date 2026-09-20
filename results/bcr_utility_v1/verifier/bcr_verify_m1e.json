@@ -3,11 +3,10 @@
  "mode": "m1e",
  "issues": [],
  "pending": [
-  "historical_label_caches_recomputed",
-  "m1e_attribution_present"
+  "historical_label_caches_recomputed"
  ],
  "n_issues": 0,
- "n_pending": 2,
+ "n_pending": 1,
  "checks": [
   {
    "check": "bcr_protocol_frozen",
@@ -252,7 +251,7 @@
   {
    "check": "m1e_m1_evidence_unchanged",
    "ok": true,
-   "detail": "36 M1 artifacts match their committed blobs at 1c243ac0ad78; no tracked changes",
+   "detail": "36 M1 artifacts match their committed blobs at 41a9b7ebe9fa; no tracked changes",
    "pending": false
   },
   {
@@ -263,14 +262,26 @@
   },
   {
    "check": "m1e_attribution_present",
-   "ok": false,
-   "detail": "missing: ['maweibo', 'pheme']",
-   "pending": true
+   "ok": true,
+   "detail": "attribution/<dataset>.json for both datasets",
+   "pending": false
+  },
+  {
+   "check": "m1e_variants_fixed_and_eval_never_trained_on",
+   "ok": true,
+   "detail": "D0/D2/D3/D5 trained, D1/D4 reused verbatim, 6 variants total, scalers fitted on training rows only, configs from the frozen grid chosen on dev",
+   "pending": false
+  },
+  {
+   "check": "m1e_feature_groups_frozen",
+   "ok": true,
+   "detail": "Z/F/S/C groups and D0-D5 evidence widths match the frozen definition",
+   "pending": false
   },
   {
    "check": "m1e_no_reader_inference_or_label_artifacts",
    "ok": true,
-   "detail": "m1e contains only []",
+   "detail": "m1e contains only ['attribution']",
    "pending": false
   },
   {

@@ -1,0 +1,52 @@
+=== M1-E attribution start 2026年 09月 20日 星期日 15:17:04 CST HEAD=2184e6341ddfa9ff81c4ce6ec43a2ad179e5431f ===
+[m1e] maweibo: 2549 atomic keys, 2549 feature rows
+[m1e] maweibo/D0_Z: qwen=0.1948 mistral=0.1588 internlm=0.2138 (53.7s)
+[m1e] maweibo/D2_Z_F_S: qwen=0.2736 mistral=0.2856 internlm=0.2940 (119.5s)
+[m1e] maweibo/D3_Z_F_C: qwen=0.2585 mistral=0.2818 internlm=0.2241 (187.3s)
+[m1e] maweibo/D5_Z_S_C: qwen=0.2943 mistral=0.3035 internlm=0.3239 (241.4s)
+[m1e] maweibo/D1_Z_F: reused frozen B4_zero_touch_bcr qwen=0.2400 mistral=0.1649 internlm=0.2924
+[m1e] maweibo/D4_Z_F_S_C: reused frozen B5_light_touch_bcr qwen=0.3535 mistral=0.3095 internlm=0.2303
+{
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1e/attribution/maweibo.json",
+ "bytes": 30514,
+ "sha256": "cfe584464c461040625938f360da951faaeff9f9e452c0f73119659ccb86461f"
+}
+[m1e] pheme: 2107 atomic keys, 2107 feature rows
+[m1e] pheme/D0_Z: qwen=0.2426 mistral=0.2567 internlm=0.2834 (32.6s)
+[m1e] pheme/D2_Z_F_S: qwen=0.0750 mistral=0.1555 internlm=0.2961 (88.7s)
+[m1e] pheme/D3_Z_F_C: qwen=0.1519 mistral=0.0522 internlm=0.3264 (136.2s)
+[m1e] pheme/D5_Z_S_C: qwen=0.1801 mistral=0.3738 internlm=0.2711 (196.5s)
+[m1e] pheme/D1_Z_F: reused frozen B4_zero_touch_bcr qwen=0.2680 mistral=0.2181 internlm=0.3494
+[m1e] pheme/D4_Z_F_S_C: reused frozen B5_light_touch_bcr qwen=0.0819 mistral=0.2066 internlm=0.1344
+{
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1e/attribution/pheme.json",
+ "bytes": 30577,
+ "sha256": "ce79b308b73f3a644313afcd8b0b220cedc3c2ac0524b0e118c402042443942a"
+}
+=== M1-E attribution complete rc=0 2026年 09月 20日 星期日 15:25:54 CST ===
+=== M1-E attribution start 2026年 09月 20日 星期日 15:33:08 CST HEAD=41a9b7ebe9fa50944c688b48120502bdfba0aa4c ===
+[m1e] maweibo: 2549 atomic keys, 2549 feature rows
+[m1e] maweibo/D0_Z: qwen=0.1948 mistral=0.1588 internlm=0.2138 (55.2s)
+[m1e] maweibo/D2_Z_F_S: qwen=0.2736 mistral=0.2856 internlm=0.2940 (122.4s)
+[m1e] maweibo/D3_Z_F_C: qwen=0.2585 mistral=0.2818 internlm=0.2241 (191.5s)
+[m1e] maweibo/D5_Z_S_C: qwen=0.2943 mistral=0.3035 internlm=0.3239 (250.6s)
+[m1e] maweibo/D1_Z_F: reused frozen B4_zero_touch_bcr qwen=0.2400 mistral=0.1649 internlm=0.2924
+[m1e] maweibo/D4_Z_F_S_C: reused frozen B5_light_touch_bcr qwen=0.3535 mistral=0.3095 internlm=0.2303
+{
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1e/attribution/maweibo.json",
+ "bytes": 32070,
+ "sha256": "44f772d5e40c5d8333a1652e073670ddbfaa3a61ff7c95455fb6152559059b1f"
+}
+[m1e] pheme: 2107 atomic keys, 2107 feature rows
+[m1e] pheme/D0_Z: qwen=0.2426 mistral=0.2567 internlm=0.2834 (34.4s)
+[m1e] pheme/D2_Z_F_S: qwen=0.0750 mistral=0.1555 internlm=0.2961 (91.4s)
+[m1e] pheme/D3_Z_F_C: qwen=0.1519 mistral=0.0522 internlm=0.3264 (139.5s)
+[m1e] pheme/D5_Z_S_C: qwen=0.1801 mistral=0.3738 internlm=0.2711 (199.0s)
+[m1e] pheme/D1_Z_F: reused frozen B4_zero_touch_bcr qwen=0.2680 mistral=0.2181 internlm=0.3494
+[m1e] pheme/D4_Z_F_S_C: reused frozen B5_light_touch_bcr qwen=0.0819 mistral=0.2066 internlm=0.1344
+{
+ "path": "/data/jyz/next/llm/cr_tser_ws/results/bcr_utility_v1/m1e/attribution/pheme.json",
+ "bytes": 32120,
+ "sha256": "1f82cdb15afeb80e1e78d2efe5d94797e65adb47512193db15d765814d361450"
+}
+=== M1-E attribution complete rc=0 2026年 09月 20日 星期日 15:42:04 CST ===

@@ -1,7 +1,7 @@
 {
  "protocol": "bcr_v1",
  "stage": "m1e",
- "status": "INFRASTRUCTURE_PAUSE",
+ "status": "COMPLETED",
  "m1_verdict_unchanged": true,
  "m1_verdict": "M1_CONDITIONAL_GO",
  "defines_new_gate": false,
@@ -12,18 +12,40 @@
  },
  "tasks_completed": [
   "A_frozen_evidence_pins",
+  "B_feature_group_ablations_D0_D2_D3_D5",
+  "C_fingerprint_incremental_contribution_D4_vs_D5",
   "D_dataset_shift_audit",
   "E_reader_cutoff_class_concentration",
   "F_b3_deployment_contract"
  ],
- "tasks_blocked": [
-  "B_feature_group_ablations_D0_D2_D3_D5",
-  "C_fingerprint_incremental_contribution_D4_vs_D5"
- ],
- "blocked_reason": "SERVER connection closed by 60.215.128.50:32985 (see INFRASTRUCTURE_PAUSE.json); stopped per the connection contract, no retry loop, no connection change, no server work moved to LOCAL",
+ "key_findings": {
+  "maweibo_vs_frozen_B0": {
+   "D0_Z_no_fingerprint_no_e3": -0.0471,
+   "D1_Z_F_frozen_B4": -0.0038,
+   "D2_Z_F_S": 0.0482,
+   "D3_Z_F_C": 0.0185,
+   "D4_Z_F_S_C_frozen_B5": 0.0616,
+   "D5_Z_S_C_no_fingerprint": 0.0710
+  },
+  "pheme_vs_frozen_B0": {
+   "D0_Z": 0.0136,
+   "D1_Z_F_frozen_B4": 0.0312,
+   "D2_Z_F_S": -0.0718,
+   "D3_Z_F_C": -0.0704,
+   "D4_Z_F_S_C_frozen_B5": -0.1063,
+   "D5_Z_S_C_no_fingerprint": 0.0277
+  },
+  "fingerprint_increment_D4_minus_D5": {
+   "maweibo": -0.0094,
+   "maweibo_ci": [-0.0675, 0.0435],
+   "pheme": -0.1340,
+   "pheme_ci": [-0.1582, -0.1000]
+  },
+  "interpretation": "The Ma-Weibo LIGHT-TOUCH gain is attributable to the E3 source-state and evidence-familiarity features, not to the behavioral fingerprint. With E3 present the fingerprint adds no positive increment on Ma-Weibo (CI covers 0) and is clearly harmful on PHEME. E2 alone (D0, no fingerprint, no E3) is itself negative on Ma-Weibo. These are post-hoc diagnostics and do not modify the frozen M1_CONDITIONAL_GO verdict."
+ },
  "frozen_m1_results_untouched": true,
  "reader_inference_run": false,
  "utility_labels_generated": false,
  "m2_entered": false,
- "next": "resume M1-E Task B/C with next/.codex_tmp_ssh_run.cmd after the user restores the tunnel"
+ "next": "await research review of the M1-E attribution finding"
 }
