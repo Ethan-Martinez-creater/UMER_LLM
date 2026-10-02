@@ -485,20 +485,38 @@ def verify_m1e(repo_root: str, environment: str = "") -> dict:
     return payload
 
 
+def verify_m1f(repo_root: str, environment: str = "") -> dict:
+    """M0 + M1 + M1-E checks plus the M1-F validity-audit checks."""
+    payload = verify_m1e(repo_root, environment=environment)
+    from . import verifier_m1f
+    extra = verifier_m1f.verify(repo_root)
+    payload["mode"] = "m1f"
+    payload["checks"] += extra["checks"]
+    payload["issues"] += extra["issues"]
+    payload["pending"] += extra["pending"]
+    payload["n_issues"] = len(payload["issues"])
+    payload["n_pending"] = len(payload["pending"])
+    payload["m1f"] = extra.get("m1f", {})
+    return payload
+
+
 def main(argv=None) -> int:
     import argparse
     import sys
     from pathlib import Path
 
     parser = argparse.ArgumentParser(description="BCR-Utility verifier")
-    parser.add_argument("--mode", choices=("m0", "m1", "m1e"), default="m0")
+    parser.add_argument("--mode", choices=("m0", "m1", "m1e", "m1f"),
+                        default="m0")
     parser.add_argument("--repo-root", default=None)
     parser.add_argument("--environment", default="")
     parser.add_argument("--json", default=None,
                         help="write the verifier report here")
     args = parser.parse_args(argv)
     repo_root = args.repo_root or str(Path(__file__).resolve().parents[2])
-    if args.mode == "m1e":
+    if args.mode == "m1f":
+        payload = verify_m1f(repo_root, environment=args.environment)
+    elif args.mode == "m1e":
         payload = verify_m1e(repo_root, environment=args.environment)
     elif args.mode == "m1":
         payload = verify_m1(repo_root, environment=args.environment)
@@ -507,7 +525,8 @@ def main(argv=None) -> int:
     target = args.json or os.path.join(
         str(repo_root), P.RESULTS_ROOT, "verifier",
         {"m0": "bcr_verify.json", "m1": "bcr_verify_m1.json",
-         "m1e": "bcr_verify_m1e.json"}[args.mode])
+         "m1e": "bcr_verify_m1e.json",
+         "m1f": "bcr_verify_m1f.json"}[args.mode])
     historical_import.write_json(target, payload)
     print(json.dumps({k: payload[k] for k in
                       ("protocol", "issues", "pending", "n_issues",

@@ -414,6 +414,84 @@ def m1e_path(repo_root, *parts) -> str:
     return os.path.join(m1e_dir(repo_root), *parts)
 
 
+# --------------------------------------------------------------------------
+# M1-F — Strong-baseline & validity audit (bounded falsification round)
+# --------------------------------------------------------------------------
+#: Stage namespace. Every M1-F artifact lives here; nothing under ``m1/`` or
+#: ``m1e/`` is ever written by this stage.
+M1F_DIRNAME = "m1f"
+#: The approved commit this audit starts from (plan header).
+M1F_BASELINE_COMMIT = "b62010b07f8fa8fbc9d2604b4e8fdf8cbe6a8d12"
+
+M1F_EVIDENCE_PINS_FILENAME = "evidence_pins.json"
+M1F_TASK_VALIDITY_FILENAME = "task_validity.json"
+M1F_TASK_VALIDITY_REPORT_FILENAME = "TASK_VALIDITY.md"
+M1F_BASELINES_DIRNAME = "baselines"
+M1F_ACTIVE_AUDIT_FILENAME = "active_signed_audit.json"
+M1F_WITHIN_SNAPSHOT_FILENAME = "within_snapshot_audit.json"
+M1F_ROBUSTNESS_FILENAME = "robustness_diagnostic.json"
+M1F_PHEME_FILENAME = "pheme_diagnostic.json"
+M1F_VERDICT_FILENAME = "M1F_VERDICT.json"
+M1F_REPORT_FILENAME = "M1F_REPORT.md"
+
+#: The fixed strong-baseline ladder (plan §6). ``S4`` is the frozen D5.
+M1F_S0 = "S0_all_neutral"
+M1F_S1 = "S1_train_prior"
+M1F_S2 = "S2_source_state"
+M1F_S3 = "S3_source_state_plus_z"
+M1F_S4 = "S4_frozen_d5"
+M1F_VARIANTS = (M1F_S0, M1F_S1, M1F_S2, M1F_S3, M1F_S4)
+#: Variants this stage fits itself (the others are constant or reused).
+M1F_TRAINED_VARIANTS = (M1F_S2, M1F_S3)
+#: Constant predictors: no fitting, no held-out information.
+M1F_CONSTANT_VARIANTS = (M1F_S0, M1F_S1)
+#: The comparator pool holds only the *strong simple* baselines; S4 is the
+#: candidate, never its own comparator (plan §6).
+M1F_COMPARATOR_POOL = (M1F_S0, M1F_S1, M1F_S2, M1F_S3)
+#: S4 reuses the frozen M1-E ``D5_Z_S_C`` predictions verbatim.
+M1F_REUSED_VARIANTS = {M1F_S4: "D5_Z_S_C"}
+
+#: Sign classes whose gold rows form the active (signed) audit (plan §8).
+M1F_ACTIVE_CLASSES = ("HELPFUL", "HARMFUL")
+
+#: Decision thresholds (plan §12). Fixed; never tuned on utility_eval.
+M1F_MEAN_DELTA_MIN = 0.02
+M1F_CI_ALPHA = 0.05
+M1F_POSITIVE_READERS_MIN = 2
+#: Diagnostic-only sign thresholds; the official threshold stays ±0.05.
+M1F_THRESHOLDS = (0.03, 0.05, 0.07)
+M1F_OFFICIAL_THRESHOLD = UTILITY_THRESHOLD
+#: Within-snapshot statistics need >= 3 evidence rows and a non-zero gold
+#: utility variance inside ``(event, cutoff, reader)`` (plan §9).
+M1F_WITHIN_MIN_ROWS = 3
+M1F_WITHIN_VARIANCE_EPS = 1e-12
+#: |u| within this band of the official threshold counts as near-boundary.
+M1F_NEAR_BOUNDARY_BAND = 0.01
+
+#: The A/B label-swap probe cannot be reconstructed from frozen caches: the
+#: frozen E3 rows hold only the original A/B orientation, so a swapped prompt
+#: needs new reader inference — which M1-F forbids (plan §10).
+M1F_AB_SWAP_STATUS = "NOT_TESTABLE_WITHOUT_NEW_READER_INFERENCE"
+
+M1F_OUTCOMES = ("M1F_CONTINUE_TO_CONFIRMATION_REVIEW",
+                "M1F_CLOSE_BCR_UTILITY_METHOD", "M1F_VALIDITY_BLOCKED",
+                "IMPLEMENTATION_BLOCKED", "INFRASTRUCTURE_PAUSE")
+
+#: Artifact directories that must not appear under ``m1f/`` (no reader
+#: inference, no new labels, no deployed models, no next stage).
+M1F_FORBIDDEN_ARTIFACT_DIRS = ("probe_responses", "reader_probes",
+                               "utility_labels", "fingerprints", "models",
+                               "m2", "m2_pilot", "phi", "gemma")
+
+
+def m1f_dir(repo_root) -> str:
+    return os.path.join(str(repo_root), RESULTS_ROOT, M1F_DIRNAME)
+
+
+def m1f_path(repo_root, *parts) -> str:
+    return os.path.join(m1f_dir(repo_root), *parts)
+
+
 def frozen_constants() -> dict:
     """The numbers the M0 verifier checks for drift."""
     return {

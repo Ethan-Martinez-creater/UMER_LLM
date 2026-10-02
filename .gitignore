@@ -3,6 +3,9 @@ WORKSPACE_GUIDE.md
 resources/resource_manifest.md
 results/source_paths.json
 
+# Archived legacy planning docs (local only, never pushed to GitHub)
+docs/old_plan_md/
+
 # Server-side deployment/ops scripts (environment-specific entry points)
 scripts/launch_materialize_resources.sh
 scripts/materialize_resources.sh
