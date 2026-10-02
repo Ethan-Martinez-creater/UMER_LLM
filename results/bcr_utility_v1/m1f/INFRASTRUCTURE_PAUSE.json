@@ -1,0 +1,30 @@
+{
+ "stage": "m1f",
+ "status": "INFRASTRUCTURE_PAUSE",
+ "detected_at_local": "2026-10-02T21:42:33+08:00",
+ "wrapper_used": "next/.codex_tmp_ssh_run.cmd (-> Algorithm/modified/next/.codex_tmp_ssh_run.cmd)",
+ "raw_errors": [
+  "Connection closed by 60.215.128.50 port 32985",
+  "Connection closed by 60.215.128.50 port 32985"
+ ],
+ "host": "jyz@60.215.128.50",
+ "port": 32985,
+ "actions_taken": [
+  "stopped immediately (no host/port/user change, no alternative SSH/SCP, no retry loop)",
+  "one liveness probe with the same approved wrapper (also refused)",
+  "no server work moved to LOCAL",
+  "no reader inference, no utility labels, no E0/E1/E2/E3 regeneration attempted"
+ ],
+ "blocked_work": [
+  "M1-F SERVER authoritative run of scripts/bcr_run_m1f.py (Tasks B/C/D/E/F/G on SERVER)",
+  "M1-F SERVER authoritative verifier: bcr_verify.py --mode m1f with issues=0, pending=0",
+  "M1-F final artifacts (baselines/, active_signed_audit.json, within_snapshot_audit.json, robustness_diagnostic.json, pheme_diagnostic.json, M1F_VERDICT.json, M1F_REPORT.md) and the M1-F verdict"
+ ],
+ "completed_work": [
+  "M1-F implementation committed and pushed at b499844: Task A validity audit, S0-S4 strong-baseline ladder, Task C/D signed+active metrics, Task E within-snapshot discrimination, Task F fixed-threshold diagnostics, Task G PHEME diagnostic, verifier mode m1f, report generator",
+  "LOCAL tests: 496 passed (BCR 277 + CR-TSER 219); compileall clean",
+  "LOCAL smoke run of the whole pipeline on Ma-Weibo (--iterations 50, non-formal): every artifact path executed end to end"
+ ],
+ "local_smoke_only_note": "The files currently under results/bcr_utility_v1/m1f/ other than this record are a LOCAL smoke run: Ma-Weibo only and 50 bootstrap iterations, so their confidence intervals are not the frozen 10000-iteration ones. They are NOT the formal M1-F result, must not be quoted as one, and are to be overwritten by the SERVER run before any verdict is reported. Their observed point estimates (which do not depend on the iteration count) point to M1F_CLOSE_BCR_UTILITY_METHOD, but no verdict is claimed until the SERVER run and verifier complete.",
+ "waiting_for": "user restores the tunnel; then rerun next/.codex_tmp_ssh_run.cmd and restart the M1-F SERVER run"
+}
