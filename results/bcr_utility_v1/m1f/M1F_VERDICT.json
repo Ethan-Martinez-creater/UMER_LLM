@@ -1,0 +1,59 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "m1f",
+ "status": "COMPLETED",
+ "verdict": "M1F_CLOSE_BCR_UTILITY_METHOD",
+ "primary_dataset": "maweibo",
+ "defines_new_gate": false,
+ "m1_verdict_unchanged": true,
+ "m1e_verdict_unchanged": true,
+ "m2_entered": false,
+ "authorizes_m2": false,
+ "checks": {
+  "mean_delta_gte_0.02": false,
+  "ci_low_gt_0": false,
+  "positive_readers_gte_2": true,
+  "active_macro_f1_improves": false,
+  "harmful_auprc_not_decreased": false,
+  "within_snapshot_centered_spearman_improves_over_S2": true,
+  "gain_not_only_neutral": false
+ },
+ "conditions": {
+  "mean_delta_min": 0.02,
+  "positive_readers_min": 2,
+  "ci_alpha": 0.05
+ },
+ "observed": {
+  "mean_delta_macro_f1": -0.007549343178252704,
+  "ci_low": -0.0956122069692234,
+  "ci_high": 0.07994781867387857,
+  "positive_readers": 2,
+  "worst_reader_delta": -0.14426073733835415,
+  "active_macro_f1_delta": -0.18926150534889358,
+  "harmful_auprc_delta": -0.04190736357407765,
+  "within_snapshot_centered_spearman_delta": 0.0023637105530888956,
+  "within_snapshot_ci": [
+   -0.09943387718159928,
+   0.0824937734888962
+  ]
+ },
+ "gain_only_neutral_detail": {
+  "gain_only_neutral": true,
+  "active_macro_f1_delta": -0.18926150534889358,
+  "harmful_f1_delta": -0.11092411260709914,
+  "helpful_f1_delta": -0.08518266757300706,
+  "rule": "gain counts as NEUTRAL-only when the active Macro-F1 difference and both active-class F1 differences are all non-positive"
+ },
+ "comparator": "S2_source_state",
+ "pheme_diagnostic": {
+  "diagnostic_only": true,
+  "decides_gate": false
+ },
+ "reader_inference_run": false,
+ "utility_labels_generated": false,
+ "e3_regenerated": false,
+ "new_model_deployed": false,
+ "baseline_commit": "b62010b07f8fa8fbc9d2604b4e8fdf8cbe6a8d12",
+ "note": "A CONTINUE outcome permits only a new research-review round for fresh-event / new-reader confirmation; it never authorizes M2.",
+ "seconds": 2741.897770881653
+}

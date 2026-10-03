@@ -1,0 +1,62 @@
+{
+ "protocol": "bcr_v1",
+ "stage": "m1f",
+ "task": "task_validity_audit",
+ "relabelled_historical_data": false,
+ "changed_threshold_or_split": false,
+ "sources": [
+  "project/cr_tser/config/pilot_config.py",
+  "project/cr_tser/readers/base_reader.py",
+  "project/cr_tser/readers/sequence_scorer.py"
+ ],
+ "reader_prompt": {
+  "target": "A = RUMOR vs B = NON_RUMOR (source post plus the observed social evidence visible up to the cutoff)",
+  "scoring": "teacher-forced candidate log probability p_r(y|C), y in {A=RUMOR, B=NON_RUMOR}",
+  "single_prompt_builder": "project/cr_tser/readers/base_reader.py"
+ },
+ "utility_definition": {
+  "formula": "u_r(e) = p_r(gold | SRC) - p_r(gold | SRC without e)",
+  "gold": "the dataset's frozen rumour/non-rumour label of the event the evidence belongs to",
+  "threshold": 0.05,
+  "sign_classes": [
+   "HELPFUL",
+   "NEUTRAL",
+   "HARMFUL"
+  ],
+  "supervision": "I1_atomic only; I2-I5 are non-supervision"
+ },
+ "utility_meaning": {
+  "positive": "the evidence unit makes this reader more likely to answer with the dataset's gold rumour/non-rumour label for that event",
+  "negative": "the evidence unit makes this reader less likely to answer with that gold label",
+  "is_verification_utility": false,
+  "claim_allowed": "reader-specific rumour-label evidence utility",
+  "claim_forbidden": "fact-checking / truth-verification utility, or any claim that the evidence was shown to be true or false"
+ },
+ "datasets": {
+  "maweibo": {
+   "language": "Chinese",
+   "platform": "Sina Weibo",
+   "task": "event-level rumour vs non-rumour detection",
+   "label_semantics": "the event's rumour / non-rumour annotation carried by the frozen Ma-Weibo source (Ma et al., IJCAI 2016)",
+   "is_truth_verification": false,
+   "boundary": "the label is a rumour annotation, not a verified true/false verdict on the underlying claim"
+  },
+  "pheme": {
+   "language": "English",
+   "platform": "Twitter",
+   "task": "event-level rumour vs non-rumour detection",
+   "label_semantics": "the event's rumour / non-rumour annotation carried by the frozen PHEME source (Zubiaga et al., PLOS ONE 2016)",
+   "is_truth_verification": false,
+   "boundary": "rumour != false and non-rumour != true: PHEME annotates whether a claim circulated as an unverified rumour, not whether it is factually true or false"
+  }
+ },
+ "cross_dataset_boundary": {
+  "is_language_only_shift": false,
+  "note": "Ma-Weibo and PHEME differ in platform, language, annotation process and claim distribution; M1-E measured a systematic E3 distribution shift, so the M1-F contrast must not be reported as a language-only shift"
+ },
+ "conclusion": {
+  "supports_intended_claim": true,
+  "reason": "utility is defined over the reader's rumour/non-rumour answer agreement, so an evidence-level claim is supported provided it is stated as rumour-label utility and never as truth verification",
+  "validity_blocked": false
+ }
+}
