@@ -1,0 +1,28 @@
+{
+  "audit_date": "2026-10-03",
+  "mode": "read_only_remote_json_inspection_no_model_inference",
+  "repository": "https://github.com/CharlesJW222/Lying_with_Truth",
+  "observed_repository_head": "21183d3ce578d7d4bc05c51e29857e9e97237bfa",
+  "fetch_ref": "main",
+  "source_pattern": "https://raw.githubusercontent.com/CharlesJW222/Lying_with_Truth/main/CoPHEME/{event}/{event}_{hypotheses|evidence}.json",
+  "counts": [
+    {"event": "charliehebdo", "hypotheses_false": 116, "hypotheses_unverified": 149, "evidence_non_rumour": 1621, "evidence_true": 193},
+    {"event": "ferguson", "hypotheses_false": 8, "hypotheses_unverified": 266, "evidence_non_rumour": 859, "evidence_true": 10},
+    {"event": "germanwings-crash", "hypotheses_false": 111, "hypotheses_unverified": 33, "evidence_non_rumour": 231, "evidence_true": 94},
+    {"event": "ottawashooting", "hypotheses_false": 72, "hypotheses_unverified": 69, "evidence_non_rumour": 420, "evidence_true": 329},
+    {"event": "putinmissing", "hypotheses_false": 9, "hypotheses_unverified": 117, "evidence_non_rumour": 112, "evidence_true": 0},
+    {"event": "sydneysiege", "hypotheses_false": 86, "hypotheses_unverified": 54, "evidence_non_rumour": 699, "evidence_true": 382}
+  ],
+  "totals": {"hypotheses_false": 402, "hypotheses_unverified": 688, "evidence_non_rumour": 3942, "evidence_true": 1008},
+  "loader_source": "https://raw.githubusercontent.com/CharlesJW222/Lying_with_Truth/main/src/utils/data_loader.py",
+  "loader_observation": "get_target_hypotheses defaults only_rumour=True; this branch admits both false and unverified and ignores veracity_filter. Including both categories is appropriate for a rumour-status task; whether it creates a task mismatch depends on downstream targets, filtering and evaluation. This does not establish the exact published evaluation sample set.",
+  "limits": [
+    "Counts refer to public pool rows, not unique independent claims or published experimental samples.",
+    "Responses used floating main URLs; no per-file hashes or response-to-observed-HEAD binding were preserved. Counts are observations at fetch time, not commit-pinned reproduction evidence.",
+    "A source tweet veracity label does not automatically transfer to its extracted conclusion or every evidence fragment.",
+    "non-rumour does not prove factual truth; unverified does not prove falsity.",
+    "No claim-level truth or entailment validation was performed.",
+    "No license approval, attack-plan provenance audit or published experiment reproduction was performed.",
+    "Raw datasets were inspected in memory only and were not redistributed."
+  ]
+}

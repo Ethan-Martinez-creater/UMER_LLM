@@ -1,0 +1,32 @@
+{
+  "review_date": "2026-10-02",
+  "scope": "POST_HOC_ARITHMETIC_ONLY: existing frozen D5 predictions; no model inference, no training, no new formal gate, no change to M1_CONDITIONAL_GO",
+  "inputs": [
+    "results/bcr_utility_v1/m1e/attribution/predictions_maweibo_D5_Z_S_C.jsonl",
+    "results/bcr_utility_v1/m1e/attribution/predictions_pheme_D5_Z_S_C.jsonl",
+    "results/bcr_utility_v1/m1e/attribution/maweibo.json",
+    "results/bcr_utility_v1/m1e/attribution/pheme.json"
+  ],
+  "verification": "D5 Macro-F1 recomputed from gold_sign and pred_sign; agrees with stored eval_metrics to within 1e-12. Evidence keys unique within each held-out reader. 25 distinct evaluation events per dataset and reader.",
+  "constant_rule": "Predict NEUTRAL for every row; fixed diagnostic rule, not selected or fitted using evaluation labels.",
+  "formula": "macro_f1(always_NEUTRAL) = (2*n_neutral/(n_total+n_neutral))/3; HELPFUL and HARMFUL F1 are zero.",
+  "confidence_interval": "Not computed for this post-hoc comparison. Point differences do not establish statistical significance.",
+  "datasets": {
+    "maweibo": {
+      "qwen": {"n": 611, "gold_counts": {"HELPFUL": 58, "NEUTRAL": 486, "HARMFUL": 67}, "constant_macro_f1": 0.29535095715587967, "D5_macro_f1": 0.29427451443298464, "D5_minus_constant": -0.0010764427228950324, "harmful_prevalence": 0.10965630114566285, "D5_harmful_auprc": 0.14421081879226716},
+      "mistral": {"n": 611, "gold_counts": {"HELPFUL": 41, "NEUTRAL": 519, "HARMFUL": 51}, "constant_macro_f1": 0.30619469026548674, "D5_macro_f1": 0.30350813151769834, "D5_minus_constant": -0.0026865587477883923, "harmful_prevalence": 0.08346972176759411, "D5_harmful_auprc": 0.07987684185084326},
+      "internlm": {"n": 611, "gold_counts": {"HELPFUL": 86, "NEUTRAL": 483, "HARMFUL": 42}, "constant_macro_f1": 0.2943327239488117, "D5_macro_f1": 0.3238776655443322, "D5_minus_constant": 0.029544941595520513, "harmful_prevalence": 0.06873977086743044, "D5_harmful_auprc": 0.1434236304939302},
+      "mean_constant_macro_f1": 0.2986261237900594,
+      "mean_D5_macro_f1": 0.30722010383167175,
+      "mean_D5_minus_constant": 0.00859398004161235
+    },
+    "pheme": {
+      "qwen": {"n": 695, "gold_counts": {"HELPFUL": 67, "NEUTRAL": 562, "HARMFUL": 66}, "constant_macro_f1": 0.298064173959162, "D5_macro_f1": 0.18007418941765393, "D5_minus_constant": -0.11798998454150808, "harmful_prevalence": 0.09496402877697842, "D5_harmful_auprc": 0.10939816226121454},
+      "mistral": {"n": 695, "gold_counts": {"HELPFUL": 13, "NEUTRAL": 674, "HARMFUL": 8}, "constant_macro_f1": 0.3282201120038958, "D5_macro_f1": 0.37380731283170304, "D5_minus_constant": 0.04558720082780726, "harmful_prevalence": 0.011510791366906475, "D5_harmful_auprc": 0.17339576982136687},
+      "internlm": {"n": 695, "gold_counts": {"HELPFUL": 84, "NEUTRAL": 437, "HARMFUL": 174}, "constant_macro_f1": 0.2573616018845701, "D5_macro_f1": 0.27109315874936585, "D5_minus_constant": 0.013731556864795769, "harmful_prevalence": 0.2503597122302158, "D5_harmful_auprc": 0.2801283869606317},
+      "mean_constant_macro_f1": 0.2945486292825426,
+      "mean_D5_macro_f1": 0.2749915536662409,
+      "mean_D5_minus_constant": -0.0195570756163017
+    }
+  }
+}
