@@ -1,0 +1,126 @@
+{
+  "generated_by": "scripts/ses_v1/p0/build_rv_map_and_sample.py",
+  "data_source": {
+    "provider": "figshare 6392078 v1 (Kochkina, Liakata, Zubiaga; 2018-06-10)",
+    "license": "CC BY 4.0",
+    "file": "PHEME_veracity.tar.bz2",
+    "bytes": 46529729,
+    "sha256": "079f6ffdbc0b367399262f101774372e5d19dd8278c33d6c97a84461a9bc58dd",
+    "archive_safety": "SAFE"
+  },
+  "events": [
+    "charliehebdo-all-rnr-threads",
+    "ebola-essien-all-rnr-threads",
+    "ferguson-all-rnr-threads",
+    "germanwings-crash-all-rnr-threads",
+    "gurlitt-all-rnr-threads",
+    "ottawashooting-all-rnr-threads",
+    "prince-toronto-all-rnr-threads",
+    "putinmissing-all-rnr-threads",
+    "sydneysiege-all-rnr-threads"
+  ],
+  "totals": {
+    "threads_all": 6425,
+    "rumour": 2402,
+    "non_rumour": 4023,
+    "v_true": 1067,
+    "v_false": 638,
+    "v_unverified": 697,
+    "v_conflict": 0,
+    "v_missing": 0
+  },
+  "conflict_examples": [],
+  "v_missing_examples": [],
+  "topic_stats": {
+    "charliehebdo": {
+      "rumour": 458,
+      "non-rumour": 1621,
+      "true": 193,
+      "false": 116,
+      "unverified": 149,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 426
+    },
+    "ebola-essien": {
+      "rumour": 14,
+      "non-rumour": 0,
+      "true": 0,
+      "false": 14,
+      "unverified": 0,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 14
+    },
+    "ferguson": {
+      "rumour": 284,
+      "non-rumour": 859,
+      "true": 10,
+      "false": 8,
+      "unverified": 266,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 252
+    },
+    "germanwings-crash": {
+      "rumour": 238,
+      "non-rumour": 231,
+      "true": 94,
+      "false": 111,
+      "unverified": 33,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 220
+    },
+    "gurlitt": {
+      "rumour": 61,
+      "non-rumour": 77,
+      "true": 59,
+      "false": 0,
+      "unverified": 2,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 61
+    },
+    "ottawashooting": {
+      "rumour": 470,
+      "non-rumour": 420,
+      "true": 329,
+      "false": 72,
+      "unverified": 69,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 274
+    },
+    "prince-toronto": {
+      "rumour": 229,
+      "non-rumour": 4,
+      "true": 0,
+      "false": 222,
+      "unverified": 7,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 131
+    },
+    "putinmissing": {
+      "rumour": 126,
+      "non-rumour": 112,
+      "true": 0,
+      "false": 9,
+      "unverified": 117,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 106
+    },
+    "sydneysiege": {
+      "rumour": 522,
+      "non-rumour": 699,
+      "true": 382,
+      "false": 86,
+      "unverified": 54,
+      "v_conflict": 0,
+      "v_missing": 0,
+      "has_links": 393
+    }
+  }
+}

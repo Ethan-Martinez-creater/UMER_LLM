@@ -1,0 +1,29 @@
+{
+  "all_pass": true,
+  "data_version_sha256": "079f6ffdbc0b367399262f101774372e5d19dd8278c33d6c97a84461a9bc58dd",
+  "checks": {
+    "sample_replay_matches_manifest": true,
+    "manifest_anon_ids_unique": true,
+    "manifest_thread_hashes_unique": true,
+    "manifest_r_all_rumour": true,
+    "manifest_v_matches_class": true,
+    "sample_counts": {
+      "true": 20,
+      "false": 20,
+      "unverified": 20
+    },
+    "sample_no_shortfall": true,
+    "topics_covered": 9,
+    "observability_rows_60": true,
+    "observability_consistent_with_manifest": true,
+    "observability_mismatch_examples": [],
+    "all_rows_marked_provisional": true,
+    "no_candidate_semantics_consistent": true,
+    "no_after_cutoff_in_core_pairs": true,
+    "no_raw_twitter_ids_in_p0_docs": true,
+    "leak_examples": [],
+    "required_files_present": true,
+    "missing_files": [],
+    "archive_sha256_matches_data_version": true
+  }
+}

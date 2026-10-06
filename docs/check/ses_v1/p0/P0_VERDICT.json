@@ -1,0 +1,89 @@
+{
+  "protocol": "ses_v1_p0",
+  "date": "2026-10-06",
+  "overall_verdict": "SES_P0_NOT_READY",
+  "verdict_basis": "temporal_traceability=NOT_READY 且强配对 5/6 与 nearest_work_exclusion=UNRESOLVED 三项缺口并存；数据与许可侧成立。无单一标签掩盖：逐项见 dimension_verdicts。",
+  "dimension_verdicts": {
+    "asset_access": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "figshare 6392078 v1 主包 46529729 字节下载成功，SHA256=079f6ffdbc0b367399262f101774372e5d19dd8278c33d6c97a84461a9bc58dd；包安全检查 275248 条目 0 不安全路径（local_assets/ses_v1/p0/archive_safety_check.json）；docs/check/ses_v1/p0/P0_ASSET_AUDIT.json totals"
+    },
+    "license": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "figshare API: license CC BY 4.0（local_assets/ses_v1/p0/figshare_meta.json）；派生统计与匿名 manifest 可发布；原社交内容逐帖再分发不获许可支持，故正文仅存本地 local_assets，公开文件只含聚合统计与哈希"
+    },
+    "native_label_mapping": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "6425 threads（2402 rumour/4023 non-rumour）；R 以目录结构为基准，V 用官方 convert_veracity_annotations.py 逻辑从 annotation.json misinformation/true 计算：true=1067/false=638/unverified=697，冲突 0、缺失 0；单元测试含与官方脚本的直接对比"
+    },
+    "temporal_traceability": {
+      "verdict": "NOT_READY",
+      "evidence": "时间戳与树结构完全可核（60 条 15/60/360min 截点审计完成，15 条 15min 无候选）；但候选纠错材料的历史截点内容大多不可核：bbc.in/14ulyLt、bbc.in/1EMTxMz、cbc.ca/1.2873068 在 Wayback 无存档，且当前重定向内容已漂移（cbc 链接现为受害者确认页，非 RT 时刻疏散报道）；仅 usatoday(2014-08-16 快照)与 bleacherreport(2014-12-06)有存档。最小缺项：P1 需把'截点前可用性'作为独立标注维度，并对每条候选材料做定向存档核查；部分现实可补，部分不可补（如实保留 TEMPORAL_AVAILABILITY_UNKNOWN）"
+    },
+    "dependency_observability": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "RT/引述前缀、共享展开 URL 簇（60 条中 11 条有 >=2 共享 URL）、structure.json+in_reply_to 完整父子链、annotation 原生 for/against/observing links 全部可程序化恢复；P0_OBSERVABILITY.csv dependency_state 列"
+    },
+    "correction_observability": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "12 条深查中纠错信号明确：026(0.4min 断言式+10.2min 来源检查)、028(11.28min 引用式+树内传播)、014(归属质疑->树内确认)、007(更正请求)、053(引用式无链接)；030 反向案例（错误引述传播、annotation 4 条 AGAINST 未进入树内）；P0_CASE_AUDIT.md"
+    },
+    "nearest_work_exclusion": {
+      "verdict": "UNRESOLVED",
+      "evidence": "9 篇中 7 篇已核（4 正文、2 官方摘要、1 元数据受限），无一篇同时覆盖'真实线程依赖结构 + 同源复述不重复计数 + 独立纠错保留'；但 LLM-TKT(SIGIR 2026) FULLTEXT_UNRESOLVED、GAVEL(Findings ACL 2026) 仅官方摘要，二者差异判断存在残余不确定性；P0_NEAREST_WORKS.md 对照表"
+    },
+    "distinct_falsifiable_hypothesis": {
+      "verdict": "SUPPORTED_FOR_DESIGN",
+      "evidence": "H1 依赖感知计数（规则去重为最强基线，推翻条件：与规则去重无显著差异或与文本相似度共线）；H2 可溯源纠错保留（推翻条件：消融依赖判断后增益不降或依赖最终 V 标签）；P0_NEAREST_WORKS.md"
+    },
+    "model_effectiveness": {
+      "verdict": "NOT_TESTED",
+      "evidence": "本轮无模型加载、无 GPU 实验、无 reader 推理"
+    },
+    "gold_status": {
+      "verdict": "PROVISIONAL_AUDIT_NOT_GOLD",
+      "evidence": "P0_OBSERVABILITY.csv 全部 60 行 provisional=1；无双评一致性、无 kappa；深查 12 条为执行智能体审查笔记"
+    }
+  },
+  "gate_conditions": {
+    "cond1_real_mapping_license": true,
+    "cond2_60_samples_3_topics": true,
+    "cond3_six_pair_candidates": false,
+    "cond3_detail": "强配对 5 条（026/028/014/007/053）覆盖 5 话题，true=2/false=2/unverified=1，另 030 为反向配对；缺 1 条强配对，缺口为'树内纠错附带可核历史材料'（ bbc.in/cbc.ca 短链无存档）",
+    "cond4_temporal_verifiable": false,
+    "cond4_detail": "时间戳可核但候选材料截点前内容多 TEMPORAL_AVAILABILITY_UNKNOWN",
+    "cond5_nearest_works_traceable": false,
+    "cond5_detail": "LLM-TKT 全文未获取、GAVEL 仅摘要",
+    "cond6_falsifiable_hypothesis_with_design": true
+  },
+  "infrastructure": {
+    "network": "github.com 与 figshare 直连间歇失败，经本机代理 127.0.0.1:7890 完成 fetch/push/下载；web.archive.org WebFetch 超时改用 curl 代理",
+    "status": "无 INFRASTRUCTURE_PAUSE；所有阻塞均已绕行完成"
+  },
+  "counts": {
+    "threads_total": 6425,
+    "rumour_total": 2402,
+    "v_true": 1067,
+    "v_false": 638,
+    "v_unverified": 697,
+    "v_conflict": 0,
+    "v_missing": 0,
+    "selected": 60,
+    "selected_by_class": {"true": 20, "false": 20, "unverified": 20},
+    "topics_covered": 9,
+    "no_candidate_15m": 15,
+    "url_cluster_threads": 11,
+    "pair_paraphrase_threads": 22,
+    "deny_signal_threads": 13,
+    "deep_audited": 12,
+    "public_page_requests": 9,
+    "strong_pair_candidates": 5,
+    "public_page_budget": 12
+  },
+  "next": "AWAIT_REVIEW_FOR_P1_DESIGN",
+  "no_model_load": true,
+  "no_gpu": true,
+  "no_training": true,
+  "no_attack_generation": true,
+  "no_new_gold": true
+}
