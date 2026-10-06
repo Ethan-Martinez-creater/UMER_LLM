@@ -1,0 +1,52 @@
+{
+  "budget_objects": {
+    "used": 5,
+    "cap": 18
+  },
+  "budget_http_attempts": {
+    "used": 5,
+    "cap": 48
+  },
+  "results": [
+    {
+      "object": "1",
+      "case": "SES-P0-028",
+      "url": "https://web.archive.org/web/20150109/https://www.bbc.co.uk/news/live/world-europe-30722098",
+      "outcome": "OK",
+      "final_url": "https://web.archive.org/web/20150109221731/http://www.bbc.co.uk/news/live/world-europe-30722098",
+      "content_sha256": "5ff234321aa4e70ce5eafc3210a3159043c049c790049823fb1af1622f4f55a1"
+    },
+    {
+      "object": "2",
+      "case": "SES-P0-007",
+      "url": "https://web.archive.org/web/20150324/https://www.bbc.co.uk/news/live/32030778",
+      "outcome": "OK",
+      "final_url": "https://web.archive.org/web/20150324173509/http://www.bbc.co.uk/news/live/32030778",
+      "content_sha256": "454c505179046ab78f109da84ed5210e32babb7276ee27d652f7995cebfb9ef2"
+    },
+    {
+      "object": "3",
+      "case": "SES-P0-026",
+      "url": "https://web.archive.org/web/20141215/https://www.cbc.ca/news/world/sydney-caf%C3%A9-siege-victims-identified-as-tori-johnson-katrina-dawson-1.2873068",
+      "outcome": "OK",
+      "final_url": "https://web.archive.org/web/20141216103022/http://www.cbc.ca/news/world/sydney-caf%C3%A9-siege-victims-identified-as-tori-johnson-katrina-dawson-1.2873068",
+      "content_sha256": "c21e7a2bf8d7cf6c7ccdfb2b1e21d845e39dbe9401e835b6f5a89e86931ab7df"
+    },
+    {
+      "object": "4",
+      "case": "SES-P0-053",
+      "url": "http://web.archive.org/web/20140816002324/http://www.usatoday.com/story/news/usanow/2014/08/15/ferguson-missouri-police-michael-brown-shooting/14098369/",
+      "outcome": "OK",
+      "final_url": "http://web.archive.org/web/20140816002324/http://www.usatoday.com/story/news/usanow/2014/08/15/ferguson-missouri-police-michael-brown-shooting/14098369/",
+      "content_sha256": "dadc4b1b8db78ed4f69f2398b55d0861b40722ea0ffc67548a84e41c2a66e71a"
+    },
+    {
+      "object": "5",
+      "case": "SES-P0-030",
+      "url": "http://web.archive.org/web/20141206002110/http://bleacherreport.com/articles/2229044-ghana-and-ac-milan-star-michael-essien-denies-rumours-his-has-ebola-virus",
+      "outcome": "OK",
+      "final_url": "http://web.archive.org/web/20141206002110/http://bleacherreport.com/articles/2229044-ghana-and-ac-milan-star-michael-essien-denies-rumours-his-has-ebola-virus",
+      "content_sha256": "1d6e46465ea26a801d9e13d4726919a3a497cf14274a8d1b686f7f1109b14769"
+    }
+  ]
+}

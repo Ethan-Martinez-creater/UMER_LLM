@@ -18,6 +18,14 @@
     "observability_consistent_with_manifest": true,
     "observability_mismatch_examples": [],
     "all_rows_marked_provisional": true,
+    "correction_candidate_enum_ok": true,
+    "temporal_enum_ok": true,
+    "state_vs_evidence_placement_ok": true,
+    "enum_violation_examples": {
+      "cc": [],
+      "temporal": [],
+      "misplaced": []
+    },
     "no_candidate_semantics_consistent": true,
     "no_after_cutoff_in_core_pairs": true,
     "no_raw_twitter_ids_in_p0_docs": true,

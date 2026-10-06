@@ -1,0 +1,23 @@
+{
+  "all_pass": true,
+  "checks": {
+    "orig_manifest_replay_unchanged": true,
+    "extension_set_correct": true,
+    "extension_no_overlap_with_orig_deep": true,
+    "deep_total_24": true,
+    "ledger_enum_ok": true,
+    "ledger_enum_violations": [],
+    "ledger_all_provisional": true,
+    "pair_gate_semantics_ok": true,
+    "pair_gate_violations": [],
+    "ledger_cutoff_consistent_with_offset": true,
+    "cutoff_violations": [],
+    "parent_edges_recorded_not_defaulted": true,
+    "input_hashes_present_60": true,
+    "request_budget_ok": true,
+    "no_raw_ids_in_r1_docs": true,
+    "leak_files": [],
+    "verdict_pair_counts_consistent": true
+  },
+  "data_version_sha256": "079f6ffdbc0b367399262f101774372e5d19dd8278c33d6c97a84461a9bc58dd"
+}

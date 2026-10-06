@@ -1,0 +1,13 @@
+anon_id,v_class,topic,thread_hash,source_created_at,n_reactions,in_15m,in_60m,in_360m,selection_rule,provisional
+SES-P0-002,true,ottawashooting,91d593781690a675,Wed Oct 22 16:17:11 +0000 2014,5,3,4,4,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-003,true,gurlitt,a303bc90e76e1510,Mon Nov 24 11:32:58 +0000 2014,0,0,0,0,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-004,true,ferguson,af402b09b4a5e737,Fri Aug 15 19:14:50 +0000 2014,4,3,3,4,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-005,true,sydneysiege,33f35c64e661ab13,Mon Dec 15 15:16:25 +0000 2014,4,2,3,4,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-021,false,germanwings-crash,45c398a25f0a928f,Tue Mar 24 10:55:03 +0000 2015,0,0,0,0,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-022,false,ebola-essien,db5115db72752e98,Sun Oct 12 17:53:56 +0000 2014,4,3,3,4,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-023,false,ottawashooting,1242c6280d373e90,Wed Oct 22 15:44:34 +0000 2014,3,3,3,3,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-024,false,prince-toronto,c87dbd2eb3d69aab,Tue Nov 04 16:28:06 +0000 2014,4,3,4,4,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-041,unverified,germanwings-crash,4afa0c56d556efbe,Fri Mar 27 09:55:28 +0000 2015,12,6,8,12,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-042,unverified,ottawashooting,9dd13ac73872e2d6,Wed Oct 22 17:09:39 +0000 2014,9,4,5,5,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-043,unverified,prince-toronto,2551365ea0150652,Tue Nov 04 21:50:07 +0000 2014,0,0,0,0,per_class_manifest_order_exclude_original_deep12,1
+SES-P0-044,unverified,gurlitt,3e95aaa463a7e545,Thu Nov 20 03:15:39 +0000 2014,0,0,0,0,per_class_manifest_order_exclude_original_deep12,1

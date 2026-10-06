@@ -108,6 +108,22 @@ def main() -> int:
     # 6. provisional 标记全量
     checks["all_rows_marked_provisional"] = all(r.get("provisional") == "1" for r in obs)
 
+    # 6b. F4 强 schema：固定枚举与状态/证据位置检查
+    ENUM_CC = {"yes", "no", "unknown"}
+    ENUM_TEMPORAL = {"REPLY_TIME_VERIFIABLE_CONTENT_UNKNOWN", "AFTER_CUTOFF_ONLY",
+                     "NO_CANDIDATE", "UNKNOWN"}
+    bad_cc = [r["anon_id"] for r in obs if r.get("correction_candidate") not in ENUM_CC]
+    bad_temporal = [r["anon_id"] for r in obs if r.get("temporal_availability") not in ENUM_TEMPORAL]
+    misplaced = [r["anon_id"] for r in obs
+                 if "before_cutoff" in (r.get("correction_evidence") or "").lower()
+                 or "after_cutoff" in (r.get("correction_evidence") or "").lower()
+                 or "core pair" in (r.get("temporal_availability") or "").lower()]
+    checks["correction_candidate_enum_ok"] = (not bad_cc)
+    checks["temporal_enum_ok"] = (not bad_temporal)
+    checks["state_vs_evidence_placement_ok"] = (not misplaced)
+    checks["enum_violation_examples"] = {"cc": bad_cc[:5], "temporal": bad_temporal[:5],
+                                         "misplaced": misplaced[:5]}
+
     # 7. 截点语义：no_candidate_15m 与 in_15m 一致；after-cutoff 未混入截点前候选
     bad_nc = [r["anon_id"] for r in obs if (r["no_candidate_15m"] == "True") != (r["in_15m"] == "0")]
     checks["no_candidate_semantics_consistent"] = (not bad_nc)
